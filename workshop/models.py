@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db import models
+
 
 class UserProfile(models.Model):
     USER_ROLES = [
@@ -23,26 +23,47 @@ class Customer(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class Bike(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bikes')
     brand = models.CharField(max_length=100)
     model = models.CharField(max_length=100, blank=True)
     color = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return f"{self.brand} {self.model} ({self.customer.name})"
+        return f"{self.brand} {self.model or ''} ({self.customer.name})"
 
-class ProblemType(models.Model):
+
+class RepairCategory(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
+
+class RepairSubCategory(models.Model):
+    category = models.ForeignKey(
+        RepairCategory,
+        on_delete=models.CASCADE,
+        related_name='subcategories'
+    )
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        unique_together = ('category', 'name')
+
+    def __str__(self):
+        return f"{self.category.name} > {self.name}"
+
+
 class RepairJob(models.Model):
     bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
-    problem_types = models.ManyToManyField(ProblemType, blank=True)
+    subcategories = models.ManyToManyField(
+        RepairSubCategory,
+        blank=True,
+        related_name='repair_jobs'
+    )
     problem_description = models.TextField(blank=True)
     diagnosis = models.TextField(blank=True)
     quote_price = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)

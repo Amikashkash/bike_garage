@@ -7,6 +7,10 @@ from .forms import BikeForm
 from .forms import RepairJobForm
 from django.shortcuts import render, redirect
 from .permissions import role_required
+from .permissions import staff_required, mechanic_required, manager_required
+from .models import RepairCategory
+from .forms import RepairCategoryForm, RepairSubCategoryForm
+
 
 
 @login_required
@@ -56,13 +60,41 @@ def user_login(request):
             login(request, user)
             return redirect('/')
         else:
-            return render(request, 'login.html', {'error': 'שם משתמש או סיסמה שגויים'})
-    return render(request, 'login.html')
+            return render(request, 'workshop/login.html', {'error': 'שם משתמש או סיסמה שגויים'})
+    return render(request, 'workshop/login.html')
 
 @login_required
+@staff_required
 def home(request):
     return render(request, "workshop/home.html")
 
 def user_logout(request):
     logout(request)
     return redirect("login")
+
+@staff_required
+def category_list(request):
+    cats = RepairCategory.objects.prefetch_related('subcategories').all()
+    return render(request, 'workshop/category_list.html', {'categories': cats})
+
+@staff_required
+def category_create(request):
+    if request.method == 'POST':
+        form = RepairCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')
+    else:
+        form = RepairCategoryForm()
+    return render(request, 'workshop/category_form.html', {'form': form})
+
+@staff_required
+def subcategory_create(request):
+    if request.method == 'POST':
+        form = RepairSubCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('category_list')
+    else:
+        form = RepairSubCategoryForm()
+    return render(request, 'workshop/subcategory_form.html', {'form': form})

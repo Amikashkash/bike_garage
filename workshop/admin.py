@@ -1,14 +1,17 @@
 from django.contrib import admin
-from .models import Customer, Bike, ProblemType, RepairJob
-from django.contrib import admin
-from .models import UserProfile
+from .models import (
+    UserProfile,
+    Customer,
+    Bike,
+    RepairCategory,
+    RepairSubCategory,
+    RepairJob,
+)
 
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role')
-
-
+# רישום מודלים לממשק הניהול
+admin.site.register(UserProfile)
 admin.site.register(Customer)
 admin.site.register(Bike)
-admin.site.register(ProblemType)
+admin.site.register(RepairCategory)
+admin.site.register(RepairSubCategory)
 admin.site.register(RepairJob)

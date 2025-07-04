@@ -8,6 +8,9 @@ urlpatterns = [
     path('customer/new/', views.customer_form, name='customer_form'),
     path('bike/new/', views.bike_form, name='bike_form'),
     path('repair/new/', views.repair_form, name='repair_form'),
+    path('categories/',       views.category_list,      name='category_list'),
+    path('categories/new/',   views.category_create,    name='category_create'),
+    path('subcategories/new/',views.subcategory_create, name='subcategory_create'),
 
     
     # נחזיר את הטפסים בהמשך ונוסיף כאן לינקים אליהם

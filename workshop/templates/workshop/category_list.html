@@ -1,0 +1,21 @@
+{% extends "workshop/base.html" %}
+{% block title %}ניהול קטגוריות תיקון{% endblock %}
+{% block content %}
+  <h2>קטגוריות תיקון</h2>
+  <a href="{% url 'category_create' %}">+ קטגוריה חדשה</a> |
+  <a href="{% url 'subcategory_create' %}">+ תת־קטגוריה חדשה</a>
+  <ul>
+    {% for cat in categories %}
+      <li>
+        <strong>{{ cat.name }}</strong>
+        <ul>
+          {% for sub in cat.subcategories.all %}
+            <li>{{ sub.name }}</li>
+          {% empty %}
+            <li><em>אין תתי־קטגוריות</em></li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
