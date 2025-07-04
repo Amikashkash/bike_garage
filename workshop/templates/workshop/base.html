@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}מוסך אופניים{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        header, footer {
+            background-color: #eee;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🚲 מוסך האופניים</h1>
+    {% if user.is_authenticated %}
+        <nav>
+            <a href="/">דף הבית</a>
+            <a href="/repair/new/">תיקון חדש</a>
+            <a href="/logout/">התנתקות</a>
+        </nav>
+        <p>שלום {{ user.username }}!</p>
+    {% else %}
+        <a href="/login/">התחברות</a>
+    {% endif %}
+</header>
+
+<hr>
+
+{% block content %}
+<!-- כאן ייכנס התוכן של כל דף אחר -->
+{% endblock %}
+
+<hr>
+
+<footer>
+    &copy; {{ now|date:"Y" }} מוסך האופניים
+</footer>
+
+</body>
+</html>

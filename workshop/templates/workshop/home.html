@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>דף הבית</title>
+</head>
+<body>
+    <h1>ברוכים הבאים למערכת ניהול המוסך</h1>
+    <p>שלום, {{ request.user.username }}!</p>
+
+    <ul>
+        <li><a href="{% url 'customer_form' %}">הוסף לקוח חדש</a></li>
+        <li><a href="{% url 'bike_form' %}">הוסף אופניים חדשים</a></li>
+        <li><a href="{% url 'repair_form' %}">הוסף תיקון חדש</a></li>
+        <li><a href="{% url 'logout' %}">התנתק</a></li>
+    </ul>
+</body>
+</html>

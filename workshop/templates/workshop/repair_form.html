@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>תיקון חדש</title>
+</head>
+<body>
+    <h2>הוסף תיקון לאופניים</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">שמור</button>
+    </form>
+    <br>
+    <a href="{% url 'home' %}">חזרה לדף הבית</a>
+</body>
+</html>
