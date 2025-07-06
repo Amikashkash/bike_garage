@@ -10,6 +10,8 @@ from .permissions import role_required
 from .permissions import staff_required, mechanic_required, manager_required
 from .models import RepairCategory
 from .forms import RepairCategoryForm, RepairSubCategoryForm
+from .forms import RepairJobForm
+from .models import RepairCategory
 
 
 
@@ -23,7 +25,11 @@ def repair_form(request):
             return redirect('home')
     else:
         form = RepairJobForm()
-    return render(request, 'workshop/repair_form.html', {'form': form})
+        categories = RepairCategory.objects.prefetch_related('subcategories').all()
+    return render(request, 'workshop/repair_form.html', {
+        'form': form,
+        'categories': categories,
+    })
 
 
 @login_required
@@ -75,7 +81,13 @@ def user_logout(request):
 @staff_required
 def category_list(request):
     cats = RepairCategory.objects.prefetch_related('subcategories').all()
-    return render(request, 'workshop/category_list.html', {'categories': cats})
+    return render(request, 'workshop/repair_form.html', {
+    'form': form,
+    'categories': categories
+})
+
+
+
 
 @staff_required
 def category_create(request):

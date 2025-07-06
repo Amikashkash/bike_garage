@@ -1,12 +1,75 @@
 {% extends "workshop/base.html" %}
-
-{% block title %}תיקון חדש{% endblock %}
+{% block title %}הוסף תיקון אופניים{% endblock %}
 
 {% block content %}
 <h2>הוסף תיקון לאופניים</h2>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+
+  <div>
+    {{ form.bike.label_tag }}<br>
+    {{ form.bike }}
+  </div>
+  <br>
+
+  <div>
+    <strong>בחר קטגוריות תקלה:</strong>
+    <ul style="list-style-type: none; padding: 0;">
+      {% for cat in categories %}
+        <li>
+          <label>
+            <input type="checkbox" class="category-checkbox" data-cat-id="{{ cat.id }}">
+            {{ cat.name }}
+          </label>
+          <ul style="list-style-type: none; margin-right: 24px; display: none;" id="subcat-list-{{ cat.id }}">
+            {% for sub in cat.subcategories.all %}
+              <li>
+                <label>
+                  <input type="checkbox" name="subcategories" value="{{ sub.id }}">
+                  {{ sub.name }}
+                </label>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <br>
+
+  <div>
+    {{ form.problem_description.label_tag }}<br>
+    {{ form.problem_description }}
+  </div>
+  <br>
+  <div>
+    {{ form.diagnosis.label_tag }}<br>
+    {{ form.diagnosis }}
+  </div>
+  <br>
+  <div>
+    {{ form.quote_price.label_tag }}<br>
+    {{ form.quote_price }}
+  </div>
+  <br>
+  <div>
+    {{ form.is_approved }} {{ form.is_approved.label_tag }}
+  </div>
+  <br>
   <button type="submit">שמור</button>
+  <a href="{% url 'home' %}">ביטול</a>
 </form>
+
+<script>
+  document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      var list = document.getElementById('subcat-list-' + this.dataset.catId);
+      if (this.checked) {
+        list.style.display = 'block';
+      } else {
+        list.style.display = 'none';
+      }
+    });
+  });
+</script>
 {% endblock %}
