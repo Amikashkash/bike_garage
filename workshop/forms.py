@@ -108,7 +108,7 @@ class MechanicSignUpForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            UserProfile.objects.create(user=user, role='mechanic')
+            UserProfile.objects.get_or_create(user=user, defaults={'role': 'mechanic'})
         return user
 
 class ManagerSignUpForm(UserCreationForm):
@@ -138,7 +138,7 @@ class ManagerSignUpForm(UserCreationForm):
         user.is_staff = True   # גישה ל־admin
         if commit:
             user.save()
-            UserProfile.objects.create(user=user, role='manager')
+            UserProfile.objects.get_or_create(user=user, defaults={'role': 'manager'})
         return user
 
 class CustomerRegisterForm(UserCreationForm):
@@ -166,12 +166,14 @@ class CustomerRegisterForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
-            UserProfile.objects.create(user=user, role='customer')
-            Customer.objects.create(
-                user=user,  # ← קישור ה־User ל־Customer
-                name=self.cleaned_data['name'],
-                phone=self.cleaned_data['phone'],
-                email=self.cleaned_data['email'],
+            UserProfile.objects.get_or_create(user=user, defaults={'role': 'customer'})
+            Customer.objects.get_or_create(
+                user=user,
+                defaults={
+                    'name': self.cleaned_data['name'],
+                    'phone': self.cleaned_data['phone'],
+                    'email': self.cleaned_data['email'],
+                }
             )
         return user
     
