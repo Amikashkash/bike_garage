@@ -3,10 +3,41 @@
 {% block title %}לקוח חדש{% endblock %}
 
 {% block content %}
-<h2>הוסף לקוח חדש</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">שמור</button>
-</form>
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2>📝 הוסף לקוח חדש</h2>
+    
+    <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d9ff;">
+        <h4>💡 מידע חשוב:</h4>
+        <p>• לקוח זה יוסף כפרטי קשר בלבד</p>
+        <p>• הלקוח לא יוכל להתחבר למערכת</p>
+        <p>• אם הלקוח רוצה לדווח תקלות בעצמו, עליו להירשם דרך דף "הרשמה"</p>
+    </div>
+
+    <form method="post" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div style="margin-top: 20px;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                💾 שמור לקוח
+            </button>
+            <a href="{% url 'home' %}" style="margin-right: 10px; color: #6c757d; text-decoration: none;">
+                ← חזור לדף הבית
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+    form input, form select, form textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    button:hover {
+        background-color: #218838 !important;
+    }
+</style>
 {% endblock %}

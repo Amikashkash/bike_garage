@@ -105,10 +105,12 @@
                         <li><a href="{% url 'repair_form' %}">תיקון חדש</a></li>
                         <li><a href="{% url 'bike_form' %}">אופניים חדשים</a></li>
                         <li><a href="{% url 'customer_form' %}">לקוח חדש</a></li>
+                        <li><a href="{% url 'customer_list' %}">רשימת לקוחות</a></li>
                         <li><a href="{% url 'category_list' %}">קטגוריות</a></li>
                     {% endif %}
                     {% if user.userprofile.role == 'manager' %}
                         <li><a href="/admin/">ניהול</a></li>
+                        <li><a href="{% url 'link_customer_user' %}">חיבור לקוחות</a></li>
                     {% endif %}
                     <li><a href="{% url 'logout' %}">התנתק ({{ user.username }})</a></li>
                 {% else %}

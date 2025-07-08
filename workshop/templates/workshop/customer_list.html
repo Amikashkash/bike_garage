@@ -1,0 +1,83 @@
+{% extends "workshop/base.html" %}
+
+{% block title %}רשימת לקוחות{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>👥 רשימת לקוחות</h2>
+        <a href="{% url 'customer_form' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+            ➕ הוסף לקוח חדש
+        </a>
+    </div>
+
+    <!-- לקוחות עם חשבון משתמש -->
+    <div style="margin-bottom: 30px;">
+        <h3 style="color: #28a745;">🟢 לקוחות רשומים במערכת ({{ customers_with_user.count }})</h3>
+        <p style="color: #666; font-size: 0.9em;">לקוחות שנרשמו בעצמם ויכולים להתחבר למערכת</p>
+        
+        {% if customers_with_user %}
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+            {% for customer in customers_with_user %}
+            <div style="display: flex; justify-content: space-between; padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #e9ecef;">
+                <div>
+                    <strong>{{ customer.name }}</strong>
+                    <br>
+                    <small style="color: #666;">
+                        📞 {{ customer.phone }} 
+                        {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
+                        | 👤 משתמש: {{ customer.user.username }}
+                    </small>
+                </div>
+                <div style="font-size: 0.8em; color: #28a745;">
+                    ✅ יכול להתחבר
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #666; font-style: italic;">אין לקוחות רשומים עדיין</p>
+        {% endif %}
+    </div>
+
+    <!-- לקוחות ללא חשבון משתמש -->
+    <div>
+        <h3 style="color: #ffc107;">🟡 פרטי קשר בלבד ({{ customers_without_user.count }})</h3>
+        <p style="color: #666; font-size: 0.9em;">לקוחות שנוצרו ע"י המנהל - ללא אפשרות התחברות</p>
+        
+        {% if customers_without_user %}
+        <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2;">
+            {% for customer in customers_without_user %}
+            <div style="display: flex; justify-content: space-between; padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #ffcc02;">
+                <div>
+                    <strong>{{ customer.name }}</strong>
+                    <br>
+                    <small style="color: #666;">
+                        📞 {{ customer.phone }} 
+                        {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
+                    </small>
+                </div>
+                <div style="font-size: 0.8em; color: #ff8f00;">
+                    ⚠️ רק פרטי קשר
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #666; font-style: italic;">אין פרטי קשר שנוצרו ע"י המנהל</p>
+        {% endif %}
+    </div>
+
+    <!-- הסבר -->
+    <div style="margin-top: 30px; padding: 15px; background-color: #e3f2fd; border-radius: 8px; border: 1px solid #bbdefb;">
+        <h4>💡 הסבר על סוגי הלקוחות:</h4>
+        <ul style="margin: 10px 0;">
+            <li><strong>לקוחות רשומים (ירוק):</strong> נרשמו בעצמם דרך דף ההרשמה, יכולים להתחבר ולדווח תקלות</li>
+            <li><strong>פרטי קשר (צהוב):</strong> נוצרו ע"י המנהל/מכונאי, משמשים רק לתיעוד ויצירת תיקונים</li>
+        </ul>
+        <p style="margin: 10px 0; color: #1565c0;">
+            <strong>המלצה:</strong> עודד לקוחות להירשם בעצמם כדי שיוכלו לעקוב אחר התיקונים ולדווח תקלות.
+        </p>
+    </div>
+</div>
+{% endblock %}

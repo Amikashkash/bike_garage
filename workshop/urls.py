@@ -12,6 +12,8 @@ urlpatterns = [
     
     # Customer and Bikes
     path('customer/new/', views.customer_form, name='customer_form'),
+    path('customers/', views.customer_list, name='customer_list'),
+    path('customers/link/', views.link_customer_to_user, name='link_customer_user'),
     path('bike/new/', views.bike_form, name='bike_form'),
     
     # Repairs

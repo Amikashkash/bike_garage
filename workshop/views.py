@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.http import HttpResponse
 
@@ -145,10 +146,65 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "נרשמת בהצלחה!")
+            
+            # בדיקה אם חובר לקוח קיים
+            if hasattr(form, 'existing_customer') and form.cleaned_data.get('link_existing'):
+                messages.success(request, f"נרשמת בהצלחה! חשבונך חובר ללקוח הקיים במערכת. כעת תוכל לראות את כל האופניים והתיקונים שלך.")
+            else:
+                messages.success(request, "נרשמת בהצלחה! ברוך הבא למערכת המוסך.")
+            
             return redirect('home')
     else:
         form = CustomerRegisterForm()
     return render(request, 'workshop/register.html', {'form': form})
+
+@login_required
+@staff_required
+def customer_list(request):
+    """רשימת כל הלקוחות - מחולקת לפי סוג"""
+    # לקוחות עם חשבון משתמש (נרשמו בעצמם)
+    customers_with_user = Customer.objects.filter(user__isnull=False).select_related('user')
+    
+    # לקוחות ללא חשבון משתמש (נוצרו ע"י מנהל)
+    customers_without_user = Customer.objects.filter(user__isnull=True)
+    
+    context = {
+        'customers_with_user': customers_with_user,
+        'customers_without_user': customers_without_user,
+    }
+    return render(request, 'workshop/customer_list.html', context)
+
+@login_required
+@manager_required
+def link_customer_to_user(request):
+    """מנהל יכול לחבר לקוח קיים למשתמש קיים"""
+    if request.method == 'POST':
+        customer_id = request.POST.get('customer_id')
+        user_id = request.POST.get('user_id')
+        
+        try:
+            customer = Customer.objects.get(id=customer_id, user__isnull=True)
+            user = User.objects.get(id=user_id)
+            
+            # בדיקה שהמשתמש עדיין לא מחובר ללקוח אחר
+            if hasattr(user, 'customer'):
+                messages.error(request, f"המשתמש {user.username} כבר מחובר ללקוח אחר")
+            else:
+                customer.user = user
+                customer.save()
+                messages.success(request, f"הלקוח {customer.name} חובר בהצלחה למשתמש {user.username}")
+                
+        except (Customer.DoesNotExist, User.DoesNotExist):
+            messages.error(request, "שגיאה בחיבור הלקוח למשתמש")
+    
+    # הצגת לקוחות ללא משתמש ומשתמשים ללא לקוח
+    customers_without_user = Customer.objects.filter(user__isnull=True)
+    users_without_customer = User.objects.filter(customer__isnull=True, userprofile__role='customer')
+    
+    context = {
+        'customers_without_user': customers_without_user,
+        'users_without_customer': users_without_customer,
+    }
+    return render(request, 'workshop/link_customer_user.html', context)
 
 

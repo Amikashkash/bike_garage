@@ -1,0 +1,85 @@
+{% extends "workshop/base.html" %}
+
+{% block title %}חיבור לקוחות למשתמשים{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <h2>🔗 חיבור לקוחות למשתמשים</h2>
+    <p style="color: #666;">כאן תוכל לחבר לקוחות קיימים (שנוצרו ללא חשבון) למשתמשים רשומים</p>
+
+    {% if customers_without_user and users_without_customer %}
+    <form method="post" style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr 200px; gap: 15px; align-items: end;">
+            <div>
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">בחר לקוח ללא חשבון:</label>
+                <select name="customer_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">-- בחר לקוח --</option>
+                    {% for customer in customers_without_user %}
+                    <option value="{{ customer.id }}">{{ customer.name }} ({{ customer.phone }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label style="font-weight: bold; display: block; margin-bottom: 5px;">בחר משתמש ללא לקוח:</label>
+                <select name="user_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">-- בחר משתמש --</option>
+                    {% for user in users_without_customer %}
+                    <option value="{{ user.id }}">{{ user.username }} ({{ user.email }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <button type="submit" style="background-color: #28a745; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; width: 100%;">
+                    🔗 חבר
+                </button>
+            </div>
+        </div>
+    </form>
+    {% endif %}
+
+    <!-- רשימת לקוחות ללא חשבון -->
+    <div style="margin-bottom: 30px;">
+        <h3 style="color: #ffc107;">⚠️ לקוחות ללא חשבון משתמש ({{ customers_without_user.count }})</h3>
+        {% if customers_without_user %}
+        <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2;">
+            {% for customer in customers_without_user %}
+            <div style="padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #ffcc02;">
+                <strong>{{ customer.name }}</strong> - {{ customer.phone }}
+                {% if customer.email %} - {{ customer.email }}{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #666; font-style: italic;">כל הלקוחות מחוברים למשתמשים! 🎉</p>
+        {% endif %}
+    </div>
+
+    <!-- רשימת משתמשים ללא לקוח -->
+    <div>
+        <h3 style="color: #17a2b8;">👤 משתמשי לקוח ללא פרטי לקוח ({{ users_without_customer.count }})</h3>
+        {% if users_without_customer %}
+        <div style="background-color: #e1f5fe; padding: 15px; border-radius: 8px; border: 1px solid #b3e5fc;">
+            {% for user in users_without_customer %}
+            <div style="padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #4fc3f7;">
+                <strong>{{ user.username }}</strong>
+                {% if user.email %} - {{ user.email }}{% endif %}
+                <small style="color: #666;">(נרשם: {{ user.date_joined|date:"d/m/Y" }})</small>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color: #666; font-style: italic;">כל המשתמשים מחוברים ללקוחות! 🎉</p>
+        {% endif %}
+    </div>
+
+    {% if not customers_without_user and not users_without_customer %}
+    <div style="text-align: center; padding: 40px; background-color: #d4edda; border-radius: 8px; margin-top: 20px;">
+        <h3 style="color: #155724;">✅ כל הלקוחות והמשתמשים מחוברים!</h3>
+        <p style="color: #155724;">אין צורך בחיבורים נוספים כרגע.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,40 +1,116 @@
 {% extends "workshop/base.html" %}
 {% block title %}הרשמה{% endblock %}
 {% block content %}
-<h2>הרשמה ללקוחות</h2>
-<form method="post" dir="rtl" style="max-width: 400px; margin: auto;">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    <div>
-        {{ form.username.label_tag }}<br>
-        {{ form.username }}
-        {{ form.username.errors }}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2>🚲 הרשמה ללקוחות</h2>
+    
+    <!-- הסבר על סוגי הרשמה -->
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #bbdefb;">
+        <h4>💡 סוגי הרשמה:</h4>
+        <ul style="margin: 10px 0;">
+            <li><strong>לקוח חדש:</strong> מלא את הפרטים בלבד</li>
+            <li><strong>יש לי כבר פרטים במערכת:</strong> סמן את התיבה למטה כדי לחבר לחשבון קיים</li>
+        </ul>
     </div>
-    <div>
-        {{ form.name.label_tag }}<br>
-        {{ form.name }}
-        {{ form.name.errors }}
+
+    <form method="post" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.username.id_for_label }}" style="font-weight: bold;">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.name.id_for_label }}" style="font-weight: bold;">{{ form.name.label }}</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.name.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.phone.id_for_label }}" style="font-weight: bold;">{{ form.phone.label }}</label>
+            {{ form.phone }}
+            {% if form.phone.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.phone.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.email.id_for_label }}" style="font-weight: bold;">{{ form.email.label }}</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+
+        <!-- תיבת סימון לחיבור לקוח קיים -->
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                {{ form.link_existing }}
+                <span style="margin-right: 8px; font-weight: bold;">{{ form.link_existing.label }}</span>
+            </label>
+            <small style="color: #856404; margin-top: 5px; display: block;">
+                {{ form.link_existing.help_text }}
+            </small>
+            {% if form.link_existing.errors %}
+                <div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ form.link_existing.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label for="{{ form.password1.id_for_label }}" style="font-weight: bold;">{{ form.password1.label }}</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.password1.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="{{ form.password2.id_for_label }}" style="font-weight: bold;">{{ form.password2.label }}</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div style="color: #dc3545; font-size: 0.9em;">{{ form.password2.errors }}</div>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center;">
+            <button type="submit" style="background-color: #28a745; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 1.1em;">
+                🚀 הרשם למערכת
+            </button>
+        </div>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <p>כבר יש לך חשבון? <a href="{% url 'login' %}" style="color: #007bff;">התחבר כאן</a></p>
     </div>
-    <div>
-        {{ form.phone.label_tag }}<br>
-        {{ form.phone }}
-        {{ form.phone.errors }}
-    </div>
-    <div>
-        {{ form.email.label_tag }}<br>
-        {{ form.email }}
-        {{ form.email.errors }}
-    </div>
-    <div>
-        {{ form.password1.label_tag }}<br>
-        {{ form.password1 }}
-        {{ form.password1.errors }}
-    </div>
-    <div>
-        {{ form.password2.label_tag }}<br>
-        {{ form.password2 }}
-        {{ form.password2.errors }}
-    </div>
-    <button type="submit">הרשם</button>
-</form>
+</div>
+
+<style>
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 1em;
+    }
+    input[type="checkbox"] {
+        margin-left: 8px;
+        transform: scale(1.2);
+    }
+    button:hover {
+        background-color: #218838 !important;
+    }
+</style>
 {% endblock %}

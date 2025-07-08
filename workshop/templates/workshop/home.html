@@ -16,11 +16,32 @@
     </ul>
 {% elif user.is_authenticated and user.userprofile.role != "customer" %}
     <!-- קישורים לצוות ומנהלים -->
-    <ul>
-        <li><a href="{% url 'customer_form' %}">הוסף לקוח חדש</a></li>
-        <li><a href="{% url 'bike_form' %}">הוסף אופניים חדשים</a></li>
-        <li><a href="{% url 'repair_form' %}">הוסף תיקון חדש</a></li>
-    </ul>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3>👥 ניהול לקוחות</h3>
+            <p style="color: #666; font-size: 0.9em;">ניהול פרטי לקוחות ומעקב</p>
+            <a href="{% url 'customer_form' %}" style="color: #007bff; text-decoration: none;">➕ הוסף לקוח חדש</a><br>
+            <a href="{% url 'customer_list' %}" style="color: #007bff; text-decoration: none;">📋 רשימת לקוחות</a>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3>🚲 ניהול אופניים</h3>
+            <p style="color: #666; font-size: 0.9em;">רישום אופניים חדשים</p>
+            <a href="{% url 'bike_form' %}" style="color: #007bff; text-decoration: none;">➕ הוסף אופניים חדשים</a>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3>🔧 ניהול תיקונים</h3>
+            <p style="color: #666; font-size: 0.9em;">יצירת תיקונים חדשים</p>
+            <a href="{% url 'repair_form' %}" style="color: #007bff; text-decoration: none;">➕ הוסף תיקון חדש</a>
+        </div>
+        
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 8px; border: 1px solid #dee2e6;">
+            <h3>⚙️ הגדרות מערכת</h3>
+            <p style="color: #666; font-size: 0.9em;">ניהול קטגוריות ותת־קטגוריות</p>
+            <a href="{% url 'category_list' %}" style="color: #007bff; text-decoration: none;">📂 קטגוריות תיקון</a>
+        </div>
+    </div>
 {% endif %}
 
 {% else %}
