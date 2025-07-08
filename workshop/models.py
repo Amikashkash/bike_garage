@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+
 class UserProfile(models.Model):
     USER_ROLES = [
         ('customer', 'לקוח'),
@@ -17,6 +18,7 @@ class UserProfile(models.Model):
 
 
 class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True)

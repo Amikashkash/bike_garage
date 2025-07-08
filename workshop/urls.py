@@ -11,7 +11,9 @@ urlpatterns = [
     path('categories/',       views.category_list,      name='category_list'),
     path('categories/new/',   views.category_create,    name='category_create'),
     path('subcategories/new/',views.subcategory_create, name='subcategory_create'),
-
+    path('customer/report/', views.customer_report, name='customer_report'),
+     path('register/', views.register, name='register'),
+    path('customer/report/', views.customer_report, name='customer_report'),
     
     # נחזיר את הטפסים בהמשך ונוסיף כאן לינקים אליהם
 ]

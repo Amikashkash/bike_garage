@@ -4,12 +4,28 @@
 
 {% block content %}
 <h1>ברוכים הבאים למערכת ניהול המוסך</h1>
-<p>שלום, {{ request.user.username }}!</p>
-<ul>
-  <li><a href="{% url 'customer_form' %}">הוסף לקוח חדש</a></li>
-  <li><a href="{% url 'bike_form' %}">הוסף אופניים חדשים</a></li>
-  <li><a href="{% url 'repair_form' %}">הוסף תיקון חדש</a></li>
-  <li><a href="{% url 'logout' %}">התנתק</a></li>
-</ul>
-{% endblock %}
 
+{% if user.is_authenticated %}
+    <p>שלום, {{ user.username }}!</p>
+    <a href="{% url 'logout' %}">התנתק</a>
+
+    {% if user.is_authenticated and user.userprofile.role == "customer" %}
+    <!-- קישורים ללקוח -->
+    <ul>
+        <li><a href="{% url 'customer_report' %}">דווח תקלה חדשה</a></li>
+    </ul>
+{% elif user.is_authenticated and user.userprofile.role != "customer" %}
+    <!-- קישורים לצוות ומנהלים -->
+    <ul>
+        <li><a href="{% url 'customer_form' %}">הוסף לקוח חדש</a></li>
+        <li><a href="{% url 'bike_form' %}">הוסף אופניים חדשים</a></li>
+        <li><a href="{% url 'repair_form' %}">הוסף תיקון חדש</a></li>
+    </ul>
+{% endif %}
+
+{% else %}
+    <a href="{% url 'login' %}">התחבר</a>
+    <a href="{% url 'register' %}">הרשם</a>
+{% endif %}
+
+{% endblock %}

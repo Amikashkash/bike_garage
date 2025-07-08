@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from .models import RepairJob, RepairSubCategory, Bike
 from django.contrib.auth.models import User
-
 from .models import (
     Customer,
     Bike,
@@ -11,7 +11,7 @@ from .models import (
     UserProfile,
 )
 
-# ——— Forms for domain models ———
+# -- טפסים למודלים עיקריים --
 
 class CustomerForm(forms.ModelForm):
     class Meta:
@@ -51,9 +51,96 @@ class RepairSubCategoryForm(forms.ModelForm):
             'name'    : 'תת־קטגוריה',
         }
 
-
 class RepairJobForm(forms.ModelForm):
-    # שדה מותאם ל-ManyToMany לתתי־קטגוריות
+    subcategories = forms.ModelMultipleChoiceField(
+        queryset=RepairSubCategory.objects.select_related('category'),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="תקלות (בחירה מרשימת תתי־קטגוריות)"
+    )
+
+    class Meta:
+        model = RepairJob
+        fields = [
+            'bike',                 # בוחר אופניים (עם שם הלקוח בצד ברשימה)
+            'subcategories',        # רשימת תקלות
+            'problem_description',  # תיאור
+            'diagnosis',            # אבחון
+            'quote_price',          # הצעת מחיר
+            'is_approved',          # אישור
+        ]
+        labels = {
+            'bike': 'אופניים',
+            'problem_description': 'תיאור התקלה (חופשי)',
+            'diagnosis': 'אבחון',
+            'quote_price': 'הצעת מחיר',
+            'is_approved': 'אושר על ידי הלקוח',
+        }
+        widgets = {
+            'subcategories': forms.CheckboxSelectMultiple,
+        }
+
+# -- טפסי הרשמה והרשאות --
+
+class MechanicSignUpForm(UserCreationForm):
+    """טופס הרשמת מכונאי (role='mechanic')"""
+    class Meta:
+        model = User
+        fields = ('username', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        Customer.objects.create(
+            user=user,  # ← זהו הקישור החיוני!
+            name=self.cleaned_data['name'],
+            phone=self.cleaned_data['phone'],
+            email=self.cleaned_data['email'],
+        )
+        return user
+
+class ManagerSignUpForm(UserCreationForm):
+    """טופס הרשמת מנהל (role='manager')"""
+    class Meta:
+        model = User
+        fields = ('username', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.is_staff = True   # גישה ל־admin
+        if commit:
+            user.save()
+            UserProfile.objects.create(user=user, role='manager')
+        return user
+
+class CustomerRegisterForm(UserCreationForm):
+    name = forms.CharField(label="שם מלא", max_length=100)
+    phone = forms.CharField(label="טלפון", max_length=20)
+    email = forms.EmailField(label="אימייל", required=False)
+
+    class Meta:
+        model = User
+        fields = ['username', 'name', 'phone', 'email', 'password1', 'password2']
+        labels = {
+            'username': 'שם משתמש',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].label = "סיסמה"
+        self.fields['password2'].label = "אימות סיסמה"
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        Customer.objects.create(
+            user=user,  # ← קישור ה־User ל־Customer
+            name=self.cleaned_data['name'],
+            phone=self.cleaned_data['phone'],
+            email=self.cleaned_data['email'],
+        )
+        return user
+    
+    
+class CustomerRepairJobForm(forms.ModelForm):
     subcategories = forms.ModelMultipleChoiceField(
         queryset=RepairSubCategory.objects.select_related('category'),
         required=False,
@@ -67,49 +154,10 @@ class RepairJobForm(forms.ModelForm):
             'bike',
             'subcategories',
             'problem_description',
-            'diagnosis',
-            'quote_price',
-            'is_approved',
         ]
         labels = {
-            'bike'               : 'אופניים',
+            'bike': 'אופניים',
+            'subcategories': 'תקלות',
             'problem_description': 'תיאור התקלה (חופשי)',
-            'diagnosis'          : 'אבחון',
-            'quote_price'        : 'הצעת מחיר',
-            'is_approved'        : 'אושר על ידי הלקוח',
         }
-        widgets = {
-            # ניתן להגדיר כאן אם תרצה סידור שונה
-            'subcategories': forms.CheckboxSelectMultiple,
-        }
-
-# ——— (אופציונלי) Forms ל-User/UserProfile ———
-
-class MechanicSignUpForm(UserCreationForm):
-    """טופס הרשמת מכונאי (role='mechanic')"""
-    class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2')
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        # אם תרצה לאפשר כניסה ל-admin, השתמש user.is_staff = True
-        if commit:
-            user.save()
-            UserProfile.objects.create(user=user, role='mechanic')
-        return user
-
-class ManagerSignUpForm(UserCreationForm):
-    """טופס הרשמת מנהל (role='manager')"""
-    class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2')
-
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.is_staff = True   # גישה ל־admin
-        # user.is_superuser = True  # אם תרצה מנהל־על
-        if commit:
-            user.save()
-            UserProfile.objects.create(user=user, role='manager')
-        return user
+    

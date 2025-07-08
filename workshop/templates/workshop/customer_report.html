@@ -1,0 +1,10 @@
+{% extends "workshop/base.html" %}
+{% block title %}דיווח תקלה חדשה{% endblock %}
+{% block content %}
+<h2>דיווח תקלה באופניים</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">שלח תקלה</button>
+</form>
+{% endblock %}

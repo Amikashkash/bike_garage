@@ -12,7 +12,33 @@ from .models import RepairCategory
 from .forms import RepairCategoryForm, RepairSubCategoryForm
 from .forms import RepairJobForm
 from .models import RepairCategory
+from .models import Bike, RepairJob
+from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomerRegisterForm
+from .models import Customer, Bike
+from .forms import CustomerRepairJobForm
 
+
+
+
+@login_required
+def customer_report(request):
+    customer = Customer.objects.get(user=request.user)
+    # כל האופניים של הלקוח הזה בלבד
+    bikes = Bike.objects.filter(customer=customer)
+    if request.method == 'POST':
+        form = CustomerRepairJobForm(request.POST)
+        form.fields['bike'].queryset = bikes
+        if form.is_valid():
+            repair = form.save(commit=False)
+            if repair.bike in bikes:
+                repair.save()
+                form.save_m2m()
+                return render(request, 'workshop/customer_report_done.html')
+    else:
+        form = CustomerRepairJobForm()
+        form.fields['bike'].queryset = bikes
+    return render(request, 'workshop/customer_report.html', {'form': form})
 
 
 @login_required
@@ -69,8 +95,7 @@ def user_login(request):
             return render(request, 'workshop/login.html', {'error': 'שם משתמש או סיסמה שגויים'})
     return render(request, 'workshop/login.html')
 
-@login_required
-@staff_required
+
 def home(request):
     return render(request, "workshop/home.html")
 
@@ -110,3 +135,17 @@ def subcategory_create(request):
     else:
         form = RepairSubCategoryForm()
     return render(request, 'workshop/subcategory_form.html', {'form': form})
+
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomerRegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('home')
+    else:
+        form = CustomerRegisterForm()
+    return render(request, 'workshop/register.html', {'form': form})
+
+
