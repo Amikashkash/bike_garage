@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import RepairJob, RepairSubCategory, Bike
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import User
 from .models import (
     Customer,
@@ -84,25 +84,54 @@ class RepairJobForm(forms.ModelForm):
 
 class MechanicSignUpForm(UserCreationForm):
     """טופס הרשמת מכונאי (role='mechanic')"""
+    name = forms.CharField(label="שם מלא", max_length=100)
+    phone = forms.CharField(
+        label="טלפון",
+        max_length=20,
+        validators=[RegexValidator(r'^[0-9\-\+]{9,15}$', 'נא להזין מספר טלפון תקין')]
+    )
+    email = forms.EmailField(label="אימייל", required=False)
+    
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
+        fields = ('username', 'name', 'phone', 'email', 'password1', 'password2')
+        labels = {
+            'username': 'שם משתמש',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].label = "סיסמה"
+        self.fields['password2'].label = "אימות סיסמה"
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        Customer.objects.create(
-            user=user,  # ← זהו הקישור החיוני!
-            name=self.cleaned_data['name'],
-            phone=self.cleaned_data['phone'],
-            email=self.cleaned_data['email'],
-        )
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            UserProfile.objects.create(user=user, role='mechanic')
         return user
 
 class ManagerSignUpForm(UserCreationForm):
     """טופס הרשמת מנהל (role='manager')"""
+    name = forms.CharField(label="שם מלא", max_length=100)
+    phone = forms.CharField(
+        label="טלפון",
+        max_length=20,
+        validators=[RegexValidator(r'^[0-9\-\+]{9,15}$', 'נא להזין מספר טלפון תקין')]
+    )
+    email = forms.EmailField(label="אימייל", required=False)
+    
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
+        fields = ('username', 'name', 'phone', 'email', 'password1', 'password2')
+        labels = {
+            'username': 'שם משתמש',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].label = "סיסמה"
+        self.fields['password2'].label = "אימות סיסמה"
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -114,7 +143,11 @@ class ManagerSignUpForm(UserCreationForm):
 
 class CustomerRegisterForm(UserCreationForm):
     name = forms.CharField(label="שם מלא", max_length=100)
-    phone = forms.CharField(label="טלפון", max_length=20)
+    phone = forms.CharField(
+        label="טלפון",
+        max_length=20,
+        validators=[RegexValidator(r'^[0-9\-\+]{9,15}$', 'נא להזין מספר טלפון תקין')]
+    )
     email = forms.EmailField(label="אימייל", required=False)
 
     class Meta:
@@ -130,13 +163,16 @@ class CustomerRegisterForm(UserCreationForm):
         self.fields['password2'].label = "אימות סיסמה"
 
     def save(self, commit=True):
-        user = super().save(commit=commit)
-        Customer.objects.create(
-            user=user,  # ← קישור ה־User ל־Customer
-            name=self.cleaned_data['name'],
-            phone=self.cleaned_data['phone'],
-            email=self.cleaned_data['email'],
-        )
+        user = super().save(commit=False)
+        if commit:
+            user.save()
+            UserProfile.objects.create(user=user, role='customer')
+            Customer.objects.create(
+                user=user,  # ← קישור ה־User ל־Customer
+                name=self.cleaned_data['name'],
+                phone=self.cleaned_data['phone'],
+                email=self.cleaned_data['email'],
+            )
         return user
     
     
