@@ -1,0 +1,101 @@
+{% extends "workshop/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h2>{{ title }}</h2>
+        
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <h5 class="mb-3">פרטי לקוח</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.customer_name.id_for_label }}">{{ form.customer_name.label }}</label>
+                                {{ form.customer_name }}
+                                {% if form.customer_name.errors %}
+                                    <div class="text-danger">{{ form.customer_name.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.customer_phone.id_for_label }}">{{ form.customer_phone.label }}</label>
+                                {{ form.customer_phone }}
+                                {% if form.customer_phone.errors %}
+                                    <div class="text-danger">{{ form.customer_phone.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="{{ form.customer_email.id_for_label }}">{{ form.customer_email.label }}</label>
+                        {{ form.customer_email }}
+                        {% if form.customer_email.errors %}
+                            <div class="text-danger">{{ form.customer_email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <hr>
+                    
+                    <h5 class="mb-3">פרטי אופניים</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bike_brand.id_for_label }}">{{ form.bike_brand.label }}</label>
+                                {{ form.bike_brand }}
+                                {% if form.bike_brand.errors %}
+                                    <div class="text-danger">{{ form.bike_brand.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bike_model.id_for_label }}">{{ form.bike_model.label }}</label>
+                                {{ form.bike_model }}
+                                {% if form.bike_model.errors %}
+                                    <div class="text-danger">{{ form.bike_model.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group mb-3">
+                                <label for="{{ form.bike_color.id_for_label }}">{{ form.bike_color.label }}</label>
+                                {{ form.bike_color }}
+                                {% if form.bike_color.errors %}
+                                    <div class="text-danger">{{ form.bike_color.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-4">
+                        <button type="submit" class="btn btn-primary">
+                            {% if customer_instance %}עדכן{% else %}צור{% endif %}
+                        </button>
+                        <a href="{% url 'customer_list' %}" class="btn btn-secondary">ביטול</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+</style>
+{% endblock %}

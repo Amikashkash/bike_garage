@@ -68,6 +68,49 @@
             {% endif %}
         </div>
 
+        <!-- אופציה להוספת אופניים -->
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 5px;">
+            <label style="display: flex; align-items: center; cursor: pointer;">
+                {{ form.has_bike }}
+                <span style="margin-right: 8px; font-weight: bold;">{{ form.has_bike.label }}</span>
+            </label>
+            <small style="color: #0c5460; margin-top: 5px; display: block;">
+                {{ form.has_bike.help_text }}
+            </small>
+            {% if form.has_bike.errors %}
+                <div style="color: #dc3545; font-size: 0.9em; margin-top: 5px;">{{ form.has_bike.errors }}</div>
+            {% endif %}
+            
+            <!-- שדות אופניים - יופיעו רק אם נבחר -->
+            <div id="bike_fields" style="margin-top: 15px; display: none;">
+                <h5 style="margin-bottom: 10px; color: #0c5460;">פרטי האופניים:</h5>
+                
+                <div style="margin-bottom: 10px;">
+                    <label for="{{ form.bike_brand.id_for_label }}" style="font-weight: bold;">{{ form.bike_brand.label }}</label>
+                    {{ form.bike_brand }}
+                    {% if form.bike_brand.errors %}
+                        <div style="color: #dc3545; font-size: 0.9em;">{{ form.bike_brand.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <label for="{{ form.bike_model.id_for_label }}" style="font-weight: bold;">{{ form.bike_model.label }}</label>
+                    {{ form.bike_model }}
+                    {% if form.bike_model.errors %}
+                        <div style="color: #dc3545; font-size: 0.9em;">{{ form.bike_model.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div style="margin-bottom: 10px;">
+                    <label for="{{ form.bike_color.id_for_label }}" style="font-weight: bold;">{{ form.bike_color.label }}</label>
+                    {{ form.bike_color }}
+                    {% if form.bike_color.errors %}
+                        <div style="color: #dc3545; font-size: 0.9em;">{{ form.bike_color.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
         <div style="margin-bottom: 15px;">
             <label for="{{ form.password1.id_for_label }}" style="font-weight: bold;">{{ form.password1.label }}</label>
             {{ form.password1 }}
@@ -95,6 +138,28 @@
         <p>כבר יש לך חשבון? <a href="{% url 'login' %}" style="color: #007bff;">התחבר כאן</a></p>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const hasBikeCheckbox = document.getElementById('{{ form.has_bike.id_for_label }}');
+    const bikeFields = document.getElementById('bike_fields');
+    
+    // פונקציה להצגה/הסתרה של שדות האופניים
+    function toggleBikeFields() {
+        if (hasBikeCheckbox.checked) {
+            bikeFields.style.display = 'block';
+        } else {
+            bikeFields.style.display = 'none';
+        }
+    }
+    
+    // בדיקה ראשונית
+    toggleBikeFields();
+    
+    // האזנה לשינויים
+    hasBikeCheckbox.addEventListener('change', toggleBikeFields);
+});
+</script>
 
 <style>
     input[type="text"], input[type="email"], input[type="password"] {

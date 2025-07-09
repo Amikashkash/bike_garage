@@ -1,0 +1,181 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}סטטוס תיקון{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>סטטוס תיקון #{{ repair_job.id }}</h1>
+        <p class="text-muted">מעקב אחר התקדמות התיקון</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>פרטי התיקון</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
+                <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
+                <p><strong>תאריך דיווח:</strong> {{ repair_job.created_at|date:"d/m/Y H:i" }}</p>
+                <p><strong>סטטוס נוכחי:</strong> 
+                    <span class="badge badge-{% if repair_job.status == 'completed' %}success{% elif repair_job.status == 'in_progress' %}primary{% elif repair_job.status == 'approved' %}info{% else %}warning{% endif %}">
+                        {{ repair_job.get_status_display }}
+                    </span>
+                </p>
+                
+                {% if repair_job.assigned_mechanic %}
+                <p><strong>מכונאי מטפל:</strong> {{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}</p>
+                {% endif %}
+                
+                {% if repair_job.problem_description %}
+                <p><strong>תיאור התקלה:</strong></p>
+                <p class="bg-light p-2 rounded small">{{ repair_job.problem_description }}</p>
+                {% endif %}
+                
+                {% if repair_job.diagnosis %}
+                <p><strong>אבחון:</strong></p>
+                <p class="bg-warning p-2 rounded small">{{ repair_job.diagnosis }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        {% if repair_job.repair_items.exists %}
+        <div class="card">
+            <div class="card-header">
+                <h5>פעולות תיקון</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>פעולה</th>
+                                <th>מחיר</th>
+                                <th>סטטוס</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in repair_job.repair_items.all %}
+                            <tr>
+                                <td>{{ item.description }}</td>
+                                <td>₪{{ item.price }}</td>
+                                <td>
+                                    {% if item.is_completed %}
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-check"></i> הושלם
+                                        </span>
+                                    {% elif item.is_approved_by_customer %}
+                                        <span class="badge badge-primary">
+                                            <i class="fas fa-clock"></i> בביצוע
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-hourglass-half"></i> ממתין לאישור
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <small><strong>מאושר:</strong> ₪{{ repair_job.get_total_approved_price }}</small>
+                        </div>
+                        <div class="col-6">
+                            <small><strong>ממתין:</strong> ₪{{ repair_job.get_pending_approval_price }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if repair_job.status == 'diagnosed' and repair_job.bike.customer.user == request.user %}
+        <div class="card mt-3">
+            <div class="card-body text-center">
+                <h6>פעולה נדרשת</h6>
+                <p>התיקון מוכן לאישור שלך</p>
+                <a href="{% url 'customer_approval' repair_job.id %}" class="btn btn-success">
+                    <i class="fas fa-check"></i> אשר פעולות תיקון
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <div class="col-md-4">
+        {% if updates %}
+        <div class="card">
+            <div class="card-header">
+                <h5>עדכונים</h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    {% for update in updates %}
+                    <div class="timeline-item mb-3">
+                        <div class="timeline-marker bg-primary"></div>
+                        <div class="timeline-content">
+                            <p class="mb-1">{{ update.message }}</p>
+                            <small class="text-muted">
+                                {{ update.created_at|date:"d/m/Y H:i" }}
+                                {% if update.user %}
+                                - {{ update.user.get_full_name|default:update.user.username }}
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #dee2e6;
+}
+
+.timeline-item {
+    position: relative;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2.25rem;
+    top: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+}
+
+.timeline-content {
+    background: #f8f9fa;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    border-left: 3px solid #007bff;
+}
+</style>
+{% endblock %}

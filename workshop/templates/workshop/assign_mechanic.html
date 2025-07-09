@@ -1,0 +1,91 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}הקצאת מכונאי{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1>הקצאת מכונאי לתיקון</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'manager_dashboard' %}">דשבורד מנהל</a></li>
+                <li class="breadcrumb-item active">הקצאת מכונאי</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5>פרטי התיקון</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>תיקון מספר:</strong> {{ repair_job.id }}</p>
+                        <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
+                        <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>סטטוס:</strong> 
+                            <span class="badge badge-success">{{ repair_job.get_status_display }}</span>
+                        </p>
+                        <p><strong>מחיר מאושר:</strong> ₪{{ repair_job.get_total_approved_price }}</p>
+                    </div>
+                </div>
+                
+                <h6>פעולות מאושרות:</h6>
+                <ul class="list-group list-group-flush">
+                    {% for item in repair_job.approved_items %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ item.description }}
+                        <span class="badge badge-primary">₪{{ item.price }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>בחירת מכונאי</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if mechanics %}
+                    <div class="form-group">
+                        <label for="mechanic_id">בחר מכונאי לביצוע התיקון:</label>
+                        <select name="mechanic_id" id="mechanic_id" class="form-control" required>
+                            <option value="">-- בחר מכונאי --</option>
+                            {% for mechanic in mechanics %}
+                            <option value="{{ mechanic.id }}">
+                                {{ mechanic.get_full_name|default:mechanic.username }}
+                                {% if mechanic.email %} - {{ mechanic.email }}{% endif %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-cog"></i> הקצה מכונאי
+                        </button>
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">חזור</a>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <h6>אין מכונאים זמינים</h6>
+                        <p class="mb-0">לא נמצאו מכונאים במערכת. אנא הוסף מכונאים תחילה.</p>
+                    </div>
+                    <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">חזור</a>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

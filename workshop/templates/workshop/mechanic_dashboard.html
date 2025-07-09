@@ -1,0 +1,109 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}דשבורד מכונאי{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>דשבורד מכונאי</h1>
+        <p class="text-muted">התיקונים שהוקצו אליך לביצוע</p>
+    </div>
+</div>
+
+{% if assigned_repairs %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <i class="fas fa-wrench"></i>
+                    התיקונים שלי ({{ assigned_repairs.count }})
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>פעולות מאושרות</th>
+                                <th>מחיר</th>
+                                <th>התקדמות</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for repair in assigned_repairs %}
+                            <tr>
+                                <td>{{ repair.id }}</td>
+                                <td>{{ repair.bike }}</td>
+                                <td>
+                                    {{ repair.bike.customer.name }}
+                                    {% if repair.bike.customer.phone %}
+                                    <br><small class="text-muted">{{ repair.bike.customer.phone }}</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ repair.approved_count }} פעולות
+                                </td>
+                                <td>₪{{ repair.get_total_approved_price }}</td>
+                                <td>
+                                    <div class="progress" style="width: 100px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ repair.progress_percentage }}%;" 
+                                             aria-valuenow="{{ repair.progress_percentage }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ repair.progress_percentage|floatformat:0 }}%
+                                        </div>
+                                    </div>
+                                    <small>{{ repair.completed_count }}/{{ repair.approved_count }} הושלמו</small>
+                                </td>
+                                <td>
+                                    <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-tasks"></i> עדכן ביצוע
+                                    </a>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h6>הוראות עבודה</h6>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li><strong>צפה בפרטי התיקון</strong> - לחץ על "צפה" כדי לראות את פרטי התיקון והאבחון</li>
+                    <li><strong>עדכן ביצוע</strong> - לחץ על "עדכן ביצוע" כדי לסמן פעולות שהושלמו</li>
+                    <li><strong>הוסף הערות</strong> - תוכל להוסיף הערות על כל פעולה שביצעת</li>
+                    <li><strong>סיום התיקון</strong> - כאשר כל הפעולות יסומנו כמושלמות, התיקון יועבר לסטטוס "הושלם"</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="alert alert-info text-center">
+            <h4>אין תיקונים שהוקצו אליך כרגע</h4>
+            <p>כשיהיו תיקונים חדשים, הם יופיעו כאן.</p>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

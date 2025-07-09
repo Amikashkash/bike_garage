@@ -1,0 +1,176 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}אבחון תיקון{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>אבחון תיקון</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'manager_dashboard' %}">דשבורד מנהל</a></li>
+                <li class="breadcrumb-item active">אבחון תיקון #{{ repair_job.id }}</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5>פרטי התיקון</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
+                <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
+                <p><strong>טלפון:</strong> {{ repair_job.bike.customer.phone }}</p>
+                <p><strong>תאריך דיווח:</strong> {{ repair_job.created_at|date:"d/m/Y H:i" }}</p>
+                
+                {% if repair_job.subcategories.exists %}
+                <p><strong>קטגוריות תקלה:</strong></p>
+                <ul>
+                    {% for subcategory in repair_job.subcategories.all %}
+                    <li>{{ subcategory }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                
+                {% if repair_job.problem_description %}
+                <p><strong>תיאור התקלה:</strong></p>
+                <p class="bg-light p-2 rounded">{{ repair_job.problem_description }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <form method="post" id="diagnosisForm">
+            {% csrf_token %}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>אבחון והצעת מחיר</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        {{ diagnosis_form.diagnosis.label_tag }}
+                        {{ diagnosis_form.diagnosis }}
+                        {% if diagnosis_form.diagnosis.help_text %}
+                        <small class="form-text text-muted">{{ diagnosis_form.diagnosis.help_text }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5>פעולות תיקון ומחירים</h5>
+                    <small class="text-muted">הוסף את כל הפעולות הנדרשות עם מחירים</small>
+                </div>
+                <div class="card-body">
+                    <div id="repair-items-container">
+                        <div class="repair-item row mb-3">
+                            <div class="col-md-8">
+                                <input type="text" name="item_0_description" class="form-control" placeholder="תיאור הפעולה (לדוגמה: החלפת בלמים קדמיים)" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="number" name="item_0_price" class="form-control" placeholder="מחיר (₪)" step="0.01" min="0" required>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-danger btn-sm remove-item" style="display: none;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="add-item" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-plus"></i> הוסף פעולה נוספת
+                    </button>
+                    
+                    <div class="mt-3">
+                        <strong>סה"כ כולל: ₪<span id="total-price">0.00</span></strong>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-3">
+                <button type="submit" class="btn btn-success btn-lg">
+                    <i class="fas fa-check"></i> שמור אבחון ושלח ללקוח
+                </button>
+                <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">ביטול</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let itemIndex = 1;
+    
+    function updateTotal() {
+        let total = 0;
+        document.querySelectorAll('input[name$="_price"]').forEach(function(input) {
+            if (input.value) {
+                total += parseFloat(input.value) || 0;
+            }
+        });
+        document.getElementById('total-price').textContent = total.toFixed(2);
+    }
+    
+    function updateRemoveButtons() {
+        const items = document.querySelectorAll('.repair-item');
+        items.forEach(function(item, index) {
+            const removeBtn = item.querySelector('.remove-item');
+            if (items.length > 1) {
+                removeBtn.style.display = 'block';
+            } else {
+                removeBtn.style.display = 'none';
+            }
+        });
+    }
+    
+    document.getElementById('add-item').addEventListener('click', function() {
+        const container = document.getElementById('repair-items-container');
+        const newItem = document.createElement('div');
+        newItem.className = 'repair-item row mb-3';
+        newItem.innerHTML = `
+            <div class="col-md-8">
+                <input type="text" name="item_${itemIndex}_description" class="form-control" placeholder="תיאור הפעולה" required>
+            </div>
+            <div class="col-md-3">
+                <input type="number" name="item_${itemIndex}_price" class="form-control" placeholder="מחיר (₪)" step="0.01" min="0" required>
+            </div>
+            <div class="col-md-1">
+                <button type="button" class="btn btn-danger btn-sm remove-item">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        `;
+        container.appendChild(newItem);
+        itemIndex++;
+        updateRemoveButtons();
+        
+        // Add event listeners for new price input
+        newItem.querySelector('input[name$="_price"]').addEventListener('input', updateTotal);
+    });
+    
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')) {
+            const item = e.target.closest('.repair-item');
+            item.remove();
+            updateTotal();
+            updateRemoveButtons();
+        }
+    });
+    
+    // Add event listeners for existing price inputs
+    document.querySelectorAll('input[name$="_price"]').forEach(function(input) {
+        input.addEventListener('input', updateTotal);
+    });
+    
+    updateRemoveButtons();
+});
+</script>
+{% endblock %}

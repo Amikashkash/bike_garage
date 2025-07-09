@@ -1,0 +1,98 @@
+{% extends "workshop/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>{{ title }}</h2>
+            <a href="{% url 'customer_add_bike' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> הוסף אופניים נוספות
+            </a>
+        </div>
+        
+        {% if bikes %}
+            <div class="row">
+                {% for bike in bikes %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bicycle"></i>
+                                {{ bike.brand }} {{ bike.model|default:"" }}
+                            </h5>
+                            {% if bike.color %}
+                                <span class="badge badge-info">{{ bike.color }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>יצרן:</strong> {{ bike.brand }}<br>
+                                {% if bike.model %}
+                                    <strong>מודל:</strong> {{ bike.model }}<br>
+                                {% endif %}
+                                {% if bike.color %}
+                                    <strong>צבע:</strong> {{ bike.color }}<br>
+                                {% endif %}
+                                <strong>נרשם:</strong> {{ bike.created_at|date:"d/m/Y" }}
+                            </p>
+                            
+                            <!-- תיקונים עבור האופניים הזה -->
+                            {% with bike.repairs.all as repairs %}
+                                {% if repairs %}
+                                    <hr>
+                                    <h6>תיקונים:</h6>
+                                    <ul class="list-unstyled">
+                                        {% for repair in repairs %}
+                                        <li class="mb-1">
+                                            <span class="badge badge-{% if repair.status == 'completed' %}success{% elif repair.status == 'in_progress' %}primary{% elif repair.status == 'diagnosed' %}warning{% else %}secondary{% endif %}">
+                                                {{ repair.get_status_display }}
+                                            </span>
+                                            <small class="text-muted">{{ repair.created_at|date:"d/m/Y" }}</small>
+                                            <a href="{% url 'repair_status' repair.id %}" class="btn btn-sm btn-link p-0">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <small class="text-muted">אין תיקונים עדיין</small>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center">
+                <h4>אין לך אופניים רשומות במערכת</h4>
+                <p>תוכל להוסיף אופניים חדשות על ידי לחיצה על הכפתור למעלה</p>
+                <a href="{% url 'customer_add_bike' %}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> הוסף אופניים ראשונות
+                </a>
+            </div>
+        {% endif %}
+        
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> חזרה לדף הבית
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.badge {
+    font-size: 0.75em;
+}
+</style>
+{% endblock %}

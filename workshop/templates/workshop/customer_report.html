@@ -1,10 +1,368 @@
 {% extends "workshop/base.html" %}
+
 {% block title %}דיווח תקלה חדשה{% endblock %}
+
 {% block content %}
-<h2>דיווח תקלה באופניים</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">שלח תקלה</button>
-</form>
+<div style="max-width: 600px; margin: 0 auto;">
+    <h2>🚲 דיווח תקלה באופניים</h2>
+    <p style="color: #666; margin-bottom: 20px;">בחר את האופניים ותת הקטגוריות הרלוונטיות לתקלה</p>
+    
+    <form method="post" id="repairForm">
+        {% csrf_token %}
+        
+        <!-- בחירת אופניים -->
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+            <label for="id_bike" style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;">
+                🚲 בחר אופניים:
+            </label>
+            {{ form.bike }}
+        </div>
+        
+        <!-- תת קטגוריות עם אקורדיון -->
+        <div style="margin-bottom: 20px;">
+            <h3 style="color: #333; margin-bottom: 15px;">🔧 בחר סוג התקלה:</h3>
+            
+            <!-- אקורדיון דינמי -->
+            <div id="categoriesAccordion">
+                <!-- JavaScript ייצור את התוכן כאן -->
+            </div>
+            
+            <!-- גיבוי - הטופס המקורי (יוסתר אם יש קטגוריות) -->
+            <div id="fallbackCategories" style="display: block;">
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                    <label style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;">
+                        📋 בחר תקלות מהרשימה:
+                    </label>
+                    {{ form.subcategories }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- תיאור חופשי -->
+        <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px; border: 1px solid #dee2e6;">
+            <label for="id_problem_description" style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;">
+                📝 תיאור נוסף (אופציונלי):
+            </label>
+            {{ form.problem_description }}
+        </div>
+        
+        <!-- כפתור שליחה -->
+        <button type="submit" style="width: 100%; padding: 12px; background-color: #28a745; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            📤 שלח דיווח תקלה
+        </button>
+    </form>
+</div>
+
+<style>
+/* עיצוב לאקורדיון */
+.category-header {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    text-align: right;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.category-header:hover {
+    background-color: #0056b3;
+}
+
+.category-header.active {
+    background-color: #28a745;
+    border-radius: 8px 8px 0 0;
+}
+
+.category-content {
+    display: none;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.category-content.active {
+    display: block;
+}
+
+.subcategory-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+}
+
+.subcategory-item:last-child {
+    border-bottom: none;
+}
+
+.subcategory-item input[type="checkbox"] {
+    margin-left: 10px;
+    transform: scale(1.2);
+}
+
+.subcategory-item label {
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    flex-grow: 1;
+}
+
+/* עיצוב מותאם למובייל */
+@media (max-width: 768px) {
+    .category-header {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+    
+    .subcategory-item {
+        padding: 10px 0;
+    }
+    
+    .subcategory-item input[type="checkbox"] {
+        transform: scale(1.3);
+        margin-left: 12px;
+    }
+    
+    .subcategory-item label {
+        font-size: 15px;
+        line-height: 1.4;
+    }
+}
+
+/* עיצוב שדות הטופס */
+select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* עיצוב checkbox במצב רגיל */
+#fallbackCategories input[type="checkbox"] {
+    margin-left: 8px;
+    transform: scale(1.2);
+}
+
+#fallbackCategories label {
+    margin-right: 5px;
+    display: inline-block;
+    padding: 5px 0;
+    cursor: pointer;
+}
+
+#fallbackCategories ul {
+    list-style: none;
+    padding: 0;
+}
+
+#fallbackCategories li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#fallbackCategories li:last-child {
+    border-bottom: none;
+}
+
+/* כפתור עם אפקט hover */
+button[type="submit"]:hover {
+    background-color: #218838;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const accordionContainer = document.getElementById('categoriesAccordion');
+    const fallbackContainer = document.getElementById('fallbackCategories');
+    
+    // בדיקה מקיפה שכל האלמנטים קיימים
+    if (!accordionContainer) {
+        console.error('Accordion container not found');
+        return;
+    }
+    
+    if (!fallbackContainer) {
+        console.error('Fallback container not found');
+        return;
+    }
+    
+    // חיפוש checkboxes של subcategories (CheckboxSelectMultiple)
+    console.log('Looking for checkboxes in fallbackContainer:', fallbackContainer);
+    console.log('fallbackContainer HTML:', fallbackContainer.innerHTML);
+    
+    const subcategoryCheckboxes = fallbackContainer.querySelectorAll('input[type="checkbox"]');
+    console.log(`Found ${subcategoryCheckboxes.length} subcategory checkboxes`);
+    
+    // אם לא נמצאו checkboxes, בואו נחפש באופן רחב יותר
+    if (subcategoryCheckboxes.length === 0) {
+        console.log('Trying to find checkboxes in the entire document...');
+        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+        console.log(`Found ${allCheckboxes.length} checkboxes in the entire document`);
+        
+        allCheckboxes.forEach((cb, index) => {
+            console.log(`Checkbox ${index}:`, cb.name, cb.value, cb.parentElement);
+        });
+    }
+    
+    if (subcategoryCheckboxes.length === 0) {
+        console.log('No subcategories available - showing fallback message');
+        accordionContainer.innerHTML = `
+            <div style="padding: 20px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; text-align: center;">
+                <h4 style="color: #856404; margin-bottom: 10px;">⚠️ אין קטגוריות זמינות</h4>
+                <p style="color: #856404; margin-bottom: 15px;">
+                    כרגע אין קטגוריות תקלה במערכת.<br>
+                    תוכל לתאר את התקלה בתיבת הטקסט למטה.
+                </p>
+                <small style="color: #6c757d;">
+                    💡 מנהל המערכת יכול להוסיף קטגוריות דרך פאנל הניהול
+                </small>
+            </div>
+        `;
+        return;
+    }
+    
+    // אם יש קטגוריות - הסתר את הגיבוי ובנה אקורדיון
+    console.log('Building accordion with categories');
+    fallbackContainer.style.display = 'none';
+    
+    // ארגון תתי קטגוריות לפי קטגוריה ראשית
+    const categories = {};
+    
+    console.log('Starting to process checkboxes...');
+    
+    subcategoryCheckboxes.forEach(checkbox => {
+        const label = checkbox.parentElement.querySelector('label');
+        if (!label) return;
+        
+        const text = label.textContent.trim();
+        // החלפת HTML entities לתווים רגילים
+        const cleanText = text.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+        const parts = cleanText.split(' > ');
+        
+        console.log(`Processing: "${text}" -> "${cleanText}" -> parts:`, parts);
+        
+        if (parts.length === 2) {
+            const [categoryName, subcategoryName] = parts;
+            if (!categories[categoryName]) {
+                categories[categoryName] = [];
+            }
+            categories[categoryName].push({
+                checkbox: checkbox,
+                name: subcategoryName,
+                value: checkbox.value,
+                selected: checkbox.checked
+            });
+        } else {
+            // אם אין פורמט "קטגוריה > תת קטגוריה"
+            if (!categories['כללי']) {
+                categories['כללי'] = [];
+            }
+            categories['כללי'].push({
+                checkbox: checkbox,
+                name: cleanText,
+                value: checkbox.value,
+                selected: checkbox.checked
+            });
+        }
+    });
+    
+    console.log('Categories found:', Object.keys(categories));
+    console.log('Categories data:', categories);
+    
+    // יצירת האקורדיון
+    Object.keys(categories).forEach(categoryName => {
+        const categoryDiv = document.createElement('div');
+        categoryDiv.className = 'category-section';
+        
+        // כותרת הקטגוריה
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'category-header';
+        header.innerHTML = `
+            <span>${categoryName}</span>
+            <span class="arrow">▼</span>
+        `;
+        
+        // תוכן הקטגוריה
+        const content = document.createElement('div');
+        content.className = 'category-content';
+        
+        categories[categoryName].forEach(subcategory => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'subcategory-item';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = subcategory.value;
+            checkbox.checked = subcategory.selected;
+            checkbox.id = `accordion_${subcategory.value}`;
+            checkbox.name = subcategory.checkbox.name; // שמירה על שם הטופס המקורי
+            
+            const label = document.createElement('label');
+            label.htmlFor = `accordion_${subcategory.value}`;
+            label.textContent = subcategory.name;
+            
+            itemDiv.appendChild(label);
+            itemDiv.appendChild(checkbox);
+            content.appendChild(itemDiv);
+            
+            // סנכרון עם הטופס המקורי
+            checkbox.addEventListener('change', function() {
+                subcategory.checkbox.checked = this.checked;
+            });
+            
+            // סנכרון גם בכיוון השני (אם הטופס המקורי משתנה)
+            subcategory.checkbox.addEventListener('change', function() {
+                checkbox.checked = this.checked;
+            });
+        });
+        
+        // פונקציונליות האקורדיון
+        header.addEventListener('click', function() {
+            const isActive = content.classList.contains('active');
+            
+            // סגירת כל הקטגוריות האחרות
+            accordionContainer.querySelectorAll('.category-content').forEach(c => c.classList.remove('active'));
+            accordionContainer.querySelectorAll('.category-header').forEach(h => {
+                h.classList.remove('active');
+                h.querySelector('.arrow').textContent = '▼';
+            });
+            
+            // פתיחה/סגירה של הקטגוריה הנוכחית
+            if (!isActive) {
+                content.classList.add('active');
+                header.classList.add('active');
+                header.querySelector('.arrow').textContent = '▲';
+            }
+        });
+        
+        categoryDiv.appendChild(header);
+        categoryDiv.appendChild(content);
+        accordionContainer.appendChild(categoryDiv);
+    });
+    
+    console.log(`Created accordion with ${Object.keys(categories).length} categories`);
+});
+</script>
+
 {% endblock %}

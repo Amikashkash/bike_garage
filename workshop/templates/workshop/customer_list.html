@@ -6,9 +6,14 @@
 <div style="max-width: 1000px; margin: 0 auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h2>👥 רשימת לקוחות</h2>
-        <a href="{% url 'customer_form' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-            ➕ הוסף לקוח חדש
-        </a>
+        <div style="display: flex; gap: 10px;">
+            <a href="{% url 'customer_form' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                ➕ הוסף לקוח חדש
+            </a>
+            <a href="{% url 'customer_with_bike_new' %}" style="background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
+                👥🚲 לקוח + אופניים
+            </a>
+        </div>
     </div>
 
     <!-- לקוחות עם חשבון משתמש -->
@@ -19,18 +24,47 @@
         {% if customers_with_user %}
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
             {% for customer in customers_with_user %}
-            <div style="display: flex; justify-content: space-between; padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #e9ecef;">
-                <div>
-                    <strong>{{ customer.name }}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: white; border-radius: 8px; border: 1px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="flex-grow: 1;">
+                    <strong style="font-size: 1.1em;">{{ customer.name }}</strong>
                     <br>
                     <small style="color: #666;">
                         📞 {{ customer.phone }} 
                         {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
-                        | 👤 משתמש: {{ customer.user.username }}
+                        | 👤 {{ customer.user.username }}
                     </small>
+                    {% with customer.bikes.all as bikes %}
+                        {% if bikes %}
+                            <br>
+                            <small style="color: #2196f3;">
+                                🚲 {{ bikes.count }} אופניים: 
+                                {% for bike in bikes %}
+                                    {{ bike.brand }} {{ bike.model|default:"" }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </small>
+                        {% else %}
+                            <br>
+                            <small style="color: #ff9800;">⚠️ אין אופניים רשומות</small>
+                        {% endif %}
+                    {% endwith %}
                 </div>
-                <div style="font-size: 0.8em; color: #28a745;">
-                    ✅ יכול להתחבר
+                <div style="display: flex; gap: 10px;">
+                    <span style="background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">
+                        ✅ רשום
+                    </span>
+                    {% with customer.bikes.first as first_bike %}
+                        {% if first_bike %}
+                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                               style="background-color: #2196f3; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                ✏️ ערוך
+                            </a>
+                        {% else %}
+                            <a href="{% url 'customer_bike_add' customer.id %}" 
+                               style="background-color: #ff9800; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                ➕ הוסף אופניים
+                            </a>
+                        {% endif %}
+                    {% endwith %}
                 </div>
             </div>
             {% endfor %}
@@ -48,17 +82,46 @@
         {% if customers_without_user %}
         <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2;">
             {% for customer in customers_without_user %}
-            <div style="display: flex; justify-content: space-between; padding: 10px; margin-bottom: 10px; background-color: white; border-radius: 5px; border: 1px solid #ffcc02;">
-                <div>
-                    <strong>{{ customer.name }}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: white; border-radius: 8px; border: 1px solid #ffcc02; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <div style="flex-grow: 1;">
+                    <strong style="font-size: 1.1em;">{{ customer.name }}</strong>
                     <br>
                     <small style="color: #666;">
                         📞 {{ customer.phone }} 
                         {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
                     </small>
+                    {% with customer.bikes.all as bikes %}
+                        {% if bikes %}
+                            <br>
+                            <small style="color: #2196f3;">
+                                🚲 {{ bikes.count }} אופניים: 
+                                {% for bike in bikes %}
+                                    {{ bike.brand }} {{ bike.model|default:"" }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </small>
+                        {% else %}
+                            <br>
+                            <small style="color: #ff9800;">⚠️ אין אופניים רשומות</small>
+                        {% endif %}
+                    {% endwith %}
                 </div>
-                <div style="font-size: 0.8em; color: #ff8f00;">
-                    ⚠️ רק פרטי קשר
+                <div style="display: flex; gap: 10px;">
+                    <span style="background-color: #ff8f00; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">
+                        ⚠️ פרטי קשר
+                    </span>
+                    {% with customer.bikes.first as first_bike %}
+                        {% if first_bike %}
+                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                               style="background-color: #2196f3; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                ✏️ ערוך
+                            </a>
+                        {% else %}
+                            <a href="{% url 'customer_bike_add' customer.id %}" 
+                               style="background-color: #ff9800; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
+                                ➕ הוסף אופניים
+                            </a>
+                        {% endif %}
+                    {% endwith %}
                 </div>
             </div>
             {% endfor %}
