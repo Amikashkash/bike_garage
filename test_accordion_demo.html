@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקת אקורדיון דיווח תקלה</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        /* עיצוב לאקורדיון */
+        .category-header {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 8px;
+            width: 100%;
+            text-align: right;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .category-header:hover {
+            background-color: #0056b3;
+        }
+
+        .category-header.active {
+            background-color: #28a745;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .category-content {
+            display: none;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        .subcategory-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            align-items: center;
+        }
+
+        .subcategory-item:last-child {
+            border-bottom: none;
+        }
+
+        .subcategory-item input[type="checkbox"] {
+            margin-left: 10px;
+            transform: scale(1.2);
+        }
+
+        .subcategory-item label {
+            cursor: pointer;
+            font-size: 14px;
+            color: #333;
+            flex-grow: 1;
+        }
+        
+        /* טופס גיבוי מוסתר */
+        #fallbackCategories {
+            display: none;
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .demo-info {
+            background-color: #d4edda;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #c3e6cb;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-info">
+            <h3>🧪 דמו - אקורדיון דיווח תקלה</h3>
+            <p>זוהי בדיקה של הקוד JavaScript שנכתב עבור מסך דיווח התקלה במערכת מוסך האופניים.</p>
+        </div>
+        
+        <h2>🚲 דיווח תקלה באופניים</h2>
+        <p style="color: #666; margin-bottom: 20px;">בחר את האופניים ותת הקטגוריות הרלוונטיות לתקלה</p>
+        
+        <!-- אקורדיון דינמי -->
+        <div id="categoriesAccordion">
+            <!-- JavaScript ייצור את התוכן כאן -->
+        </div>
+        
+        <!-- גיבוי - הטופס המקורי (מוסתר) -->
+        <div id="fallbackCategories">
+            <h4>📋 בחר תקלות מהרשימה:</h4>
+            <!-- סימולציה של checkboxes מ-Django -->
+            <label><input type="checkbox" name="subcategories" value="1"> בלמים > בלמים לא עוצרים</label><br>
+            <label><input type="checkbox" name="subcategories" value="2"> בלמים > חריקות בלמים</label><br>
+            <label><input type="checkbox" name="subcategories" value="3"> בלמים > ידיות בלמים רפויות</label><br>
+            <label><input type="checkbox" name="subcategories" value="4"> גלגלים > פנצ'ר</label><br>
+            <label><input type="checkbox" name="subcategories" value="5"> גלגלים > גלגל עקום</label><br>
+            <label><input type="checkbox" name="subcategories" value="6"> גלגלים > חישוקים שבורים</label><br>
+            <label><input type="checkbox" name="subcategories" value="7"> שרשרת > שרשרת קופצת</label><br>
+            <label><input type="checkbox" name="subcategories" value="8"> שרשרת > שרשרת חורקת</label><br>
+            <label><input type="checkbox" name="subcategories" value="9"> שרשרת > שרשרת שבורה</label><br>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 8px;">
+            <h4>🔍 בדיקות לביצוע:</h4>
+            <ul>
+                <li>✅ האם מוצג אקורדיון במקום רשימת צ'קבוקסים?</li>
+                <li>✅ האם לחיצה על כותרת קטגוריה פותחת/סוגרת?</li>
+                <li>✅ האם בחירת צ'קבוקס מסנכרנת עם הטופס המוסתר?</li>
+                <li>✅ האם זה נראה טוב במובייל?</li>
+            </ul>
+        </div>
+        
+        <div id="selectedValues" style="margin-top: 20px; padding: 15px; background-color: #e9ecef; border-radius: 8px; display: none;">
+            <h4>🎯 ערכים נבחרים:</h4>
+            <div id="selectedList"></div>
+        </div>
+    </div>
+
+    <script>
+    // אותו קוד JavaScript מהתבנית המקורית
+    document.addEventListener('DOMContentLoaded', function() {
+        const accordionContainer = document.getElementById('categoriesAccordion');
+        const fallbackContainer = document.getElementById('fallbackCategories');
+        
+        if (!accordionContainer || !fallbackContainer) {
+            console.error('Required containers not found');
+            return;
+        }
+        
+        // חיפוש כל ה-checkboxes של subcategories
+        const checkboxes = fallbackContainer.querySelectorAll('input[type="checkbox"][name="subcategories"]');
+        console.log(`Found ${checkboxes.length} subcategory checkboxes`);
+        
+        if (checkboxes.length === 0) {
+            console.log('No subcategories found - showing message');
+            accordionContainer.innerHTML = `
+                <div style="padding: 20px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; text-align: center;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">⚠️ אין קטגוריות זמינות</h4>
+                    <p style="color: #856404; margin-bottom: 15px;">
+                        כרגע אין קטגוריות תקלה במערכת.<br>
+                        תוכל לתאר את התקלה בתיבת הטקסט למטה.
+                    </p>
+                    <small style="color: #6c757d;">
+                        💡 מנהל המערכת יכול להוסיף קטגוריות דרך פאנל הניהול
+                    </small>
+                </div>
+            `;
+            fallbackContainer.style.display = 'block';
+            return;
+        }
+        
+        // יש checkboxes - בואו נבנה אקורדיון
+        console.log('Building accordion...');
+        const categories = {};
+        
+        // אירגון הcheckboxes לפי קטגוריות
+        checkboxes.forEach(checkbox => {
+            const label = checkbox.nextElementSibling || checkbox.parentElement.querySelector('label');
+            if (!label) return;
+            
+            let labelText = label.textContent || label.innerText;
+            labelText = labelText.trim();
+            
+            console.log(`Processing checkbox: ${labelText}`);
+            
+            // חיפוש פורמט "קטגוריה > תת קטגוריה"
+            if (labelText.includes(' > ')) {
+                const parts = labelText.split(' > ');
+                const categoryName = parts[0].trim();
+                const subcategoryName = parts[1].trim();
+                
+                if (!categories[categoryName]) {
+                    categories[categoryName] = [];
+                }
+                
+                categories[categoryName].push({
+                    checkbox: checkbox,
+                    name: subcategoryName,
+                    value: checkbox.value
+                });
+            } else {
+                // אם אין פורמט ברור, שים ב"כללי"
+                if (!categories['כללי']) {
+                    categories['כללי'] = [];
+                }
+                
+                categories['כללי'].push({
+                    checkbox: checkbox,
+                    name: labelText,
+                    value: checkbox.value
+                });
+            }
+        });
+        
+        console.log('Categories:', Object.keys(categories));
+        
+        // בניית האקורדיון
+        let accordionHTML = '';
+        
+        Object.keys(categories).forEach(categoryName => {
+            const categoryId = `cat_${categoryName.replace(/\s+/g, '_')}`;
+            
+            accordionHTML += `
+                <div class="category-section">
+                    <button type="button" class="category-header" onclick="toggleAccordion('${categoryId}')">
+                        <span>${categoryName}</span>
+                        <span class="arrow" id="arrow_${categoryId}">▼</span>
+                    </button>
+                    <div class="category-content" id="${categoryId}" style="display: none;">
+            `;
+            
+            categories[categoryName].forEach(subcategory => {
+                const checked = subcategory.checkbox.checked ? 'checked' : '';
+                accordionHTML += `
+                    <div class="subcategory-item">
+                        <label>
+                            <input type="checkbox" name="subcategories" value="${subcategory.value}" ${checked} 
+                                   onchange="syncCheckbox('${subcategory.value}', this.checked)">
+                            <span class="subcategory-label">${subcategory.name}</span>
+                        </label>
+                    </div>
+                `;
+            });
+            
+            accordionHTML += '</div></div>';
+        });
+        
+        accordionContainer.innerHTML = accordionHTML;
+        fallbackContainer.style.display = 'none';
+        
+        console.log(`Accordion created with ${Object.keys(categories).length} categories`);
+        
+        // הצגת ערכים נבחרים (לבדיקה)
+        updateSelectedValues();
+    });
+
+    // פונקציה לפתיחה/סגירה של אקורדיון
+    function toggleAccordion(categoryId) {
+        const content = document.getElementById(categoryId);
+        const arrow = document.getElementById(`arrow_${categoryId}`);
+        
+        if (content.style.display === 'none') {
+            // סגירת כל האחרים
+            document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
+            document.querySelectorAll('.arrow').forEach(a => a.textContent = '▼');
+            
+            // פתיחת הנוכחי
+            content.style.display = 'block';
+            arrow.textContent = '▲';
+        } else {
+            content.style.display = 'none';
+            arrow.textContent = '▼';
+        }
+    }
+
+    // פונקציה לסנכרון עם הטופס המקורי
+    function syncCheckbox(value, checked) {
+        const originalCheckbox = document.querySelector(`#fallbackCategories input[value="${value}"]`);
+        if (originalCheckbox) {
+            originalCheckbox.checked = checked;
+        }
+        updateSelectedValues();
+    }
+    
+    // פונקציה להצגת ערכים נבחרים (לבדיקה)
+    function updateSelectedValues() {
+        const selectedContainer = document.getElementById('selectedValues');
+        const selectedList = document.getElementById('selectedList');
+        const fallbackContainer = document.getElementById('fallbackCategories');
+        
+        const checkedBoxes = fallbackContainer.querySelectorAll('input[type="checkbox"]:checked');
+        
+        if (checkedBoxes.length > 0) {
+            selectedContainer.style.display = 'block';
+            let listHTML = '';
+            checkedBoxes.forEach(cb => {
+                const label = cb.parentElement;
+                listHTML += `<div>✅ ${label.textContent.trim()}</div>`;
+            });
+            selectedList.innerHTML = listHTML;
+        } else {
+            selectedContainer.style.display = 'none';
+        }
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דמו תצוגת הערות מכונאי</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f8f9fc;
+        }
+        
+        /* עיצוב פריטי התיקון */
+        .repair-item-card {
+            background: #ffffff;
+            border: 1px solid #e3e6f0 !important;
+            transition: box-shadow 0.15s ease-in-out;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .repair-item-card:hover {
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        }
+
+        .item-header {
+            background: #ffffff;
+            margin: 0;
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-description {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .item-price {
+            font-size: 1.1em;
+            color: #27ae60;
+            min-width: 80px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .item-status {
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .mechanic-notes-full-width {
+            background: #f8f9fc !important;
+            margin: 0;
+            border-top: 3px solid #4e73df;
+            width: 100%;
+            padding: 1rem 1.25rem;
+        }
+
+        .notes-content {
+            color: #2c3e50;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-size: 0.95em;
+            margin: 0;
+        }
+
+        /* שיפור רזולוציות מובייל */
+        @media (max-width: 768px) {
+            .item-header .d-flex {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+            
+            .item-info {
+                margin-top: 0.75rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .item-price, .item-status {
+                margin-right: 0 !important;
+                min-width: auto;
+                text-align: left;
+            }
+            
+            .mechanic-notes-full-width {
+                padding: 1rem !important;
+            }
+        }
+
+        /* הבטחת רוחב מלא */
+        .mechanic-notes-full-width {
+            display: block;
+            width: 100% !important;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>דמו תצוגת הערות מכונאי</h1>
+                <p class="text-muted">בדיקת המבנה החדש של טבלת פעולות התיקון</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>פעולות תיקון (5 פריטים)</h5>
+                    </div>
+                    <div class="card-body">
+                        
+                        <!-- פריט עם הערה קצרה -->
+                        <div class="repair-item-card border rounded">
+                            <div class="item-header d-flex justify-content-between align-items-center">
+                                <div class="item-description flex-grow-1">
+                                    <strong>החלפת כבל הילוכים אחורי</strong>
+                                </div>
+                                <div class="item-info d-flex align-items-center">
+                                    <div class="item-price mr-3">
+                                        <strong>₪80</strong>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-check"></i> הושלם
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mechanic-notes-full-width">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-sticky-note text-primary mr-2"></i>
+                                    <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                                    <span class="text-muted mr-2" style="font-size: 0.85em;">
+                                        <i class="fas fa-user mr-1"></i>דני המכונאי
+                                    </span>
+                                </div>
+                                <div class="notes-content">הכבל היה שחוק מאוד. הוחלף בכבל איכותי מסוג Shimano.</div>
+                            </div>
+                        </div>
+
+                        <!-- פריט עם הערה ארוכה -->
+                        <div class="repair-item-card border rounded">
+                            <div class="item-header d-flex justify-content-between align-items-center">
+                                <div class="item-description flex-grow-1">
+                                    <strong>כיוונון מערכת הילוכים</strong>
+                                </div>
+                                <div class="item-info d-flex align-items-center">
+                                    <div class="item-price mr-3">
+                                        <strong>₪50</strong>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-check"></i> הושלם
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mechanic-notes-full-width">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-sticky-note text-primary mr-2"></i>
+                                    <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                                    <span class="text-muted mr-2" style="font-size: 0.85em;">
+                                        <i class="fas fa-user mr-1"></i>דני המכונאי
+                                    </span>
+                                </div>
+                                <div class="notes-content">בוצע כיוונון מדויק של כל ההילוכים. נבדקו כל המעברים והושגה רמת דיוק גבוהה. במהלך הכיוונון זוהו כמה בעיות קלות בשרשרת שתוקנו גם כן. מומלץ על בדיקה חוזרת אחרי 100 ק"מ רכיבה כדי לוודא שהכיוונון נשמר.</div>
+                            </div>
+                        </div>
+
+                        <!-- פריט עם הערה עם מעברי שורה -->
+                        <div class="repair-item-card border rounded">
+                            <div class="item-header d-flex justify-content-between align-items-center">
+                                <div class="item-description flex-grow-1">
+                                    <strong>בדיקת מערכת בלמים</strong>
+                                </div>
+                                <div class="item-info d-flex align-items-center">
+                                    <div class="item-price mr-3">
+                                        <strong>₪30</strong>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="badge badge-primary">
+                                            <i class="fas fa-clock"></i> בביצוע
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mechanic-notes-full-width">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-sticky-note text-primary mr-2"></i>
+                                    <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                                    <span class="text-muted mr-2" style="font-size: 0.85em;">
+                                        <i class="fas fa-user mr-1"></i>דני המכונאי
+                                    </span>
+                                </div>
+                                <div class="notes-content">זוהתה בעיה בלוחיות הבלם האחוריות!
+
+בעיות שזוהו:
+- לוחיות בלויות מעבר למותר
+- רעש חריקה חזק
+- ביצועי בלימה ירודים
+
+המלצה: החלפה מיידית נדרשת לפני רכיבה נוספת מטעמי בטיחות!</div>
+                            </div>
+                        </div>
+
+                        <!-- פריט בלי הערה -->
+                        <div class="repair-item-card border rounded">
+                            <div class="item-header d-flex justify-content-between align-items-center">
+                                <div class="item-description flex-grow-1">
+                                    <strong>החלפת לוחיות בלם אחוריות</strong>
+                                </div>
+                                <div class="item-info d-flex align-items-center">
+                                    <div class="item-price mr-3">
+                                        <strong>₪120</strong>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="badge badge-secondary">
+                                            <i class="fas fa-hourglass-half"></i> ממתין לאישור
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- פריט עם הערה קצרה נוספת -->
+                        <div class="repair-item-card border rounded">
+                            <div class="item-header d-flex justify-content-between align-items-center">
+                                <div class="item-description flex-grow-1">
+                                    <strong>שמן וניקוי שרשרת</strong>
+                                </div>
+                                <div class="item-info d-flex align-items-center">
+                                    <div class="item-price mr-3">
+                                        <strong>₪25</strong>
+                                    </div>
+                                    <div class="item-status">
+                                        <span class="badge badge-success">
+                                            <i class="fas fa-check"></i> הושלם
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mechanic-notes-full-width">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-sticky-note text-primary mr-2"></i>
+                                    <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                                    <span class="text-muted mr-2" style="font-size: 0.85em;">
+                                        <i class="fas fa-user mr-1"></i>דני המכונאי
+                                    </span>
+                                </div>
+                                <div class="notes-content">שרשרת נוקתה בקפידה ושומנה בשמן איכותי. מומלץ על שמון חוזר כל 200 ק"מ.</div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 pt-3 border-top">
+                            <div class="row">
+                                <div class="col-6">
+                                    <small><strong>מאושר:</strong> ₪185</small>
+                                </div>
+                                <div class="col-6">
+                                    <small><strong>ממתין:</strong> ₪120</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>הסבר המבנה החדש</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>מבנה כל פריט תיקון:</h6>
+                        <ul>
+                            <li><strong>שורה עליונה:</strong> תיאור הפעולה + מחיר + סטטוס</li>
+                            <li><strong>שורה תחתונה:</strong> הערת מכונאי ברוחב מלא (אם קיימת)</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">עיצוב ההערות:</h6>
+                        <ul>
+                            <li>רקע תכלת בהיר</li>
+                            <li>גבול כחול עליון</li>
+                            <li>אייקון הערה</li>
+                            <li>שם המכונאי</li>
+                            <li>טקסט ההערה ברוחב מלא</li>
+                            <li>שבירת שורות אוטומטית</li>
+                        </ul>
+                        
+                        <h6 class="mt-3">יתרונות:</h6>
+                        <ul>
+                            <li>הערות מוצגות ברוחב מלא</li>
+                            <li>קריאות מעולה</li>
+                            <li>תמיכה בהערות ארוכות</li>
+                            <li>מותאם למובייל</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

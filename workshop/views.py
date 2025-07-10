@@ -8,6 +8,9 @@ from django.utils import timezone
 from django.db import transaction
 from django.core.mail import send_mail
 from django.conf import settings
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 from .models import (
     Customer, Bike, RepairCategory, RepairSubCategory, RepairJob,
@@ -291,6 +294,12 @@ def link_customer_to_user(request):
 @manager_required
 def manager_dashboard(request):
     """דשבורד למנהל - מציג תיקונים שדורשים אבחון או עדכון"""
+    # תיקונים תקועים - דחיפות עליונה
+    stuck_repairs = RepairJob.objects.filter(
+        is_stuck=True, 
+        stuck_resolved=False
+    ).select_related('bike', 'bike__customer', 'assigned_mechanic').order_by('stuck_at')
+    
     pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
     pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
     partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer').prefetch_related('repair_items')
@@ -308,6 +317,7 @@ def manager_dashboard(request):
         repair.progress_percentage = (repair.completed_items.count() / repair.approved_items.count() * 100) if repair.approved_items.count() > 0 else 0
     
     context = {
+        'stuck_repairs': stuck_repairs,
         'pending_diagnosis': pending_diagnosis,
         'pending_approval': pending_approval,
         'partially_approved': partially_approved,
@@ -502,25 +512,33 @@ def assign_mechanic(request, repair_id):
     })
 
 @login_required
-@mechanic_required
+@mechanic_required  
 def mechanic_dashboard(request):
     """דשבורד למכונאי - מציג תיקונים שהוקצו אליו"""
-    assigned_repairs = RepairJob.objects.filter(
-        assigned_mechanic=request.user,
-        status='in_progress'
-    ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
-    
-    # הוספת מידע על התקדמות לכל תיקון
-    for repair in assigned_repairs:
-        repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-        repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, is_completed=True)
-        repair.approved_count = repair.approved_items.count()
-        repair.completed_count = repair.completed_items.count()
-        repair.progress_percentage = (repair.completed_count / repair.approved_count * 100) if repair.approved_count > 0 else 0
-    
-    return render(request, 'workshop/mechanic_dashboard.html', {
-        'assigned_repairs': assigned_repairs,
-    })
+    try:
+        assigned_repairs = RepairJob.objects.filter(
+            assigned_mechanic=request.user,
+            status='in_progress'
+        ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
+        
+        # הוספת מידע על התקדמות לכל תיקון
+        for repair in assigned_repairs:
+            repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
+            repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, is_completed=True)
+            repair.approved_count = repair.approved_items.count()
+            repair.completed_count = repair.completed_items.count()
+            repair.progress_percentage = (repair.completed_count / repair.approved_count * 100) if repair.approved_count > 0 else 0
+            
+            # הוספת שדות stuck באופן בטוח
+            repair.is_stuck = getattr(repair, 'is_stuck', False)
+            repair.stuck_reason = getattr(repair, 'stuck_reason', '')
+        
+        return render(request, 'workshop/mechanic_dashboard.html', {
+            'assigned_repairs': assigned_repairs,
+        })
+    except Exception as e:
+        from django.http import HttpResponse
+        return HttpResponse(f"שגיאה: {str(e)}")  
 
 @login_required
 @mechanic_required
@@ -537,7 +555,7 @@ def mechanic_task_completion(request, repair_id):
         
         if task_form.is_valid():
             completed_items = task_form.cleaned_data['completed_items']
-            notes = task_form.cleaned_data.get('notes', '')
+            general_notes = task_form.cleaned_data.get('general_notes', '')
             
             with transaction.atomic():
                 # עדכון הפעולות שהושלמו
@@ -545,9 +563,17 @@ def mechanic_task_completion(request, repair_id):
                     item.is_completed = True
                     item.completed_by = request.user
                     item.completed_at = timezone.now()
-                    if notes:
-                        item.notes = notes
                     item.save()
+                
+                # עדכון הערות לכל פעולה (גם למושלמות וגם לא מושלמות)
+                approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
+                for item in approved_items:
+                    notes_field = f'notes_{item.id}'
+                    if notes_field in task_form.cleaned_data:
+                        item_notes = task_form.cleaned_data[notes_field]
+                        if item_notes:  # רק אם יש הערות
+                            item.notes = item_notes
+                            item.save()
                 
                 # בדיקה אם כל הפעולות שאושרו הושלמו
                 approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
@@ -679,7 +705,7 @@ http://localhost:8000/repair/{repair_job.id}/approve/
         RepairUpdate.objects.create(
             repair_job=repair_job,
             user=user,
-            message=f"נשלחה התראה ללקוח: {message_map.get(message_type, extra_message)[:100]}...",
+            message=f"נשלחה התראה ללקוח: {extra_message[:100]}..." if extra_message else f"התראה נשלחה - {message_type}",
             is_visible_to_customer=False  # זה עדכון פנימי
         )
 
@@ -769,5 +795,102 @@ def customer_bikes_list(request):
         'title': 'האופניים שלי'
     }
     return render(request, 'workshop/customer_bikes_list.html', context)
+
+
+@login_required
+@mechanic_required
+def update_repair_status(request):
+    """עדכון סטטוס תקוע של תיקון על ידי מכונאי"""
+    if request.method == 'POST':
+        try:
+            repair_id = request.POST.get('repair_id')
+            status = request.POST.get('status')
+            reason = request.POST.get('reason', '')
+            
+            repair_job = get_object_or_404(RepairJob, id=repair_id, assigned_mechanic=request.user)
+            
+            if status == 'stuck':
+                repair_job.is_stuck = True
+                repair_job.stuck_reason = reason
+                repair_job.stuck_at = timezone.now()
+                repair_job.stuck_resolved = False
+                repair_job.manager_response = ''
+                
+                # יצירת עדכון למעקב
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message=f"מכונאי דיווח על התקיעות: {reason}",
+                    is_visible_to_customer=False
+                )
+                
+                messages.success(request, 'התיקון סומן כתקוע. המנהל יקבל התראה.')
+                
+            elif status == 'working':
+                repair_job.is_stuck = False
+                repair_job.stuck_reason = ''
+                repair_job.stuck_at = None
+                repair_job.stuck_resolved = True
+                
+                # יצירת עדכון למעקב
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message="מכונאי חזר לעבודה רגילה",
+                    is_visible_to_customer=False
+                )
+            
+            repair_job.save()
+            
+            return JsonResponse({'success': True})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+@manager_required
+def manager_response_stuck(request):
+    """תגובת מנהל לתיקון תקוע"""
+    if request.method == 'POST':
+        try:
+            repair_id = request.POST.get('repair_id')
+            response = request.POST.get('response')
+            mark_resolved = request.POST.get('mark_resolved') == 'true'
+            
+            repair_job = get_object_or_404(RepairJob, id=repair_id, is_stuck=True)
+            
+            # עדכון התגובה
+            repair_job.manager_response = response
+            
+            if mark_resolved:
+                repair_job.stuck_resolved = True
+                repair_job.is_stuck = False
+                
+                # יצירת עדכון למעקב
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message=f"מנהל פתר את התקיעות: {response}",
+                    is_visible_to_customer=False
+                )
+            else:
+                # יצירת עדכון למעקב
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message=f"מנהל השיב על התקיעות: {response}",
+                    is_visible_to_customer=False
+                )
+            
+            repair_job.save()
+            
+            return JsonResponse({'success': True})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 

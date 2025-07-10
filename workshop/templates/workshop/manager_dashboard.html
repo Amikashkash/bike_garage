@@ -10,6 +10,83 @@
     </div>
 </div>
 
+<!-- תיקונים תקועים - דחיפות עליונה -->
+{% if stuck_repairs %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-danger border-danger" style="border-width: 3px !important;">
+            <div class="d-flex align-items-center mb-3">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mr-3" style="animation: pulse 2s infinite;"></i>
+                <div>
+                    <h4 class="mb-1 text-danger">
+                        <strong>🚨 תיקונים תקועים - דרושה התייחסות מיידית!</strong>
+                    </h4>
+                    <p class="mb-0">{{ stuck_repairs.count }} מכונאים זקוקים לעזרתך</p>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>מזהה</th>
+                            <th>מכונאי</th>
+                            <th>אופניים</th>
+                            <th>לקוח</th>
+                            <th>סיבת התקיעות</th>
+                            <th>תאריך התקיעות</th>
+                            <th>פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for repair in stuck_repairs %}
+                        <tr class="table-warning">
+                            <td><strong>#{{ repair.id }}</strong></td>
+                            <td>
+                                <i class="fas fa-user mr-1"></i>
+                                {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                            </td>
+                            <td>{{ repair.bike }}</td>
+                            <td>{{ repair.bike.customer.name }}</td>
+                            <td>
+                                <div class="alert alert-warning mb-0 p-2">
+                                    <small><strong>{{ repair.stuck_reason }}</strong></small>
+                                </div>
+                            </td>
+                            <td>
+                                <small>{{ repair.stuck_at|date:"d/m/Y H:i" }}</small>
+                                <br>
+                                <span class="badge badge-danger">
+                                    {{ repair.stuck_at|timesince }} לפני
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success btn-sm respond-btn" 
+                                        data-repair-id="{{ repair.id }}" 
+                                        data-mechanic="{{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}"
+                                        data-problem="{{ repair.stuck_reason }}"
+                                        title="השב למכונאי">
+                                    <i class="fas fa-reply"></i> השב
+                                </button>
+                                <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i> צפה
+                                </a>
+                                <button type="button" class="btn btn-outline-secondary btn-sm resolve-btn" 
+                                        data-repair-id="{{ repair.id }}" 
+                                        title="סמן כנפתר">
+                                    <i class="fas fa-check"></i> נפתר
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% if pending_diagnosis %}
 <div class="row mb-4">
     <div class="col-md-12">
@@ -276,4 +353,154 @@
         </div>
     </div>
 </div>
+
+<!-- מודל לתגובת מנהל לתיקון תקוע -->
+<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseModalLabel">
+                    <i class="fas fa-reply text-success mr-2"></i>
+                    תגובה לתיקון תקוע
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>מכונאי:</strong> <span id="mechanicName"></span><br>
+                    <strong>בעיה:</strong> <span id="problemDescription"></span>
+                </div>
+                <form id="responseForm">
+                    <div class="form-group">
+                        <label for="managerResponse">תגובתך למכונאי:</label>
+                        <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 
+                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="markResolved" name="mark_resolved">
+                        <label class="form-check-label" for="markResolved">
+                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
+                        </label>
+                    </div>
+                    <input type="hidden" id="responseRepairId" name="repair_id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-success" id="sendResponse">
+                    <i class="fas fa-paper-plane"></i> שלח תגובה
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // פתיחת מודל תגובה
+    $('.respond-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        const mechanic = $(this).data('mechanic');
+        const problem = $(this).data('problem');
+        
+        $('#responseRepairId').val(repairId);
+        $('#mechanicName').text(mechanic);
+        $('#problemDescription').text(problem);
+        $('#managerResponse').val('');
+        $('#markResolved').prop('checked', false);
+        $('#responseModal').modal('show');
+    });
+    
+    // שליחת תגובה
+    $('#sendResponse').click(function() {
+        const repairId = $('#responseRepairId').val();
+        const response = $('#managerResponse').val().trim();
+        const markResolved = $('#markResolved').prop('checked');
+        
+        if (!response) {
+            alert('נא לכתוב תגובה למכונאי');
+            return;
+        }
+        
+        sendManagerResponse(repairId, response, markResolved);
+        $('#responseModal').modal('hide');
+    });
+    
+    // סימון כנפתר ישירות
+    $('.resolve-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        if (confirm('האם אתה בטוח שהתיקון נפתר?')) {
+            sendManagerResponse(repairId, 'התיקון סומן כנפתר על ידי המנהל', true);
+        }
+    });
+    
+    function sendManagerResponse(repairId, response, markResolved) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+        
+        $.ajax({
+            url: '{% url "manager_response_stuck" %}',
+            method: 'POST',
+            data: {
+                'repair_id': repairId,
+                'response': response,
+                'mark_resolved': markResolved
+            },
+            success: function(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('שגיאה: ' + response.error);
+                }
+            },
+            error: function() {
+                alert('שגיאה בשליחת התגובה');
+            }
+        });
+    }
+    
+    // פונקציות עזר ל-CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+});
+</script>
+
+<style>
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.alert-danger {
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.table-warning {
+    background-color: #fff3cd !important;
+}
+</style>
 {% endblock %}

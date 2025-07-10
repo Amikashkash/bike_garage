@@ -1,0 +1,467 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}🔧 משימות טכנאי - תיקון {{ repair_job.id }}{% endblock %}
+
+{% block content %}
+<!-- Hero Header לטכנאי -->
+<div class="enduro-hero-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav class="enduro-breadcrumb">
+                    <a href="{% url 'mechanic_dashboard' %}" class="breadcrumb-link">
+                        <i class="fas fa-tachometer-alt"></i> דשבורד טכנאי
+                    </a>
+                    <span class="breadcrumb-separator">⚡</span>
+                    <span class="breadcrumb-current">משימות תיקון</span>
+                </nav>
+                
+                <h1 class="enduro-title mb-3">
+                    <i class="fas fa-wrench enduro-icon-spin"></i>
+                    משימות תיקון #{{ repair_job.id }}
+                    <span class="enduro-badge-new">EXTREME</span>
+                </h1>
+                <p class="enduro-subtitle">{{ repair_job.bike }} - {{ repair_job.bike.customer.name }}</p>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div class="enduro-repair-status">
+                    <div class="status-badge">{{ repair_job.get_status_display }}</div>
+                    <div class="status-label">סטטוס תיקון</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- פרטי התיקון -->
+<div class="enduro-section">
+    <div class="container">
+        <div class="enduro-card">
+            <div class="enduro-card-header">
+                <div class="enduro-card-title">
+                    <i class="fas fa-bicycle"></i>
+                    פרטי התיקון
+                </div>
+                <div class="enduro-card-subtitle">
+                    מידע מפורט על האופניים והתיקון הנדרש
+                </div>
+            </div>
+            <div class="enduro-card-body" style="padding: 2rem;">
+                <div class="repair-details-grid">
+                    <div class="detail-group">
+                        <div class="detail-item">
+                            <span class="detail-label">אופניים:</span>
+                            <span class="detail-value">{{ repair_job.bike }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">לקוח:</span>
+                            <span class="detail-value">{{ repair_job.bike.customer.name }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">טלפון:</span>
+                            <span class="detail-value">{{ repair_job.bike.customer.phone }}</span>
+                        </div>
+                    </div>
+                    <div class="detail-group">
+                        <div class="detail-item">
+                            <span class="detail-label">אבחון:</span>
+                            <span class="detail-value">{{ repair_job.diagnosis|truncatechars:100|default:"לא צוין" }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">תיאור התקלה:</span>
+                            <span class="detail-value">{{ repair_job.problem_description|truncatechars:100|default:"לא צוין" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+        
+        <!-- משימות ממתינות -->
+        {% if pending_tasks %}
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-dark">
+                        <h5><i class="fas fa-tasks"></i> משימות ממתינות לביצוע ({{ pending_tasks.count }})</h5>
+                        <small>💡 אם יש בעיה או חסר משהו - סמן כ"חסום" וכתב מה חסר</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>פעולה</th>
+                                        <th>מחיר</th>
+                                        <th>סטטוס</th>
+                                        <th>הערות / מה מונע מביצוע</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in pending_tasks %}
+                                    <tr id="task_row_{{ task.id }}">
+                                        <td>
+                                            <strong>{{ task.description }}</strong>
+                                        </td>
+                                        <td>₪{{ task.price }}</td>
+                                        <td>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="complete_{{ task.id }}" id="task_complete_{{ task.id }}"
+                                                       onchange="toggleTaskStatus({{ task.id }})">
+                                                <label class="form-check-label" for="task_complete_{{ task.id }}">
+                                                    <span class="text-success">✅ בוצע</span>
+                                                </label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" 
+                                                       name="blocked_{{ task.id }}" id="task_blocked_{{ task.id }}"
+                                                       onchange="toggleTaskStatus({{ task.id }})">
+                                                <label class="form-check-label" for="task_blocked_{{ task.id }}">
+                                                    <span class="text-warning">⏸️ חסום/נדחה</span>
+                                                </label>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <!-- הערות עבור פעולה שבוצעה -->
+                                            <div id="completion_notes_{{ task.id }}" style="display: none;">
+                                                <label class="small text-success">הערות נוספות (אופציונלי):</label>
+                                                <textarea class="form-control form-control-sm" 
+                                                          name="completion_notes_{{ task.id }}" 
+                                                          rows="2" 
+                                                          placeholder="הערות נוספות על הביצוע..."></textarea>
+                                                <small class="text-muted">הערות קודמות יישמרו אוטומטית</small>
+                                            </div>
+                                            
+                                            <!-- הערות עבור פעולה חסומה -->
+                                            <div id="block_notes_{{ task.id }}" style="display: none;">
+                                                <label class="small text-warning">מה מונע ממך להתקדם?</label>
+                                                <select class="form-control form-control-sm mb-1" name="block_reason_{{ task.id }}">
+                                                    <option value="">בחר סיבה...</option>
+                                                    <option value="missing_part">חסר חלק</option>
+                                                    <option value="need_order">צריך להזמין חלק</option>
+                                                    <option value="technical_issue">בעיה טכנית</option>
+                                                    <option value="need_approval">צריך אישור נוסף</option>
+                                                    <option value="waiting_customer">ממתין ללקוח</option>
+                                                    <option value="other">אחר</option>
+                                                </select>
+                                                <textarea class="form-control form-control-sm" 
+                                                          name="block_notes_{{ task.id }}" 
+                                                          rows="2" 
+                                                          placeholder="מה בדיוק חסר או מה הבעיה?"></textarea>
+                                            </div>
+                                            
+                                            <!-- הצגת הערות קיימות -->
+                                            {% if task.block_notes or task.notes %}
+                                            <div class="small mt-2" style="background-color: #f8f9fa; padding: 8px; border-radius: 4px;">
+                                                <strong class="text-info">הערות קודמות:</strong><br>
+                                                {% if task.block_notes %}
+                                                    <span class="text-warning">חסימות:</span> {{ task.block_notes }}<br>
+                                                {% endif %}
+                                                {% if task.notes and task.notes != task.block_notes %}
+                                                    <span class="text-success">ביצוע:</span> {{ task.notes }}
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- פעולות חסומות -->
+        {% if blocked_tasks %}
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h5><i class="fas fa-exclamation-triangle"></i> פעולות חסומות/נדחות ({{ blocked_tasks.count }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>פעולה</th>
+                                        <th>מחיר</th>
+                                        <th>סיבת חסימה</th>
+                                        <th>הערות</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in blocked_tasks %}
+                                    <tr class="table-warning">
+                                        <td>{{ task.description }}</td>
+                                        <td>₪{{ task.price }}</td>
+                                        <td>
+                                            <span class="badge badge-warning">{{ task.get_block_reason_display }}</span>
+                                        </td>
+                                        <td>
+                                            {% if task.block_notes %}
+                                                <small>{{ task.block_notes }}</small>
+                                            {% else %}
+                                                <small class="text-muted">אין הערות</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-sm btn-success" 
+                                                    onclick="unblockTask({{ task.id }})">
+                                                <i class="fas fa-play"></i> שחרר
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="alert alert-warning">
+                            <strong>הערה:</strong> פעולות חסומות דורשות טיפול לפני שניתן להמשיך. 
+                            לחץ על "שחרר" כדי להחזיר פעולה לרשימת הממתינות.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- משימות שהושלמו -->
+        {% if completed_tasks %}
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white">
+                        <h5><i class="fas fa-check-circle"></i> משימות שהושלמו ({{ completed_tasks.count }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>פעולה</th>
+                                        <th>מחיר</th>
+                                        <th>הושלמה</th>
+                                        <th>על ידי</th>
+                                        <th>הערות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in completed_tasks %}
+                                    <tr>
+                                        <td>{{ task.description }}</td>
+                                        <td>₪{{ task.price }}</td>
+                                        <td>
+                                            <small class="text-success">
+                                                {{ task.completed_at|date:"d/m/Y H:i" }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <small>
+                                                {{ task.completed_by.get_full_name|default:task.completed_by.username }}
+                                            </small>
+                                        </td>
+                                        <td>
+                                            {% if task.notes or task.block_notes %}
+                                                <div class="small">
+                                                    {% if task.block_notes %}
+                                                        <div class="mb-1">
+                                                            <span class="badge badge-warning">{{ task.get_block_reason_display }}</span><br>
+                                                            <span class="text-warning">בעיות שהיו:</span> {{ task.block_notes }}
+                                                        </div>
+                                                    {% endif %}
+                                                    {% if task.notes and task.notes != task.block_notes %}
+                                                        <div>
+                                                            <span class="text-success">הערות ביצוע:</span> {{ task.notes }}
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                            {% else %}
+                                                <small class="text-muted">אין הערות</small>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- עדכון כללי -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-comment"></i> עדכון כללי ללקוח</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="general_update">הודעה ללקוח (אופציונלי):</label>
+                            <textarea class="form-control" name="general_update" id="general_update" 
+                                      rows="3" placeholder="למשל: 'החלפתי את הבלמים הקדמיים, הגלגל זקוק לתיקון נוסף...'"></textarea>
+                            <small class="form-text text-muted">הודעה זו תהיה גלויה ללקוח ותישלח אליו כהתראה</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- כפתורי פעולה -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body text-center">
+                        {% if pending_tasks %}
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="fas fa-save"></i> שמור עדכונים
+                        </button>
+                        {% endif %}
+                        <a href="{% url 'repair_status' repair_job.id %}" class="btn btn-info">
+                            <i class="fas fa-eye"></i> צפה בסטטוס כללי
+                        </a>
+                        <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> חזור לדשבורד
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    {% if not pending_tasks and not completed_tasks %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info text-center">
+                <h4>אין משימות עדיין</h4>
+                <p>התיקון עדיין לא אושר על ידי הלקוח או שאין פעולות מוגדרות.</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// הוספת אפקט ויזואלי לסימון משימות
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="complete_"], input[type="checkbox"][name^="blocked_"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('tr');
+            if (this.name.includes('complete_') && this.checked) {
+                row.classList.add('table-success');
+                row.style.opacity = '0.8';
+            } else if (this.name.includes('blocked_') && this.checked) {
+                row.classList.add('table-warning');
+                row.style.opacity = '0.8';
+            } else {
+                row.classList.remove('table-success', 'table-warning');
+                row.style.opacity = '1';
+            }
+        });
+    });
+});
+
+// פונקציה לטיפול בשינוי סטטוס משימה
+function toggleTaskStatus(taskId) {
+    const completeCheckbox = document.getElementById(`task_complete_${taskId}`);
+    const blockedCheckbox = document.getElementById(`task_blocked_${taskId}`);
+    const completionNotes = document.getElementById(`completion_notes_${taskId}`);
+    const blockNotes = document.getElementById(`block_notes_${taskId}`);
+    
+    // וידוא שרק אחד יכול להיות מסומן
+    if (completeCheckbox.checked && blockedCheckbox.checked) {
+        if (event.target === completeCheckbox) {
+            blockedCheckbox.checked = false;
+        } else {
+            completeCheckbox.checked = false;
+        }
+    }
+    
+    // הצגת/הסתרת שדות הערות בהתאם לסטטוס
+    if (completeCheckbox.checked) {
+        completionNotes.style.display = 'block';
+        blockNotes.style.display = 'none';
+    } else if (blockedCheckbox.checked) {
+        completionNotes.style.display = 'none';
+        blockNotes.style.display = 'block';
+    } else {
+        completionNotes.style.display = 'none';
+        blockNotes.style.display = 'none';
+    }
+}
+
+// פונקציה לשחרור פעולה חסומה
+function unblockTask(taskId) {
+    if (confirm('האם אתה בטוח שברצונך לשחרר את הפעולה ולהחזיר אותה לרשימת הממתינות?')) {
+        // יצירת form מוסתר לשליחת בקשה
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = window.location.href;
+        
+        // הוספת CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // הוספת פרמטר לשחרור המשימה
+        const unblockInput = document.createElement('input');
+        unblockInput.type = 'hidden';
+        unblockInput.name = `unblock_${taskId}`;
+        unblockInput.value = 'true';
+        form.appendChild(unblockInput);
+        
+        // שליחת הטופס
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+// פונקציה לשחרור משימה חסומה
+function unblockTask(taskId) {
+    const row = document.getElementById(`task_row_${taskId}`);
+    const completeCheckbox = document.getElementById(`task_complete_${taskId}`);
+    const blockedCheckbox = document.getElementById(`task_blocked_${taskId}`);
+    
+    // הסרת הסימון משני הכפתורים
+    completeCheckbox.checked = false;
+    blockedCheckbox.checked = false;
+    
+    // הסרת השורות החסומות
+    row.classList.remove('table-warning');
+    row.style.opacity = '1';
+    
+    // הסרת הערות חסימה אם קיימות
+    const blockNotes = document.getElementById(`block_notes_${taskId}`);
+    blockNotes.style.display = 'none';
+    blockNotes.querySelector('textarea').value = '';
+    
+    // העברת המשימה חזרה לרשימת הממתינות
+    const pendingTasksTable = document.querySelector('table.table-striped tbody');
+    pendingTasksTable.appendChild(row);
+    
+    // עדכון כותרת הכרטיס
+    const cardHeader = document.querySelector('div.card-header h5');
+    const currentCount = parseInt(cardHeader.textContent.match(/\d+/)[0]);
+    cardHeader.innerHTML = cardHeader.innerHTML.replace(/\d+/, currentCount + 1);
+    
+    // הצגת התראה על הצלחה
+    alert('המשימה שוחררה בהצלחה!');
+}
+</script>
+{% endblock %}

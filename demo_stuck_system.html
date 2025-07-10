@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דמו מערכת תיקונים תקועים</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f8f9fc;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .alert-danger {
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .table-warning {
+            background-color: #fff3cd !important;
+        }
+        
+        .status-btn {
+            min-width: 40px;
+        }
+
+        .btn-group-sm > .btn {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .badge-danger {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <!-- כותרת ראשית -->
+        <div class="row">
+            <div class="col-md-12">
+                <h1>דמו מערכת תיקונים תקועים</h1>
+                <p class="text-muted">הצגת התכונה החדשה למכונאים ומנהלים</p>
+            </div>
+        </div>
+        
+        <!-- תצוגת מנהל - תיקונים תקועים -->
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h2><i class="fas fa-user-tie mr-2"></i>תצוגת מנהל - דשבורד</h2>
+                
+                <!-- תיקונים תקועים -->
+                <div class="alert alert-danger border-danger" style="border-width: 3px !important;">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-triangle fa-2x text-danger mr-3" style="animation: pulse 2s infinite;"></i>
+                        <div>
+                            <h4 class="mb-1 text-danger">
+                                <strong>🚨 תיקונים תקועים - דרושה התייחסות מיידית!</strong>
+                            </h4>
+                            <p class="mb-0">2 מכונאים זקוקים לעזרתך</p>
+                        </div>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>מזהה</th>
+                                    <th>מכונאי</th>
+                                    <th>אופניים</th>
+                                    <th>לקוח</th>
+                                    <th>סיבת התקיעות</th>
+                                    <th>תאריך התקיעות</th>
+                                    <th>פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="table-warning">
+                                    <td><strong>#123</strong></td>
+                                    <td>
+                                        <i class="fas fa-user mr-1"></i>
+                                        יוסי המכונאי
+                                    </td>
+                                    <td>Specialized Rockhopper</td>
+                                    <td>דני הלקוח</td>
+                                    <td>
+                                        <div class="alert alert-warning mb-0 p-2">
+                                            <small><strong>חסר חלק מסוים בדרישה מיוחדת - Shimano Deore XT 12-speed. המוצר אזל מהמחסן ואני לא בטוח איך להמשיך...</strong></small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small>10/07/2025 14:30</small>
+                                        <br>
+                                        <span class="badge badge-danger">
+                                            שעתיים לפני
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm" onclick="showResponseModal()">
+                                            <i class="fas fa-reply"></i> השב
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> צפה
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-check"></i> נפתר
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td><strong>#124</strong></td>
+                                    <td>
+                                        <i class="fas fa-user mr-1"></i>
+                                        אבי המכונאי
+                                    </td>
+                                    <td>Trek X-Caliber 8</td>
+                                    <td>שרה כהן</td>
+                                    <td>
+                                        <div class="alert alert-warning mb-0 p-2">
+                                            <small><strong>בעיה עם הכלי המיוחד לפירוק - חסר מפתח בגודל מסוים</strong></small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <small>10/07/2025 16:15</small>
+                                        <br>
+                                        <span class="badge badge-danger">
+                                            30 דקות לפני
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-success btn-sm" onclick="showResponseModal()">
+                                            <i class="fas fa-reply"></i> השב
+                                        </button>
+                                        <button type="button" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i> צפה
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-check"></i> נפתר
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- תצוגת מכונאי - דשבורד -->
+        <div class="row mb-5">
+            <div class="col-md-12">
+                <h2><i class="fas fa-wrench mr-2"></i>תצוגת מכונאי - דשבורד</h2>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h5>
+                            <i class="fas fa-wrench"></i>
+                            התיקונים שלי (3)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>פעולות מאושרות</th>
+                                        <th>מחיר</th>
+                                        <th>התקדמות</th>
+                                        <th>סטטוס עבודה</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>123</td>
+                                        <td>Specialized Rockhopper</td>
+                                        <td>
+                                            דני הלקוח
+                                            <br><small class="text-muted">052-9876543</small>
+                                        </td>
+                                        <td>3 פעולות</td>
+                                        <td>₪360</td>
+                                        <td>
+                                            <div class="progress" style="width: 100px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: 33%;" 
+                                                     aria-valuenow="33" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    33%
+                                                </div>
+                                            </div>
+                                            <small>1/3 הושלמו</small>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                <span class="badge badge-danger mb-2">
+                                                    <i class="fas fa-times"></i> תקוע
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">חסר חלק מסוים בדרישה...</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm">
+                                                <i class="fas fa-tasks"></i> עדכן ביצוע
+                                            </button>
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> צפה
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>124</td>
+                                        <td>Trek X-Caliber 8</td>
+                                        <td>
+                                            שרה כהן
+                                            <br><small class="text-muted">050-1234567</small>
+                                        </td>
+                                        <td>2 פעולות</td>
+                                        <td>₪150</td>
+                                        <td>
+                                            <div class="progress" style="width: 100px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: 50%;" 
+                                                     aria-valuenow="50" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    50%
+                                                </div>
+                                            </div>
+                                            <small>1/2 הושלמו</small>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                <div class="btn-group btn-group-sm" role="group">
+                                                    <button type="button" class="btn btn-success status-btn" 
+                                                            onclick="markWorking(124)"
+                                                            title="עובד בסדר">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-outline-danger status-btn" 
+                                                            onclick="markStuck(124)"
+                                                            title="תקוע - זקוק לעזרה">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm">
+                                                <i class="fas fa-tasks"></i> עדכן ביצוע
+                                            </button>
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> צפה
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>125</td>
+                                        <td>Giant Escape 3</td>
+                                        <td>
+                                            מיכאל לוי
+                                            <br><small class="text-muted">054-7654321</small>
+                                        </td>
+                                        <td>1 פעולות</td>
+                                        <td>₪80</td>
+                                        <td>
+                                            <div class="progress" style="width: 100px;">
+                                                <div class="progress-bar bg-success" role="progressbar" 
+                                                     style="width: 100%;" 
+                                                     aria-valuenow="100" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    100%
+                                                </div>
+                                            </div>
+                                            <small>1/1 הושלמו</small>
+                                        </td>
+                                        <td>
+                                            <div class="text-center">
+                                                <span class="badge badge-success">
+                                                    <i class="fas fa-check"></i> הושלם
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye"></i> צפה
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- הסבר התכונה -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-lightbulb mr-2"></i>איך עובדת המערכת החדשה?</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>עבור המכונאי:</h6>
+                                <ol>
+                                    <li><strong>כפתורי סטטוס:</strong> לכל תיקון יש שני כפתורים:
+                                        <br>✅ <span class="badge badge-success">עובד בסדר</span>
+                                        <br>❌ <span class="badge badge-danger">תקוע</span>
+                                    </li>
+                                    <li><strong>סימון תקוע:</strong> כשמכונאי תקוע, הוא לוחץ על ❌ ומסביר מה הבעיה</li>
+                                    <li><strong>התראה למנהל:</strong> המנהל מקבל התראה מיידית</li>
+                                    <li><strong>המשך עבודה:</strong> המכונאי יכול להמשיך עבודה רגילה או לחכות לתגובה</li>
+                                </ol>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>עבור המנהל:</h6>
+                                <ol>
+                                    <li><strong>תצוגה בולטת:</strong> תיקונים תקועים מופיעים בראש הדף עם התראה אדומה</li>
+                                    <li><strong>פרטי הבעיה:</strong> המנהל רואה בדיוק מה הבעיה ומתי היא דווחה</li>
+                                    <li><strong>תגובה מהירה:</strong> המנהל יכול להשיב למכונאי עם הוראות או פתרון</li>
+                                    <li><strong>סימון פתרון:</strong> כשהבעיה נפתרת, המנהל סוגר את התיקון התקוע</li>
+                                </ol>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="alert alert-success">
+                                    <strong>יתרונות המערכת:</strong>
+                                    <ul class="mb-0">
+                                        <li>תקשורת מהירה ויעילה בין מכונאי למנהל</li>
+                                        <li>זיהוי מיידי של בעיות שדורשות התייחסות</li>
+                                        <li>מעקב אחר זמני תגובה ופתרון בעיות</li>
+                                        <li>שיפור זרימת העבודה במוסך</li>
+                                        <li>הקטנת זמני השבתה של תיקונים</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- מודל לסימון תקוע -->
+    <div class="modal fade" id="stuckModal" tabindex="-1" aria-labelledby="stuckModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stuckModalLabel">
+                        <i class="fas fa-exclamation-triangle text-warning mr-2"></i>
+                        סימון תיקון כתקוע
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>שים לב:</strong> סימון התיקון כ"תקוע" יתריע למנהל שדרושה התייחסות מיידית.
+                    </div>
+                    <div class="form-group">
+                        <label for="stuckReason">אנא פרט מה הבעיה ואיך המנהל יכול לעזור:</label>
+                        <textarea class="form-control" id="stuckReason" rows="4" 
+                                  placeholder="לדוגמה: חסר חלק חילוף מסוים, זקוק לייעוץ טכני, בעיה עם כלי עבודה..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmStuck()">
+                        <i class="fas fa-exclamation-triangle"></i> סמן כתקוע
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- מודל לתגובת מנהל -->
+    <div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="responseModalLabel">
+                        <i class="fas fa-reply text-success mr-2"></i>
+                        תגובה לתיקון תקוע
+                    </h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <strong>מכונאי:</strong> יוסי המכונאי<br>
+                        <strong>בעיה:</strong> חסר חלק מסוים בדרישה מיוחדת - Shimano Deore XT 12-speed...
+                    </div>
+                    <div class="form-group">
+                        <label for="managerResponse">תגובתך למכונאי:</label>
+                        <textarea class="form-control" id="managerResponse" rows="4" 
+                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="markResolved">
+                        <label class="form-check-label" for="markResolved">
+                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ביטול</button>
+                    <button type="button" class="btn btn-success" onclick="sendResponse()">
+                        <i class="fas fa-paper-plane"></i> שלח תגובה
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function markWorking(repairId) {
+            alert('התיקון #' + repairId + ' סומן כ"עובד בסדר"');
+        }
+        
+        function markStuck(repairId) {
+            $('#stuckModal').modal('show');
+        }
+        
+        function confirmStuck() {
+            const reason = $('#stuckReason').val();
+            if (!reason.trim()) {
+                alert('נא לפרט את הסיבה להתקיעות');
+                return;
+            }
+            alert('התיקון סומן כתקוע. המנהל יקבל התראה.\n\nסיבה: ' + reason);
+            $('#stuckModal').modal('hide');
+        }
+        
+        function showResponseModal() {
+            $('#responseModal').modal('show');
+        }
+        
+        function sendResponse() {
+            const response = $('#managerResponse').val();
+            const resolved = $('#markResolved').prop('checked');
+            
+            if (!response.trim()) {
+                alert('נא לכתוב תגובה למכונאי');
+                return;
+            }
+            
+            let message = 'תגובה נשלחה למכונאי:\n\n' + response;
+            if (resolved) {
+                message += '\n\nהתיקון סומן כנפתר.';
+            }
+            
+            alert(message);
+            $('#responseModal').modal('hide');
+        }
+    </script>
+</body>
+</html>

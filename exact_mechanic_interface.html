@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בדיקה - ממשק טכנאי אמיתי</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">דשבורד טכנאי</a></li>
+                        <li class="breadcrumb-item active">משימות תיקון</li>
+                    </ol>
+                </nav>
+                
+                <h1>משימות תיקון #2</h1>
+                <p class="text-muted">מרין פצצת מדרכות - בנימין נתניהו</p>
+            </div>
+        </div>
+
+        <!-- פרטי התיקון -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5><i class="fas fa-bicycle"></i> פרטי התיקון</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>אופניים:</strong> מרין פצצת מדרכות<br>
+                                <strong>לקוח:</strong> בנימין נתניהו<br>
+                                <strong>טלפון:</strong> 050-1234567
+                            </div>
+                            <div class="col-md-6">
+                                <strong>סטטוס:</strong> <span class="badge badge-info">בביצוע</span><br>
+                                <strong>אבחון:</strong> צריך להחליף צמיגים<br>
+                                <strong>תיאור התקלה:</strong> צמיג שחוק
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form method="post">
+            <!-- משימות ממתינות -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card border-warning">
+                        <div class="card-header bg-warning text-dark">
+                            <h5><i class="fas fa-tasks"></i> משימות ממתינות לביצוע (1)</h5>
+                            <small>💡 אם יש בעיה או חסר משהו - סמן כ"חסום" וכתב מה חסר</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>פעולה</th>
+                                            <th>מחיר</th>
+                                            <th>סטטוס</th>
+                                            <th>הערות / מה מונע מביצוע</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr id="task_row_1">
+                                            <td>
+                                                <strong>החלפת צמיג קידמי מישלין</strong>
+                                            </td>
+                                            <td>₪350.00</td>
+                                            <td>
+                                                <div class="form-check mb-2">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="complete_1" id="task_complete_1"
+                                                           onchange="toggleTaskStatus(1)">
+                                                    <label class="form-check-label" for="task_complete_1">
+                                                        <span class="text-success">✅ בוצע</span>
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" 
+                                                           name="blocked_1" id="task_blocked_1"
+                                                           onchange="toggleTaskStatus(1)">
+                                                    <label class="form-check-label" for="task_blocked_1">
+                                                        <span class="text-warning">⏸️ חסום/נדחה</span>
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <!-- הערות עבור פעולה שבוצעה -->
+                                                <div id="completion_notes_1" style="display: none;">
+                                                    <label class="small text-success">הערות נוספות (אופציונלי):</label>
+                                                    <textarea class="form-control form-control-sm" 
+                                                              name="completion_notes_1" 
+                                                              rows="2" 
+                                                              placeholder="הערות נוספות על הביצוע..."></textarea>
+                                                    <small class="text-muted">הערות קודמות יישמרו אוטומטית</small>
+                                                </div>
+                                                
+                                                <!-- הערות עבור פעולה חסומה -->
+                                                <div id="block_notes_1" style="display: none;">
+                                                    <label class="small text-warning">מה מונע ממך להתקדם?</label>
+                                                    <select class="form-control form-control-sm mb-1" name="block_reason_1">
+                                                        <option value="">בחר סיבה...</option>
+                                                        <option value="missing_part">חסר חלק</option>
+                                                        <option value="need_order">צריך להזמין חלק</option>
+                                                        <option value="technical_issue">בעיה טכנית</option>
+                                                        <option value="need_approval">צריך אישור נוסף</option>
+                                                        <option value="waiting_customer">ממתין ללקוח</option>
+                                                        <option value="other">אחר</option>
+                                                    </select>
+                                                    <textarea class="form-control form-control-sm" 
+                                                              name="block_notes_1" 
+                                                              rows="2" 
+                                                              placeholder="מה בדיוק חסר או מה הבעיה?"></textarea>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- כפתורי פעולה -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-save"></i> שמור עדכונים
+                            </button>
+                            <a href="#" class="btn btn-info">
+                                <i class="fas fa-eye"></i> צפה בסטטוס כללי
+                            </a>
+                            <a href="#" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> חזור לדשבורד
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="mt-5 p-4 bg-light border rounded">
+        <h4>🔍 זה בדיוק מה שאמור להיראות:</h4>
+        <ul>
+            <li><strong>כותרת עמודה:</strong> "הערות / מה מונע מביצוע" ✅</li>
+            <li><strong>הסבר בכותרת:</strong> "אם יש בעיה או חסר משהו - סמן כ'חסום' וכתב מה חסר" ✅</li>
+            <li><strong>כאשר לוחצים "בוצע":</strong> "הערות נוספות (אופציונלי)" ✅</li>
+            <li><strong>כאשר לוחצים "חסום":</strong> "מה מונע ממך להתקדם?" ✅</li>
+        </ul>
+        
+        <div class="mt-3">
+            <button type="button" class="btn btn-success" onclick="testComplete()">בדוק: סמן "בוצע"</button>
+            <button type="button" class="btn btn-warning mx-2" onclick="testBlocked()">בדוק: סמן "חסום"</button>
+            <button type="button" class="btn btn-secondary" onclick="testReset()">איפוס</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleTaskStatus(taskId) {
+            const completeCheckbox = document.getElementById(`task_complete_${taskId}`);
+            const blockedCheckbox = document.getElementById(`task_blocked_${taskId}`);
+            const completionNotes = document.getElementById(`completion_notes_${taskId}`);
+            const blockNotes = document.getElementById(`block_notes_${taskId}`);
+            
+            // וידוא שרק אחד יכול להיות מסומן
+            if (completeCheckbox.checked && blockedCheckbox.checked) {
+                if (event.target === completeCheckbox) {
+                    blockedCheckbox.checked = false;
+                } else {
+                    completeCheckbox.checked = false;
+                }
+            }
+            
+            // הצגת/הסתרת שדות הערות בהתאם לסטטוס
+            if (completeCheckbox.checked) {
+                completionNotes.style.display = 'block';
+                blockNotes.style.display = 'none';
+            } else if (blockedCheckbox.checked) {
+                completionNotes.style.display = 'none';
+                blockNotes.style.display = 'block';
+            } else {
+                completionNotes.style.display = 'none';
+                blockNotes.style.display = 'none';
+            }
+        }
+        
+        function testComplete() {
+            document.getElementById('task_complete_1').checked = true;
+            document.getElementById('task_blocked_1').checked = false;
+            toggleTaskStatus(1);
+        }
+        
+        function testBlocked() {
+            document.getElementById('task_complete_1').checked = false;
+            document.getElementById('task_blocked_1').checked = true;
+            toggleTaskStatus(1);
+        }
+        
+        function testReset() {
+            document.getElementById('task_complete_1').checked = false;
+            document.getElementById('task_blocked_1').checked = false;
+            toggleTaskStatus(1);
+        }
+    </script>
+</body>
+</html>

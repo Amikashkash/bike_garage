@@ -34,6 +34,7 @@ urlpatterns = [
     path('manager/dashboard/', views.manager_dashboard, name='manager_dashboard'),
     path('manager/repair/<int:repair_id>/diagnosis/', views.repair_diagnosis, name='repair_diagnosis'),
     path('manager/repair/<int:repair_id>/assign/', views.assign_mechanic, name='assign_mechanic'),
+    path('manager/response-stuck/', views.manager_response_stuck, name='manager_response_stuck'),
     
     # Customer approval
     path('repair/<int:repair_id>/approve/', views.customer_approval, name='customer_approval'),
@@ -41,6 +42,7 @@ urlpatterns = [
     # Mechanic workflow
     path('mechanic/dashboard/', views.mechanic_dashboard, name='mechanic_dashboard'),
     path('mechanic/repair/<int:repair_id>/complete/', views.mechanic_task_completion, name='mechanic_task_completion'),
+    path('mechanic/update-status/', views.update_repair_status, name='update_repair_status'),
     
     # Categories
     path('categories/', views.category_list, name='category_list'),

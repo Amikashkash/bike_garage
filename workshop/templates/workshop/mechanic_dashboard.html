@@ -31,6 +31,7 @@
                                 <th>פעולות מאושרות</th>
                                 <th>מחיר</th>
                                 <th>התקדמות</th>
+                                <th>סטטוס עבודה</th>
                                 <th>פעולות</th>
                             </tr>
                         </thead>
@@ -60,6 +61,32 @@
                                         </div>
                                     </div>
                                     <small>{{ repair.completed_count }}/{{ repair.approved_count }} הושלמו</small>
+                                </td>
+                                <td>
+                                    <div class="text-center">
+                                        {% if repair.is_stuck %}
+                                            <span class="badge badge-danger mb-2">
+                                                <i class="fas fa-times"></i> תקוע
+                                            </span>
+                                            <br>
+                                            <small class="text-muted">{{ repair.stuck_reason|truncatechars:30 }}</small>
+                                        {% else %}
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-success status-btn" 
+                                                        data-repair-id="{{ repair.id }}" 
+                                                        data-status="working" 
+                                                        title="עובד בסדר">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-danger status-btn" 
+                                                        data-repair-id="{{ repair.id }}" 
+                                                        data-status="stuck" 
+                                                        title="תקוע - זקוק לעזרה">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-primary btn-sm">
@@ -106,4 +133,145 @@
     </div>
 </div>
 {% endif %}
+
+<!-- מודל לביאור התקיעות -->
+<div class="modal fade" id="stuckModal" tabindex="-1" aria-labelledby="stuckModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="stuckModalLabel">
+                    <i class="fas fa-exclamation-triangle text-warning mr-2"></i>
+                    סימון תיקון כתקוע
+                </h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning">
+                    <strong>שים לב:</strong> סימון התיקון כ"תקוע" יתריע למנהל שדרושה התייחסות מיידית.
+                </div>
+                <form id="stuckForm">
+                    <div class="form-group">
+                        <label for="stuckReason">אנא פרט מה הבעיה ואיך המנהל יכול לעזור:</label>
+                        <textarea class="form-control" id="stuckReason" name="stuck_reason" rows="4" 
+                                  placeholder="לדוגמה: חסר חלק חילוף מסוים, זקוק לייעוץ טכני, בעיה עם כלי עבודה..."></textarea>
+                    </div>
+                    <input type="hidden" id="repairId" name="repair_id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-danger" id="confirmStuck">
+                    <i class="fas fa-exclamation-triangle"></i> סמן כתקוע
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // טיפול בלחיצות על כפתורי הסטטוס
+    $('.status-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        const status = $(this).data('status');
+        
+        if (status === 'working') {
+            // אם המכונאי מסמן שהוא עובד בסדר - עדכון ישיר
+            updateRepairStatus(repairId, 'working', '');
+        } else if (status === 'stuck') {
+            // אם המכונאי מסמן שהוא תקוע - פתח מודל לביאור
+            $('#repairId').val(repairId);
+            $('#stuckReason').val('');
+            $('#stuckModal').modal('show');
+        }
+    });
+    
+    // אישור סימון כתקוע
+    $('#confirmStuck').click(function() {
+        const repairId = $('#repairId').val();
+        const reason = $('#stuckReason').val().trim();
+        
+        if (!reason) {
+            alert('נא לפרט את הסיבה להתקיעות');
+            return;
+        }
+        
+        updateRepairStatus(repairId, 'stuck', reason);
+        $('#stuckModal').modal('hide');
+    });
+    
+    function updateRepairStatus(repairId, status, reason) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+        
+        $.ajax({
+            url: '{% url "update_repair_status" %}',
+            method: 'POST',
+            data: {
+                'repair_id': repairId,
+                'status': status,
+                'reason': reason
+            },
+            success: function(response) {
+                if (response.success) {
+                    // רענון הדף כדי להציג את השינויים
+                    location.reload();
+                } else {
+                    alert('שגיאה: ' + response.error);
+                }
+            },
+            error: function() {
+                alert('שגיאה בעדכון הסטטוס');
+            }
+        });
+    }
+    
+    // פונקציות עזר ל-CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+});
+</script>
+
+<style>
+.status-btn {
+    min-width: 40px;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+}
+
+.badge-danger {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+</style>
 {% endblock %}

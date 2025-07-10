@@ -566,28 +566,39 @@ class CustomerApprovalForm(forms.Form):
 
 
 class MechanicTaskForm(forms.Form):
-    """טופס למכונאי לסימון פעולות שבוצעו"""
+    """טופס למכונאי לסימון פעולות שבוצעו עם הערות לכל סעיף"""
     def __init__(self, *args, repair_job=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.repair_job = repair_job
         
-        # רק פעולות שאושרו על ידי הלקוח ועדיין לא הושלמו
-        approved_items = repair_job.repair_items.filter(
-            is_approved_by_customer=True,
-            is_completed=False
-        )
+        # רק פעולות שאושרו על ידי הלקוח
+        approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
         
         self.fields['completed_items'] = forms.ModelMultipleChoiceField(
-            queryset=approved_items,
+            queryset=approved_items.filter(is_completed=False),
             widget=forms.CheckboxSelectMultiple,
             required=False,
             label="בחר את הפעולות שהושלמו:",
         )
         
-        self.fields['notes'] = forms.CharField(
-            label="הערות כלליות (אופציונלי)",
+        # יצירת שדה הערות לכל פעולה
+        for item in approved_items:
+            field_name = f'notes_{item.id}'
+            self.fields[field_name] = forms.CharField(
+                label=f"הערות עבור: {item.description}",
+                required=False,
+                initial=item.notes,
+                widget=forms.Textarea(attrs={
+                    'rows': 2, 
+                    'placeholder': 'למשל: חסר חלק, תקלה נוספת שהתגלתה, עבודה דחופה התקבלה, וכו...'
+                }),
+                help_text="הערות חשובות - תקועה, הסתייגויות, בעיות שהתגלו, חלקים חסרים, וכו'"
+            )
+        
+        self.fields['general_notes'] = forms.CharField(
+            label="הערות כלליות על התיקון",
             required=False,
-            widget=forms.Textarea(attrs={'rows': 3})
+            widget=forms.Textarea(attrs={'rows': 3, 'placeholder': 'הערות כלליות על מצב התיקון...'})
         )
 
 

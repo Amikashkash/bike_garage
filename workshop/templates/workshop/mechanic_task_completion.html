@@ -69,12 +69,12 @@
                 <div class="card-body">
                     {% if task_form.completed_items.field.queryset %}
                         <div class="form-group">
-                            <label>בחר את הפעולות שהשלמת:</label>
+                            <label>בחר את הפעולות שהשלמת והוסף הערות לכל פעולה:</label>
                             
                             {% for item in task_form.completed_items.field.queryset %}
-                            <div class="card mb-2">
-                                <div class="card-body py-2">
-                                    <div class="form-check">
+                            <div class="card mb-3 border-primary">
+                                <div class="card-body">
+                                    <div class="form-check mb-2">
                                         <input class="form-check-input" 
                                                type="checkbox" 
                                                name="completed_items" 
@@ -84,22 +84,47 @@
                                             <strong>{{ item.description }}</strong>
                                             <br>
                                             <small class="text-muted">מחיר: ₪{{ item.price }}</small>
-                                            {% if item.notes %}
-                                                <br><small class="text-info">הערות קודמות: {{ item.notes }}</small>
-                                            {% endif %}
                                         </label>
+                                    </div>
+                                    
+                                    <!-- שדה הערות לפעולה הספציפית -->
+                                    <div class="form-group">
+                                        <label class="small font-weight-bold text-primary">
+                                            הערות עבור פעולה זו:
+                                        </label>
+                                        <textarea name="notes_{{ item.id }}" 
+                                                  class="form-control" 
+                                                  rows="2" 
+                                                  placeholder="למשל: חסר חלק, תקלה נוספת שהתגלתה, עבודה דחופה התקבלה, וכו...">{{ item.notes }}</textarea>
+                                        <small class="form-text text-muted">
+                                            הערות חשובות - תקועה, הסתייגויות, בעיות שהתגלו, חלקים חסרים, וכו'
+                                        </small>
+                                        {% if item.notes %}
+                                            <small class="text-info d-block mt-1">
+                                                <i class="fas fa-info-circle"></i> הערות קודמות: {{ item.notes }}
+                                            </small>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
                         </div>
                         
-                        <div class="form-group">
-                            {{ task_form.notes.label_tag }}
-                            {{ task_form.notes }}
-                            <small class="form-text text-muted">
-                                הוסף הערות כלליות על העבודה שביצעת (אופציונלי)
-                            </small>
+                        <!-- הערות כלליות -->
+                        <div class="card mt-3 bg-light">
+                            <div class="card-body">
+                                <div class="form-group mb-0">
+                                    <label for="id_general_notes">הערות כלליות על התיקון:</label>
+                                    <textarea name="general_notes" 
+                                              id="id_general_notes" 
+                                              class="form-control" 
+                                              rows="3" 
+                                              placeholder="הערות כלליות על מצב התיקון..."></textarea>
+                                    <small class="form-text text-muted">
+                                        הערות כלליות על כל התיקון (אופציונלי)
+                                    </small>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="mt-3">

@@ -93,6 +93,13 @@ class RepairJob(models.Model):
         blank=True,
         related_name='assigned_repairs'
     )
+    
+    # סטטוס "תקוע" למכונאי
+    is_stuck = models.BooleanField(default=False, verbose_name="מכונאי תקוע")
+    stuck_reason = models.TextField(blank=True, verbose_name="סיבת התקיעות")
+    stuck_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך סימון כתקוע")
+    stuck_resolved = models.BooleanField(default=False, verbose_name="התקיעות נפתרה")
+    manager_response = models.TextField(blank=True, verbose_name="תגובת מנהל")
 
     def __str__(self):
         return f"תיקון {self.bike} - {self.get_status_display()}"
@@ -104,6 +111,22 @@ class RepairJob(models.Model):
     def get_pending_approval_price(self):
         """מחיר פעולות שממתינות לאישור"""
         return sum(item.price for item in self.repair_items.filter(is_approved_by_customer=False))
+    
+    def get_completed_count(self):
+        """מספר פעולות שהושלמו"""
+        return self.repair_items.filter(is_completed=True).count()
+    
+    def get_approved_count(self):
+        """מספר פעולות מאושרות"""
+        return self.repair_items.filter(is_approved_by_customer=True).count()
+    
+    def get_progress_percentage(self):
+        """אחוז ההתקדמות"""
+        approved = self.get_approved_count()
+        if approved == 0:
+            return 0
+        completed = self.get_completed_count()
+        return (completed / approved) * 100
 
 
 class RepairItem(models.Model):
