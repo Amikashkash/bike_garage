@@ -1,0 +1,22 @@
+# דוגמא לקובץ .env לפיתוח מקומי
+# העתק קובץ זה ל-.env ועדכן את הערכים
+
+# Debug mode - תמיד True בפיתוח מקומי
+DEBUG=True
+
+# Secret key לפיתוח מקומי (לא production!)
+SECRET_KEY=django-insecure-local-development-key-123456789
+
+# Allowed hosts לפיתוח מקומי
+ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
+
+# Database לפיתוח מקומי (SQLite)
+# השאר ריק לשימוש ב-SQLite המקומי
+DATABASE_URL=
+
+# הגדרות נוספות לפיתוח מקומי
+STATIC_URL=/static/
+MEDIA_URL=/media/
+
+# Email settings לפיתוח מקומי
+EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend

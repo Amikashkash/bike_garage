@@ -164,7 +164,7 @@ def check_basic_functionality():
         return False
 
 def main():
-    print("🚀 בדיקת מערכת לפני deployment")
+    print("🚀 בדיקת מערכת לפני deployment".encode('utf-8', errors='ignore').decode('utf-8'))
     print("=" * 50)
     
     checks = [

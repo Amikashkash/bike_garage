@@ -8,7 +8,24 @@ env/
 venv/
 ENV/
 env.bak/
-venv.bak/
+
+# Development files
+.env
+.env.local
+.env.development
+*.log
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local database (development only)
+db_local.sqlite3
+local_settings.py
 
 # Django
 *.log
