@@ -133,55 +133,60 @@ def user_login(request):
 def home(request):
     context = {}
     
-    if request.user.is_authenticated and hasattr(request.user, 'userprofile'):
-        role = request.user.userprofile.role
-        
-        if role == 'customer':
-            # עבור לקוח - הצג תיקונים שלו
-            try:
-                customer = request.user.customer
-                all_repairs = RepairJob.objects.filter(
-                    bike__customer=customer
-                ).select_related('bike').order_by('-created_at')
-                
-                # תיקונים הממתינים לאישור
-                pending_approval = all_repairs.filter(status='diagnosed')[:5]
-                
-                # תיקונים אחרונים
-                recent_repairs = all_repairs[:5]
+    try:
+        if request.user.is_authenticated and hasattr(request.user, 'userprofile'):
+            role = request.user.userprofile.role
+            
+            if role == 'customer':
+                # עבור לקוח - הצג תיקונים שלו
+                try:
+                    customer = request.user.customer
+                    all_repairs = RepairJob.objects.filter(
+                        bike__customer=customer
+                    ).select_related('bike').order_by('-created_at')
+                    
+                    # תיקונים הממתינים לאישור
+                    pending_approval = all_repairs.filter(status='diagnosed')[:5]
+                    
+                    # תיקונים אחרונים
+                    recent_repairs = all_repairs[:5]
+                    
+                    context.update({
+                        'recent_repairs': recent_repairs,
+                        'pending_approval': pending_approval,
+                        'customer': customer,
+                    })
+                except Customer.DoesNotExist:
+                    context['no_customer_profile'] = True
+                    
+            elif role == 'mechanic':
+                # עבור מכונאי - הצג תיקונים המוקצים אליו
+                assigned_repairs = RepairJob.objects.filter(
+                    assigned_mechanic=request.user,
+                    status='in_progress'
+                ).select_related('bike', 'bike__customer')[:5]
                 
                 context.update({
-                    'recent_repairs': recent_repairs,
-                    'pending_approval': pending_approval,
-                    'customer': customer,
+                    'assigned_repairs': assigned_repairs,
                 })
-            except Customer.DoesNotExist:
-                context['no_customer_profile'] = True
                 
-        elif role == 'mechanic':
-            # עבור מכונאי - הצג תיקונים המוקצים אליו
-            assigned_repairs = RepairJob.objects.filter(
-                assigned_mechanic=request.user,
-                status='in_progress'
-            ).select_related('bike', 'bike__customer')[:5]
-            
-            context.update({
-                'assigned_repairs': assigned_repairs,
-            })
-            
-        elif role == 'manager':
-            # עבור מנהל - תקציר מהיר
-            pending_diagnosis = RepairJob.objects.filter(status='reported').count()
-            pending_approval = RepairJob.objects.filter(status='diagnosed').count()
-            in_progress = RepairJob.objects.filter(status='in_progress').count()
-            
-            context.update({
-                'pending_diagnosis_count': pending_diagnosis,
-                'pending_approval_count': pending_approval,
-                'in_progress_count': in_progress,
-            })
+            elif role == 'manager':
+                # עבור מנהל - תקציר מהיר
+                pending_diagnosis = RepairJob.objects.filter(status='reported').count()
+                pending_approval = RepairJob.objects.filter(status='diagnosed').count()
+                in_progress = RepairJob.objects.filter(status='in_progress').count()
+                
+                context.update({
+                    'pending_diagnosis_count': pending_diagnosis,
+                    'pending_approval_count': pending_approval,
+                    'in_progress_count': in_progress,
+                })
+    except Exception as e:
+        # לוג השגיאה אבל תמשיך להציג את הדף
+        print(f"Home view error: {e}")
+        context['error'] = "בעיה בטעינת הנתונים"
     
-    return render(request, "workshop/home.html", context)
+    return render(request, 'workshop/home.html', context)
 
 def user_logout(request):
     logout(request)
