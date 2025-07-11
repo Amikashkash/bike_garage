@@ -15,25 +15,32 @@
     {% if item.notes %}
     <div class="row mb-3">
         <div class="col-md-12">
-            <div class="alert alert-{% if item.is_completed %}info{% else %}warning{% endif %} border-left-primary">
+            <div class="alert alert-{% if item.status == 'blocked' %}danger{% elif item.status == 'completed' %}info{% else %}warning{% endif %} 
+                 border-left-{% if item.status == 'blocked' %}danger{% else %}primary{% endif %}"
+                 {% if item.status == 'blocked' %}style="border-left: 4px solid #dc3545; box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);"{% endif %}>
                 <div class="d-flex align-items-center">
                     <div class="mr-3">
-                        {% if item.is_completed %}
+                        {% if item.status == 'blocked' %}
+                            <i class="fas fa-exclamation-triangle text-danger fa-2x" style="animation: pulse 2s infinite;"></i>
+                        {% elif item.status == 'completed' %}
                             <i class="fas fa-check-circle text-success fa-2x"></i>
                         {% else %}
                             <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
                         {% endif %}
                     </div>
                     <div class="flex-grow-1">
-                        <h6 class="mb-2">
-                            {% if item.is_completed %}
+                        <h6 class="mb-2 {% if item.status == 'blocked' %}text-danger{% endif %}">
+                            {% if item.status == 'blocked' %}
+                                🚨 פעולה תקועה - דרושה עזרת מנהל:
+                            {% elif item.status == 'completed' %}
                                 הערת מכונאי לפעולה שהושלמה:
                             {% else %}
                                 הערת מכונאי - בעיה או הסתייגות:
                             {% endif %}
                             <strong>{{ item.description }}</strong>
                         </h6>
-                        <div class="p-2 rounded bg-white border" style="font-size: 1.05em; line-height: 1.5;">
+                        <div class="p-2 rounded {% if item.status == 'blocked' %}bg-light border-danger{% else %}bg-white border{% endif %}" 
+                             style="font-size: 1.05em; line-height: 1.5; {% if item.status == 'blocked' %}color: #721c24;{% endif %}">
                             {{ item.notes|linebreaks }}
                         </div>
                         {% if item.completed_by %}
@@ -41,6 +48,13 @@
                                 <i class="fas fa-user"></i> {{ item.completed_by.get_full_name|default:item.completed_by.username }}
                                 {% if item.completed_at %} - {{ item.completed_at|date:"d/m/Y H:i" }}{% endif %}
                             </small>
+                        {% endif %}
+                        {% if item.status == 'blocked' %}
+                            <div class="mt-2">
+                                <small class="text-danger font-weight-bold">
+                                    <i class="fas fa-info-circle mr-1"></i>המנהל יטפל בפעולה זו בהקדם
+                                </small>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
@@ -91,27 +105,39 @@
             </div>
             <div class="card-body">
                 {% for item in repair_job.repair_items.all %}
-                <div class="repair-item-card border rounded mb-3" style="background: #ffffff; border: 1px solid #e3e6f0;">
+                <div class="repair-item-card border rounded mb-3 
+                    {% if item.status == 'blocked' %}border-danger bg-light-danger{% else %}bg-white{% endif %}" 
+                    style="border: {% if item.status == 'blocked' %}2px solid #dc3545{% else %}1px solid #e3e6f0{% endif %};">
+                    
                     <!-- שורה עליונה: תיאור ומחיר וסטטוס -->
                     <div class="item-header d-flex justify-content-between align-items-center p-3" style="border-bottom: 1px solid #f0f0f0;">
-                        <div class="item-description flex-grow-1" style="font-size: 1.1em; color: #2c3e50;">
-                            <strong>{{ item.description }}</strong>
+                        <div class="item-description flex-grow-1" style="font-size: 1.1em; color: {% if item.status == 'blocked' %}#dc3545{% else %}#2c3e50{% endif %};">
+                            <strong>
+                                {% if item.status == 'blocked' %}
+                                    <i class="fas fa-exclamation-triangle text-danger mr-1"></i>
+                                {% endif %}
+                                {{ item.description }}
+                            </strong>
                         </div>
                         <div class="item-info d-flex align-items-center">
                             <div class="item-price mr-3" style="font-size: 1.1em; color: #27ae60; min-width: 80px; text-align: center;">
                                 <strong>₪{{ item.price }}</strong>
                             </div>
                             <div class="item-status" style="min-width: 120px; text-align: center;">
-                                {% if item.is_completed %}
+                                {% if item.status == 'completed' %}
                                     <span class="badge badge-success">
                                         <i class="fas fa-check"></i> הושלם
                                     </span>
                                     {% if item.completed_at %}
                                         <br><small class="text-muted">{{ item.completed_at|date:"d/m H:i" }}</small>
                                     {% endif %}
+                                {% elif item.status == 'blocked' %}
+                                    <span class="badge badge-danger" style="animation: pulse 2s infinite;">
+                                        <i class="fas fa-times"></i> תקוע - דרושה עזרה
+                                    </span>
                                 {% elif item.is_approved_by_customer %}
-                                    <span class="badge badge-primary">
-                                        <i class="fas fa-clock"></i> בביצוע
+                                    <span class="badge badge-warning">
+                                        <i class="fas fa-clock"></i> ממתין לביצוע
                                     </span>
                                 {% else %}
                                     <span class="badge badge-secondary">
@@ -124,17 +150,27 @@
                     
                     <!-- שורה תחתונה: הערות מכונאי - ברוחב מלא של הכרטיס -->
                     {% if item.notes %}
-                    <div class="mechanic-notes-full-width p-3" style="background: #f8f9fc; border-top: 3px solid #4e73df;">
+                    <div class="mechanic-notes-full-width p-3" style="background: {% if item.status == 'blocked' %}#f8d7da{% else %}#f8f9fc{% endif %}; border-top: 3px solid {% if item.status == 'blocked' %}#dc3545{% else %}#4e73df{% endif %};">
                         <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-sticky-note text-primary mr-2"></i>
-                            <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                            {% if item.status == 'blocked' %}
+                                <i class="fas fa-exclamation-triangle text-danger mr-2"></i>
+                                <span class="font-weight-bold text-danger" style="font-size: 0.9em;">הערת מכונאי - פעולה תקועה:</span>
+                            {% else %}
+                                <i class="fas fa-sticky-note text-primary mr-2"></i>
+                                <span class="font-weight-bold text-primary" style="font-size: 0.9em;">הערת מכונאי:</span>
+                            {% endif %}
                             {% if item.completed_by %}
                                 <span class="text-muted mr-2" style="font-size: 0.85em;">
                                     <i class="fas fa-user mr-1"></i>{{ item.completed_by.get_full_name|default:item.completed_by.username }}
                                 </span>
                             {% endif %}
                         </div>
-                        <div class="notes-content" style="color: #2c3e50; line-height: 1.5; font-size: 0.95em; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">{{ item.notes }}</div>
+                        <div class="notes-content" style="color: {% if item.status == 'blocked' %}#721c24{% else %}#2c3e50{% endif %}; line-height: 1.5; font-size: 0.95em; word-wrap: break-word; overflow-wrap: break-word; white-space: pre-wrap;">{{ item.notes }}</div>
+                        {% if item.status == 'blocked' %}
+                            <div class="mt-2">
+                                <small class="text-danger"><i class="fas fa-info-circle mr-1"></i>פעולה זו דורשת התייחסות מנהל</small>
+                            </div>
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -210,6 +246,60 @@
         {% endif %}
     </div>
 </div>
+
+<!-- סעיף למנהל להוסיף תגובה לתיקון תקוע -->
+{% if show_manager_response %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-reply"></i>
+                    תגובת מנהל לתיקון תקוע
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="manager_response">
+                    
+                    <div class="form-group">
+                        <label for="managerResponse">הקלד את תגובתך למכונאי:</label>
+                        <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 
+                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."
+                                  required></textarea>
+                        <small class="form-text text-muted">הסבר למכונאי איך לפתור את הבעיה או הנחיות להמשך</small>
+                    </div>
+                    
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="markResolved" name="mark_resolved" value="true">
+                        <label class="form-check-label" for="markResolved">
+                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
+                        </label>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane"></i> שלח תגובה למכונאי
+                        </button>
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary ml-2">
+                            <i class="fas fa-arrow-left"></i> חזרה לדשבורד
+                        </a>
+                    </div>
+                </form>
+                
+                <!-- הצגת תגובה קיימת אם יש -->
+                {% if repair_job.manager_response %}
+                <div class="mt-4 p-3 bg-light border-left-success">
+                    <h6 class="text-success">תגובה קודמת של המנהל:</h6>
+                    <p class="mb-0">{{ repair_job.manager_response|linebreaks }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <style>
 .timeline {
@@ -339,6 +429,52 @@
         min-width: auto;
         text-align: left;
     }
+}
+
+/* עיצוב פעולות תקועות */
+.bg-light-danger {
+    background-color: #f8d7da !important;
+}
+
+.border-danger {
+    border-color: #dc3545 !important;
+}
+
+/* אנימציית פועם לבאדג' תקוע */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.badge-danger {
+    animation: pulse 2s infinite;
+}
+
+/* הדגשת פעולות תקועות */
+.repair-item-card.border-danger {
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.3);
+    position: relative;
+}
+
+.repair-item-card.border-danger::before {
+    content: "⚠️ תקוע";
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background: #dc3545;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    font-weight: bold;
+}
+
+/* צבעי טקסט משופרים */
+.text-danger {
+    color: #dc3545 !important;
+    font-weight: 600;
+}
     
     .mechanic-notes-full-width {
         padding: 1rem !important;

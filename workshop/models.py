@@ -131,10 +131,21 @@ class RepairJob(models.Model):
 
 class RepairItem(models.Model):
     """פעולה/חלק בתיקון"""
+    STATUS_CHOICES = [
+        ('pending', 'ממתין'),
+        ('completed', 'בוצע'),
+        ('blocked', 'תקוע'),
+    ]
+    
     repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='repair_items')
     description = models.CharField(max_length=200, verbose_name="תיאור הפעולה")
     price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="מחיר")
     is_approved_by_customer = models.BooleanField(default=False, verbose_name="אושר על ידי לקוח")
+    
+    # סטטוס הפעולה
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="סטטוס")
+    
+    # שדות ישנים לתאימות לאחור
     is_completed = models.BooleanField(default=False, verbose_name="בוצע")
     completed_by = models.ForeignKey(
         'auth.User', 
@@ -145,6 +156,36 @@ class RepairItem(models.Model):
     )
     completed_at = models.DateTimeField(null=True, blank=True)
     notes = models.TextField(blank=True, verbose_name="הערות")
+
+    def save(self, *args, **kwargs):
+        """שמירה עם עדכון שדות ישנים לתאימות לאחור"""
+        # עדכון is_completed בהתאם לסטטוס
+        self.is_completed = (self.status == 'completed')
+        super().save(*args, **kwargs)
+    
+    def mark_as_completed(self, user=None):
+        """סימון כבוצע"""
+        self.status = 'completed'
+        self.is_completed = True
+        if user:
+            self.completed_by = user
+        from django.utils import timezone
+        self.completed_at = timezone.now()
+        self.save()
+    
+    def mark_as_blocked(self, reason=""):
+        """סימון כתקוע"""
+        self.status = 'blocked'
+        self.is_completed = False
+        if reason:
+            self.notes = reason
+        self.save()
+    
+    def mark_as_pending(self):
+        """סימון כממתין"""
+        self.status = 'pending'
+        self.is_completed = False
+        self.save()
 
     def __str__(self):
         return f"{self.description} - ₪{self.price}"

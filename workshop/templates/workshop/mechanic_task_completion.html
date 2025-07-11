@@ -69,41 +69,62 @@
                 <div class="card-body">
                     {% if task_form.completed_items.field.queryset %}
                         <div class="form-group">
-                            <label>בחר את הפעולות שהשלמת והוסף הערות לכל פעולה:</label>
+                            <label>עדכן סטטוס והערות לכל פעולה:</label>
                             
                             {% for item in task_form.completed_items.field.queryset %}
                             <div class="card mb-3 border-primary">
                                 <div class="card-body">
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input" 
-                                               type="checkbox" 
-                                               name="completed_items" 
-                                               value="{{ item.id }}" 
-                                               id="item_{{ item.id }}">
-                                        <label class="form-check-label" for="item_{{ item.id }}">
-                                            <strong>{{ item.description }}</strong>
-                                            <br>
-                                            <small class="text-muted">מחיר: ₪{{ item.price }}</small>
-                                        </label>
+                                    <h6 class="card-title">{{ item.description }}</h6>
+                                    <p class="text-muted small">מחיר: ₪{{ item.price }}</p>
+                                    
+                                    <!-- בחירת סטטוס הפעולה -->
+                                    <div class="form-group">
+                                        <label class="font-weight-bold">סטטוס הפעולה:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
+                                                   id="completed_{{ item.id }}" value="completed" 
+                                                   {% if item.status == 'completed' %}checked{% endif %}>
+                                            <label class="form-check-label text-success" for="completed_{{ item.id }}">
+                                                <i class="fas fa-check-circle"></i> הושלם בהצלחה
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
+                                                   id="blocked_{{ item.id }}" value="blocked" 
+                                                   {% if item.status == 'blocked' %}checked{% endif %}>
+                                            <label class="form-check-label text-danger" for="blocked_{{ item.id }}">
+                                                <i class="fas fa-times-circle"></i> תקוע/חסום
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
+                                                   id="pending_{{ item.id }}" value="pending" 
+                                                   {% if item.status == 'pending' or not item.status %}checked{% endif %}>
+                                            <label class="form-check-label text-warning" for="pending_{{ item.id }}">
+                                                <i class="fas fa-clock"></i> ממתין לביצוע
+                                            </label>
+                                        </div>
+                                    </div> 
+                                                   id="pending_{{ item.id }}" value="pending" 
+                                                   {% if not item.is_completed and not item.is_blocked %}checked{% endif %}>
+                                            <label class="form-check-label text-warning" for="pending_{{ item.id }}">
+                                                <i class="fas fa-clock"></i> טרם הושלם
+                                            </label>
+                                        </div>
                                     </div>
                                     
-                                    <!-- שדה הערות לפעולה הספציפית -->
+                                    <!-- שדה הערות -->
                                     <div class="form-group">
                                         <label class="small font-weight-bold text-primary">
                                             הערות עבור פעולה זו:
                                         </label>
                                         <textarea name="notes_{{ item.id }}" 
                                                   class="form-control" 
-                                                  rows="2" 
-                                                  placeholder="למשל: חסר חלק, תקלה נוספת שהתגלתה, עבודה דחופה התקבלה, וכו...">{{ item.notes }}</textarea>
+                                                  rows="3" 
+                                                  placeholder="למשל: חסר חלק, תקלה נוספת שהתגלתה, עבודה דחופה התקבלה, וכו...">{{ item.notes|default:'' }}</textarea>
                                         <small class="form-text text-muted">
                                             הערות חשובות - תקועה, הסתייגויות, בעיות שהתגלו, חלקים חסרים, וכו'
                                         </small>
-                                        {% if item.notes %}
-                                            <small class="text-info d-block mt-1">
-                                                <i class="fas fa-info-circle"></i> הערות קודמות: {{ item.notes }}
-                                            </small>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

@@ -7,6 +7,30 @@
     <div class="col-md-12">
         <h1>דשבורד מנהל</h1>
         <p class="text-muted">ניהול תיקונים וזרימת עבודה</p>
+        
+        <!-- סיכום מצב כללי -->
+        {% if in_progress %}
+        <div class="alert alert-light border">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h4 class="text-secondary mb-1">{{ waiting_to_start_count }}</h4>
+                    <small class="text-muted">ממתינות להתחלה</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="text-success mb-1">{{ actively_working_count }}</h4>
+                    <small class="text-muted">בעבודה פעילה</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="text-danger mb-1">{{ blocked_tasks_count }}</h4>
+                    <small class="text-muted">תקועות - דרושה עזרה</small>
+                </div>
+                <div class="col-md-3">
+                    <h4 class="text-info mb-1">{{ in_progress.count }}</h4>
+                    <small class="text-muted">סה״כ תיקונים פעילים</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -61,13 +85,9 @@
                                 </span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-success btn-sm respond-btn" 
-                                        data-repair-id="{{ repair.id }}" 
-                                        data-mechanic="{{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}"
-                                        data-problem="{{ repair.stuck_reason }}"
-                                        title="השב למכונאי">
+                                <a href="{% url 'repair_status' repair.id %}" class="btn btn-success btn-sm">
                                     <i class="fas fa-reply"></i> השב
-                                </button>
+                                </a>
                                 <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
                                     <i class="fas fa-eye"></i> צפה
                                 </a>
@@ -240,44 +260,55 @@
 {% endif %}
 
 {% if in_progress %}
+<!-- חלוקה של תיקונים בביצוע לפי סטטוס מפורט -->
+
+<!-- תיקונים ממתינים להתחלה -->
 <div class="row mb-4">
     <div class="col-md-12">
-        <div class="card border-primary">
-            <div class="card-header bg-primary text-white">
+        <div class="card border-secondary">
+            <div class="card-header bg-secondary text-white">
                 <h5 class="mb-0">
-                    <i class="fas fa-wrench"></i>
-                    בביצוע ({{ in_progress.count }})
+                    <i class="fas fa-hourglass-start"></i>
+                    משימות ממתינות להתחלה 
+                    <span class="badge badge-light">{{ waiting_to_start_count }}</span>
                 </h5>
+                <small>תיקונים שהוקצו למכונאי אך עדיין לא התחילו</small>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-striped">
-                        <thead>
+                        <thead class="thead-light">
                             <tr>
                                 <th>מזהה</th>
                                 <th>אופניים</th>
                                 <th>לקוח</th>
                                 <th>מכונאי</th>
+                                <th>פעולות מאושרות</th>
                                 <th>סטטוס</th>
                                 <th>פעולות</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for repair in in_progress %}
+                            {% if repair.progress_percentage == 0 and not repair.is_effectively_stuck %}
                             <tr>
-                                <td>{{ repair.id }}</td>
+                                <td><strong>#{{ repair.id }}</strong></td>
                                 <td>{{ repair.bike }}</td>
                                 <td>{{ repair.bike.customer.name }}</td>
                                 <td>
                                     {% if repair.assigned_mechanic %}
+                                        <i class="fas fa-user text-info"></i>
                                         {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
                                     {% else %}
-                                        <span class="text-muted">לא הוקצה</span>
+                                        <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> לא הוקצה</span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <span class="badge badge-{{ repair.status|yesno:'success,warning' }}">
-                                        {{ repair.get_status_display }}
+                                    <span class="badge badge-info">{{ repair.approved_items.count }} פעולות</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-secondary">
+                                        <i class="fas fa-hourglass-start"></i> ממתין להתחלה
                                     </span>
                                 </td>
                                 <td>
@@ -291,6 +322,158 @@
                                     {% endif %}
                                 </td>
                             </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- תיקונים בביצוע פעיל -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs"></i>
+                    משימות בביצוע פעיל 
+                    <span class="badge badge-light">{{ actively_working_count }}</span>
+                </h5>
+                <small>תיקונים שהמכונאי עובד עליהם כרגע</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>התקדמות</th>
+                                <th>סטטוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for repair in in_progress %}
+                            {% if repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck %}
+                            <tr>
+                                <td><strong>#{{ repair.id }}</strong></td>
+                                <td>{{ repair.bike }}</td>
+                                <td>{{ repair.bike.customer.name }}</td>
+                                <td>
+                                    <i class="fas fa-user text-success"></i>
+                                    {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                </td>
+                                <td>
+                                    <div class="progress" style="width: 120px;">
+                                        <div class="progress-bar bg-success" role="progressbar" 
+                                             style="width: {{ repair.progress_percentage }}%;" 
+                                             aria-valuenow="{{ repair.progress_percentage }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                            {{ repair.progress_percentage|floatformat:0 }}%
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">{{ repair.completed_items.count }}/{{ repair.approved_items.count }} הושלמו</small>
+                                </td>
+                                <td>
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-cogs fa-spin"></i> בעבודה פעילה
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- תיקונים תקועים -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    משימות תקועות - דרושה התייחסות מיידית!
+                    <span class="badge badge-light">{{ blocked_tasks_count }}</span>
+                </h5>
+                <small>תיקונים שהמכונאי סימן כתקועים או שיש בהם פעולות תקועות</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>סיבת התקיעות</th>
+                                <th>סטטוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for repair in in_progress %}
+                            {% if repair.is_effectively_stuck %}
+                            <tr class="table-warning">
+                                <td><strong>#{{ repair.id }}</strong></td>
+                                <td>{{ repair.bike }}</td>
+                                <td>{{ repair.bike.customer.name }}</td>
+                                <td>
+                                    <i class="fas fa-user text-danger"></i>
+                                    {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                </td>
+                                <td>
+                                    {% if repair.stuck_reason %}
+                                        <div class="alert alert-warning mb-0 p-2">
+                                            <small><strong>{{ repair.stuck_reason|truncatechars:50 }}</strong></small>
+                                        </div>
+                                    {% elif repair.has_blocked_items %}
+                                        <div class="alert alert-danger mb-0 p-2">
+                                            <small><strong>יש {{ repair.blocked_items.count }} פעולות תקועות</strong></small>
+                                            {% for item in repair.blocked_items %}
+                                                <br><small>• {{ item.description }}</small>
+                                                {% if item.notes %}
+                                                    <br><small class="text-muted">{{ item.notes|truncatechars:30 }}</small>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge badge-danger" style="animation: pulse 2s infinite;">
+                                        <i class="fas fa-times"></i> תקוע - דרושה עזרה
+                                    </span>
+                                    {% if repair.has_blocked_items %}
+                                        <br><small class="text-muted">פעולות תקועות</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-reply"></i> השב
+                                    </a>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endif %}
                             {% endfor %}
                         </tbody>
                     </table>
@@ -363,9 +546,7 @@
                     <i class="fas fa-reply text-success mr-2"></i>
                     תגובה לתיקון תקוע
                 </h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-info">
@@ -388,7 +569,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
                 <button type="button" class="btn btn-success" id="sendResponse">
                     <i class="fas fa-paper-plane"></i> שלח תגובה
                 </button>
@@ -399,18 +580,63 @@
 
 <script>
 $(document).ready(function() {
+    console.log('DOM מוכן, מתחיל להאזין לכפתורים');
+    
+    // ספירת כפתורים ובדיקת נוכחותם
+    const buttonCount = $('.respond-btn').length;
+    console.log('נמצאו', buttonCount, 'כפתורי השב');
+    
+    if (buttonCount === 0) {
+        console.warn('לא נמצאו כפתורי השב!');
+    }
+    
+    // בדיקת כל כפתור בנפרד
+    $('.respond-btn').each(function(index) {
+        const $btn = $(this);
+        const repairId = $btn.data('repair-id');
+        console.log(`כפתור ${index + 1}: repair-id = ${repairId}, נראה = ${$btn.is(':visible')}`);
+        
+        // בדיקה שהנתונים קיימים
+        if (!repairId) {
+            console.error(`כפתור ${index + 1} חסר repair-id!`);
+        }
+    });
+    
     // פתיחת מודל תגובה
-    $('.respond-btn').click(function() {
+    $('.respond-btn').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('כפתור השב נלחץ!'); // לבדיקה
+        console.log('האלמנט שנלחץ:', this);
+        alert('כפתור השב נלחץ!'); // הודעה ויזואלית לבדיקה
+        
         const repairId = $(this).data('repair-id');
         const mechanic = $(this).data('mechanic');
         const problem = $(this).data('problem');
         
+        console.log('נתונים מהכפתור:', {
+            repairId: repairId,
+            mechanic: mechanic,
+            problem: problem
+        });
+        
+        if (!repairId) {
+            console.error('חסר repair ID');
+            alert('שגיאה: חסר מזהה תיקון');
+            return;
+        }
+        
         $('#responseRepairId').val(repairId);
-        $('#mechanicName').text(mechanic);
-        $('#problemDescription').text(problem);
+        $('#mechanicName').text(mechanic || 'לא צוין');
+        $('#problemDescription').text(problem || 'לא צוין');
         $('#managerResponse').val('');
         $('#markResolved').prop('checked', false);
-        $('#responseModal').modal('show');
+        
+        console.log('מנסה לפתוח מודל...');
+        // Bootstrap 5 syntax
+        const modal = new bootstrap.Modal(document.getElementById('responseModal'));
+        modal.show();
     });
     
     // שליחת תגובה
@@ -421,11 +647,20 @@ $(document).ready(function() {
         
         if (!response) {
             alert('נא לכתוב תגובה למכונאי');
+            $('#managerResponse').focus();
             return;
         }
         
+        if (response.length < 10) {
+            alert('נא לכתוב תגובה מפורטת יותר (לפחות 10 תווים)');
+            $('#managerResponse').focus();
+            return;
+        }
+        
+        // השבתת הכפתור למניעת לחיצות כפולות
+        $('#sendResponse').prop('disabled', true).text('שולח...');
+        
         sendManagerResponse(repairId, response, markResolved);
-        $('#responseModal').modal('hide');
     });
     
     // סימון כנפתר ישירות
@@ -454,13 +689,25 @@ $(document).ready(function() {
                 'mark_resolved': markResolved
             },
             success: function(response) {
+                // החזרת הכפתור למצב רגיל
+                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
+                
                 if (response.success) {
+                    // Bootstrap 5 - סגירת המודל
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('responseModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                    // הצגת הודעת הצלחה
+                    alert(response.message || 'התגובה נשלחה בהצלחה');
                     location.reload();
                 } else {
                     alert('שגיאה: ' + response.error);
                 }
             },
             error: function() {
+                // החזרת הכפתור למצב רגיל
+                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
                 alert('שגיאה בשליחת התגובה');
             }
         });
@@ -501,6 +748,166 @@ $(document).ready(function() {
 
 .table-warning {
     background-color: #fff3cd !important;
+}
+
+/* שיפור חיווי סטטוס */
+.badge-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.badge-info {
+    background-color: #17a2b8 !important;
+    color: #fff !important;
+}
+
+/* כרטיסי סטטוס עם צללים */
+.card.border-secondary {
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+.card.border-success {
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.card.border-danger {
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    border-width: 2px !important;
+}
+
+/* כותרות בכרטיסים */
+.card-header.bg-secondary {
+    border-bottom: 2px solid #495057;
+}
+
+.card-header.bg-success {
+    border-bottom: 2px solid #1e7e34;
+}
+
+.card-header.bg-danger {
+    border-bottom: 2px solid #bd2130;
+}
+
+/* טקסט מכונאי */
+.text-info {
+    color: #17a2b8 !important;
+    font-weight: 500;
+}
+
+.text-success {
+    color: #28a745 !important;
+    font-weight: 500;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-weight: 500;
+}
+
+/* שדרוג פס התקדמות */
+.progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+.progress-bar.bg-success {
+    background-color: #28a745 !important;
+}
+
+/* אייקונים מסתובבים */
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* שיפור טבלאות */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    font-weight: 600;
+    border-top: none;
+}
+
+/* כפתורים משופרים */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin: 0.1rem;
+}
+
+/* רקע התראות */
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+/* תיקון כפתורי תגובה */
+.respond-btn {
+    position: relative !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.respond-btn:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+
+.respond-btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5) !important;
+    outline: none !important;
+}
+
+.respond-btn:active {
+    background-color: #1e7e34 !important;
+    border-color: #1c7430 !important;
+    transform: translateY(1px);
+}
+
+/* מניעת התנגשויות עם tooltips */
+.btn[title]:hover::after {
+    display: none !important;
+}
+
+/* מניעת חסימות מאלמנטים אחרים */
+td {
+    position: relative;
+}
+
+.btn-group {
+    position: relative;
+    z-index: 10;
+}
+
+/* וידוא שהכפתורים לא חופפים */
+.btn-sm {
+    margin: 0 2px;
+    min-width: 60px;
+    height: auto;
+    line-height: 1.5;
 }
 </style>
 {% endblock %}

@@ -66,25 +66,17 @@
                                     <div class="text-center">
                                         {% if repair.is_stuck %}
                                             <span class="badge badge-danger mb-2">
-                                                <i class="fas fa-times"></i> תקוע
+                                                <i class="fas fa-times"></i> תקוע - מחכה להוראות מהמנהל
                                             </span>
-                                            <br>
-                                            <small class="text-muted">{{ repair.stuck_reason|truncatechars:30 }}</small>
+                                            <small class="text-muted d-block">{{ repair.stuck_reason|truncatechars:30 }}</small>
+                                        {% elif repair.progress_percentage == 0 %}
+                                            <span class="badge badge-secondary mb-2">
+                                                <i class="fas fa-hourglass-start"></i> טרם התחיל
+                                            </span>
                                         {% else %}
-                                            <div class="btn-group btn-group-sm" role="group">
-                                                <button type="button" class="btn btn-success status-btn" 
-                                                        data-repair-id="{{ repair.id }}" 
-                                                        data-status="working" 
-                                                        title="עובד בסדר">
-                                                    <i class="fas fa-check"></i>
-                                                </button>
-                                                <button type="button" class="btn btn-outline-danger status-btn" 
-                                                        data-repair-id="{{ repair.id }}" 
-                                                        data-status="stuck" 
-                                                        title="תקוע - זקוק לעזרה">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </div>
+                                            <span class="badge badge-success mb-2">
+                                                <i class="fas fa-check"></i> בתהליך עבודה
+                                            </span>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -115,8 +107,14 @@
             <div class="card-body">
                 <ol>
                     <li><strong>צפה בפרטי התיקון</strong> - לחץ על "צפה" כדי לראות את פרטי התיקון והאבחון</li>
-                    <li><strong>עדכן ביצוע</strong> - לחץ על "עדכן ביצוע" כדי לסמן פעולות שהושלמו</li>
-                    <li><strong>הוסף הערות</strong> - תוכל להוסיף הערות על כל פעולה שביצעת</li>
+                    <li><strong>עדכן ביצוע</strong> - לחץ על "עדכן ביצוע" כדי לעדכן סטטוס כל פעולה:
+                        <ul class="mt-2">
+                            <li>🟢 <strong>הושלם בהצלחה</strong> - הפעולה בוצעה במלואה</li>
+                            <li>🔴 <strong>תקוע/חסום</strong> - יש בעיה ואתה זקוק לעזרת מנהל</li>
+                            <li>🟡 <strong>ממתין לביצוע</strong> - עדיין לא התחלת בפעולה זו</li>
+                        </ul>
+                    </li>
+                    <li><strong>הוסף הערות</strong> - הסבר מה הבעיה אם פעולה תקועה</li>
                     <li><strong>סיום התיקון</strong> - כאשר כל הפעולות יסומנו כמושלמות, התיקון יועבר לסטטוס "הושלם"</li>
                 </ol>
             </div>

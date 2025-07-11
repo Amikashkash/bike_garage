@@ -313,8 +313,21 @@ def manager_dashboard(request):
     
     for repair in in_progress:
         repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-        repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, is_completed=True)
+        repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, status='completed')
+        repair.blocked_items = repair.repair_items.filter(is_approved_by_customer=True, status='blocked')
+        repair.pending_items = repair.repair_items.filter(is_approved_by_customer=True, status='pending')
         repair.progress_percentage = (repair.completed_items.count() / repair.approved_items.count() * 100) if repair.approved_items.count() > 0 else 0
+        
+        # בדיקת תקיעה - או כל התיקון תקוע או שיש פעולות תקועות
+        repair.has_blocked_items = repair.blocked_items.count() > 0
+        repair.is_effectively_stuck = getattr(repair, 'is_stuck', False) or repair.has_blocked_items
+    
+    # ספירת קטגוריות לתצוגה - עם לוגיקת תקיעה מתוקנת
+    waiting_to_start_count = sum(1 for repair in in_progress 
+                                if repair.progress_percentage == 0 and not repair.is_effectively_stuck)
+    actively_working_count = sum(1 for repair in in_progress 
+                               if repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck)
+    blocked_tasks_count = sum(1 for repair in in_progress if repair.is_effectively_stuck)
     
     context = {
         'stuck_repairs': stuck_repairs,
@@ -322,6 +335,9 @@ def manager_dashboard(request):
         'pending_approval': pending_approval,
         'partially_approved': partially_approved,
         'in_progress': in_progress,
+        'waiting_to_start_count': waiting_to_start_count,
+        'actively_working_count': actively_working_count,
+        'blocked_tasks_count': blocked_tasks_count,
     }
     return render(request, 'workshop/manager_dashboard.html', context)
 
@@ -524,9 +540,14 @@ def mechanic_dashboard(request):
         # הוספת מידע על התקדמות לכל תיקון
         for repair in assigned_repairs:
             repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-            repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, is_completed=True)
+            repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, status='completed')
+            repair.blocked_items = repair.repair_items.filter(is_approved_by_customer=True, status='blocked')
+            repair.pending_items = repair.repair_items.filter(is_approved_by_customer=True, status='pending')
+            
             repair.approved_count = repair.approved_items.count()
             repair.completed_count = repair.completed_items.count()
+            repair.blocked_count = repair.blocked_items.count()
+            repair.pending_count = repair.pending_items.count()
             repair.progress_percentage = (repair.completed_count / repair.approved_count * 100) if repair.approved_count > 0 else 0
             
             # הוספת שדות stuck באופן בטוח
@@ -551,60 +572,70 @@ def mechanic_task_completion(request, repair_id):
         return redirect('mechanic_dashboard')
     
     if request.method == 'POST':
-        task_form = MechanicTaskForm(request.POST, repair_job=repair_job)
+        # לא משתמשים בטופס אלא קוראים ישירות מ-request.POST
+        general_notes = request.POST.get('general_notes', '')
         
-        if task_form.is_valid():
-            completed_items = task_form.cleaned_data['completed_items']
-            general_notes = task_form.cleaned_data.get('general_notes', '')
+        with transaction.atomic():
+            # עדכון סטטוס והערות לכל פעולה
+            approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
             
-            with transaction.atomic():
-                # עדכון הפעולות שהושלמו
-                for item in completed_items:
-                    item.is_completed = True
-                    item.completed_by = request.user
-                    item.completed_at = timezone.now()
-                    item.save()
-                
-                # עדכון הערות לכל פעולה (גם למושלמות וגם לא מושלמות)
-                approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
-                for item in approved_items:
-                    notes_field = f'notes_{item.id}'
-                    if notes_field in task_form.cleaned_data:
-                        item_notes = task_form.cleaned_data[notes_field]
-                        if item_notes:  # רק אם יש הערות
-                            item.notes = item_notes
-                            item.save()
-                
-                # בדיקה אם כל הפעולות שאושרו הושלמו
-                approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
-                completed_approved = approved_items.filter(is_completed=True)
-                
-                if approved_items.count() == completed_approved.count():
-                    repair_job.status = 'completed'
-                    repair_job.save()
+            for item in approved_items:
+                # קריאת סטטוס הפעולה
+                status_field = f'item_status_{item.id}'
+                if status_field in request.POST:
+                    item_status = request.POST[status_field]
                     
-                    RepairUpdate.objects.create(
-                        repair_job=repair_job,
-                        user=request.user,
-                        message="התיקון הושלם! ניתן לאסוף את האופניים.",
-                        is_visible_to_customer=True
-                    )
-                    
-                    # שליחת התראה ללקוח על סיום התיקון
-                    send_customer_notification(repair_job, 'repair_completed', user=request.user)
-                    
-                    messages.success(request, 'התיקון הושלם בהצלחה!')
-                else:
-                    RepairUpdate.objects.create(
-                        repair_job=repair_job,
-                        user=request.user,
-                        message=f"הושלמו {len(completed_items)} פעולות נוספות",
-                        is_visible_to_customer=True
-                    )
-                    
-                    messages.success(request, f'סומנו {len(completed_items)} פעולות כמושלמות')
+                    if item_status == 'completed':
+                        item.status = 'completed'
+                        item.is_completed = True
+                        item.completed_by = request.user
+                        item.completed_at = timezone.now()
+                    elif item_status == 'blocked':
+                        item.status = 'blocked'
+                        item.is_completed = False
+                    else:  # pending
+                        item.status = 'pending'
+                        item.is_completed = False
                 
-                return redirect('mechanic_dashboard')
+                # עדכון הערות
+                notes_field = f'notes_{item.id}'
+                if notes_field in request.POST:
+                    item_notes = request.POST[notes_field].strip()
+                    if item_notes:
+                        item.notes = item_notes
+                
+                item.save()
+            
+            # ספירת פעולות מושלמות
+            completed_count = approved_items.filter(status='completed').count()
+            
+            # בדיקה אם כל הפעולות שאושרו הושלמו
+            if approved_items.count() == completed_count and completed_count > 0:
+                repair_job.status = 'completed'
+                repair_job.save()
+                
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message="התיקון הושלם! ניתן לאסוף את האופניים.",
+                    is_visible_to_customer=True
+                )
+                
+                # שליחת התראה ללקוח על סיום התיקון
+                send_customer_notification(repair_job, 'repair_completed', user=request.user)
+                
+                messages.success(request, 'התיקון הושלם בהצלחה!')
+            else:
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message=f"עודכנו סטטוס והערות של פעולות התיקון",
+                    is_visible_to_customer=True
+                )
+                
+                messages.success(request, f'העדכונים נשמרו בהצלחה')
+            
+            return redirect('mechanic_dashboard')
     else:
         task_form = MechanicTaskForm(repair_job=repair_job)
     
@@ -633,11 +664,65 @@ def repair_status(request, repair_id):
              repair_job.bike.customer.user == request.user)):
         raise PermissionDenied("אין לך הרשאה לצפות בתיקון זה")
     
+    # טיפול בתגובת מנהל לתיקון תקוע
+    if request.method == 'POST' and is_manager(request.user):
+        action = request.POST.get('action')
+        if action == 'manager_response':
+            response = request.POST.get('manager_response', '').strip()
+            mark_resolved = request.POST.get('mark_resolved') == 'true'
+            
+            if response:
+                # עדכון התגובה
+                repair_job.manager_response = response
+                
+                if mark_resolved:
+                    # סימון כנפתר
+                    if repair_job.is_stuck:
+                        repair_job.stuck_resolved = True
+                        repair_job.is_stuck = False
+                    
+                    # פתיחת פעולות תקועות (החזרה לסטטוס ממתין)
+                    blocked_items = repair_job.repair_items.filter(is_approved_by_customer=True, status='blocked')
+                    for item in blocked_items:
+                        item.status = 'pending'
+                        item.notes = item.notes + f"\n[מנהל פתר: {response}]" if item.notes else f"[מנהל פתר: {response}]"
+                        item.save()
+                    
+                    # יצירת עדכון למעקב
+                    RepairUpdate.objects.create(
+                        repair_job=repair_job,
+                        user=request.user,
+                        message=f"מנהל פתר את התקיעות: {response}",
+                        is_visible_to_customer=False
+                    )
+                    
+                    messages.success(request, 'התקיעות נפתרה בהצלחה! המכונאי יוכל להמשיך עבודה.')
+                else:
+                    # יצירת עדכון למעקב
+                    RepairUpdate.objects.create(
+                        repair_job=repair_job,
+                        user=request.user,
+                        message=f"מנהל השיב על התקיעות: {response}",
+                        is_visible_to_customer=False
+                    )
+                    
+                    messages.success(request, 'התגובה נשלחה בהצלחה למכונאי.')
+                
+                repair_job.save()
+                return redirect('repair_status', repair_id=repair_id)
+            else:
+                messages.error(request, 'נא לכתוב תגובה למכונאי.')
+    
     updates = repair_job.updates.filter(is_visible_to_customer=True)
+    
+    # בדיקה אם יש פעולות תקועות או תיקון תקוע (למנהלים)
+    has_blocked_items = repair_job.repair_items.filter(is_approved_by_customer=True, status='blocked').exists()
+    show_manager_response = is_manager(request.user) and (repair_job.is_stuck or has_blocked_items)
     
     return render(request, 'workshop/repair_status.html', {
         'repair_job': repair_job,
         'updates': updates,
+        'show_manager_response': show_manager_response,
     })
 
 def send_customer_notification(repair_job, message_type, extra_message="", user=None):
@@ -851,6 +936,8 @@ def update_repair_status(request):
 
 @login_required
 @manager_required
+@login_required
+@manager_required
 def manager_response_stuck(request):
     """תגובת מנהל לתיקון תקוע"""
     if request.method == 'POST':
@@ -859,14 +946,31 @@ def manager_response_stuck(request):
             response = request.POST.get('response')
             mark_resolved = request.POST.get('mark_resolved') == 'true'
             
-            repair_job = get_object_or_404(RepairJob, id=repair_id, is_stuck=True)
+            # חיפוש התיקון - יכול להיות תקוע בגלל is_stuck או בגלל פעולות תקועות
+            repair_job = get_object_or_404(RepairJob, id=repair_id)
+            
+            # בדיקה שהתיקון אכן תקוע
+            has_blocked_items = repair_job.repair_items.filter(is_approved_by_customer=True, status='blocked').exists()
+            is_repair_stuck = getattr(repair_job, 'is_stuck', False)
+            
+            if not (is_repair_stuck or has_blocked_items):
+                return JsonResponse({'success': False, 'error': 'התיקון לא תקוע'})
             
             # עדכון התגובה
             repair_job.manager_response = response
             
             if mark_resolved:
-                repair_job.stuck_resolved = True
-                repair_job.is_stuck = False
+                # סימון כנפתר
+                if is_repair_stuck:
+                    repair_job.stuck_resolved = True
+                    repair_job.is_stuck = False
+                
+                # פתיחת פעולות תקועות (החזרה לסטטוס ממתין)
+                blocked_items = repair_job.repair_items.filter(is_approved_by_customer=True, status='blocked')
+                for item in blocked_items:
+                    item.status = 'pending'
+                    item.notes = item.notes + f"\n[מנהל פתר: {response}]" if item.notes else f"[מנהל פתר: {response}]"
+                    item.save()
                 
                 # יצירת עדכון למעקב
                 RepairUpdate.objects.create(
@@ -875,6 +979,8 @@ def manager_response_stuck(request):
                     message=f"מנהל פתר את התקיעות: {response}",
                     is_visible_to_customer=False
                 )
+                
+                message = 'התקיעות נפתרה בהצלחה'
             else:
                 # יצירת עדכון למעקב
                 RepairUpdate.objects.create(
@@ -883,10 +989,12 @@ def manager_response_stuck(request):
                     message=f"מנהל השיב על התקיעות: {response}",
                     is_visible_to_customer=False
                 )
+                
+                message = 'התגובה נשלחה בהצלחה'
             
             repair_job.save()
             
-            return JsonResponse({'success': True})
+            return JsonResponse({'success': True, 'message': message})
             
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})
