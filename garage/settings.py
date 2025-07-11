@@ -140,9 +140,6 @@ STATICFILES_DIRS = [
 # עבור production - הגדרת תיקיית static root
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# הגדרות WhiteNoise לקבצים סטטיים ב-production
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 # הגדרות אבטחה לproduction
 if not DEBUG:
     # HTTPS settings
@@ -156,6 +153,26 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Static files for production
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # פשוט יותר
+        },
+    }
+else:
+    # Development - default storage
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
