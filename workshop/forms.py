@@ -399,34 +399,43 @@ class CustomerRegisterForm(UserCreationForm):
         user = super().save(commit=False)
         if commit:
             user.save()
+            
+            # יצירת פרופיל משתמש
             UserProfile.objects.get_or_create(user=user, defaults={'role': 'customer'})
             
-            # יצירת או חיבור לקוח
-            if hasattr(self, 'existing_customer') and self.cleaned_data.get('link_existing'):
-                # עדכון הלקוח הקיים עם המשתמש החדש
-                customer = self.existing_customer
-                customer.user = user
-                # עדכון פרטים אם שונים
-                if customer.email != self.cleaned_data['email']:
-                    customer.email = self.cleaned_data['email']
-                customer.save()
-            else:
-                # יצירת לקוח חדש
-                customer = Customer.objects.create(
-                    user=user,
-                    name=self.cleaned_data['name'],
-                    phone=self.cleaned_data['phone'],
-                    email=self.cleaned_data['email'],
-                )
-            
-            # יצירת אופניים אם צוין
-            if self.cleaned_data.get('has_bike') and self.cleaned_data.get('bike_brand'):
-                Bike.objects.create(
-                    customer=customer,
-                    brand=self.cleaned_data['bike_brand'],
-                    model=self.cleaned_data.get('bike_model', ''),
-                    color=self.cleaned_data.get('bike_color', ''),
-                )
+            try:
+                # יצירת או חיבור לקוח
+                if hasattr(self, 'existing_customer') and self.cleaned_data.get('link_existing'):
+                    # עדכון הלקוח הקיים עם המשתמש החדש
+                    customer = self.existing_customer
+                    customer.user = user
+                    # עדכון פרטים אם שונים
+                    email = self.cleaned_data.get('email', '')
+                    if customer.email != email:
+                        customer.email = email
+                    customer.save()
+                else:
+                    # יצירת לקוח חדש
+                    customer = Customer.objects.create(
+                        user=user,
+                        name=self.cleaned_data.get('name', ''),
+                        phone=self.cleaned_data.get('phone', ''),
+                        email=self.cleaned_data.get('email', ''),
+                    )
+                
+                # יצירת אופניים אם צוין
+                if self.cleaned_data.get('has_bike') and self.cleaned_data.get('bike_brand'):
+                    Bike.objects.create(
+                        customer=customer,
+                        brand=self.cleaned_data.get('bike_brand', ''),
+                        model=self.cleaned_data.get('bike_model', ''),
+                        color=self.cleaned_data.get('bike_color', ''),
+                    )
+            except Exception as e:
+                # אם יש בעיה ביצירת הלקוח/אופניים, עדיין נשמור את המשתמש
+                print(f"Error creating customer/bike: {e}")
+                pass
+                
         return user
     
     

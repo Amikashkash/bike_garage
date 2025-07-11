@@ -227,16 +227,22 @@ def register(request):
     if request.method == 'POST':
         form = CustomerRegisterForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            
-            # בדיקה אם חובר לקוח קיים
-            if hasattr(form, 'existing_customer') and form.cleaned_data.get('link_existing'):
-                messages.success(request, f"נרשמת בהצלחה! חשבונך חובר ללקוח הקיים במערכת. כעת תוכל לראות את כל האופניים והתיקונים שלך.")
-            else:
-                messages.success(request, "נרשמת בהצלחה! ברוך הבא למערכת המוסך.")
-            
-            return redirect('home')
+            try:
+                user = form.save()
+                login(request, user)
+                
+                # בדיקה אם חובר לקוח קיים
+                if hasattr(form, 'existing_customer') and form.cleaned_data.get('link_existing'):
+                    messages.success(request, f"נרשמת בהצלחה! חשבונך חובר ללקוח הקיים במערכת. כעת תוכל לראות את כל האופניים והתיקונים שלך.")
+                else:
+                    messages.success(request, "נרשמת בהצלחה! ברוך הבא למערכת המוסך.")
+                
+                return redirect('home')
+            except Exception as e:
+                messages.error(request, f"שגיאה ברישום: {str(e)}")
+                print(f"Registration error: {e}")
+        else:
+            messages.error(request, "יש שגיאות בטופס. אנא תקן ונסה שוב.")
     else:
         form = CustomerRegisterForm()
     return render(request, 'workshop/register.html', {'form': form})
