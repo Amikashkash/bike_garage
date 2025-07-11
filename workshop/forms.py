@@ -178,7 +178,7 @@ class CustomerForm(forms.ModelForm):
         widgets = {
             'phone': forms.TextInput(attrs={
                 'placeholder': 'לדוגמה: 050-1234567',
-                'pattern': '[0-9\-\+]{9,15}'
+                'pattern': r'[0-9\-\+]{9,15}'
             })
         }
     
