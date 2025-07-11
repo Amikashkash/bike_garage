@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-$%fb&h2%_kxy_sb4^5oh-qsq)w#xn+io8bfotscgaa=@8&m=2$')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = config('DEBUG', default=True, cast=bool)  # זמני לבדיקת שגיאות
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*,localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
@@ -140,9 +140,8 @@ STATICFILES_DIRS = [
 # עבור production - הגדרת תיקיית static root
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# הגדרות WhiteNoise פשוטות לקבצים סטטיים
+# WhiteNoise פשוט
 WHITENOISE_USE_FINDERS = True
-WHITENOISE_AUTOREFRESH = True
 
 # Force Django admin static files
 WHITENOISE_STATIC_PREFIX = '/static/'
