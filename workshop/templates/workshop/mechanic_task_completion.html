@@ -16,150 +16,121 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <div class="card">
+    <!-- פרטי תיקון - עמודה קבועה -->
+    <div class="col-lg-4 col-md-5">
+        <div class="card sticky-top" style="top: 20px;">
             <div class="card-header">
-                <h5>פרטי התיקון</h5>
+                <h5><i class="fas fa-info-circle"></i> פרטי התיקון</h5>
             </div>
             <div class="card-body">
                 <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
                 <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
                 <p><strong>טלפון:</strong> {{ repair_job.bike.customer.phone }}</p>
-                <p><strong>תאריך דיווח:</strong> {{ repair_job.created_at|date:"d/m/Y H:i" }}</p>
                 
                 {% if repair_job.problem_description %}
-                <p><strong>תיאור התקלה המקורי:</strong></p>
-                <p class="bg-light p-2 rounded small">{{ repair_job.problem_description }}</p>
+                <p><strong>תקלה:</strong></p>
+                <p class="small bg-light p-2 rounded">{{ repair_job.problem_description|truncatechars:100 }}</p>
                 {% endif %}
                 
-                {% if repair_job.diagnosis %}
-                <p><strong>אבחון:</strong></p>
-                <p class="bg-warning p-2 rounded small">{{ repair_job.diagnosis }}</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <div class="card mt-3">
-            <div class="card-header">
-                <h6>התקדמות כללית</h6>
-            </div>
-            <div class="card-body">
-                <div class="progress mb-2">
-                    <div class="progress-bar bg-success" role="progressbar" 
-                         style="width: {{ repair_job.progress_percentage }}%;" 
-                         aria-valuenow="{{ repair_job.progress_percentage }}" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
-                        {{ repair_job.progress_percentage|floatformat:0 }}%
+                <div class="mt-3">
+                    <strong>התקדמות:</strong>
+                    <div class="progress mt-2">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: {{ repair_job.progress_percentage }}%;">
+                            {{ repair_job.progress_percentage|floatformat:0 }}%
+                        </div>
                     </div>
+                    <small class="text-muted">{{ repair_job.completed_count }}/{{ repair_job.approved_count }} הושלמו</small>
                 </div>
-                <small>{{ repair_job.completed_count }} מתוך {{ repair_job.approved_count }} פעולות הושלמו</small>
             </div>
         </div>
     </div>
     
-    <div class="col-md-6">
+    <!-- עדכון סטטוס - עמודה ראשית -->
+    <div class="col-lg-8 col-md-7">
         <form method="post">
             {% csrf_token %}
             
             <div class="card">
                 <div class="card-header">
-                    <h5>סמן פעולות שהושלמו</h5>
+                    <h5><i class="fas fa-tasks"></i> עדכון סטטוס פעולות</h5>
                 </div>
                 <div class="card-body">
                     {% if task_form.completed_items.field.queryset %}
-                        <div class="form-group">
-                            <label>עדכן סטטוס והערות לכל פעולה:</label>
+                        {% for item in task_form.completed_items.field.queryset %}
+                        <div class="border rounded p-3 mb-3 item-card">
+                            <!-- כותרת הפעולה -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">{{ item.description }}</h6>
+                                <span class="text-muted">₪{{ item.price }}</span>
+                            </div>
                             
-                            {% for item in task_form.completed_items.field.queryset %}
-                            <div class="card mb-3 border-primary">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ item.description }}</h6>
-                                    <p class="text-muted small">מחיר: ₪{{ item.price }}</p>
-                                    
-                                    <!-- בחירת סטטוס הפעולה -->
-                                    <div class="form-group">
-                                        <label class="font-weight-bold">סטטוס הפעולה:</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
-                                                   id="completed_{{ item.id }}" value="completed" 
+                            <!-- בחירת סטטוס בשורה אחת -->
+                            <div class="btn-group-toggle mb-2" data-toggle="buttons">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="btn btn-outline-success btn-sm w-100 status-btn {% if item.status == 'completed' %}active{% endif %}">
+                                            <input type="radio" name="item_status_{{ item.id }}" value="completed" 
                                                    {% if item.status == 'completed' %}checked{% endif %}>
-                                            <label class="form-check-label text-success" for="completed_{{ item.id }}">
-                                                <i class="fas fa-check-circle"></i> הושלם בהצלחה
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
-                                                   id="blocked_{{ item.id }}" value="blocked" 
-                                                   {% if item.status == 'blocked' %}checked{% endif %}>
-                                            <label class="form-check-label text-danger" for="blocked_{{ item.id }}">
-                                                <i class="fas fa-times-circle"></i> תקוע/חסום
-                                            </label>
-                                        </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="item_status_{{ item.id }}" 
-                                                   id="pending_{{ item.id }}" value="pending" 
-                                                   {% if item.status == 'pending' or not item.status %}checked{% endif %}>
-                                            <label class="form-check-label text-warning" for="pending_{{ item.id }}">
-                                                <i class="fas fa-clock"></i> ממתין לביצוע
-                                            </label>
-                                        </div>
-                                    </div> 
-                                                   id="pending_{{ item.id }}" value="pending" 
-                                                   {% if not item.is_completed and not item.is_blocked %}checked{% endif %}>
-                                            <label class="form-check-label text-warning" for="pending_{{ item.id }}">
-                                                <i class="fas fa-clock"></i> טרם הושלם
-                                            </label>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- שדה הערות -->
-                                    <div class="form-group">
-                                        <label class="small font-weight-bold text-primary">
-                                            הערות עבור פעולה זו:
+                                            <i class="fas fa-check"></i> הושלם
                                         </label>
-                                        <textarea name="notes_{{ item.id }}" 
-                                                  class="form-control" 
-                                                  rows="3" 
-                                                  placeholder="למשל: חסר חלק, תקלה נוספת שהתגלתה, עבודה דחופה התקבלה, וכו...">{{ item.notes|default:'' }}</textarea>
-                                        <small class="form-text text-muted">
-                                            הערות חשובות - תקועה, הסתייגויות, בעיות שהתגלו, חלקים חסרים, וכו'
-                                        </small>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="btn btn-outline-danger btn-sm w-100 status-btn {% if item.status == 'blocked' %}active{% endif %}">
+                                            <input type="radio" name="item_status_{{ item.id }}" value="blocked" 
+                                                   {% if item.status == 'blocked' %}checked{% endif %}>
+                                            <i class="fas fa-times"></i> תקוע
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="btn btn-outline-warning btn-sm w-100 status-btn {% if item.status == 'pending' or not item.status %}active{% endif %}">
+                                            <input type="radio" name="item_status_{{ item.id }}" value="pending" 
+                                                   {% if item.status == 'pending' or not item.status %}checked{% endif %}>
+                                            <i class="fas fa-clock"></i> ממתין
+                                        </label>
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %}
+                            
+                            <!-- תיבת הערות מתקפלת -->
+                            <div class="notes-section">
+                                <button type="button" class="btn btn-link btn-sm p-0" onclick="toggleNotes({{ item.id }})">
+                                    <i class="fas fa-comment-alt"></i> הערות 
+                                    <span id="notes-icon-{{ item.id }}" class="fas fa-chevron-down"></span>
+                                </button>
+                                <div id="notes-{{ item.id }}" class="collapse {% if item.notes %}show{% endif %} mt-2">
+                                    <textarea name="notes_{{ item.id }}" 
+                                              class="form-control form-control-sm" 
+                                              rows="2" 
+                                              placeholder="הערות, בעיות, חלקים חסרים...">{{ item.notes|default:'' }}</textarea>
+                                </div>
+                            </div>
                         </div>
+                        {% endfor %}
                         
                         <!-- הערות כלליות -->
-                        <div class="card mt-3 bg-light">
-                            <div class="card-body">
-                                <div class="form-group mb-0">
-                                    <label for="id_general_notes">הערות כלליות על התיקון:</label>
-                                    <textarea name="general_notes" 
-                                              id="id_general_notes" 
-                                              class="form-control" 
-                                              rows="3" 
-                                              placeholder="הערות כלליות על מצב התיקון..."></textarea>
-                                    <small class="form-text text-muted">
-                                        הערות כלליות על כל התיקון (אופציונלי)
-                                    </small>
-                                </div>
+                        <div class="card bg-light mt-3">
+                            <div class="card-body py-2">
+                                <label class="small font-weight-bold">הערות כלליות על התיקון:</label>
+                                <textarea name="general_notes" 
+                                          class="form-control form-control-sm" 
+                                          rows="2" 
+                                          placeholder="הערות כלליות..."></textarea>
                             </div>
                         </div>
                         
-                        <div class="mt-3">
-                            <button type="submit" class="btn btn-success btn-lg">
+                        <div class="mt-3 text-center">
+                            <button type="submit" class="btn btn-success btn-lg px-5">
                                 <i class="fas fa-check"></i> עדכן ביצוע
                             </button>
-                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary">חזור</a>
+                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary ml-2">חזור</a>
                         </div>
                     {% else %}
-                        <div class="alert alert-info">
-                            <h6>כל הפעולות הושלמו!</h6>
+                        <div class="alert alert-success text-center">
+                            <h5><i class="fas fa-check-circle"></i> כל הפעולות הושלמו!</h5>
                             <p class="mb-0">כל הפעולות שאושרו על ידי הלקוח כבר סומנו כמושלמות.</p>
+                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-primary mt-2">חזור לדשבורד</a>
                         </div>
-                        <a href="{% url 'mechanic_dashboard' %}" class="btn btn-primary">חזור לדשבורד</a>
                     {% endif %}
                 </div>
             </div>
@@ -167,41 +138,80 @@
     </div>
 </div>
 
-{% if repair_job.pending_items %}
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h6>פעולות שהושלמו</h6>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-sm">
-                        <thead>
-                            <tr>
-                                <th>פעולה</th>
-                                <th>מחיר</th>
-                                <th>בוצע על ידי</th>
-                                <th>תאריך השלמה</th>
-                                <th>הערות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in repair_job.pending_items %}
-                            <tr>
-                                <td>{{ item.description }}</td>
-                                <td>₪{{ item.price }}</td>
-                                <td>{{ item.completed_by.get_full_name|default:item.completed_by.username }}</td>
-                                <td>{{ item.completed_at|date:"d/m/Y H:i" }}</td>
-                                <td>{{ item.notes|default:"-" }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+<script>
+function toggleNotes(itemId) {
+    const notesDiv = document.getElementById('notes-' + itemId);
+    const icon = document.getElementById('notes-icon-' + itemId);
+    
+    if (notesDiv.classList.contains('show')) {
+        notesDiv.classList.remove('show');
+        icon.classList.remove('fa-chevron-up');
+        icon.classList.add('fa-chevron-down');
+    } else {
+        notesDiv.classList.add('show');
+        icon.classList.remove('fa-chevron-down');
+        icon.classList.add('fa-chevron-up');
+    }
+}
+
+// הפעלת הסטיילינג של הכפתורים
+document.addEventListener('DOMContentLoaded', function() {
+    const radioButtons = document.querySelectorAll('input[type="radio"]');
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', function() {
+            // הסרת active מכל הכפתורים באותה קבוצה
+            const groupName = this.name;
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                r.closest('label').classList.remove('active');
+            });
+            
+            // הוספת active לכפתור הנבחר
+            this.closest('label').classList.add('active');
+        });
+    });
+});
+</script>
+
+<style>
+.status-btn {
+    transition: all 0.2s;
+}
+
+.status-btn.active {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.item-card {
+    background: #fafafa;
+    transition: all 0.2s;
+}
+
+.item-card:hover {
+    background: #f0f0f0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.sticky-top {
+    z-index: 1;
+}
+
+.notes-section .btn-link {
+    text-decoration: none;
+    color: #6c757d;
+}
+
+.notes-section .btn-link:hover {
+    color: #495057;
+}
+
+@media (max-width: 768px) {
+    .col-md-4 {
+        margin-bottom: 5px;
+    }
+    
+    .sticky-top {
+        position: relative !important;
+    }
+}
+</style>
 {% endblock %}
