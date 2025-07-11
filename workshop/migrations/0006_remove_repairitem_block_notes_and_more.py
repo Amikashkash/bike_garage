@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('workshop', '0005_add_stuck_fields'),
+        ('workshop', '0004_repairitem_block_notes_repairitem_block_reason_and_more'),
     ]
 
     operations = [
