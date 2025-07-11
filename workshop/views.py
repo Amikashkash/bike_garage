@@ -294,52 +294,50 @@ def link_customer_to_user(request):
 @manager_required
 def manager_dashboard(request):
     """דשבורד למנהל - מציג תיקונים שדורשים אבחון או עדכון"""
-    # תיקונים תקועים - דחיפות עליונה
-    stuck_repairs = RepairJob.objects.filter(
-        is_stuck=True, 
-        stuck_resolved=False
-    ).select_related('bike', 'bike__customer', 'assigned_mechanic').order_by('stuck_at')
-    
-    pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
-    pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
-    partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer').prefetch_related('repair_items')
-    in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
-    
-    # הוספת מידע על פעולות מאושרות לכל תיקון
-    for repair in partially_approved:
-        repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-        repair.total_items = repair.repair_items.count()
-        repair.approved_count = repair.approved_items.count()
-    
-    for repair in in_progress:
-        repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-        repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, status='completed')
-        repair.blocked_items = repair.repair_items.filter(is_approved_by_customer=True, status='blocked')
-        repair.pending_items = repair.repair_items.filter(is_approved_by_customer=True, status='pending')
-        repair.progress_percentage = (repair.completed_items.count() / repair.approved_items.count() * 100) if repair.approved_items.count() > 0 else 0
+    try:
+        # תיקונים שהמכונאי סימן כתקועים
+        stuck_repairs = RepairJob.objects.filter(
+            is_stuck=True
+        ).select_related('bike', 'bike__customer', 'assigned_mechanic')
         
-        # בדיקת תקיעה - או כל התיקון תקוע או שיש פעולות תקועות
-        repair.has_blocked_items = repair.blocked_items.count() > 0
-        repair.is_effectively_stuck = getattr(repair, 'is_stuck', False) or repair.has_blocked_items
+        # תיקונים לפי סטטוס
+        pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
+        pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
+        partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
+        in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic')
+        
+        # ספירה פשוטה
+        waiting_to_start_count = pending_diagnosis.count()
+        actively_working_count = in_progress.count()
+        blocked_tasks_count = stuck_repairs.count()
+        
+        context = {
+            'stuck_repairs': stuck_repairs,
+            'pending_diagnosis': pending_diagnosis,
+            'pending_approval': pending_approval,
+            'partially_approved': partially_approved,
+            'in_progress': in_progress,
+            'waiting_to_start_count': waiting_to_start_count,
+            'actively_working_count': actively_working_count,
+            'blocked_tasks_count': blocked_tasks_count,
+        }
+        return render(request, 'workshop/manager_dashboard.html', context)
     
-    # ספירת קטגוריות לתצוגה - עם לוגיקת תקיעה מתוקנת
-    waiting_to_start_count = sum(1 for repair in in_progress 
-                                if repair.progress_percentage == 0 and not repair.is_effectively_stuck)
-    actively_working_count = sum(1 for repair in in_progress 
-                               if repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck)
-    blocked_tasks_count = sum(1 for repair in in_progress if repair.is_effectively_stuck)
-    
-    context = {
-        'stuck_repairs': stuck_repairs,
-        'pending_diagnosis': pending_diagnosis,
-        'pending_approval': pending_approval,
-        'partially_approved': partially_approved,
-        'in_progress': in_progress,
-        'waiting_to_start_count': waiting_to_start_count,
-        'actively_working_count': actively_working_count,
-        'blocked_tasks_count': blocked_tasks_count,
-    }
-    return render(request, 'workshop/manager_dashboard.html', context)
+    except Exception as e:
+        # לוג השגיאה ותצוגת דף ריק
+        print(f"Manager dashboard error: {e}")
+        context = {
+            'error': str(e),
+            'stuck_repairs': [],
+            'pending_diagnosis': [],
+            'pending_approval': [],
+            'partially_approved': [],
+            'in_progress': [],
+            'waiting_to_start_count': 0,
+            'actively_working_count': 0,
+            'blocked_tasks_count': 0,
+        }
+        return render(request, 'workshop/manager_dashboard.html', context)
 
 @login_required
 @manager_required

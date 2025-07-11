@@ -140,6 +140,13 @@ STATICFILES_DIRS = [
 # עבור production - הגדרת תיקיית static root
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+# הגדרות WhiteNoise פשוטות לקבצים סטטיים
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
+
+# Force Django admin static files
+WHITENOISE_STATIC_PREFIX = '/static/'
+
 # הגדרות אבטחה לproduction
 if not DEBUG:
     # HTTPS settings
@@ -153,26 +160,6 @@ if not DEBUG:
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
-    # Static files for production
-    STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # פשוט יותר
-        },
-    }
-else:
-    # Development - default storage
-    STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-        },
-    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
