@@ -67,7 +67,13 @@ def customer_report(request):
     else:
         form = CustomerRepairJobForm()
         form.fields['bike'].queryset = bikes
-    return render(request, 'workshop/customer_report.html', {'form': form})
+    
+    # הוספת קטגוריות כמו בדף המנהל
+    categories = RepairCategory.objects.prefetch_related('subcategories').all()
+    return render(request, 'workshop/customer_report.html', {
+        'form': form,
+        'categories': categories,
+    })
 
 
 @login_required
