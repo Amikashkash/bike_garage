@@ -18,23 +18,16 @@
             {{ form.bike }}
         </div>
         
-        <!-- תת קטגוריות עם אקורדיון -->
+        <!-- תת קטגוריות -->
         <div style="margin-bottom: 20px;">
             <h3 style="color: #333; margin-bottom: 15px;">🔧 בחר סוג התקלה:</h3>
             
-            <!-- אקורדיון דינמי -->
-            <div id="categoriesAccordion">
-                <!-- JavaScript ייצור את התוכן כאן -->
-            </div>
-            
-            <!-- גיבוי - הטופס המקורי (יוסתר אם יש קטגוריות) -->
-            <div id="fallbackCategories" style="display: block;">
-                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
-                    <label style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;">
-                        📋 בחר תקלות מהרשימה:
-                    </label>
-                    {{ form.subcategories }}
-                </div>
+            <!-- רשימת קטגוריות פשוטה -->
+            <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
+                <label style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;">
+                    📋 בחר תקלות מהרשימה:
+                </label>
+                {{ form.subcategories }}
             </div>
         </div>
         
@@ -155,31 +148,32 @@ textarea {
     resize: vertical;
 }
 
-/* עיצוב checkbox במצב רגיל */
-#fallbackCategories input[type="checkbox"] {
+/* עיצוב checkbox רגיל */
+.category-checkboxes input[type="checkbox"] {
     margin-left: 8px;
+    margin-right: 5px;
     transform: scale(1.2);
 }
 
-#fallbackCategories label {
-    margin-right: 5px;
-    display: inline-block;
-    padding: 5px 0;
-    cursor: pointer;
-}
-
-#fallbackCategories ul {
-    list-style: none;
-    padding: 0;
-}
-
-#fallbackCategories li {
+.category-checkboxes label {
+    display: block;
     padding: 8px 0;
+    cursor: pointer;
     border-bottom: 1px solid #e9ecef;
 }
 
-#fallbackCategories li:last-child {
+.category-checkboxes label:last-child {
     border-bottom: none;
+}
+
+.category-checkboxes ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.category-checkboxes li {
+    padding: 5px 0;
 }
 
 /* כפתור עם אפקט hover */
@@ -192,176 +186,20 @@ button[type="submit"]:hover {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const accordionContainer = document.getElementById('categoriesAccordion');
-    const fallbackContainer = document.getElementById('fallbackCategories');
+    console.log('Customer report form loaded');
     
-    // בדיקה מקיפה שכל האלמנטים קיימים
-    if (!accordionContainer) {
-        console.error('Accordion container not found');
-        return;
-    }
+    // בדיקה פשוטה שהטופס עובד
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    console.log(`Found ${checkboxes.length} category checkboxes`);
     
-    if (!fallbackContainer) {
-        console.error('Fallback container not found');
-        return;
-    }
-    
-    // חיפוש checkboxes של subcategories (CheckboxSelectMultiple)
-    console.log('Looking for checkboxes in fallbackContainer:', fallbackContainer);
-    console.log('fallbackContainer HTML:', fallbackContainer.innerHTML);
-    
-    const subcategoryCheckboxes = fallbackContainer.querySelectorAll('input[type="checkbox"]');
-    console.log(`Found ${subcategoryCheckboxes.length} subcategory checkboxes`);
-    
-    // אם לא נמצאו checkboxes, בואו נחפש באופן רחב יותר
-    if (subcategoryCheckboxes.length === 0) {
-        console.log('Trying to find checkboxes in the entire document...');
-        const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-        console.log(`Found ${allCheckboxes.length} checkboxes in the entire document`);
-        
-        allCheckboxes.forEach((cb, index) => {
-            console.log(`Checkbox ${index}:`, cb.name, cb.value, cb.parentElement);
+    if (checkboxes.length === 0) {
+        console.log('⚠️ No categories found - subcategories may not be loaded');
+    } else {
+        console.log('✅ Categories loaded successfully');
+        checkboxes.forEach((cb, index) => {
+            console.log(`  ${index + 1}. ${cb.parentElement.textContent.trim()}`);
         });
     }
-    
-    if (subcategoryCheckboxes.length === 0) {
-        console.log('No subcategories available - showing fallback message');
-        accordionContainer.innerHTML = `
-            <div style="padding: 20px; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; text-align: center;">
-                <h4 style="color: #856404; margin-bottom: 10px;">⚠️ אין קטגוריות זמינות</h4>
-                <p style="color: #856404; margin-bottom: 15px;">
-                    כרגע אין קטגוריות תקלה במערכת.<br>
-                    תוכל לתאר את התקלה בתיבת הטקסט למטה.
-                </p>
-                <small style="color: #6c757d;">
-                    💡 מנהל המערכת יכול להוסיף קטגוריות דרך פאנל הניהול
-                </small>
-            </div>
-        `;
-        return;
-    }
-    
-    // אם יש קטגוריות - הסתר את הגיבוי ובנה אקורדיון
-    console.log('Building accordion with categories');
-    fallbackContainer.style.display = 'none';
-    
-    // ארגון תתי קטגוריות לפי קטגוריה ראשית
-    const categories = {};
-    
-    console.log('Starting to process checkboxes...');
-    
-    subcategoryCheckboxes.forEach(checkbox => {
-        const label = checkbox.parentElement.querySelector('label');
-        if (!label) return;
-        
-        const text = label.textContent.trim();
-        // החלפת HTML entities לתווים רגילים
-        const cleanText = text.replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
-        const parts = cleanText.split(' > ');
-        
-        console.log(`Processing: "${text}" -> "${cleanText}" -> parts:`, parts);
-        
-        if (parts.length === 2) {
-            const [categoryName, subcategoryName] = parts;
-            if (!categories[categoryName]) {
-                categories[categoryName] = [];
-            }
-            categories[categoryName].push({
-                checkbox: checkbox,
-                name: subcategoryName,
-                value: checkbox.value,
-                selected: checkbox.checked
-            });
-        } else {
-            // אם אין פורמט "קטגוריה > תת קטגוריה"
-            if (!categories['כללי']) {
-                categories['כללי'] = [];
-            }
-            categories['כללי'].push({
-                checkbox: checkbox,
-                name: cleanText,
-                value: checkbox.value,
-                selected: checkbox.checked
-            });
-        }
-    });
-    
-    console.log('Categories found:', Object.keys(categories));
-    console.log('Categories data:', categories);
-    
-    // יצירת האקורדיון
-    Object.keys(categories).forEach(categoryName => {
-        const categoryDiv = document.createElement('div');
-        categoryDiv.className = 'category-section';
-        
-        // כותרת הקטגוריה
-        const header = document.createElement('button');
-        header.type = 'button';
-        header.className = 'category-header';
-        header.innerHTML = `
-            <span>${categoryName}</span>
-            <span class="arrow">▼</span>
-        `;
-        
-        // תוכן הקטגוריה
-        const content = document.createElement('div');
-        content.className = 'category-content';
-        
-        categories[categoryName].forEach(subcategory => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'subcategory-item';
-            
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = subcategory.value;
-            checkbox.checked = subcategory.selected;
-            checkbox.id = `accordion_${subcategory.value}`;
-            checkbox.name = subcategory.checkbox.name; // שמירה על שם הטופס המקורי
-            
-            const label = document.createElement('label');
-            label.htmlFor = `accordion_${subcategory.value}`;
-            label.textContent = subcategory.name;
-            
-            itemDiv.appendChild(label);
-            itemDiv.appendChild(checkbox);
-            content.appendChild(itemDiv);
-            
-            // סנכרון עם הטופס המקורי
-            checkbox.addEventListener('change', function() {
-                subcategory.checkbox.checked = this.checked;
-            });
-            
-            // סנכרון גם בכיוון השני (אם הטופס המקורי משתנה)
-            subcategory.checkbox.addEventListener('change', function() {
-                checkbox.checked = this.checked;
-            });
-        });
-        
-        // פונקציונליות האקורדיון
-        header.addEventListener('click', function() {
-            const isActive = content.classList.contains('active');
-            
-            // סגירת כל הקטגוריות האחרות
-            accordionContainer.querySelectorAll('.category-content').forEach(c => c.classList.remove('active'));
-            accordionContainer.querySelectorAll('.category-header').forEach(h => {
-                h.classList.remove('active');
-                h.querySelector('.arrow').textContent = '▼';
-            });
-            
-            // פתיחה/סגירה של הקטגוריה הנוכחית
-            if (!isActive) {
-                content.classList.add('active');
-                header.classList.add('active');
-                header.querySelector('.arrow').textContent = '▲';
-            }
-        });
-        
-        categoryDiv.appendChild(header);
-        categoryDiv.appendChild(content);
-        accordionContainer.appendChild(categoryDiv);
-    });
-    
-    console.log(`Created accordion with ${Object.keys(categories).length} categories`);
 });
 </script>
 
