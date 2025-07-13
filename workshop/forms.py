@@ -443,9 +443,20 @@ class CustomerRepairJobForm(forms.ModelForm):
     subcategories = forms.ModelMultipleChoiceField(
         queryset=RepairSubCategory.objects.select_related('category').order_by('category__name', 'name'),
         required=False,
-        widget=AccordionCheckboxSelectMultiple(),
+        widget=forms.CheckboxSelectMultiple(attrs={
+            'class': 'category-checkboxes'
+        }),
         label="בחר סוגי התקלות"
     )
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # וידוא שיש קטגוריות
+        subcats_count = self.fields['subcategories'].queryset.count()
+        print(f"CustomerRepairJobForm: {subcats_count} subcategories available")  # Debug
+        
+        if subcats_count == 0:
+            print("No subcategories found!")  # Debug
 
     class Meta:
         model = RepairJob
