@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'workshop.middleware.DatabaseFixMiddleware',  # תיקון אוטומטי של מסד הנתונים
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # עבור קבצים סטטיים ב-production
     'django.contrib.sessions.middleware.SessionMiddleware',
