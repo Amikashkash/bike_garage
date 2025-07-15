@@ -42,7 +42,13 @@ def run_migrations_programmatically():
         except:
             pass
         
-        # עכשיו ננסה להריץ רק את המיגרציה החדשה שלנו
+        # בדיקה אם השדות כבר קיימים לפני הרצת המיגרציה
+        print("🔍 בודק אם השדות החדשים כבר קיימים...")
+        if check_quality_fields_exist():
+            print("ℹ️ השדות כבר קיימים! מסמן מיגרציה כמושלמת...")
+            return mark_migration_as_fake('0008_repairjob_customer_notified_and_more')
+        
+        # אם השדות לא קיימים, ננסה להריץ את המיגרציה
         print("🎯 מנסה להריץ את המיגרציה החדשה שלנו...")
         
         sys.argv = ['manage.py', 'migrate', 'workshop', '0008']
