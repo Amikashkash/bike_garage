@@ -44,6 +44,11 @@ urlpatterns = [
     path('mechanic/repair/<int:repair_id>/complete/', views.mechanic_task_completion, name='mechanic_task_completion'),
     path('mechanic/update-status/', views.update_repair_status, name='update_repair_status'),
     
+    # Manager quality check
+    path('manager/quality-check/<int:repair_id>/', views.manager_quality_check, name='manager_quality_check'),
+    path('manager/quality-approve/<int:repair_id>/', views.manager_quality_approve, name='manager_quality_approve'),
+    path('manager/mark-delivered/<int:repair_id>/', views.manager_mark_delivered, name='manager_mark_delivered'),
+    
     # Categories
     path('categories/', views.category_list, name='category_list'),
     path('categories/new/', views.category_create, name='category_create'),

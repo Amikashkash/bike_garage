@@ -3,6 +3,7 @@
 {% block title %}דשבורד מנהל{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="row">
     <div class="col-md-12">
         <h1>דשבורד מנהל</h1>
@@ -671,6 +672,14 @@ $(document).ready(function() {
         }
     });
     
+    // סימון כנמסר
+    $('.deliver-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        if (confirm('האם אתה בטוח שהתיקון נמסר ללקוח?')) {
+            markAsDelivered(repairId);
+        }
+    });
+    
     function sendManagerResponse(repairId, response, markResolved) {
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
@@ -710,6 +719,28 @@ $(document).ready(function() {
                 $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
                 alert('שגיאה בשליחת התגובה');
             }
+        });
+    }
+    
+    function markAsDelivered(repairId) {
+        fetch(`/manager/mark-delivered/${repairId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // רענון הדף
+            } else {
+                alert('שגיאה בעדכון הסטטוס: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('שגיאה בחיבור לשרת');
         });
     }
     
@@ -850,6 +881,10 @@ $(document).ready(function() {
     padding: 0.25rem 0.5rem;
     font-size: 0.875rem;
     margin: 0.1rem;
+    margin: 0 2px;
+    min-width: 60px;
+    height: auto;
+    line-height: 1.5;
 }
 
 /* רקע התראות */

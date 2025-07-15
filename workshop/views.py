@@ -323,6 +323,12 @@ def manager_dashboard(request):
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
         in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
+        # תיקונים הממתינים לבדיקת איכות
+        awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
+        
+        # תיקונים מוכנים לאיסוף
+        ready_for_pickup = RepairJob.objects.filter(status='quality_approved').select_related('bike', 'bike__customer')
+        
         # ספירה מתוקנת
         waiting_to_start_count = 0
         actively_working_count = 0
@@ -340,6 +346,8 @@ def manager_dashboard(request):
             'pending_approval': pending_approval,
             'partially_approved': partially_approved,
             'in_progress': in_progress,
+            'awaiting_quality_check': awaiting_quality_check,
+            'ready_for_pickup': ready_for_pickup,
             'waiting_to_start_count': waiting_to_start_count,
             'actively_working_count': actively_working_count,
             'blocked_tasks_count': blocked_tasks_count,
@@ -558,7 +566,7 @@ def mechanic_dashboard(request):
             status='in_progress'
         ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
         
-        # הוספת מידע על התקדמות לכל תיקון (לא צריך - יש properties במודל)
+        # הוספת מידע על התקדמות לכל תיקון (לא צריך - יש properties במודל RepairJob)
         for repair in assigned_repairs:
             # כל הפעולות הבאות כבר קיימות כ-properties במודל RepairJob
             repair.pending_items = repair.repair_items.filter(is_approved_by_customer=True, status='pending')
@@ -630,20 +638,17 @@ def mechanic_task_completion(request, repair_id):
             
             # בדיקה אם כל הפעולות שאושרו הושלמו
             if approved_items.count() == completed_count and completed_count > 0:
-                repair_job.status = 'completed'
+                repair_job.status = 'awaiting_quality_check'
                 repair_job.save()
                 
                 RepairUpdate.objects.create(
                     repair_job=repair_job,
                     user=request.user,
-                    message="התיקון הושלם! ניתן לאסוף את האופניים.",
+                    message="התיקון הושלם והועבר לבדיקת איכות על ידי המנהל.",
                     is_visible_to_customer=True
                 )
                 
-                # שליחת התראה ללקוח על סיום התיקון
-                send_customer_notification(repair_job, 'repair_completed', user=request.user)
-                
-                messages.success(request, 'התיקון הושלם בהצלחה!')
+                messages.success(request, 'התיקון הושלם והועבר לבדיקת איכות!')
             else:
                 RepairUpdate.objects.create(
                     repair_job=repair_job,
@@ -951,8 +956,7 @@ def update_repair_status(request):
     
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
-@login_required
-@manager_required
+
 @login_required
 @manager_required
 def manager_response_stuck(request):
@@ -1012,6 +1016,97 @@ def manager_response_stuck(request):
             repair_job.save()
             
             return JsonResponse({'success': True, 'message': message})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+@login_required
+def manager_quality_check(request, repair_id):
+    """דף בדיקת איכות למנהל"""
+    if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
+        return redirect('login')
+    
+    repair_job = get_object_or_404(RepairJob, id=repair_id)
+    
+    # וודא שהתיקון מוכן לבדיקת איכות
+    if repair_job.status != 'awaiting_quality_check':
+        messages.error(request, 'תיקון זה אינו מוכן לבדיקת איכות')
+        return redirect('manager_dashboard')
+    
+    return render(request, 'workshop/manager_quality_check.html', {
+        'repair_job': repair_job,
+        'approved_items': repair_job.approved_items,
+        'completed_items': repair_job.completed_items,
+    })
+
+
+@login_required
+def manager_quality_approve(request, repair_id):
+    """אישור או דחיית בדיקת איכות על ידי מנהל"""
+    if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
+        return redirect('login')
+    
+    if request.method == 'POST':
+        repair_job = get_object_or_404(RepairJob, id=repair_id)
+        
+        action = request.POST.get('action')
+        quality_notes = request.POST.get('quality_notes', '')
+        
+        if action == 'approve':
+            # אישור בדיקת איכות
+            repair_job.status = 'quality_approved'
+            repair_job.quality_checked_by = request.user
+            repair_job.quality_check_date = timezone.now()
+            repair_job.quality_notes = quality_notes
+            repair_job.ready_for_pickup_date = timezone.now()
+            repair_job.save()
+            
+            messages.success(request, f'תיקון #{repair_job.id} אושר ומוכן לאיסוף!')
+            
+        elif action == 'reject':
+            # דחיית בדיקת איכות - החזרה למכונאי לתיקון
+            repair_job.status = 'in_progress'
+            repair_job.quality_notes = quality_notes
+            repair_job.is_stuck = True
+            repair_job.stuck_reason = f"דחיית בדיקת איכות: {quality_notes}"
+            repair_job.stuck_at = timezone.now()
+            repair_job.save()
+            
+            messages.warning(request, f'תיקון #{repair_job.id} נדחה בבדיקת האיכות והוחזר למכונאי')
+        
+        return redirect('manager_dashboard')
+    
+    return redirect('manager_quality_check', repair_id=repair_id)
+
+
+@login_required
+def manager_mark_delivered(request, repair_id):
+    """סימון תיקון כנמסר ללקוח"""
+    if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
+        return JsonResponse({'success': False, 'error': 'אין הרשאה'})
+    
+    if request.method == 'POST':
+        try:
+            repair_job = get_object_or_404(RepairJob, id=repair_id)
+            
+            if repair_job.status != 'quality_approved':
+                return JsonResponse({'success': False, 'error': 'תיקון זה אינו מוכן למסירה'})
+            
+            repair_job.status = 'delivered'
+            repair_job.save()
+            
+            # יצירת עדכון למעקב
+            RepairUpdate.objects.create(
+                repair_job=repair_job,
+                user=request.user,
+                message="התיקון נמסר ללקוח בהצלחה.",
+                is_visible_to_customer=True
+            )
+            
+            return JsonResponse({'success': True})
             
         except Exception as e:
             return JsonResponse({'success': False, 'error': str(e)})

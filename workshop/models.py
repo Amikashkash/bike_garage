@@ -66,6 +66,8 @@ class RepairJob(models.Model):
         ('partially_approved', 'אושר חלקית על ידי לקוח'),
         ('approved', 'אושר על ידי לקוח'),
         ('in_progress', 'בביצוע'),
+        ('awaiting_quality_check', 'ממתין לבדיקת איכות'),
+        ('quality_approved', 'עבר בדיקת איכות - מוכן לאיסוף'),
         ('completed', 'הושלם'),
         ('delivered', 'נמסר ללקוח'),
     ]
@@ -80,7 +82,7 @@ class RepairJob(models.Model):
     diagnosis = models.TextField(blank=True, verbose_name="אבחון")
     
     # פרטי סטטוס
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='reported')
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='reported')
     created_at = models.DateTimeField(auto_now_add=True)
     diagnosed_at = models.DateTimeField(null=True, blank=True)
     approved_at = models.DateTimeField(null=True, blank=True)
@@ -100,6 +102,20 @@ class RepairJob(models.Model):
     stuck_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך סימון כתקוע")
     stuck_resolved = models.BooleanField(default=False, verbose_name="התקיעות נפתרה")
     manager_response = models.TextField(blank=True, verbose_name="תגובת מנהל")
+    
+    # בדיקת איכות על ידי מנהל
+    quality_checked_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='quality_checked_repairs',
+        verbose_name="נבדק על ידי מנהל"
+    )
+    quality_check_date = models.DateTimeField(null=True, blank=True, verbose_name="תאריך בדיקת איכות")
+    quality_notes = models.TextField(blank=True, verbose_name="הערות בדיקת איכות")
+    ready_for_pickup_date = models.DateTimeField(null=True, blank=True, verbose_name="תאריך מוכנות לאיסוף")
+    customer_notified = models.BooleanField(default=False, verbose_name="לקוח עודכן על מוכנות לאיסוף")
 
     def __str__(self):
         return f"תיקון {self.bike} - {self.get_status_display()}"
