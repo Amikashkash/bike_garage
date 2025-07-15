@@ -138,8 +138,49 @@ def create_dashboard_demo_data():
                     is_approved_by_customer=True,
                     status='pending'
                 )
+            else:
+                # לתיקון תקוע - נוסיף פעולה שהושלמה ופעולה חסומה
+                item3 = RepairItem.objects.create(
+                    repair_job=repair,
+                    description="ניקוי שרשרת",
+                    price=30.00,
+                    is_approved_by_customer=True,
+                    status='completed'
+                )
             
             print(f"✅ נוספו פעולות לתיקון #{repair.id}")
+        
+        elif repair.status == 'partially_approved':
+            # גם לתיקונים מאושרים חלקית צריכות להיות פעולות
+            RepairItem.objects.create(
+                repair_job=repair,
+                description="החלפת בלמים קדמיים",
+                price=150.00,
+                is_approved_by_customer=True
+            )
+            RepairItem.objects.create(
+                repair_job=repair,
+                description="החלפת בלמים אחוריים",
+                price=120.00,
+                is_approved_by_customer=False  # לא אושר
+            )
+            print(f"✅ נוספו פעולות לתיקון חלקית מאושר #{repair.id}")
+            
+        elif repair.status == 'diagnosed':
+            # לתיקונים מאובחנים - פעולות שממתינות לאישור
+            RepairItem.objects.create(
+                repair_job=repair,
+                description="החלפת צמיגים קדמיים ואחוריים",
+                price=200.00,
+                is_approved_by_customer=False
+            )
+            RepairItem.objects.create(
+                repair_job=repair,
+                description="כיוון בלמים ובדיקת כבלים",
+                price=80.00,
+                is_approved_by_customer=False
+            )
+            print(f"✅ נוספו פעולות לתיקון מאובחן #{repair.id}")
         
         created_count += 1
         print(f"✅ תיקון נוצר: {repair.status} - {repair.problem_description[:30]}...")
