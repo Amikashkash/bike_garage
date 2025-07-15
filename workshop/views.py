@@ -315,17 +315,23 @@ def manager_dashboard(request):
         # תיקונים שהמכונאי סימן כתקועים
         stuck_repairs = RepairJob.objects.filter(
             is_stuck=True
-        ).select_related('bike', 'bike__customer', 'assigned_mechanic')
+        ).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
         # תיקונים לפי סטטוס
         pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
         pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
-        in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic')
+        in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
-        # ספירה פשוטה
-        waiting_to_start_count = pending_diagnosis.count()
-        actively_working_count = in_progress.count()
+        # ספירה מתוקנת
+        waiting_to_start_count = 0
+        actively_working_count = 0
+        for repair in in_progress:
+            if repair.progress_percentage == 0 and not repair.is_effectively_stuck:
+                waiting_to_start_count += 1
+            elif repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck:
+                actively_working_count += 1
+        
         blocked_tasks_count = stuck_repairs.count()
         
         context = {

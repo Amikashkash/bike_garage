@@ -127,6 +127,41 @@ class RepairJob(models.Model):
             return 0
         completed = self.get_completed_count()
         return (completed / approved) * 100
+    
+    @property
+    def progress_percentage(self):
+        """property לגישה קלה מהתבניות"""
+        return self.get_progress_percentage()
+    
+    @property  
+    def is_effectively_stuck(self):
+        """האם התיקון תקוע למעשה (תקוע או יש פעולות חסומות)"""
+        if self.is_stuck:
+            return True
+        # בדיקה אם יש פעולות חסומות
+        return self.repair_items.filter(status='blocked').exists()
+    
+    @property
+    def completed_items(self):
+        """פעולות שהושלמו"""
+        return self.repair_items.filter(status='completed')
+        
+    @property
+    def approved_items(self):
+        """פעולות מאושרות"""
+        return self.repair_items.filter(is_approved_by_customer=True)
+        
+    @property
+    def blocked_items(self):
+        """פעולות חסומות"""
+        return self.repair_items.filter(status='blocked')
+    
+    @property
+    def has_blocked_items(self):
+        """האם יש פעולות חסומות"""
+        return self.blocked_items.exists()
+
+    # ...existing code...
 
 
 class RepairItem(models.Model):
