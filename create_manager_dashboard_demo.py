@@ -8,7 +8,7 @@ import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'garage.settings')
 django.setup()
 
-from workshop.models import RepairJob, Customer, Bike, User, RepairCategory, RepairSubCategory
+from workshop.models import RepairJob, Customer, Bike, User, RepairCategory, RepairSubCategory, RepairItem
 from django.contrib.auth.models import Group
 from django.utils import timezone
 import random
@@ -110,6 +110,37 @@ def create_dashboard_demo_data():
             stuck_reason=repair_data.get('stuck_reason', ''),
             stuck_at=repair_data.get('stuck_at')
         )
+        
+        # הוספת פעולות תיקון לתיקונים שצריכים אותן
+        if repair.status in ['approved', 'in_progress']:
+            # יצירת פעולות דמו
+            item1 = RepairItem.objects.create(
+                repair_job=repair,
+                description="בדיקת בלמים",
+                price=50.00,
+                is_approved_by_customer=True,
+                status='completed' if repair.status == 'in_progress' and not repair.is_stuck else 'pending'
+            )
+            
+            item2 = RepairItem.objects.create(
+                repair_job=repair,
+                description="החלפת צמיג אחורי",
+                price=120.00,
+                is_approved_by_customer=True,
+                status='blocked' if repair.is_stuck else 'pending'
+            )
+            
+            if not repair.is_stuck:
+                item3 = RepairItem.objects.create(
+                    repair_job=repair,
+                    description="כיוון הילוכים",
+                    price=80.00,
+                    is_approved_by_customer=True,
+                    status='pending'
+                )
+            
+            print(f"✅ נוספו פעולות לתיקון #{repair.id}")
+        
         created_count += 1
         print(f"✅ תיקון נוצר: {repair.status} - {repair.problem_description[:30]}...")
     
