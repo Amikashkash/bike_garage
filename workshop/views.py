@@ -540,8 +540,8 @@ def assign_mechanic(request, repair_id):
     # רשימת מכונאים זמינים
     mechanics = User.objects.filter(userprofile__role='mechanic')
     
-    # הוספת פעולות מאושרות
-    repair_job.approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
+    # הוספת פעולות מאושרות (לא צריך - כבר יש property)
+    # repair_job.approved_items כבר קיים כ-property במודל
     
     return render(request, 'workshop/assign_mechanic.html', {
         'repair_job': repair_job,
@@ -558,11 +558,9 @@ def mechanic_dashboard(request):
             status='in_progress'
         ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
         
-        # הוספת מידע על התקדמות לכל תיקון
+        # הוספת מידע על התקדמות לכל תיקון (לא צריך - יש properties במודל)
         for repair in assigned_repairs:
-            repair.approved_items = repair.repair_items.filter(is_approved_by_customer=True)
-            repair.completed_items = repair.repair_items.filter(is_approved_by_customer=True, status='completed')
-            repair.blocked_items = repair.repair_items.filter(is_approved_by_customer=True, status='blocked')
+            # כל הפעולות הבאות כבר קיימות כ-properties במודל RepairJob
             repair.pending_items = repair.repair_items.filter(is_approved_by_customer=True, status='pending')
             
             repair.approved_count = repair.approved_items.count()
@@ -660,13 +658,11 @@ def mechanic_task_completion(request, repair_id):
     else:
         task_form = MechanicTaskForm(repair_job=repair_job)
     
-    # הוספת מידע נוסף לתיקון
-    repair_job.approved_items = repair_job.repair_items.filter(is_approved_by_customer=True)
-    repair_job.completed_items = repair_job.repair_items.filter(is_approved_by_customer=True, is_completed=True)
+    # הוספת מידע נוסף לתיקון (לא צריך - יש properties במודל)
+    # repair_job.approved_items, completed_items, progress_percentage כבר קיימים כ-properties
     repair_job.pending_items = repair_job.repair_items.filter(is_completed=True)
     repair_job.approved_count = repair_job.approved_items.count()
     repair_job.completed_count = repair_job.completed_items.count()
-    repair_job.progress_percentage = (repair_job.completed_count / repair_job.approved_count * 100) if repair_job.approved_count > 0 else 0
     
     return render(request, 'workshop/mechanic_task_completion.html', {
         'repair_job': repair_job,
