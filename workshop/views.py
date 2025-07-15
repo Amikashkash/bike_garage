@@ -567,7 +567,7 @@ def mechanic_dashboard(request):
             repair.completed_count = repair.completed_items.count()
             repair.blocked_count = repair.blocked_items.count()
             repair.pending_count = repair.pending_items.count()
-            repair.progress_percentage = (repair.completed_count / repair.approved_count * 100) if repair.approved_count > 0 else 0
+            # progress_percentage הוא property - לא צריך להגדיר אותו ידנית
             
             # הוספת שדות stuck באופן בטוח
             repair.is_stuck = getattr(repair, 'is_stuck', False)
