@@ -93,9 +93,19 @@ def repair_form(request):
     if request.method == 'POST':
         form = RepairJobForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "התיקון נוצר בהצלחה!")
-            return redirect('home')
+            try:
+                # אם השדות החדשים קיימים - שמירה רגילה
+                if has_quality_fields():
+                    form.save()
+                else:
+                    # שמירה ידנית ללא השדות החדשים
+                    repair = form.save(commit=False)
+                    repair.save()
+                
+                messages.success(request, "התיקון נוצר בהצלחה!")
+                return redirect('home')
+            except Exception as e:
+                messages.error(request, f"שגיאה ביצירת התיקון: {str(e)}")
     else:
         form = RepairJobForm()
     categories = RepairCategory.objects.prefetch_related('subcategories').all()
