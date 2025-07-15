@@ -43,6 +43,17 @@ def mechanic_required(view_func):
 def customer_required(view_func):
     return user_passes_test(is_customer)(view_func)
 
+def has_quality_fields():
+    """בדיקה אם השדות החדשים לבדיקת איכות קיימים במסד הנתונים"""
+    from django.db import connection
+    try:
+        cursor = connection.cursor()
+        cursor.execute("PRAGMA table_info(workshop_repairjob);")
+        columns = [row[1] for row in cursor.fetchall()]
+        required_fields = ['quality_checked_by_id', 'quality_check_date', 'quality_notes']
+        return all(field in columns for field in required_fields)
+    except:
+        return False
 
 
 @login_required
@@ -323,11 +334,13 @@ def manager_dashboard(request):
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
         in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
-        # תיקונים הממתינים לבדיקת איכות
-        awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
+        # תיקונים הממתינים לבדיקת איכות - רק אם השדות קיימים
+        awaiting_quality_check = []
+        ready_for_pickup = []
         
-        # תיקונים מוכנים לאיסוף
-        ready_for_pickup = RepairJob.objects.filter(status='quality_approved').select_related('bike', 'bike__customer')
+        if has_quality_fields():
+            awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
+            ready_for_pickup = RepairJob.objects.filter(status='quality_approved').select_related('bike', 'bike__customer')
         
         # ספירה מתוקנת
         waiting_to_start_count = 0
@@ -755,7 +768,7 @@ def send_customer_notification(repair_job, message_type, extra_message="", user=
     if customer.email:
         subject_map = {
             'diagnosis_ready': f'אבחון מוכן עבור {repair_job.bike} - מוסך האופניים',
-            'repair_completed': f'התיקון הושלם עבור {repair_job.bike} - מוסך האופניים',
+            'repair_completed': f'התיקון נשלם עבור {repair_job.bike} - מוסך האופניים',
             'general_update': f'עדכון בתיקון {repair_job.bike} - מוסך האופניים',
         }
         
@@ -1024,10 +1037,16 @@ def manager_response_stuck(request):
 
 
 @login_required
+@login_required
 def manager_quality_check(request, repair_id):
     """דף בדיקת איכות למנהל"""
     if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
         return redirect('login')
+    
+    # בדיקה אם השדות החדשים קיימים
+    if not has_quality_fields():
+        messages.error(request, 'תכונת בדיקת איכות עדיין לא זמינה במערכת')
+        return redirect('manager_dashboard')
     
     repair_job = get_object_or_404(RepairJob, id=repair_id)
     
@@ -1048,6 +1067,11 @@ def manager_quality_approve(request, repair_id):
     """אישור או דחיית בדיקת איכות על ידי מנהל"""
     if not hasattr(request.user, 'userprofile') or request.user.userprofile.role != 'manager':
         return redirect('login')
+    
+    # בדיקה אם השדות החדשים קיימים
+    if not has_quality_fields():
+        messages.error(request, 'תכונת בדיקת איכות עדיין לא זמינה במערכת')
+        return redirect('manager_dashboard')
     
     if request.method == 'POST':
         repair_job = get_object_or_404(RepairJob, id=repair_id)
