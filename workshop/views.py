@@ -349,7 +349,22 @@ def manager_dashboard(request):
         pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
         pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
-        in_progress = RepairJob.objects.filter(status__in=['approved', 'in_progress']).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
+        
+        # הפרדה נכונה: תיקונים מאושרים ממתינים להקצאת מכונאי vs בביצוע
+        approved_waiting_for_mechanic = RepairJob.objects.filter(
+            status='approved', 
+            assigned_mechanic__isnull=True
+        ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
+        
+        in_progress = RepairJob.objects.filter(
+            status='in_progress'
+        ).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
+        
+        # תיקונים מאושרים עם מכונאי מוקצה אבל עדיין לא התחילו
+        approved_with_mechanic = RepairJob.objects.filter(
+            status='approved',
+            assigned_mechanic__isnull=False
+        ).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
         # תיקונים הממתינים לבדיקת איכות - רק אם השדות קיימים
         awaiting_quality_check = []
@@ -377,6 +392,15 @@ def manager_dashboard(request):
         # ספירה מתוקנת
         waiting_to_start_count = 0
         actively_working_count = 0
+        
+        # ספירה של תיקונים מאושרים עם מכונאי
+        for repair in approved_with_mechanic:
+            if repair.progress_percentage == 0 and not repair.is_effectively_stuck:
+                waiting_to_start_count += 1
+            elif repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck:
+                actively_working_count += 1
+        
+        # ספירה של תיקונים בביצוע
         for repair in in_progress:
             if repair.progress_percentage == 0 and not repair.is_effectively_stuck:
                 waiting_to_start_count += 1
@@ -390,6 +414,8 @@ def manager_dashboard(request):
             'pending_diagnosis': pending_diagnosis,
             'pending_approval': pending_approval,
             'partially_approved': partially_approved,
+            'approved_waiting_for_mechanic': approved_waiting_for_mechanic,
+            'approved_with_mechanic': approved_with_mechanic,
             'in_progress': in_progress,
             'awaiting_quality_check': awaiting_quality_check,
             'repairs_work_completed': repairs_work_completed,

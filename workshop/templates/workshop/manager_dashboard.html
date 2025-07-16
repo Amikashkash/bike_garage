@@ -53,9 +53,13 @@
         <p class="text-muted">ניהול תיקונים וזרימת עבודה</p>
         
         <!-- סיכום מצב כללי -->
-        {% if in_progress %}
+        {% if approved_waiting_for_mechanic or in_progress %}
         <div class="alert alert-light border">
             <div class="row text-center">
+                <div class="col-md-2">
+                    <h4 class="text-warning mb-1">{{ approved_waiting_for_mechanic.count }}</h4>
+                    <small class="text-muted">ממתינים להקצאת מכונאי</small>
+                </div>
                 <div class="col-md-2">
                     <h4 class="text-secondary mb-1">{{ waiting_to_start_count }}</h4>
                     <small class="text-muted">ממתינות להתחלה</small>
@@ -67,10 +71,6 @@
                 <div class="col-md-2">
                     <h4 class="text-danger mb-1">{{ blocked_tasks_count }}</h4>
                     <small class="text-muted">תקועות - דרושה עזרה</small>
-                </div>
-                <div class="col-md-2">
-                    <h4 class="text-warning mb-1">{{ awaiting_quality_check.count }}</h4>
-                    <small class="text-muted">ממתינים לבדיקת איכות</small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-info mb-1">{{ repairs_not_collected.count }}</h4>
@@ -211,6 +211,52 @@
                                         <td>
                                             <a href="{% url 'customer_approval' repair.id %}" class="btn btn-success btn-sm">
                                                 <i class="fas fa-check me-1"></i> אשר/דחה
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- תיקונים מאושרים ממתינים להקצאת מכונאי -->
+            {% if approved_waiting_for_mechanic %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="approvedWaitingHeading">
+                    <button class="accordion-button collapsed text-info fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#approvedWaitingCollapse" aria-expanded="false" aria-controls="approvedWaitingCollapse">
+                        <i class="fas fa-user-plus me-2"></i>
+                        מאושרים - ממתינים להקצאת מכונאי ({{ approved_waiting_for_mechanic.count }})
+                    </button>
+                </h2>
+                <div id="approvedWaitingCollapse" class="accordion-collapse collapse" aria-labelledby="approvedWaitingHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>פעולות מאושרות</th>
+                                        <th>מחיר</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in approved_waiting_for_mechanic %}
+                                    <tr class="table-info">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.approved_items.count }} פעולות</td>
+                                        <td>₪{{ repair.get_total_approved_price }}</td>
+                                        <td>
+                                            <a href="{% url 'assign_mechanic' repair.id %}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-user-plus me-1"></i> הקצה מכונאי
                                             </a>
                                         </td>
                                     </tr>
