@@ -346,11 +346,26 @@ def manager_dashboard(request):
         
         # תיקונים הממתינים לבדיקת איכות - רק אם השדות קיימים
         awaiting_quality_check = []
-        ready_for_pickup = []
         
-        if has_quality_fields():
+        has_quality = has_quality_fields()
+        
+        if has_quality:
             awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
-            ready_for_pickup = RepairJob.objects.filter(status='quality_approved').select_related('bike', 'bike__customer')
+        
+        # קטגוריות חדשות - ויזואליות בלבד כרגע
+        repairs_work_completed = []  # אופניים שנאספו על ידי הלקוח
+        repairs_not_collected = []   # אופניים שטרם נאספו
+        
+        if has_quality:
+            # אופניים שנאספו על ידי הלקוח (סטטוס completed/delivered)
+            repairs_work_completed = RepairJob.objects.filter(
+                status__in=['completed', 'delivered']
+            ).select_related('bike', 'bike__customer')
+            
+            # אופניים שטרם נאספו (quality_approved - מוכנים לאיסוף)
+            repairs_not_collected = RepairJob.objects.filter(
+                status='quality_approved'
+            ).select_related('bike', 'bike__customer')
         
         # ספירה מתוקנת
         waiting_to_start_count = 0
@@ -370,16 +385,21 @@ def manager_dashboard(request):
             'partially_approved': partially_approved,
             'in_progress': in_progress,
             'awaiting_quality_check': awaiting_quality_check,
-            'ready_for_pickup': ready_for_pickup,
+            'repairs_work_completed': repairs_work_completed,
+            'repairs_not_collected': repairs_not_collected,
             'waiting_to_start_count': waiting_to_start_count,
             'actively_working_count': actively_working_count,
             'blocked_tasks_count': blocked_tasks_count,
         }
+        
         return render(request, 'workshop/manager_dashboard.html', context)
     
     except Exception as e:
         # לוג השגיאה ותצוגת דף ריק
         print(f"Manager dashboard error: {e}")
+        import traceback
+        traceback.print_exc()
+        
         context = {
             'error': str(e),
             'stuck_repairs': [],
@@ -387,9 +407,13 @@ def manager_dashboard(request):
             'pending_approval': [],
             'partially_approved': [],
             'in_progress': [],
+            'awaiting_quality_check': [],
+            'repairs_work_completed': [],
+            'repairs_not_collected': [],
             'waiting_to_start_count': 0,
             'actively_working_count': 0,
             'blocked_tasks_count': 0,
+            'all_repairs_count': 0,
         }
         return render(request, 'workshop/manager_dashboard.html', context)
 

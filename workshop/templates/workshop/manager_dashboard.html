@@ -2,6 +2,49 @@
 
 {% block title %}דשבורד מנהל{% endblock %}
 
+{% block extra_css %}
+<style>
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.alert-danger {
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.table-warning {
+    background-color: #fff3cd !important;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin: 0 2px;
+    min-width: 60px;
+    height: auto;
+    line-height: 1.5;
+}
+
+.respond-btn {
+    position: relative !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.respond-btn:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 {% csrf_token %}
 <div class="row">
@@ -13,7 +56,7 @@
         {% if in_progress %}
         <div class="alert alert-light border">
             <div class="row text-center">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4 class="text-secondary mb-1">{{ waiting_to_start_count }}</h4>
                     <small class="text-muted">ממתינות להתחלה</small>
                 </div>
@@ -30,1067 +73,578 @@
                     <small class="text-muted">ממתינים לבדיקת איכות</small>
                 </div>
                 <div class="col-md-2">
-                    <h4 class="text-success mb-1">{{ ready_for_pickup.count }}</h4>
+                    <h4 class="text-info mb-1">{{ repairs_not_collected.count }}</h4>
                     <small class="text-muted">מוכנים לאיסוף</small>
                 </div>
                 <div class="col-md-2">
-                    <h4 class="text-info mb-1">{{ in_progress.count }}</h4>
-                    <small class="text-muted">סה״כ תיקונים פעילים</small>
+                    <h4 class="text-primary mb-1">{{ repairs_work_completed.count }}</h4>
+                    <small class="text-muted">אופניים שנאספו</small>
                 </div>
             </div>
         </div>
         {% endif %}
-    </div>
-</div>
 
-<!-- תיקונים תקועים - דחיפות עליונה -->
-{% if stuck_repairs %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="alert alert-danger border-danger" style="border-width: 3px !important;">
-            <div class="d-flex align-items-center mb-3">
-                <i class="fas fa-exclamation-triangle fa-2x text-danger mr-3" style="animation: pulse 2s infinite;"></i>
-                <div>
-                    <h4 class="mb-1 text-danger">
-                        <strong>🚨 תיקונים תקועים - דרושה התייחסות מיידית!</strong>
-                    </h4>
-                    <p class="mb-0">{{ stuck_repairs.count }} מכונאים זקוקים לעזרתך</p>
-                </div>
-            </div>
+        <!-- תיקונים לפי קטגוריות -->
+        <div class="accordion" id="repairCategoriesAccordion">
             
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th>מזהה</th>
-                            <th>מכונאי</th>
-                            <th>אופניים</th>
-                            <th>לקוח</th>
-                            <th>סיבת התקיעות</th>
-                            <th>תאריך התקיעות</th>
-                            <th>פעולות</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for repair in stuck_repairs %}
-                        <tr class="table-warning">
-                            <td><strong>#{{ repair.id }}</strong></td>
-                            <td>
-                                <i class="fas fa-user mr-1"></i>
-                                {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
-                            </td>
-                            <td>{{ repair.bike }}</td>
-                            <td>{{ repair.bike.customer.name }}</td>
-                            <td>
-                                <div class="alert alert-warning mb-0 p-2">
-                                    <small><strong>{{ repair.stuck_reason }}</strong></small>
-                                </div>
-                            </td>
-                            <td>
-                                <small>{{ repair.stuck_at|date:"d/m/Y H:i" }}</small>
-                                <br>
-                                <span class="badge badge-danger">
-                                    {{ repair.stuck_at|timesince }} לפני
-                                </span>
-                            </td>
-                            <td>
-                                <a href="{% url 'repair_status' repair.id %}" class="btn btn-success btn-sm">
-                                    <i class="fas fa-reply"></i> השב
-                                </a>
-                                <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i> צפה
-                                </a>
-                                <button type="button" class="btn btn-outline-secondary btn-sm resolve-btn" 
-                                        data-repair-id="{{ repair.id }}" 
-                                        title="סמן כנפתר">
-                                    <i class="fas fa-check"></i> נפתר
-                                </button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-{% if pending_diagnosis %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-warning">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    תיקונים הממתינים לאבחון ({{ pending_diagnosis.count }})
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>תיאור התקלה</th>
-                                <th>תאריך דיווח</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in pending_diagnosis %}
-                            <tr>
-                                <td>{{ repair.id }}</td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>{{ repair.problem_description|default:"לא צוין"|truncatechars:50 }}</td>
-                                <td>{{ repair.created_at|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    <a href="{% url 'repair_diagnosis' repair.id %}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-stethoscope"></i> אבחן
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- תיקונים תקועים -->
+            {% if stuck_repairs %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="stuckRepairsHeading">
+                    <button class="accordion-button text-danger fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#stuckRepairsCollapse" aria-expanded="true" aria-controls="stuckRepairsCollapse">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        תיקונים תקועים - דרושה עזרה ({{ stuck_repairs.count }})
+                    </button>
+                </h2>
+                <div id="stuckRepairsCollapse" class="accordion-collapse collapse show" aria-labelledby="stuckRepairsHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>מכונאי</th>
+                                        <th>סיבת התקיעה</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in stuck_repairs %}
+                                    <tr class="table-danger">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</td>
+                                        <td>{{ repair.stuck_reason|default:"לא צוין" }}</td>
+                                        <td>
+                                            <button class="btn btn-success btn-sm respond-btn" onclick="respondToStuck({{ repair.id }})">
+                                                <i class="fas fa-reply me-1"></i> השב
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+            {% endif %}
 
-{% if pending_approval %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-info">
-            <div class="card-header bg-info text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-clock"></i>
-                    ממתינים לאישור לקוח ({{ pending_approval.count }})
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>סה"כ מחיר</th>
-                                <th>תאריך אבחון</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in pending_approval %}
-                            <tr>
-                                <td>{{ repair.id }}</td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>₪{{ repair.get_total_price|floatformat:2 }}</td>
-                                <td>{{ repair.diagnosed_at|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    <a href="{% url 'repair_diagnosis' repair.id %}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> ערוך אבחון
-                                    </a>
-                                    <a href="{% url 'customer_approval' repair.id %}" class="btn btn-primary btn-sm">
-                                        <i class="fas fa-check"></i> עבור לאישור
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- תיקונים ממתינים לאבחון -->
+            {% if pending_diagnosis %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="pendingDiagnosisHeading">
+                    <button class="accordion-button collapsed text-warning fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#pendingDiagnosisCollapse" aria-expanded="false" aria-controls="pendingDiagnosisCollapse">
+                        <i class="fas fa-search me-2"></i>
+                        ממתינים לאבחון ({{ pending_diagnosis.count }})
+                    </button>
+                </h2>
+                <div id="pendingDiagnosisCollapse" class="accordion-collapse collapse" aria-labelledby="pendingDiagnosisHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>תאריך דיווח</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in pending_diagnosis %}
+                                    <tr class="table-warning">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.created_at|date:"d/m/Y H:i" }}</td>
+                                        <td>
+                                            <a href="{% url 'repair_diagnosis' repair.id %}" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-stethoscope me-1"></i> אבחן
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+            {% endif %}
 
-{% if partially_approved %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-success">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-check-circle"></i>
-                    אושרו חלקית - מוכנים להקצאה ({{ partially_approved.count }})
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>פעולות מאושרות</th>
-                                <th>מחיר מאושר</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in partially_approved %}
-                            <tr>
-                                <td>{{ repair.id }}</td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>
-                                    {{ repair.approved_count }}/{{ repair.total_items }}
-                                </td>
-                                <td>₪{{ repair.get_total_approved_price }}</td>
-                                <td>
-                                    <a href="{% url 'assign_mechanic' repair.id %}" class="btn btn-success btn-sm">
-                                        <i class="fas fa-user-cog"></i> הקצה מכונאי
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- תיקונים ממתינים לאישור -->
+            {% if pending_approval %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="pendingApprovalHeading">
+                    <button class="accordion-button collapsed text-info fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#pendingApprovalCollapse" aria-expanded="false" aria-controls="pendingApprovalCollapse">
+                        <i class="fas fa-clipboard-check me-2"></i>
+                        ממתינים לאישור ({{ pending_approval.count }})
+                    </button>
+                </h2>
+                <div id="pendingApprovalCollapse" class="accordion-collapse collapse" aria-labelledby="pendingApprovalHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>פעולות מוצעות</th>
+                                        <th>מחיר משוער</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in pending_approval %}
+                                    <tr class="table-info">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.repair_items.count }} פעולות</td>
+                                        <td>₪{{ repair.get_total_estimated_price }}</td>
+                                        <td>
+                                            <a href="{% url 'customer_approval' repair.id %}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-check me-1"></i> אשר/דחה
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+            {% endif %}
 
-{% if in_progress %}
-<!-- חלוקה של תיקונים בביצוע לפי סטטוס מפורט -->
-
-<!-- תיקונים ממתינים להתחלה -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-secondary">
-            <div class="card-header bg-secondary text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-hourglass-start"></i>
-                    משימות ממתינות להתחלה 
-                    <span class="badge badge-light">{{ waiting_to_start_count }}</span>
-                </h5>
-                <small>תיקונים שהוקצו למכונאי אך עדיין לא התחילו</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>מכונאי</th>
-                                <th>פעולות מאושרות</th>
-                                <th>סטטוס</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in in_progress %}
-                            {% if repair.progress_percentage == 0 and not repair.is_effectively_stuck %}
-                            <tr>
-                                <td><strong>#{{ repair.id }}</strong></td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>
-                                    {% if repair.assigned_mechanic %}
-                                        <i class="fas fa-user text-info"></i>
-                                        {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
-                                    {% else %}
-                                        <span class="text-danger"><i class="fas fa-exclamation-triangle"></i> לא הוקצה</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge badge-info">{{ repair.approved_items.count }} פעולות</span>
-                                </td>
-                                <td>
-                                    <span class="badge badge-secondary">
-                                        <i class="fas fa-hourglass-start"></i> ממתין להתחלה
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                    {% if not repair.assigned_mechanic %}
-                                    <a href="{% url 'assign_mechanic' repair.id %}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-user-cog"></i> הקצה מכונאי
-                                    </a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- תיקונים בתהליך -->
+            {% if in_progress %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="inProgressHeading">
+                    <button class="accordion-button collapsed text-primary fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#inProgressCollapse" aria-expanded="false" aria-controls="inProgressCollapse">
+                        <i class="fas fa-cogs me-2"></i>
+                        בתהליך ביצוע ({{ in_progress.count }})
+                    </button>
+                </h2>
+                <div id="inProgressCollapse" class="accordion-collapse collapse" aria-labelledby="inProgressHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>מכונאי</th>
+                                        <th>התקדמות</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in in_progress %}
+                                    <tr>
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</td>
+                                        <td>
+                                            <div class="progress" style="width: 100px;">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {{ repair.progress_percentage }}%;" 
+                                                     aria-valuenow="{{ repair.progress_percentage }}" 
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="100">
+                                                    {{ repair.progress_percentage|floatformat:0 }}%
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                                <i class="fas fa-eye me-1"></i> צפה
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            {% endif %}
 
-<!-- תיקונים בביצוע פעיל -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-success">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-cogs"></i>
-                    משימות בביצוע פעיל 
-                    <span class="badge badge-light">{{ actively_working_count }}</span>
-                </h5>
-                <small>תיקונים שהמכונאי עובד עליהם כרגע</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>מכונאי</th>
-                                <th>התקדמות</th>
-                                <th>סטטוס</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in in_progress %}
-                            {% if repair.progress_percentage > 0 and repair.progress_percentage < 100 and not repair.is_effectively_stuck %}
-                            <tr>
-                                <td><strong>#{{ repair.id }}</strong></td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>
-                                    <i class="fas fa-user text-success"></i>
-                                    {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
-                                </td>
-                                <td>
-                                    <div class="progress" style="width: 120px;">
-                                        <div class="progress-bar bg-success" role="progressbar" 
-                                             style="width: {{ repair.progress_percentage }}%;" 
-                                             aria-valuenow="{{ repair.progress_percentage }}" 
-                                             aria-valuemin="0" 
-                                             aria-valuemax="100">
-                                            {{ repair.progress_percentage|floatformat:0 }}%
-                                        </div>
-                                    </div>
-                                    <small class="text-muted">{{ repair.completed_items.count }}/{{ repair.approved_items.count }} הושלמו</small>
-                                </td>
-                                <td>
-                                    <span class="badge badge-success">
-                                        <i class="fas fa-cogs fa-spin"></i> בעבודה פעילה
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- ממתינים לבדיקת איכות -->
+            {% if awaiting_quality_check %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="qualityCheckHeading">
+                    <button class="accordion-button collapsed text-warning fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#qualityCheckCollapse" aria-expanded="false" aria-controls="qualityCheckCollapse">
+                        <i class="fas fa-search-plus me-2"></i>
+                        ממתינים לבדיקת איכות ({{ awaiting_quality_check.count }})
+                    </button>
+                </h2>
+                <div id="qualityCheckCollapse" class="accordion-collapse collapse" aria-labelledby="qualityCheckHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>מכונאי</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in awaiting_quality_check %}
+                                    <tr class="table-warning">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</td>
+                                        <td>
+                                            <a href="{% url 'manager_quality_check' repair.id %}" class="btn btn-warning btn-sm">
+                                                <i class="fas fa-search-plus me-1"></i> בדוק איכות
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            {% endif %}
 
-<!-- תיקונים תקועים -->
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    משימות תקועות - דרושה התייחסות מיידית!
-                    <span class="badge badge-light">{{ blocked_tasks_count }}</span>
-                </h5>
-                <small>תיקונים שהמכונאי סימן כתקועים או שיש בהם פעולות תקועות</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead class="thead-light">
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>מכונאי</th>
-                                <th>סיבת התקיעות</th>
-                                <th>סטטוס</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in in_progress %}
-                            {% if repair.is_effectively_stuck %}
-                            <tr class="table-warning">
-                                <td><strong>#{{ repair.id }}</strong></td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>
-                                    <i class="fas fa-user text-danger"></i>
-                                    {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
-                                </td>
-                                <td>
-                                    {% if repair.stuck_reason %}
-                                        <div class="alert alert-warning mb-0 p-2">
-                                            <small><strong>{{ repair.stuck_reason|truncatechars:50 }}</strong></small>
-                                        </div>
-                                    {% elif repair.has_blocked_items %}
-                                        <div class="alert alert-danger mb-0 p-2">
-                                            <small><strong>יש {{ repair.blocked_items.count }} פעולות תקועות</strong></small>
-                                            {% for item in repair.blocked_items %}
-                                                <br><small>• {{ item.description }}</small>
-                                                {% if item.notes %}
-                                                    <br><small class="text-muted">{{ item.notes|truncatechars:30 }}</small>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <span class="badge badge-danger" style="animation: pulse 2s infinite;">
-                                        <i class="fas fa-times"></i> תקוע - דרושה עזרה
-                                    </span>
-                                    {% if repair.has_blocked_items %}
-                                        <br><small class="text-muted">פעולות תקועות</small>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-success btn-sm">
-                                        <i class="fas fa-reply"></i> השב
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <!-- מוכנים לאיסוף -->
+            {% if repairs_not_collected %}
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="notCollectedHeading">
+                    <button class="accordion-button collapsed text-success fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#notCollectedCollapse" aria-expanded="false" aria-controls="notCollectedCollapse">
+                        <i class="fas fa-check-circle me-2"></i>
+                        מוכנים לאיסוף ({{ repairs_not_collected.count }})
+                    </button>
+                </h2>
+                <div id="notCollectedCollapse" class="accordion-collapse collapse" aria-labelledby="notCollectedHeading" data-bs-parent="#repairCategoriesAccordion">
+                    <div class="accordion-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>מזהה</th>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>טלפון</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in repairs_not_collected %}
+                                    <tr class="table-success">
+                                        <td>{{ repair.id }}</td>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.bike.customer.phone|default:"לא צוין" }}</td>
+                                        <td>
+                                            <button class="btn btn-primary btn-sm" onclick="notifyCustomer({{ repair.id }})">
+                                                <i class="fas fa-phone me-1"></i> הודע ללקוח
+                                            </button>
+                                            <button class="btn btn-success btn-sm" onclick="markAsDelivered({{ repair.id }})">
+                                                <i class="fas fa-check me-1"></i> סמן כנמסר
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endif %}
+            {% endif %}
 
-<!-- תיקונים הממתינים לבדיקת איכות -->
-{% if awaiting_quality_check %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-warning">
-            <div class="card-header bg-warning text-dark">
-                <h5 class="mb-0">
-                    <i class="fas fa-search"></i>
-                    ממתינים לבדיקת איכות ({{ awaiting_quality_check.count }})
-                </h5>
-                <small>תיקונים שהמכונאי סיים ומחכים לאישור איכות שלך</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>מכונאי</th>
-                                <th>תאריך סיום</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in awaiting_quality_check %}
-                            <tr>
-                                <td>{{ repair.id }}</td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>{{ repair.assigned_mechanic.first_name|default:repair.assigned_mechanic.username }}</td>
-                                <td>{{ repair.updated_at|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    <a href="{% url 'manager_quality_check' repair.id %}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-search"></i> בדוק איכות
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
-    </div>
-</div>
-{% endif %}
 
-<!-- תיקונים מוכנים לאיסוף -->
-{% if ready_for_pickup %}
-<div class="row mb-4">
-    <div class="col-md-12">
-        <div class="card border-success">
-            <div class="card-header bg-success text-white">
-                <h5 class="mb-0">
-                    <i class="fas fa-check-circle"></i>
-                    מוכנים לאיסוף ({{ ready_for_pickup.count }})
-                </h5>
-                <small>תיקונים שעברו בדיקת איכות ומוכנים למסירה ללקוח</small>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>מזהה</th>
-                                <th>אופניים</th>
-                                <th>לקוח</th>
-                                <th>אושר ע"י</th>
-                                <th>תאריך אישור</th>
-                                <th>פעולות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for repair in ready_for_pickup %}
-                            <tr>
-                                <td>{{ repair.id }}</td>
-                                <td>{{ repair.bike }}</td>
-                                <td>{{ repair.bike.customer.name }}</td>
-                                <td>{{ repair.quality_checked_by.first_name|default:repair.quality_checked_by.username }}</td>
-                                <td>{{ repair.quality_check_date|date:"d/m/Y H:i" }}</td>
-                                <td>
-                                    {% if not repair.customer_notified %}
-                                    <button class="btn btn-primary btn-sm" onclick="notifyCustomer({{ repair.id }})">
-                                        <i class="fas fa-bell"></i> הודע ללקוח
-                                    </button>
-                                    {% endif %}
-                                    <a href="{% url 'manager_mark_delivered' repair.id %}" class="btn btn-success btn-sm">
-                                        <i class="fas fa-handshake"></i> סמן כנמסר
-                                    </a>
-                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
-                                        <i class="fas fa-eye"></i> צפה
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{% endif %}
-
-{% if not pending_diagnosis and not pending_approval and not partially_approved and not in_progress and not awaiting_quality_check and not ready_for_pickup %}
-<div class="row">
-    <div class="col-md-12">
+        <!-- הודעה אם אין נתונים -->
+        {% if not stuck_repairs and not pending_diagnosis and not pending_approval and not in_progress and not awaiting_quality_check and not repairs_not_collected %}
         <div class="alert alert-info text-center">
-            <h4>אין תיקונים הממתינים לטיפול</h4>
-            <p>כל התיקונים עובדים כראוי או הושלמו.</p>
+            <i class="fas fa-info-circle"></i>
+            אין תיקונים הדורשים טיפול כרגע
         </div>
-    </div>
-</div>
-{% endif %}
+        {% endif %}
+{% endblock %}
 
-<!-- כפתורי פעולות מהירות למנהל -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>פעולות מהירות</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success btn-block">
-                            <i class="fas fa-user-plus"></i><br>לקוח + אופניים חדשים
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'customer_form' %}" class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-user-plus"></i><br>לקוח חדש בלבד
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'bike_form' %}" class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-bicycle"></i><br>אופניים חדשות
-                        </a>
-                    </div>
-                    <div class="col-md-3">
-                        <a href="{% url 'repair_form' %}" class="btn btn-outline-primary btn-block">
-                            <i class="fas fa-wrench"></i><br>תיקון חדש
-                        </a>
-                    </div>
-                </div>
-                <div class="row mt-2">
-                    <div class="col-md-12">
-                        <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary btn-block">
-                            <i class="fas fa-list"></i> רשימת לקוחות ואופניים
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- מודל לתגובת מנהל לתיקון תקוע -->
-<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="responseModalLabel">
-                    <i class="fas fa-reply text-success mr-2"></i>
-                    תגובה לתיקון תקוע
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    <strong>מכונאי:</strong> <span id="mechanicName"></span><br>
-                    <strong>בעיה:</strong> <span id="problemDescription"></span>
-                </div>
-                <form id="responseForm">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="managerResponse">תגובתך למכונאי:</label>
-                        <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 
-                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."></textarea>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="markResolved" name="mark_resolved">
-                        <label class="form-check-label" for="markResolved">
-                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
-                        </label>
-                    </div>
-                    <input type="hidden" id="responseRepairId" name="repair_id">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
-                <button type="button" class="btn btn-success" id="sendResponse">
-                    <i class="fas fa-paper-plane"></i> שלח תגובה
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
+{% block extra_js %}
 <script>
-$(document).ready(function() {
-    console.log('DOM מוכן, מתחיל להאזין לכפתורים');
-    
-    // ספירת כפתורים ובדיקת נוכחותם
-    const buttonCount = $('.respond-btn').length;
-    console.log('נמצאו', buttonCount, 'כפתורי השב');
-    
-    if (buttonCount === 0) {
-        console.warn('לא נמצאו כפתורי השב!');
+// פונקציות עזר
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// פונקציות גלובליות
+window.markAsDelivered = function(repairId) {
+    if (!confirm('האם אתה בטוח שהתיקון נמסר ללקוח?')) {
+        return;
     }
     
-    // בדיקת כל כפתור בנפרד
-    $('.respond-btn').each(function(index) {
-        const $btn = $(this);
-        const repairId = $btn.data('repair-id');
-        console.log(`כפתור ${index + 1}: repair-id = ${repairId}, נראה = ${$btn.is(':visible')}`);
-        
-        // בדיקה שהנתונים קיימים
-        if (!repairId) {
-            console.error(`כפתור ${index + 1} חסר repair-id!`);
-        }
-    });
-    
-    // פתיחת מודל תגובה
-    $('.respond-btn').on('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        console.log('כפתור השב נלחץ!'); // לבדיקה
-        console.log('האלמנט שנלחץ:', this);
-        alert('כפתור השב נלחץ!'); // הודעה ויזואלית לבדיקה
-        
-        const repairId = $(this).data('repair-id');
-        const mechanic = $(this).data('mechanic');
-        const problem = $(this).data('problem');
-        
-        console.log('נתונים מהכפתור:', {
-            repairId: repairId,
-            mechanic: mechanic,
-            problem: problem
-        });
-        
-        if (!repairId) {
-            console.error('חסר repair ID');
-            alert('שגיאה: חסר מזהה תיקון');
-            return;
-        }
-        
-        $('#responseRepairId').val(repairId);
-        $('#mechanicName').text(mechanic || 'לא צוין');
-        $('#problemDescription').text(problem || 'לא צוין');
-        $('#managerResponse').val('');
-        $('#markResolved').prop('checked', false);
-        
-        console.log('מנסה לפתוח מודל...');
-        // Bootstrap 5 syntax
-        const modal = new bootstrap.Modal(document.getElementById('responseModal'));
-        modal.show();
-    });
-    
-    // שליחת תגובה
-    $('#sendResponse').click(function() {
-        const repairId = $('#responseRepairId').val();
-        const response = $('#managerResponse').val().trim();
-        const markResolved = $('#markResolved').prop('checked');
-        
-        if (!response) {
-            alert('נא לכתוב תגובה למכונאי');
-            $('#managerResponse').focus();
-            return;
-        }
-        
-        if (response.length < 10) {
-            alert('נא לכתוב תגובה מפורטת יותר (לפחות 10 תווים)');
-            $('#managerResponse').focus();
-            return;
-        }
-        
-        // השבתת הכפתור למניעת לחיצות כפולות
-        $('#sendResponse').prop('disabled', true).text('שולח...');
-        
-        sendManagerResponse(repairId, response, markResolved);
-    });
-    
-    // סימון כנפתר ישירות
-    $('.resolve-btn').click(function() {
-        const repairId = $(this).data('repair-id');
-        if (confirm('האם אתה בטוח שהתיקון נפתר?')) {
-            sendManagerResponse(repairId, 'התיקון סומן כנפתר על ידי המנהל', true);
-        }
-    });
-    
-    // סימון כנמסר
-    $('.deliver-btn').click(function() {
-        const repairId = $(this).data('repair-id');
-        if (confirm('האם אתה בטוח שהתיקון נמסר ללקוח?')) {
-            markAsDelivered(repairId);
-        }
-    });
-    
-    function sendManagerResponse(repairId, response, markResolved) {
-        $.ajaxSetup({
-            beforeSend: function(xhr, settings) {
-                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                }
-            }
-        });
-        
-        $.ajax({
-            url: '{% url "manager_response_stuck" %}',
-            method: 'POST',
-            data: {
-                'repair_id': repairId,
-                'response': response,
-                'mark_resolved': markResolved
-            },
-            success: function(response) {
-                // החזרת הכפתור למצב רגיל
-                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
-                
-                if (response.success) {
-                    // Bootstrap 5 - סגירת המודל
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('responseModal'));
-                    if (modal) {
-                        modal.hide();
-                    }
-                    // הצגת הודעת הצלחה
-                    alert(response.message || 'התגובה נשלחה בהצלחה');
-                    location.reload();
-                } else {
-                    alert('שגיאה: ' + response.error);
-                }
-            },
-            error: function() {
-                // החזרת הכפתור למצב רגיל
-                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
-                alert('שגיאה בשליחת התגובה');
-            }
-        });
+    const button = document.querySelector(`button[onclick*="markAsDelivered(${repairId})"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> מעדכן...';
     }
     
-    function markAsDelivered(repairId) {
-        fetch(`/manager/mark-delivered/${repairId}/`, {
+    fetch(`/manager/mark-delivered/${repairId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('התיקון סומן כנמסר בהצלחה!');
+            location.reload();
+        } else {
+            alert('שגיאה בעדכון הסטטוס: ' + data.error);
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-handshake"></i> סמן כנמסר';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('שגיאה בחיבור לשרת');
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-handshake"></i> סמן כנמסר';
+        }
+    });
+};
+
+window.notifyCustomer = function(repairId) {
+    if (!confirm('האם לשלוח הודעה ללקוח שהתיקון מוכן לאיסוף?')) {
+        return;
+    }
+    
+    fetch('/manager/notify-customer/' + repairId + '/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('הודעה נשלחה ללקוח בהצלחה!');
+            location.reload();
+        } else {
+            alert('שגיאה בשליחת ההודעה: ' + (data.error || 'שגיאה לא ידועה'));
+        }
+    })
+    .catch(error => {
+        console.error('AJAX Error:', error);
+        alert('שגיאה בשליחת ההודעה. נסה שוב.');
+    });
+};
+
+window.callCustomer = function(phoneNumber) {
+    if (phoneNumber) {
+        const confirmed = confirm(`האם להתקשר ללקוח ${phoneNumber}?\n\nאפשרויות:\n1. העתק מספר ללוח\n2. פתח באפליקציית טלפון (בנייד)`);
+        if (confirmed) {
+            navigator.clipboard.writeText(phoneNumber).then(function() {
+                alert(`המספר ${phoneNumber} הועתק ללוח!`);
+            }).catch(function() {
+                alert(`מספר טלפון: ${phoneNumber}`);
+            });
+            
+            window.open(`tel:${phoneNumber}`, '_blank');
+        }
+    } else {
+        alert('מספר טלפון לא זמין');
+    }
+};
+
+window.respondToStuck = function(repairId) {
+    const response = prompt('הכנס תגובה או הוראות למכונאי:');
+    if (response && response.trim() !== '') {
+        const button = document.querySelector(`button[onclick*="respondToStuck(${repairId})"]`);
+        if (button) {
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> שולח...';
+        }
+        
+        fetch(`/manager/respond-stuck/${repairId}/`, {
             method: 'POST',
             headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
                 'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
             },
+            body: JSON.stringify({
+                'response': response
+            })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                location.reload(); // רענון הדף
+                alert('התגובה נשלחה בהצלחה! המכונאי יוכל להמשיך בעבודה.');
+                location.reload();
             } else {
-                alert('שגיאה בעדכון הסטטוס: ' + data.error);
+                alert('שגיאה בשליחת התגובה: ' + (data.error || 'שגיאה לא ידועה'));
+                if (button) {
+                    button.disabled = false;
+                    button.innerHTML = '<i class="fas fa-reply"></i> השב';
+                }
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert('שגיאה בחיבור לשרת');
+            alert('שגיאה בשליחת התגובה');
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-reply"></i> השב';
+            }
         });
     }
-    
-    // פונקציות עזר ל-CSRF
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+};
+
+// jQuery initialization
+console.log('JavaScript נטען, בודק זמינות jQuery...');
+
+if (typeof $ !== 'undefined') {
+    console.log('jQuery זמין מיד!');
+    initJQueryCode();
+} else {
+    console.log('jQuery לא זמין עדיין, ממתין...');
+    function waitForJQuery() {
+        if (typeof $ !== 'undefined') {
+            console.log('jQuery זמין עכשיו!');
+            initJQueryCode();
+        } else {
+            setTimeout(waitForJQuery, 50);
         }
-        return cookieValue;
     }
-    
-    function csrfSafeMethod(method) {
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    
-    // פונקציה להודעה ללקוח שהתיקון מוכן
-    window.notifyCustomer = function(repairId) {
-        if (!confirm('האם לשלוח הודעה ללקוח שהתיקון מוכן לאיסוף?')) {
-            return;
-        }
+    waitForJQuery();
+}
+
+function initJQueryCode() {
+    try {
+        console.log('jQuery initialization מתחיל...');
         
-        $.ajax({
-            url: '/manager/notify-customer/' + repairId + '/',
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': getCSRFToken()
-            },
-            success: function(response) {
-                if (response.success) {
-                    alert('הודעה נשלחה ללקוח בהצלחה!');
-                    location.reload(); // רענון הדף כדי לעדכן את הכפתור
-                } else {
-                    alert('שגיאה בשליחת ההודעה: ' + (response.error || 'שגיאה לא ידועה'));
+        // כפתורי תגובה
+        $('.respond-btn').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const repairId = $(this).data('repair-id');
+            const mechanic = $(this).data('mechanic');
+            const problem = $(this).data('problem');
+            
+            if (!repairId) {
+                alert('שגיאה: חסר מזהה תיקון');
+                return;
+            }
+            
+            $('#responseRepairId').val(repairId);
+            $('#mechanicName').text(mechanic || 'לא צוין');
+            $('#problemDescription').text(problem || 'לא צוין');
+            $('#managerResponse').val('');
+            $('#markResolved').prop('checked', false);
+            
+            const modal = new bootstrap.Modal(document.getElementById('responseModal'));
+            modal.show();
+        });
+        
+        // שליחת תגובה
+        $('#sendResponse').click(function() {
+            const repairId = $('#responseRepairId').val();
+            const response = $('#managerResponse').val().trim();
+            const markResolved = $('#markResolved').prop('checked');
+            
+            if (!response) {
+                alert('נא לכתוב תגובה למכונאי');
+                $('#managerResponse').focus();
+                return;
+            }
+            
+            if (response.length < 10) {
+                alert('נא לכתוב תגובה מפורטת יותר (לפחות 10 תווים)');
+                $('#managerResponse').focus();
+                return;
+            }
+            
+            $('#sendResponse').prop('disabled', true).text('שולח...');
+            
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
                 }
-            },
-            error: function(xhr) {
-                alert('שגיאה בשליחת ההודעה. נסה שוב.');
-                console.error('AJAX Error:', xhr);
+            });
+            
+            $.ajax({
+                url: '{% url "manager_response_stuck" %}',
+                method: 'POST',
+                data: {
+                    'repair_id': repairId,
+                    'response': response,
+                    'mark_resolved': markResolved
+                },
+                success: function(response) {
+                    $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
+                    
+                    if (response.success) {
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('responseModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        alert(response.message || 'התגובה נשלחה בהצלחה');
+                        location.reload();
+                    } else {
+                        alert('שגיאה: ' + response.error);
+                    }
+                },
+                error: function() {
+                    $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
+                    alert('שגיאה בשליחת התגובה');
+                }
+            });
+        });
+        
+        $('.resolve-btn').click(function() {
+            const repairId = $(this).data('repair-id');
+            if (confirm('האם אתה בטוח שהתיקון נפתר?')) {
+                // כאן אפשר להוסיף את הלוגיקה לסימון כנפתר
+                alert('פונקציה זו תמומש בהמשך');
             }
         });
-    };
-});
+        
+        console.log('jQuery initialization הושלם בהצלחה');
+        
+    } catch (error) {
+        console.error('שגיאה ב-jQuery initialization:', error);
+    }
+}
 </script>
-
-<style>
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
-.alert-danger {
-    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
-}
-
-.table-warning {
-    background-color: #fff3cd !important;
-}
-
-/* שיפור חיווי סטטוס */
-.badge-secondary {
-    background-color: #6c757d !important;
-    color: #fff !important;
-}
-
-.badge-success {
-    background-color: #28a745 !important;
-    color: #fff !important;
-}
-
-.badge-danger {
-    background-color: #dc3545 !important;
-    color: #fff !important;
-}
-
-.badge-info {
-    background-color: #17a2b8 !important;
-    color: #fff !important;
-}
-
-/* כרטיסי סטטוס עם צללים */
-.card.border-secondary {
-    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
-}
-
-.card.border-success {
-    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
-}
-
-.card.border-danger {
-    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
-    border-width: 2px !important;
-}
-
-/* כותרות בכרטיסים */
-.card-header.bg-secondary {
-    border-bottom: 2px solid #495057;
-}
-
-.card-header.bg-success {
-    border-bottom: 2px solid #1e7e34;
-}
-
-.card-header.bg-danger {
-    border-bottom: 2px solid #bd2130;
-}
-
-/* טקסט מכונאי */
-.text-info {
-    color: #17a2b8 !important;
-    font-weight: 500;
-}
-
-.text-success {
-    color: #28a745 !important;
-    font-weight: 500;
-}
-
-.text-danger {
-    color: #dc3545 !important;
-    font-weight: 500;
-}
-
-/* שדרוג פס התקדמות */
-.progress {
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-}
-
-.progress-bar.bg-success {
-    background-color: #28a745 !important;
-}
-
-/* אייקונים מסתובבים */
-.fa-spin {
-    animation: fa-spin 2s infinite linear;
-}
-
-@keyframes fa-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* שיפור טבלאות */
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #f8f9fa;
-}
-
-.table th {
-    font-weight: 600;
-    border-top: none;
-}
-
-/* כפתורים משופרים */
-.btn-sm {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    margin: 0.1rem;
-    margin: 0 2px;
-    min-width: 60px;
-    height: auto;
-    line-height: 1.5;
-}
-
-/* רקע התראות */
-.alert-warning {
-    background-color: #fff3cd;
-    border-color: #ffeaa7;
-    color: #856404;
-}
-
-/* תיקון כפתורי תגובה */
-.respond-btn {
-    position: relative !important;
-    z-index: 999 !important;
-    pointer-events: auto !important;
-    cursor: pointer !important;
-    background-color: #28a745 !important;
-    border-color: #28a745 !important;
-    color: white !important;
-}
-
-.respond-btn:hover {
-    background-color: #218838 !important;
-    border-color: #1e7e34 !important;
-    color: white !important;
-}
-
-.respond-btn:focus {
-    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5) !important;
-    outline: none !important;
-}
-
-.respond-btn:active {
-    background-color: #1e7e34 !important;
-    border-color: #1c7430 !important;
-    transform: translateY(1px);
-}
-
-/* מניעת התנגשויות עם tooltips */
-.btn[title]:hover::after {
-    display: none !important;
-}
-
-/* מניעת חסימות מאלמנטים אחרים */
-td {
-    position: relative;
-}
-
-.btn-group {
-    position: relative;
-    z-index: 10;
-}
-
-/* וידוא שהכפתורים לא חופפים */
-.btn-sm {
-    margin: 0 2px;
-    min-width: 60px;
-    height: auto;
-    line-height: 1.5;
-}
-</style>
 {% endblock %}
