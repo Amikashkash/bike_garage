@@ -126,6 +126,20 @@ ALLOWED_HOSTS=your-app-name.onrender.com
 
 ### ✅ המערכת מוכנה ופועלת!
 
-**תאריך:** 15/07/2025  
+## 🔒 עדכון אחרון: תיקון שגיאות CSRF (16/07/2025)
+
+### בעיה שתוקנה:
+- שגיאת 403 CSRF במעבר בין נייד לשולחן עבודה
+- "CSRF token from POST incorrect"
+
+### התיקונים שבוצעו:
+- ✅ הוספת `CSRF_TRUSTED_ORIGINS` עבור Render.com
+- ✅ הגדרות CSRF ו-Session מתקדמות
+- ✅ JavaScript לטיפול אוטומטי ב-CSRF
+- ✅ CSRF meta tag לטפסי AJAX
+- ✅ רענון אוטומטי בשגיאות CSRF
+- ✅ Middleware לתיקון שדות מסד הנתונים
+
+**תאריך:** 16/07/2025  
 **מפתח:** GitHub Copilot  
-**סטטוס:** ✅ READY FOR PRODUCTION
+**סטטוס:** ✅ READY FOR PRODUCTION + CSRF FIXED

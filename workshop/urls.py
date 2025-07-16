@@ -47,6 +47,7 @@ urlpatterns = [
     # Manager quality check
     path('manager/quality-check/<int:repair_id>/', views.manager_quality_check, name='manager_quality_check'),
     path('manager/quality-approve/<int:repair_id>/', views.manager_quality_approve, name='manager_quality_approve'),
+    path('manager/notify-customer/<int:repair_id>/', views.manager_notify_customer, name='manager_notify_customer'),
     path('manager/mark-delivered/<int:repair_id>/', views.manager_mark_delivered, name='manager_mark_delivered'),
     
     # Categories

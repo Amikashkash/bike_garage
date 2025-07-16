@@ -1147,4 +1147,37 @@ def manager_mark_delivered(request, repair_id):
     
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+@login_required
+@user_passes_test(is_manager)
+def manager_notify_customer(request, repair_id):
+    """שליחת הודעה ללקוח שהתיקון מוכן לאיסוף"""
+    if not has_quality_fields():
+        return JsonResponse({'success': False, 'error': 'תכונת בדיקת איכות לא זמינה'})
+    
+    repair_job = get_object_or_404(RepairJob, id=repair_id)
+    
+    if repair_job.status != 'quality_approved':
+        return JsonResponse({'success': False, 'error': 'התיקון לא עבר בדיקת איכות'})
+    
+    if request.method == 'POST':
+        try:
+            # עדכון שהלקוח הודע
+            repair_job.customer_notified = True
+            repair_job.save()
+            
+            # יצירת עדכון במערכת
+            RepairUpdate.objects.create(
+                repair_job=repair_job,
+                user=request.user,
+                message=f"הלקוח הודע שהתיקון מוכן לאיסוף. ניתן לבוא לאסוף את האופניים.",
+                is_visible_to_customer=True
+            )
+            
+            return JsonResponse({'success': True, 'message': 'הלקוח הודע בהצלחה'})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'שיטה לא נתמכת'})
+
 

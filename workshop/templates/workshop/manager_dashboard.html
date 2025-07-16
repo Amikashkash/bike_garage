@@ -17,15 +17,23 @@
                     <h4 class="text-secondary mb-1">{{ waiting_to_start_count }}</h4>
                     <small class="text-muted">ממתינות להתחלה</small>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4 class="text-success mb-1">{{ actively_working_count }}</h4>
                     <small class="text-muted">בעבודה פעילה</small>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <h4 class="text-danger mb-1">{{ blocked_tasks_count }}</h4>
                     <small class="text-muted">תקועות - דרושה עזרה</small>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <h4 class="text-warning mb-1">{{ awaiting_quality_check.count }}</h4>
+                    <small class="text-muted">ממתינים לבדיקת איכות</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-success mb-1">{{ ready_for_pickup.count }}</h4>
+                    <small class="text-muted">מוכנים לאיסוף</small>
+                </div>
+                <div class="col-md-2">
                     <h4 class="text-info mb-1">{{ in_progress.count }}</h4>
                     <small class="text-muted">סה״כ תיקונים פעילים</small>
                 </div>
@@ -485,7 +493,116 @@
 </div>
 {% endif %}
 
-{% if not pending_diagnosis and not pending_approval and not partially_approved and not in_progress %}
+<!-- תיקונים הממתינים לבדיקת איכות -->
+{% if awaiting_quality_check %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-search"></i>
+                    ממתינים לבדיקת איכות ({{ awaiting_quality_check.count }})
+                </h5>
+                <small>תיקונים שהמכונאי סיים ומחכים לאישור איכות שלך</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>תאריך סיום</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for repair in awaiting_quality_check %}
+                            <tr>
+                                <td>{{ repair.id }}</td>
+                                <td>{{ repair.bike }}</td>
+                                <td>{{ repair.bike.customer.name }}</td>
+                                <td>{{ repair.assigned_mechanic.first_name|default:repair.assigned_mechanic.username }}</td>
+                                <td>{{ repair.updated_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <a href="{% url 'manager_quality_check' repair.id %}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-search"></i> בדוק איכות
+                                    </a>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- תיקונים מוכנים לאיסוף -->
+{% if ready_for_pickup %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-check-circle"></i>
+                    מוכנים לאיסוף ({{ ready_for_pickup.count }})
+                </h5>
+                <small>תיקונים שעברו בדיקת איכות ומוכנים למסירה ללקוח</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>אושר ע"י</th>
+                                <th>תאריך אישור</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for repair in ready_for_pickup %}
+                            <tr>
+                                <td>{{ repair.id }}</td>
+                                <td>{{ repair.bike }}</td>
+                                <td>{{ repair.bike.customer.name }}</td>
+                                <td>{{ repair.quality_checked_by.first_name|default:repair.quality_checked_by.username }}</td>
+                                <td>{{ repair.quality_check_date|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    {% if not repair.customer_notified %}
+                                    <button class="btn btn-primary btn-sm" onclick="notifyCustomer({{ repair.id }})">
+                                        <i class="fas fa-bell"></i> הודע ללקוח
+                                    </button>
+                                    {% endif %}
+                                    <a href="{% url 'manager_mark_delivered' repair.id %}" class="btn btn-success btn-sm">
+                                        <i class="fas fa-handshake"></i> סמן כנמסר
+                                    </a>
+                                    <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if not pending_diagnosis and not pending_approval and not partially_approved and not in_progress and not awaiting_quality_check and not ready_for_pickup %}
 <div class="row">
     <div class="col-md-12">
         <div class="alert alert-info text-center">
@@ -764,6 +881,33 @@ $(document).ready(function() {
     function csrfSafeMethod(method) {
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
+    
+    // פונקציה להודעה ללקוח שהתיקון מוכן
+    window.notifyCustomer = function(repairId) {
+        if (!confirm('האם לשלוח הודעה ללקוח שהתיקון מוכן לאיסוף?')) {
+            return;
+        }
+        
+        $.ajax({
+            url: '/manager/notify-customer/' + repairId + '/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('הודעה נשלחה ללקוח בהצלחה!');
+                    location.reload(); // רענון הדף כדי לעדכן את הכפתור
+                } else {
+                    alert('שגיאה בשליחת ההודעה: ' + (response.error || 'שגיאה לא ידועה'));
+                }
+            },
+            error: function(xhr) {
+                alert('שגיאה בשליחת ההודעה. נסה שוב.');
+                console.error('AJAX Error:', xhr);
+            }
+        });
+    };
 });
 </script>
 
