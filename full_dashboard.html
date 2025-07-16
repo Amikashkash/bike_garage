@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#333333">
+    <meta name="csrf-token" content="OstRNvSR101dy2ekaNf5ypk6Q5TlobduVC6uJJhEjNsblD9iKzCvGzcES0T8XYWB">
+    <!-- הוספה לבית המסך -->
+    <link rel="manifest" href="/static/workshop/manifest.json">
+    <title>דשבורד מנהל</title>
+    
+    <!-- Bootstrap CSS RTL -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* עיצוב מותאם למובייל */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .btn {
+                font-size: 14px;
+                padding: 8px 12px;
+                margin-bottom: 5px;
+            }
+            
+            .btn-block {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            .table-responsive {
+                font-size: 14px;
+            }
+            
+            h1 {
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            
+            h2 {
+                font-size: 20px;
+                margin-bottom: 12px;
+            }
+            
+            .navbar-brand {
+                font-size: 18px;
+            }
+            
+            /* שיפור התפריט במובייל */
+            .navbar-collapse {
+                background-color: #333;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding: 10px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            }
+            
+            .navbar-nav {
+                text-align: center;
+            }
+            
+            .navbar-nav .nav-item {
+                margin-bottom: 5px;
+                width: 100%;
+            }
+            
+            .navbar-nav .nav-link {
+                display: block;
+                width: 100%;
+                text-align: center;
+                padding: 10px !important;
+                margin: 2px 0;
+                border-radius: 5px;
+            }
+        }
+        
+        /* כפתורים נוחים למובייל */
+        .btn {
+            min-height: 44px; /* גובה מינימלי למגע נוח */
+        }
+        
+        /* טבלאות נוחות למובייל */
+        @media (max-width: 576px) {
+            .table td, .table th {
+                padding: 8px 4px;
+                font-size: 12px;
+            }
+            
+            .container {
+                padding: 5px;
+            }
+            
+            .content {
+                padding: 15px;
+                margin-top: 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 16px !important;
+            }
+            
+            .btn {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+        }
+        
+        /* נאבבר מותאם למובייל */
+        .navbar {
+            background-color: #333 !important;
+            padding: 8px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .navbar-brand {
+            color: white !important;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none !important;
+        }
+        
+        .navbar-brand:hover {
+            color: #f8f9fa !important;
+        }
+        
+        .navbar-toggler {
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            background: transparent !important;
+        }
+        
+        .navbar-toggler:focus {
+            box-shadow: none;
+            outline: none;
+        }
+        
+        .navbar-nav .nav-link {
+            color: white !important;
+            padding: 8px 12px !important;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255,255,255,0.1) !important;
+            color: white !important;
+        }
+        
+        /* תוכן ראשי - ריווח מהנאבבר */
+        .main-content {
+            margin-top: 0;
+            padding-top: 20px;
+        }
+        .content {
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        .messages {
+            margin: 20px 0;
+            padding: 0;
+            list-style: none;
+        }
+        .messages li {
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .messages .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .messages .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            margin-top: 40px;
+        }
+    </style>
+    
+</head>
+<body>
+    <!-- נאבבר רספונסיבי עם Bootstrap -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand" href="/">🚲 מוסך האופניים</a>
+            
+            <!-- כפתור hamburger למובייל -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    
+                        
+                        
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/manager/dashboard/">דשבורד מנהל</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/repair/new/">תיקון חדש</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/bike/new/">אופניים חדשים</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/customer/new/">לקוח חדש</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/customers/">רשימת לקוחות</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/categories/">קטגוריות</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/admin/">ניהול</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/customers/link/">חיבור לקוחות</a>
+                            </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout/">התנתק (ami)</a>
+                        </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container main-content">
+        
+
+        <div class="content">
+            
+<input type="hidden" name="csrfmiddlewaretoken" value="OstRNvSR101dy2ekaNf5ypk6Q5TlobduVC6uJJhEjNsblD9iKzCvGzcES0T8XYWB">
+<div class="row">
+    <div class="col-md-12">
+        <h1>דשבורד מנהל</h1>
+        <p class="text-muted">ניהול תיקונים וזרימת עבודה</p>
+        
+        <!-- סיכום מצב כללי -->
+        
+        <div class="alert alert-light border">
+            <div class="row text-center">
+                <div class="col-md-3">
+                    <h4 class="text-secondary mb-1">2</h4>
+                    <small class="text-muted">ממתינות להתחלה</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-success mb-1">0</h4>
+                    <small class="text-muted">בעבודה פעילה</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-danger mb-1">0</h4>
+                    <small class="text-muted">תקועות - דרושה עזרה</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-warning mb-1">4</h4>
+                    <small class="text-muted">ממתינים לבדיקת איכות</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-success mb-1">4</h4>
+                    <small class="text-muted">מוכנים לאיסוף</small>
+                </div>
+                <div class="col-md-2">
+                    <h4 class="text-info mb-1">2</h4>
+                    <small class="text-muted">סה״כ תיקונים פעילים</small>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<!-- תיקונים תקועים - דחיפות עליונה -->
+
+
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    תיקונים הממתינים לאבחון (1)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>תיאור התקלה</th>
+                                <th>תאריך דיווח</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>22</td>
+                                <td>Giant Talon (דני cohen)</td>
+                                <td>דני cohen</td>
+                                <td>החלפת שרשרת</td>
+                                <td>15/07/2025 21:05</td>
+                                <td>
+                                    <a href="/manager/repair/22/diagnosis/" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-stethoscope"></i> אבחן
+                                    </a>
+                                    <a href="/repair/22/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-info">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-clock"></i>
+                    ממתינים לאישור לקוח (1)
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>סה"כ מחיר</th>
+                                <th>תאריך אבחון</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>23</td>
+                                <td>Trek Marlin (דני cohen)</td>
+                                <td>דני cohen</td>
+                                <td>₪0.00</td>
+                                <td></td>
+                                <td>
+                                    <a href="/manager/repair/23/diagnosis/" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> ערוך אבחון
+                                    </a>
+                                    <a href="/repair/23/approve/" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-check"></i> עבור לאישור
+                                    </a>
+                                    <a href="/repair/23/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- חלוקה של תיקונים בביצוע לפי סטטוס מפורט -->
+
+<!-- תיקונים ממתינים להתחלה -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-secondary">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-hourglass-start"></i>
+                    משימות ממתינות להתחלה 
+                    <span class="badge badge-light">2</span>
+                </h5>
+                <small>תיקונים שהוקצו למכונאי אך עדיין לא התחילו</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>פעולות מאושרות</th>
+                                <th>סטטוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            
+                            <tr>
+                                <td><strong>#24</strong></td>
+                                <td>Cannondale Trail (שרה levi)</td>
+                                <td>שרה levi</td>
+                                <td>
+                                    
+                                        <i class="fas fa-user text-info"></i>
+                                        מכונאי דמו
+                                    
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">0 פעולות</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-secondary">
+                                        <i class="fas fa-hourglass-start"></i> ממתין להתחלה
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/repair/24/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                    
+                                </td>
+                            </tr>
+                            
+                            
+                            
+                            <tr>
+                                <td><strong>#25</strong></td>
+                                <td>Specialized Rockhopper (מיכל israeli)</td>
+                                <td>מיכל israeli</td>
+                                <td>
+                                    
+                                        <i class="fas fa-user text-info"></i>
+                                        מכונאי דמו
+                                    
+                                </td>
+                                <td>
+                                    <span class="badge badge-info">0 פעולות</span>
+                                </td>
+                                <td>
+                                    <span class="badge badge-secondary">
+                                        <i class="fas fa-hourglass-start"></i> ממתין להתחלה
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/repair/25/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                    
+                                </td>
+                            </tr>
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- תיקונים בביצוע פעיל -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-cogs"></i>
+                    משימות בביצוע פעיל 
+                    <span class="badge badge-light">0</span>
+                </h5>
+                <small>תיקונים שהמכונאי עובד עליהם כרגע</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>התקדמות</th>
+                                <th>סטטוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- תיקונים תקועים -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    משימות תקועות - דרושה התייחסות מיידית!
+                    <span class="badge badge-light">0</span>
+                </h5>
+                <small>תיקונים שהמכונאי סימן כתקועים או שיש בהם פעולות תקועות</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>סיבת התקיעות</th>
+                                <th>סטטוס</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            
+                            
+                            
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- תיקונים הממתינים לבדיקת איכות -->
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-search"></i>
+                    ממתינים לבדיקת איכות (4)
+                </h5>
+                <small>תיקונים שהמכונאי סיים ומחכים לאישור איכות שלך</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>מכונאי</th>
+                                <th>תאריך סיום</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>16</td>
+                                <td>מרין אלפין טרייל (דני שובבני)</td>
+                                <td>דני שובבני</td>
+                                <td>מכונאי</td>
+                                <td></td>
+                                <td>
+                                    <a href="/manager/quality-check/16/" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-search"></i> בדוק איכות
+                                    </a>
+                                    <a href="/repair/16/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>17</td>
+                                <td>מרין אלפין טרייל (דני שובבני)</td>
+                                <td>דני שובבני</td>
+                                <td>מכונאי</td>
+                                <td></td>
+                                <td>
+                                    <a href="/manager/quality-check/17/" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-search"></i> בדוק איכות
+                                    </a>
+                                    <a href="/repair/17/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>26</td>
+                                <td>Scott Aspect (מיכל israeli)</td>
+                                <td>מיכל israeli</td>
+                                <td>מכונאי</td>
+                                <td></td>
+                                <td>
+                                    <a href="/manager/quality-check/26/" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-search"></i> בדוק איכות
+                                    </a>
+                                    <a href="/repair/26/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>29</td>
+                                <td>מרין אלפין טרייל (דני שובבני)</td>
+                                <td>דני שובבני</td>
+                                <td>מכונאי</td>
+                                <td></td>
+                                <td>
+                                    <a href="/manager/quality-check/29/" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-search"></i> בדוק איכות
+                                    </a>
+                                    <a href="/repair/29/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- תיקונים מוכנים לאיסוף -->
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-check-circle"></i>
+                    מוכנים לאיסוף (4)
+                </h5>
+                <small>תיקונים שעברו בדיקת איכות ומוכנים למסירה ללקוח</small>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>מזהה</th>
+                                <th>אופניים</th>
+                                <th>לקוח</th>
+                                <th>אושר ע"י</th>
+                                <th>תאריך אישור</th>
+                                <th>פעולות</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr>
+                                <td>18</td>
+                                <td>מרין אלפין טרייל (דני שובבני)</td>
+                                <td>דני שובבני</td>
+                                <td>ami</td>
+                                <td>15/07/2025 08:34</td>
+                                <td>
+                                    
+                                    <button class="btn btn-primary btn-sm" onclick="notifyCustomer(18)">
+                                        <i class="fas fa-bell"></i> הודע ללקוח
+                                    </button>
+                                    
+                                    <a href="/manager/mark-delivered/18/" class="btn btn-success btn-sm">
+                                        <i class="fas fa-handshake"></i> סמן כנמסר
+                                    </a>
+                                    <a href="/repair/18/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>27</td>
+                                <td>Giant Talon (דני cohen)</td>
+                                <td>דני cohen</td>
+                                <td>×ž× ×”×œ</td>
+                                <td>15/07/2025 19:05</td>
+                                <td>
+                                    
+                                    <a href="/manager/mark-delivered/27/" class="btn btn-success btn-sm">
+                                        <i class="fas fa-handshake"></i> סמן כנמסר
+                                    </a>
+                                    <a href="/repair/27/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>28</td>
+                                <td>Giant Talon (דני cohen)</td>
+                                <td>דני cohen</td>
+                                <td>×ž× ×”×œ</td>
+                                <td>15/07/2025 19:05</td>
+                                <td>
+                                    
+                                    <a href="/manager/mark-delivered/28/" class="btn btn-success btn-sm">
+                                        <i class="fas fa-handshake"></i> סמן כנמסר
+                                    </a>
+                                    <a href="/repair/28/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td>30</td>
+                                <td>מרין אלפין טרייל (דני שובבני)</td>
+                                <td>דני שובבני</td>
+                                <td>ami</td>
+                                <td>16/07/2025 20:17</td>
+                                <td>
+                                    
+                                    <button class="btn btn-primary btn-sm" onclick="notifyCustomer(30)">
+                                        <i class="fas fa-bell"></i> הודע ללקוח
+                                    </button>
+                                    
+                                    <a href="/manager/mark-delivered/30/" class="btn btn-success btn-sm">
+                                        <i class="fas fa-handshake"></i> סמן כנמסר
+                                    </a>
+                                    <a href="/repair/30/status/" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye"></i> צפה
+                                    </a>
+                                </td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- כפתורי פעולות מהירות למנהל -->
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>פעולות מהירות</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/manager/customer-bike/new/" class="btn btn-success btn-block">
+                            <i class="fas fa-user-plus"></i><br>לקוח + אופניים חדשים
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/customer/new/" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-user-plus"></i><br>לקוח חדש בלבד
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/bike/new/" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-bicycle"></i><br>אופניים חדשות
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/repair/new/" class="btn btn-outline-primary btn-block">
+                            <i class="fas fa-wrench"></i><br>תיקון חדש
+                        </a>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-12">
+                        <a href="/customers/" class="btn btn-outline-secondary btn-block">
+                            <i class="fas fa-list"></i> רשימת לקוחות ואופניים
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- מודל לתגובת מנהל לתיקון תקוע -->
+<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="responseModalLabel">
+                    <i class="fas fa-reply text-success mr-2"></i>
+                    תגובה לתיקון תקוע
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <strong>מכונאי:</strong> <span id="mechanicName"></span><br>
+                    <strong>בעיה:</strong> <span id="problemDescription"></span>
+                </div>
+                <form id="responseForm">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="OstRNvSR101dy2ekaNf5ypk6Q5TlobduVC6uJJhEjNsblD9iKzCvGzcES0T8XYWB">
+                    <div class="form-group">
+                        <label for="managerResponse">תגובתך למכונאי:</label>
+                        <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 
+                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."></textarea>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="markResolved" name="mark_resolved">
+                        <label class="form-check-label" for="markResolved">
+                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
+                        </label>
+                    </div>
+                    <input type="hidden" id="responseRepairId" name="repair_id">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ביטול</button>
+                <button type="button" class="btn btn-success" id="sendResponse">
+                    <i class="fas fa-paper-plane"></i> שלח תגובה
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    console.log('DOM מוכן, מתחיל להאזין לכפתורים');
+    
+    // ספירת כפתורים ובדיקת נוכחותם
+    const buttonCount = $('.respond-btn').length;
+    console.log('נמצאו', buttonCount, 'כפתורי השב');
+    
+    if (buttonCount === 0) {
+        console.warn('לא נמצאו כפתורי השב!');
+    }
+    
+    // בדיקת כל כפתור בנפרד
+    $('.respond-btn').each(function(index) {
+        const $btn = $(this);
+        const repairId = $btn.data('repair-id');
+        console.log(`כפתור ${index + 1}: repair-id = ${repairId}, נראה = ${$btn.is(':visible')}`);
+        
+        // בדיקה שהנתונים קיימים
+        if (!repairId) {
+            console.error(`כפתור ${index + 1} חסר repair-id!`);
+        }
+    });
+    
+    // פתיחת מודל תגובה
+    $('.respond-btn').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        console.log('כפתור השב נלחץ!'); // לבדיקה
+        console.log('האלמנט שנלחץ:', this);
+        alert('כפתור השב נלחץ!'); // הודעה ויזואלית לבדיקה
+        
+        const repairId = $(this).data('repair-id');
+        const mechanic = $(this).data('mechanic');
+        const problem = $(this).data('problem');
+        
+        console.log('נתונים מהכפתור:', {
+            repairId: repairId,
+            mechanic: mechanic,
+            problem: problem
+        });
+        
+        if (!repairId) {
+            console.error('חסר repair ID');
+            alert('שגיאה: חסר מזהה תיקון');
+            return;
+        }
+        
+        $('#responseRepairId').val(repairId);
+        $('#mechanicName').text(mechanic || 'לא צוין');
+        $('#problemDescription').text(problem || 'לא צוין');
+        $('#managerResponse').val('');
+        $('#markResolved').prop('checked', false);
+        
+        console.log('מנסה לפתוח מודל...');
+        // Bootstrap 5 syntax
+        const modal = new bootstrap.Modal(document.getElementById('responseModal'));
+        modal.show();
+    });
+    
+    // שליחת תגובה
+    $('#sendResponse').click(function() {
+        const repairId = $('#responseRepairId').val();
+        const response = $('#managerResponse').val().trim();
+        const markResolved = $('#markResolved').prop('checked');
+        
+        if (!response) {
+            alert('נא לכתוב תגובה למכונאי');
+            $('#managerResponse').focus();
+            return;
+        }
+        
+        if (response.length < 10) {
+            alert('נא לכתוב תגובה מפורטת יותר (לפחות 10 תווים)');
+            $('#managerResponse').focus();
+            return;
+        }
+        
+        // השבתת הכפתור למניעת לחיצות כפולות
+        $('#sendResponse').prop('disabled', true).text('שולח...');
+        
+        sendManagerResponse(repairId, response, markResolved);
+    });
+    
+    // סימון כנפתר ישירות
+    $('.resolve-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        if (confirm('האם אתה בטוח שהתיקון נפתר?')) {
+            sendManagerResponse(repairId, 'התיקון סומן כנפתר על ידי המנהל', true);
+        }
+    });
+    
+    // סימון כנמסר
+    $('.deliver-btn').click(function() {
+        const repairId = $(this).data('repair-id');
+        if (confirm('האם אתה בטוח שהתיקון נמסר ללקוח?')) {
+            markAsDelivered(repairId);
+        }
+    });
+    
+    function sendManagerResponse(repairId, response, markResolved) {
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                }
+            }
+        });
+        
+        $.ajax({
+            url: '/manager/response-stuck/',
+            method: 'POST',
+            data: {
+                'repair_id': repairId,
+                'response': response,
+                'mark_resolved': markResolved
+            },
+            success: function(response) {
+                // החזרת הכפתור למצב רגיל
+                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
+                
+                if (response.success) {
+                    // Bootstrap 5 - סגירת המודל
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('responseModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                    // הצגת הודעת הצלחה
+                    alert(response.message || 'התגובה נשלחה בהצלחה');
+                    location.reload();
+                } else {
+                    alert('שגיאה: ' + response.error);
+                }
+            },
+            error: function() {
+                // החזרת הכפתור למצב רגיל
+                $('#sendResponse').prop('disabled', false).html('<i class="fas fa-paper-plane"></i> שלח תגובה');
+                alert('שגיאה בשליחת התגובה');
+            }
+        });
+    }
+    
+    function markAsDelivered(repairId) {
+        fetch(`/manager/mark-delivered/${repairId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // רענון הדף
+            } else {
+                alert('שגיאה בעדכון הסטטוס: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('שגיאה בחיבור לשרת');
+        });
+    }
+    
+    // פונקציות עזר ל-CSRF
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+    function csrfSafeMethod(method) {
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    
+    // פונקציה להודעה ללקוח שהתיקון מוכן
+    window.notifyCustomer = function(repairId) {
+        if (!confirm('האם לשלוח הודעה ללקוח שהתיקון מוכן לאיסוף?')) {
+            return;
+        }
+        
+        $.ajax({
+            url: '/manager/notify-customer/' + repairId + '/',
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            success: function(response) {
+                if (response.success) {
+                    alert('הודעה נשלחה ללקוח בהצלחה!');
+                    location.reload(); // רענון הדף כדי לעדכן את הכפתור
+                } else {
+                    alert('שגיאה בשליחת ההודעה: ' + (response.error || 'שגיאה לא ידועה'));
+                }
+            },
+            error: function(xhr) {
+                alert('שגיאה בשליחת ההודעה. נסה שוב.');
+                console.error('AJAX Error:', xhr);
+            }
+        });
+    };
+});
+</script>
+
+<style>
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.alert-danger {
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.table-warning {
+    background-color: #fff3cd !important;
+}
+
+/* שיפור חיווי סטטוס */
+.badge-secondary {
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: #fff !important;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+}
+
+.badge-info {
+    background-color: #17a2b8 !important;
+    color: #fff !important;
+}
+
+/* כרטיסי סטטוס עם צללים */
+.card.border-secondary {
+    box-shadow: 0 2px 4px rgba(108, 117, 125, 0.2);
+}
+
+.card.border-success {
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+}
+
+.card.border-danger {
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+    border-width: 2px !important;
+}
+
+/* כותרות בכרטיסים */
+.card-header.bg-secondary {
+    border-bottom: 2px solid #495057;
+}
+
+.card-header.bg-success {
+    border-bottom: 2px solid #1e7e34;
+}
+
+.card-header.bg-danger {
+    border-bottom: 2px solid #bd2130;
+}
+
+/* טקסט מכונאי */
+.text-info {
+    color: #17a2b8 !important;
+    font-weight: 500;
+}
+
+.text-success {
+    color: #28a745 !important;
+    font-weight: 500;
+}
+
+.text-danger {
+    color: #dc3545 !important;
+    font-weight: 500;
+}
+
+/* שדרוג פס התקדמות */
+.progress {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+}
+
+.progress-bar.bg-success {
+    background-color: #28a745 !important;
+}
+
+/* אייקונים מסתובבים */
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* שיפור טבלאות */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f8f9fa;
+}
+
+.table th {
+    font-weight: 600;
+    border-top: none;
+}
+
+/* כפתורים משופרים */
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    margin: 0.1rem;
+    margin: 0 2px;
+    min-width: 60px;
+    height: auto;
+    line-height: 1.5;
+}
+
+/* רקע התראות */
+.alert-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+/* תיקון כפתורי תגובה */
+.respond-btn {
+    position: relative !important;
+    z-index: 999 !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.respond-btn:hover {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+    color: white !important;
+}
+
+.respond-btn:focus {
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5) !important;
+    outline: none !important;
+}
+
+.respond-btn:active {
+    background-color: #1e7e34 !important;
+    border-color: #1c7430 !important;
+    transform: translateY(1px);
+}
+
+/* מניעת התנגשויות עם tooltips */
+.btn[title]:hover::after {
+    display: none !important;
+}
+
+/* מניעת חסימות מאלמנטים אחרים */
+td {
+    position: relative;
+}
+
+.btn-group {
+    position: relative;
+    z-index: 10;
+}
+
+/* וידוא שהכפתורים לא חופפים */
+.btn-sm {
+    margin: 0 2px;
+    min-width: 60px;
+    height: auto;
+    line-height: 1.5;
+}
+</style>
+
+        </div>
+    </div>
+
+    <footer>
+        &copy;  מוסך האופניים
+    </footer>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- CSRF Token Functions -->
+    <script>
+        // פונקציה לקבלת CSRF token
+        function getCSRFToken() {
+            // מנסה מהטופס הנוכחי או מה-meta tag
+            return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                   document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        }
+        
+        // הגדרת CSRF עבור AJAX requests
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                }
+            }
+        });
+        
+        // טיפול בטעינה מחדש אחרי שגיאת CSRF
+        $(document).on('ajaxError', function(event, xhr, settings) {
+            if (xhr.status === 403 && xhr.responseText.includes('CSRF')) {
+                console.log('CSRF Error detected, reloading page...');
+                // מחכה שנייה ואז טוען מחדש
+                setTimeout(function() {
+                    window.location.reload();
+                }, 1000);
+            }
+        });
+        
+        // פונקציה לרענון CSRF token
+        function refreshCSRFToken() {
+            fetch(window.location.href, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(response => response.text())
+              .then(html => {
+                  const parser = new DOMParser();
+                  const doc = parser.parseFromString(html, 'text/html');
+                  const newToken = doc.querySelector('[name=csrfmiddlewaretoken]')?.value;
+                  if (newToken) {
+                      // עדכון כל הטוקנים בדף
+                      document.querySelectorAll('[name=csrfmiddlewaretoken]').forEach(input => {
+                          input.value = newToken;
+                      });
+                      // עדכון meta tag
+                      const metaTag = document.querySelector('meta[name="csrf-token"]');
+                      if (metaTag) {
+                          metaTag.setAttribute('content', newToken);
+                      }
+                  }
+              });
+        }
+    </script>
+</body>
+</html>

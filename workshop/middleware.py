@@ -32,13 +32,19 @@ class DatabaseFixMiddleware:
     def fix_database(self):
         """תיקון מסד הנתונים"""
         with connection.cursor() as cursor:
-            # בדיקה אילו עמודות כבר קיימות
-            cursor.execute("""
-                SELECT column_name 
-                FROM information_schema.columns 
-                WHERE table_name = 'workshop_repairjob'
-            """)
-            existing_columns = [row[0] for row in cursor.fetchall()]
+            # בדיקה אילו עמודות כבר קיימות - תואם לכל סוגי מסדי הנתונים
+            try:
+                # עבור PostgreSQL
+                cursor.execute("""
+                    SELECT column_name 
+                    FROM information_schema.columns 
+                    WHERE table_name = 'workshop_repairjob'
+                """)
+                existing_columns = [row[0] for row in cursor.fetchall()]
+            except Exception:
+                # עבור SQLite
+                cursor.execute("PRAGMA table_info(workshop_repairjob);")
+                existing_columns = [row[1] for row in cursor.fetchall()]
             
             # הוספת עמודות חסרות
             columns_to_add = [
