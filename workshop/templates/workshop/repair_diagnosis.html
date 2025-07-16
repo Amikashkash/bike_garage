@@ -24,6 +24,15 @@
                 </li>
             </ol>
         </nav>
+        
+        {% if not repair_job.repair_items.exists %}
+        <div class="alert alert-info">
+            <i class="fas fa-lightbulb me-2"></i>
+            <strong>הוראות לאבחון:</strong>
+            תיקון זה עדיין לא מכיל פעולות תיקון ספציפיות. הוסף להלן את כל הפעולות הנדרשות עם מחירים מדויקים, 
+            וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.
+        </div>
+        {% endif %}
     </div>
 </div>
 

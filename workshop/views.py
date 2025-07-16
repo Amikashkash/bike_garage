@@ -94,16 +94,23 @@ def repair_form(request):
         form = RepairJobForm(request.POST)
         if form.is_valid():
             try:
-                # אם השדות החדשים קיימים - שמירה רגילה
-                if has_quality_fields():
-                    form.save()
-                else:
-                    # שמירה ידנית ללא השדות החדשים
-                    repair = form.save(commit=False)
-                    repair.save()
+                # שמירת התיקון
+                repair = form.save(commit=False)
+                repair.status = 'reported'  # סטטוס ראשוני
+                repair.save()
+                form.save_m2m()  # שמירת קטגוריות משנה
                 
-                messages.success(request, "התיקון נוצר בהצלחה!")
-                return redirect('home')
+                # אם המנהל הזין אבחון, נעביר אותו ישירות לדף האבחון המפורט
+                if is_manager(request.user) and repair.diagnosis:
+                    messages.success(request, "התיקון נוצר בהצלחה! כעת הוסף פעולות תיקון ספציפיות עם מחירים.")
+                    return redirect('repair_diagnosis', repair_id=repair.id)
+                else:
+                    messages.success(request, "התיקון נוצר בהצלחה!")
+                    if is_manager(request.user):
+                        return redirect('manager_dashboard')
+                    else:
+                        return redirect('home')
+                        
             except Exception as e:
                 messages.error(request, f"שגיאה ביצירת התיקון: {str(e)}")
     else:

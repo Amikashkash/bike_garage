@@ -45,6 +45,12 @@
   <div>
     {{ form.diagnosis.label_tag }}<br>
     {{ form.diagnosis }}
+    {% if user.userprofile.role == 'manager' %}
+    <small class="form-text text-muted">
+      <i class="fas fa-info-circle"></i>
+      אם תמלא אבחון כאן, תועבר ישירות לדף האבחון המפורט כדי להוסיף פעולות תיקון ספציפיות עם מחירים
+    </small>
+    {% endif %}
   </div>
   <br>
   <div>
