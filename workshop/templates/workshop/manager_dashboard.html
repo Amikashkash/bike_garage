@@ -555,6 +555,7 @@
                     <strong>בעיה:</strong> <span id="problemDescription"></span>
                 </div>
                 <form id="responseForm">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="managerResponse">תגובתך למכונאי:</label>
                         <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 

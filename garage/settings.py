@@ -30,6 +30,23 @@ DEBUG = config('DEBUG', default=True, cast=bool)  # זמני לבדיקת שגי
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*,localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
 
+# CSRF Settings - תיקון בעיות CSRF במעבר בין מכשירים
+CSRF_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
+CSRF_COOKIE_HTTPONLY = False  # מאפשר גישה ל-JavaScript אם נדרש
+CSRF_COOKIE_SAMESITE = 'Lax'  # מאפשר CSRF בין תת-דומיינים
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+    'https://shai-bike-garage.onrender.com',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+# Session Settings - שיפור יציבות סשן
+SESSION_COOKIE_AGE = 3600 * 24 * 7  # שבוע
+SESSION_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_SAVE_EVERY_REQUEST = True  # מחדש את הסשן בכל בקשה
 
 # Application definition
 
