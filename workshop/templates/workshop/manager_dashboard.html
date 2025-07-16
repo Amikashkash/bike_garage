@@ -195,9 +195,12 @@
                                 <td>{{ repair.id }}</td>
                                 <td>{{ repair.bike }}</td>
                                 <td>{{ repair.bike.customer.name }}</td>
-                                <td>₪{{ repair.repair_items.all|length }}</td>
+                                <td>₪{{ repair.get_total_price|floatformat:2 }}</td>
                                 <td>{{ repair.diagnosed_at|date:"d/m/Y H:i" }}</td>
                                 <td>
+                                    <a href="{% url 'repair_diagnosis' repair.id %}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> ערוך אבחון
+                                    </a>
                                     <a href="{% url 'customer_approval' repair.id %}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-check"></i> עבור לאישור
                                     </a>

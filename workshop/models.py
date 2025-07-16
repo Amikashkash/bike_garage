@@ -120,6 +120,10 @@ class RepairJob(models.Model):
     def __str__(self):
         return f"תיקון {self.bike} - {self.get_status_display()}"
     
+    def get_total_price(self):
+        """סה"כ מחיר כל הפעולות"""
+        return sum(item.price for item in self.repair_items.all())
+    
     def get_total_approved_price(self):
         """מחיר כל הפעולות שאושרו"""
         return sum(item.price for item in self.repair_items.filter(is_approved_by_customer=True))

@@ -5,11 +5,23 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>אבחון תיקון</h1>
+        <h1>
+            {% if is_editing %}
+                עריכת אבחון תיקון
+            {% else %}
+                אבחון תיקון
+            {% endif %}
+        </h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'manager_dashboard' %}">דשבורד מנהל</a></li>
-                <li class="breadcrumb-item active">אבחון תיקון #{{ repair_job.id }}</li>
+                <li class="breadcrumb-item active">
+                    {% if is_editing %}
+                        עריכת אבחון תיקון #{{ repair_job.id }}
+                    {% else %}
+                        אבחון תיקון #{{ repair_job.id }}
+                    {% endif %}
+                </li>
             </ol>
         </nav>
     </div>
@@ -69,6 +81,49 @@
                     <small class="text-muted">הוסף את כל הפעולות הנדרשות עם מחירים</small>
                 </div>
                 <div class="card-body">
+                    
+                    <!-- הצגת פעולות קיימות אם יש -->
+                    {% if repair_job.repair_items.exists %}
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-list"></i> פעולות תיקון קיימות:</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>תיאור</th>
+                                        <th>מחיר (₪)</th>
+                                        <th>סטטוס</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in repair_job.repair_items.all %}
+                                    <tr>
+                                        <td>{{ item.description }}</td>
+                                        <td>₪{{ item.price }}</td>
+                                        <td>
+                                            {% if item.is_approved_by_customer %}
+                                                <span class="badge badge-success">אושר</span>
+                                            {% else %}
+                                                <span class="badge badge-warning">ממתין לאישור</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr class="table-info">
+                                        <th>סה"כ:</th>
+                                        <th>₪{{ repair_job.get_total_price|floatformat:2 }}</th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <h6><i class="fas fa-plus"></i> הוסף פעולות נוספות:</h6>
+                    {% endif %}
+                    
                     <div id="repair-items-container">
                         <div class="repair-item row mb-3">
                             <div class="col-md-8">
@@ -97,7 +152,11 @@
             
             <div class="mt-3">
                 <button type="submit" class="btn btn-success btn-lg">
-                    <i class="fas fa-check"></i> שמור אבחון ושלח ללקוח
+                    {% if is_editing %}
+                        <i class="fas fa-save"></i> עדכן אבחון ושלח ללקוח
+                    {% else %}
+                        <i class="fas fa-check"></i> שמור אבחון ושלח ללקוח
+                    {% endif %}
                 </button>
                 <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">ביטול</a>
             </div>

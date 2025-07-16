@@ -399,9 +399,13 @@ def repair_diagnosis(request, repair_id):
     """מנהל מוסיף אבחון ופרטי תיקון"""
     repair_job = get_object_or_404(RepairJob, id=repair_id)
     
-    if repair_job.status != 'reported':
-        messages.error(request, 'תיקון זה כבר עבר אבחון')
+    # מאפשר עריכה של אבחון עד לשלב אישור הלקוח
+    if repair_job.status not in ['reported', 'diagnosed']:
+        messages.error(request, 'לא ניתן לערוך אבחון זה יותר')
         return redirect('manager_dashboard')
+    
+    # משתנה לבדוק אם זה אבחון חדש או עריכה
+    is_editing = repair_job.status == 'diagnosed'
     
     if request.method == 'POST':
         diagnosis_form = RepairDiagnosisForm(request.POST, instance=repair_job)
@@ -458,7 +462,10 @@ def repair_diagnosis(request, repair_id):
                     user=request.user
                 )
                 
-                messages.success(request, 'אבחון נשמר בהצלחה והלקוח קיבל התראה. כעת הלקוח יכול לאשר את הפעולות.')
+                if is_editing:
+                    messages.success(request, 'אבחון עודכן בהצלחה! הלקוח קיבל התראה על השינויים.')
+                else:
+                    messages.success(request, 'אבחון נשמר בהצלחה והלקוח קיבל התראה. כעת הלקוח יכול לאשר את הפעולות.')
                 return redirect('manager_dashboard')
         else:
             if not repair_items_data:
@@ -469,6 +476,7 @@ def repair_diagnosis(request, repair_id):
     return render(request, 'workshop/repair_diagnosis.html', {
         'repair_job': repair_job,
         'diagnosis_form': diagnosis_form,
+        'is_editing': is_editing,
     })
 
 @login_required
