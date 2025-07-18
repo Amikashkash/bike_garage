@@ -191,22 +191,54 @@ class RepairSubCategoryAdmin(admin.ModelAdmin):
 
 @admin.register(RepairJob)
 class RepairJobAdmin(admin.ModelAdmin):
-    list_display = ('bike', 'status', 'assigned_mechanic', 'created_at')
-    list_filter = ('status', 'created_at', 'assigned_mechanic')
-    search_fields = ('bike__brand', 'bike__customer__name')
+    list_display = ('job_number', 'bike', 'customer_name', 'status', 'assigned_mechanic', 'is_stuck', 'created_at')
+    list_filter = ('status', 'is_stuck', 'created_at', 'assigned_mechanic')
+    search_fields = ('id', 'bike__brand', 'bike__customer__name')
     readonly_fields = ('created_at', 'diagnosed_at', 'approved_at')
+    ordering = ('-created_at',)
+    
+    def job_number(self, obj):
+        """Display job number with # prefix"""
+        return f"#{obj.id}"
+    job_number.short_description = 'Job #'
+    job_number.admin_order_field = 'id'
+    
+    def customer_name(self, obj):
+        """Display customer name"""
+        return obj.bike.customer.name
+    customer_name.short_description = 'Customer'
+    customer_name.admin_order_field = 'bike__customer__name'
 
 @admin.register(RepairItem)
 class RepairItemAdmin(admin.ModelAdmin):
-    list_display = ('description', 'price', 'repair_job', 'is_approved_by_customer', 'is_completed')
-    list_filter = ('is_approved_by_customer', 'is_completed', 'repair_job__status')
-    search_fields = ('description', 'repair_job__bike__customer__name')
+    list_display = ('description', 'job_number', 'price', 'is_approved_by_customer', 'status')
+    list_filter = ('is_approved_by_customer', 'status', 'repair_job__status')
+    search_fields = ('description', 'repair_job__id', 'repair_job__bike__customer__name')
+    ordering = ('-repair_job__created_at',)
+    
+    def job_number(self, obj):
+        """Display job number with # prefix"""
+        return f"#{obj.repair_job.id}"
+    job_number.short_description = 'Job #'
+    job_number.admin_order_field = 'repair_job__id'
 
 @admin.register(RepairUpdate)
 class RepairUpdateAdmin(admin.ModelAdmin):
-    list_display = ('repair_job', 'user', 'message', 'created_at', 'is_visible_to_customer')
+    list_display = ('job_number', 'user', 'message_preview', 'created_at', 'is_visible_to_customer')
     list_filter = ('is_visible_to_customer', 'created_at')
-    search_fields = ('repair_job__bike__customer__name', 'message')
+    search_fields = ('repair_job__id', 'repair_job__bike__customer__name', 'message')
+    ordering = ('-created_at',)
+    
+    def job_number(self, obj):
+        """Display job number with # prefix"""
+        return f"#{obj.repair_job.id}"
+    job_number.short_description = 'Job #'
+    job_number.admin_order_field = 'repair_job__id'
+    
+    def message_preview(self, obj):
+        """Display first 50 characters of message"""
+        return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
+    message_preview.short_description = 'Message'
 
 # הוספת כותרת מותאמת אישית לאדמין
 admin.site.site_header = "🔧 מערכת ניהול מוסך אופניים"

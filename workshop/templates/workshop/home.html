@@ -75,6 +75,7 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
+                                        <th>מזהה</th>
                                         <th>אופניים</th>
                                         <th>סטטוס</th>
                                         <th>תאריך</th>
@@ -84,6 +85,7 @@
                                 <tbody>
                                     {% for repair in recent_repairs %}
                                     <tr>
+                                        <td><strong>#{{ repair.id }}</strong></td>
                                         <td>{{ repair.bike }}</td>
                                         <td>
                                             <span class="badge badge-{% if repair.status == 'completed' %}success{% elif repair.status == 'in_progress' %}primary{% elif repair.status == 'diagnosed' %}warning{% else %}secondary{% endif %}">
@@ -204,6 +206,7 @@
                             <table class="table table-sm">
                                 <thead>
                                     <tr>
+                                        <th>מזהה</th>
                                         <th>אופניים</th>
                                         <th>לקוח</th>
                                         <th>תאריך</th>
@@ -213,6 +216,7 @@
                                 <tbody>
                                     {% for repair in assigned_repairs %}
                                     <tr>
+                                        <td><strong>#{{ repair.id }}</strong></td>
                                         <td>{{ repair.bike }}</td>
                                         <td>{{ repair.bike.customer.name }}</td>
                                         <td>{{ repair.created_at|date:"d/m/Y" }}</td>

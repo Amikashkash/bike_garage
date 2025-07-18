@@ -4,43 +4,43 @@ __pycache__/
 *$py.class
 *.so
 .Python
-env/
-venv/
-ENV/
-env.bak/
-
-# Development files
-.env
-.env.local
-.env.development
-*.log
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Local database (development only)
-db_local.sqlite3
-local_settings.py
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
-/static
-/staticfiles
+media/
+staticfiles/
+.env
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
@@ -48,6 +48,100 @@ db.sqlite3-journal
 ._*
 .Spotlight-V100
 .Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files and debug scripts
+debug_*.py
+test_*.py
+check_*.py
+create_*.py
+fix_*.py
+analyze_*.py
+quick_*.py
+final_*.py
+mark_*.py
+simple_*.py
+smart_*.py
+start_*.py
+system_*.py
+update_*.py
+validate_*.py
+verify_*.py
+run_*.py
+reset_*.py
+set_*.py
+shell_*.py
+pre_push_*.py
+emergency_*.py
+explain_*.py
+fake_*.py
+
+# Demo and test HTML files
+demo_*.html
+test_*.html
+*_debug.html
+*_backup.html
+*_demo.html
+jquery_test.html
+manager_dashboard_*.html
+mechanic_*.html
+full_dashboard.html
+exact_mechanic_interface.html
+enduro_design_demo.html
+
+# Batch files
+*.bat
+
+# Temporary documentation
+*_FIX.md
+*_GUIDE.md
+*_SUMMARY.md
+*_SUCCESS.md
+*_COMPLETE.md
+ACCORDION_*.md
+BACKUP_*.md
+CATEGORY_*.md
+CHECKBOX_*.md
+CUSTOMER_*.md
+DASHBOARD_*.md
+DEBUG_*.md
+DELIVERY_*.md
+DEPLOYMENT_*.md
+DESIGN_*.md
+DEVELOPMENT_*.md
+ENDURO_*.md
+FINAL_*.md
+HTML_*.md
+JAVASCRIPT_*.md
+JS_*.md
+LOCAL_*.md
+MANAGER_*.md
+MECHANIC_*.md
+MIGRATION_*.md
+MOBILE_*.md
+NAVBAR_*.md
+NEW_*.md
+NOTES_*.md
+NOTIFICATION_*.md
+PRESENTATION_*.md
+PROJECT_*.md
+QUICK_*.md
+READY_*.md
+RENDER_*.md
+RESOLUTION_*.md
+SIMPLE_*.md
+STUCK_*.md
+TEMPLATE_*.md
+URL_*.md
+
+# Config files with sensitive data
+pip.conf
+env_example.txt
+
+# Backup files
+*_backup.*
+*.bak
 ehthumbs.db
 Thumbs.db
 

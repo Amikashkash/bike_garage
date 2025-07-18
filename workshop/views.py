@@ -623,25 +623,89 @@ def assign_mechanic(request, repair_id):
         mechanic_id = request.POST.get('mechanic_id')
         if mechanic_id:
             try:
-                mechanic = User.objects.get(id=mechanic_id, userprofile__role__in=['mechanic', 'manager'])
+                if mechanic_id == 'auto_assign':
+                    # הקצאה אוטומטית - מצא את המכונאי עם הכי מעט עבודות פעילות
+                    # אבל לא כולל מנהלים (המנהל יבחר את עצמו אם הוא רוצה)
+                    mechanics = User.objects.filter(userprofile__role='mechanic')
+                    
+                    # חישוב עומס עבודה לכל מכונאי
+                    best_mechanic = None
+                    min_workload = float('inf')
+                    
+                    for mechanic in mechanics:
+                        # ספירת תיקונים פעילים
+                        active_repairs = RepairJob.objects.filter(
+                            assigned_mechanic=mechanic,
+                            status='in_progress'
+                        ).count()
+                        
+                        # ספירת תיקונים תקועים (עומס נוסף)
+                        stuck_repairs = RepairJob.objects.filter(
+                            assigned_mechanic=mechanic,
+                            is_stuck=True
+                        ).count()
+                        
+                        # עומס כולל (תיקונים רגילים + תיקונים תקועים מכפילים)
+                        total_workload = active_repairs + (stuck_repairs * 2)
+                        
+                        if total_workload < min_workload:
+                            min_workload = total_workload
+                            best_mechanic = mechanic
+                    
+                    if best_mechanic:
+                        mechanic = best_mechanic
+                        auto_assigned = True
+                    else:
+                        messages.error(request, 'לא נמצא מכונאי זמין להקצאה אוטומטית')
+                        return redirect('assign_mechanic', repair_id=repair_id)
+                else:
+                    # הקצאה ספציפית למכונאי
+                    mechanic = User.objects.get(id=mechanic_id, userprofile__role__in=['mechanic', 'manager'])
+                    auto_assigned = False
+                
                 repair_job.assigned_mechanic = mechanic
                 repair_job.status = 'in_progress'
                 repair_job.save()
                 
+                # הודעת עדכון מותאמת לפי סוג ההקצאה
+                if auto_assigned:
+                    message = f"התיקון הוקצה אוטומטית למכונאי הזמין: {mechanic.get_full_name() or mechanic.username}"
+                    success_message = f'התיקון הוקצה אוטומטית למכונאי הזמין: {mechanic.get_full_name() or mechanic.username}'
+                else:
+                    message = f"התיקון הוקצה למכונאי: {mechanic.get_full_name() or mechanic.username}"
+                    success_message = f'התיקון הוקצה למכונאי {mechanic.get_full_name() or mechanic.username}'
+                
                 RepairUpdate.objects.create(
                     repair_job=repair_job,
                     user=request.user,
-                    message=f"התיקון הוקצה למכונאי: {mechanic.get_full_name() or mechanic.username}",
+                    message=message,
                     is_visible_to_customer=True
                 )
                 
-                messages.success(request, f'התיקון הוקצה למכונאי {mechanic.get_full_name() or mechanic.username}')
+                messages.success(request, success_message)
                 return redirect('manager_dashboard')
             except User.DoesNotExist:
                 messages.error(request, 'מכונאי לא נמצא')
     
-    # רשימת מכונאים זמינים (כולל מנהלים)
+    # רשימת מכונאים זמינים (כולל מנהלים) עם מידע על עומס עבודה
     mechanics = User.objects.filter(userprofile__role__in=['mechanic', 'manager'])
+    
+    # הוספת מידע על עומס עבודה לכל מכונאי
+    for mechanic in mechanics:
+        mechanic.active_repairs_count = RepairJob.objects.filter(
+            assigned_mechanic=mechanic,
+            status='in_progress'
+        ).count()
+        
+        mechanic.stuck_repairs_count = RepairJob.objects.filter(
+            assigned_mechanic=mechanic,
+            is_stuck=True
+        ).count()
+        
+        mechanic.total_workload = mechanic.active_repairs_count + (mechanic.stuck_repairs_count * 2)
+    
+    # מיון לפי עומס עבודה (הכי מעט עבודה ראשון)
+    mechanics = sorted(mechanics, key=lambda m: m.total_workload)
     
     # הוספת פעולות מאושרות (לא צריך - כבר יש property)
     # repair_job.approved_items כבר קיים כ-property במודל

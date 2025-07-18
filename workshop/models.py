@@ -116,6 +116,19 @@ class RepairJob(models.Model):
     quality_notes = models.TextField(blank=True, verbose_name="הערות בדיקת איכות")
     ready_for_pickup_date = models.DateTimeField(null=True, blank=True, verbose_name="תאריך מוכנות לאיסוף")
     customer_notified = models.BooleanField(default=False, verbose_name="לקוח עודכן על מוכנות לאיסוף")
+    
+    # שדות לתפיסה ראשונה
+    available_for_pickup = models.BooleanField(default=False, verbose_name="זמין לתפיסה ראשונה")
+    pickup_priority = models.CharField(
+        max_length=20,
+        choices=[
+            ('normal', 'רגיל'),
+            ('urgent', 'דחוף'),
+            ('critical', 'קריטי')
+        ],
+        default='normal',
+        verbose_name="עדיפות"
+    )
 
     def __str__(self):
         return f"תיקון {self.bike} - {self.get_status_display()}"
@@ -217,6 +230,30 @@ class RepairItem(models.Model):
         # עדכון is_completed בהתאם לסטטוס
         self.is_completed = (self.status == 'completed')
         super().save(*args, **kwargs)
+        
+        # עדכון סטטוס "תקוע" של התיקון כולו
+        self._update_repair_job_stuck_status()
+    
+    def _update_repair_job_stuck_status(self):
+        """עדכון סטטוס התקיעות של התיקון כולו בהתאם לפעולות חסומות"""
+        from django.utils import timezone
+        
+        # בדיקה אם יש פעולות חסומות
+        has_blocked_items = self.repair_job.repair_items.filter(status='blocked').exists()
+        
+        if has_blocked_items and not self.repair_job.is_stuck:
+            # יש פעולות חסומות והתיקון עדיין לא מסומן כתקוע
+            self.repair_job.is_stuck = True
+            self.repair_job.stuck_reason = 'התיקון מכיל פעולות חסומות הדורשות התייחסות מנהל'
+            self.repair_job.stuck_at = timezone.now()
+            self.repair_job.stuck_resolved = False
+            self.repair_job.save()
+        elif not has_blocked_items and self.repair_job.is_stuck and not self.repair_job.stuck_resolved:
+            # אין פעולות חסומות והתיקון עדיין מסומן כתקוע (אבל לא נפתר על ידי מנהל)
+            self.repair_job.is_stuck = False
+            self.repair_job.stuck_reason = ''
+            self.repair_job.stuck_at = None
+            self.repair_job.save()
     
     def mark_as_completed(self, user=None):
         """סימון כבוצע"""

@@ -5,7 +5,7 @@
 {% block content %}
 <div class="row">
     <div class="col-md-8 mx-auto">
-        <h1>הקצאת מכונאי לתיקון</h1>
+        <h1>הקצאת מכונאי לתיקון #{{ repair_job.id }}</h1>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'manager_dashboard' %}">דשבורד מנהל</a></li>
@@ -61,13 +61,27 @@
                         <label for="mechanic_id">בחר מכונאי לביצוע התיקון:</label>
                         <select name="mechanic_id" id="mechanic_id" class="form-control" required>
                             <option value="">-- בחר מכונאי --</option>
+                            <option value="auto_assign" style="background-color: #e3f2fd; font-weight: bold;">
+                                🚀 הקצה למכונאי הזמין הראשון (דחוף)
+                            </option>
                             {% for mechanic in mechanics %}
-                            <option value="{{ mechanic.id }}">
+                            <option value="{{ mechanic.id }}" 
+                                    {% if mechanic.total_workload == 0 %}style="background-color: #e8f5e8;"
+                                    {% elif mechanic.total_workload <= 2 %}style="background-color: #fff3e0;"
+                                    {% elif mechanic.total_workload > 4 %}style="background-color: #ffebee;"{% endif %}>
                                 {{ mechanic.get_full_name|default:mechanic.username }}
                                 {% if mechanic.email %} - {{ mechanic.email }}{% endif %}
+                                ({{ mechanic.active_repairs_count }} פעיל{% if mechanic.stuck_repairs_count %}, {{ mechanic.stuck_repairs_count }} תקוע{% endif %})
+                                {% if mechanic.total_workload == 0 %} ✅ זמין
+                                {% elif mechanic.total_workload <= 2 %} ⚠️ עומס קל
+                                {% elif mechanic.total_workload > 4 %} 🔴 עומס כבד{% endif %}
                             </option>
                             {% endfor %}
                         </select>
+                        <small class="form-text text-muted">
+                            💡 <strong>הקצאה אוטומטית:</strong> יוקצה למכונאי (לא מנהל) עם הכי מעט עבודות פעילות<br>
+                            🟢 זמין | 🟡 עומס קל | 🔴 עומס כבד
+                        </small>
                     </div>
                     
                     <div class="mt-3">

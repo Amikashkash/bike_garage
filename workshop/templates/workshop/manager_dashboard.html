@@ -87,8 +87,8 @@
         <!-- תיקונים לפי קטגוריות -->
         <div class="accordion" id="repairCategoriesAccordion">
             
-            <!-- תיקונים תקועים -->
-            {% if stuck_repairs %}
+            <!-- תיקונים תקועים - FIXED CONDITION -->
+            {% if stuck_repairs.count > 0 %}
             <div class="accordion-item">
                 <h2 class="accordion-header" id="stuckRepairsHeading">
                     <button class="accordion-button text-danger fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#stuckRepairsCollapse" aria-expanded="true" aria-controls="stuckRepairsCollapse">
@@ -122,6 +122,12 @@
                                             <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-sm">
                                                 <i class="fas fa-eye me-1"></i> פרטים
                                             </a>
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">
+                                            אין תיקונים תקועים כרגע
                                         </td>
                                     </tr>
                                     {% endfor %}

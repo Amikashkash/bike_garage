@@ -74,7 +74,7 @@ body {
         <div class="col-12">
             <h1 class="text-center mb-4">
                 <i class="fas fa-clipboard-check text-primary"></i>
-                אישור פעולות תיקון
+                אישור פעולות תיקון #{{ repair_job.id }}
             </h1>
             <p class="text-center text-muted">בחר את הפעולות שברצונך לאשר לביצוע</p>
         </div>
@@ -88,6 +88,10 @@ body {
                     <i class="fas fa-info-circle text-info"></i>
                     פרטי התיקון
                 </h5>
+                <div class="mb-2">
+                    <strong>מזהה תיקון:</strong> 
+                    <span class="badge bg-primary">#{{ repair_job.id }}</span>
+                </div>
                 <div class="mb-2">
                     <strong>אופניים:</strong> 
                     <span class="badge bg-secondary">{{ repair_job.bike }}</span>
