@@ -29,7 +29,7 @@ def is_manager(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'manager'
 
 def is_mechanic(user):
-    return hasattr(user, 'userprofile') and user.userprofile.role == 'mechanic'
+    return hasattr(user, 'userprofile') and user.userprofile.role in ['mechanic', 'manager']
 
 def is_customer(user):
     return hasattr(user, 'userprofile') and user.userprofile.role == 'customer'
@@ -205,15 +205,22 @@ def home(request):
                 })
                 
             elif role == 'manager':
-                # עבור מנהל - תקציר מהיר
+                # עבור מנהל - תקציר מהיר + תיקונים מוקצים (כמו מכונאי)
                 pending_diagnosis = RepairJob.objects.filter(status='reported').count()
                 pending_approval = RepairJob.objects.filter(status='diagnosed').count()
                 in_progress = RepairJob.objects.filter(status='in_progress').count()
+                
+                # תיקונים מוקצים למנהל כמכונאי
+                assigned_repairs = RepairJob.objects.filter(
+                    assigned_mechanic=request.user,
+                    status='in_progress'
+                ).select_related('bike', 'bike__customer')[:5]
                 
                 context.update({
                     'pending_diagnosis_count': pending_diagnosis,
                     'pending_approval_count': pending_approval,
                     'in_progress_count': in_progress,
+                    'assigned_repairs': assigned_repairs,
                 })
     except Exception as e:
         # לוג השגיאה אבל תמשיך להציג את הדף
@@ -616,7 +623,7 @@ def assign_mechanic(request, repair_id):
         mechanic_id = request.POST.get('mechanic_id')
         if mechanic_id:
             try:
-                mechanic = User.objects.get(id=mechanic_id, userprofile__role='mechanic')
+                mechanic = User.objects.get(id=mechanic_id, userprofile__role__in=['mechanic', 'manager'])
                 repair_job.assigned_mechanic = mechanic
                 repair_job.status = 'in_progress'
                 repair_job.save()
@@ -633,8 +640,8 @@ def assign_mechanic(request, repair_id):
             except User.DoesNotExist:
                 messages.error(request, 'מכונאי לא נמצא')
     
-    # רשימת מכונאים זמינים
-    mechanics = User.objects.filter(userprofile__role='mechanic')
+    # רשימת מכונאים זמינים (כולל מנהלים)
+    mechanics = User.objects.filter(userprofile__role__in=['mechanic', 'manager'])
     
     # הוספת פעולות מאושרות (לא צריך - כבר יש property)
     # repair_job.approved_items כבר קיים כ-property במודל

@@ -194,6 +194,40 @@
                     </div>
                 </div>
                 
+                {% if assigned_repairs %}
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5>התיקונים שלך כמכונאי ({{ assigned_repairs.count }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>אופניים</th>
+                                        <th>לקוח</th>
+                                        <th>תאריך</th>
+                                        <th>פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for repair in assigned_repairs %}
+                                    <tr>
+                                        <td>{{ repair.bike }}</td>
+                                        <td>{{ repair.bike.customer.name }}</td>
+                                        <td>{{ repair.created_at|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-sm btn-primary">עדכן</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
                 <div class="row mt-4">
                     <div class="col-md-12">
                         <div class="card">
