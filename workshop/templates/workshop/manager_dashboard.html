@@ -2,7 +2,7 @@
 
 <!-- minor change to force git update -->
 
-{% block title %}דשבורד מנהל{% endblock %}
+{% block title %}עמי דשבורד מנהל{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -51,7 +51,7 @@
 {% csrf_token %}
 <div class="row">
     <div class="col-md-12">
-        <h1>דשבורד מנהל</h1>
+        <h1>דשבורד מנהל גדול</h1>
         <p class="text-muted">ניהול תיקונים וזרימת עבודה</p>
         
         <!-- סיכום מצב כללי -->
@@ -60,27 +60,27 @@
             <div class="row text-center">
                 <div class="col-md-2">
                     <h4 class="text-warning mb-1">{{ approved_waiting_for_mechanic.count }}</h4>
-                    <small class="text-muted">ממתינים להקצאת מכונאי</small>
+                    <small class="text-muted">ממתינים להקצאת מכונאי מטפל</small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-secondary mb-1">{{ waiting_to_start_count }}</h4>
-                    <small class="text-muted">ממתינות להתחלה</small>
+                    <small class="text-muted">ממתינות להתחלת עבודה </small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-success mb-1">{{ actively_working_count }}</h4>
-                    <small class="text-muted">בעבודה פעילה</small>
+                    <small class="text-muted">בתהליך עבודה פעילה</small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-danger mb-1">{{ blocked_tasks_count }}</h4>
-                    <small class="text-muted">תקועות - דרושה עזרה</small>
+                    <small class="text-muted">עבודה תקועה - דרושה עזרה</small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-info mb-1">{{ repairs_not_collected.count }}</h4>
-                    <small class="text-muted">מוכנים לאיסוף</small>
+                    <small class="text-muted">אופניים מוכנים לאיסוף</small>
                 </div>
                 <div class="col-md-2">
                     <h4 class="text-primary mb-1">{{ repairs_work_completed.count }}</h4>
-                    <small class="text-muted">אופניים שנאספו</small>
+                    <small class="text-muted">אופניים נאספו</small>
                 </div>
             </div>
         </div>
@@ -191,7 +191,7 @@
                 <h2 class="accordion-header" id="pendingApprovalHeading">
                     <button class="accordion-button collapsed text-info fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#pendingApprovalCollapse" aria-expanded="false" aria-controls="pendingApprovalCollapse">
                         <i class="fas fa-clipboard-check me-2"></i>
-                        ממתינים לאישור ({{ pending_approval.count }})
+                        ממתינים לאישור הלקוח ({{ pending_approval.count }})
                     </button>
                 </h2>
                 <div id="pendingApprovalCollapse" class="accordion-collapse collapse" aria-labelledby="pendingApprovalHeading" data-bs-parent="#repairCategoriesAccordion">
@@ -237,7 +237,7 @@
                 <h2 class="accordion-header" id="approvedWaitingHeading">
                     <button class="accordion-button collapsed text-info fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#approvedWaitingCollapse" aria-expanded="false" aria-controls="approvedWaitingCollapse">
                         <i class="fas fa-user-plus me-2"></i>
-                        מאושרים - ממתינים להקצאת מכונאי ({{ approved_waiting_for_mechanic.count }})
+                        מאושרים - ממתינים להקצאת מכונאי מטפל ({{ approved_waiting_for_mechanic.count }})
                     </button>
                 </h2>
                 <div id="approvedWaitingCollapse" class="accordion-collapse collapse" aria-labelledby="approvedWaitingHeading" data-bs-parent="#repairCategoriesAccordion">
@@ -283,7 +283,7 @@
                 <h2 class="accordion-header" id="inProgressHeading">
                     <button class="accordion-button collapsed text-primary fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#inProgressCollapse" aria-expanded="false" aria-controls="inProgressCollapse">
                         <i class="fas fa-cogs me-2"></i>
-                        בתהליך ביצוע ({{ in_progress.count }})
+                        בעבודה ({{ in_progress.count }})
                     </button>
                 </h2>
                 <div id="inProgressCollapse" class="accordion-collapse collapse" aria-labelledby="inProgressHeading" data-bs-parent="#repairCategoriesAccordion">
@@ -383,7 +383,7 @@
                 <h2 class="accordion-header" id="notCollectedHeading">
                     <button class="accordion-button collapsed text-success fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#notCollectedCollapse" aria-expanded="false" aria-controls="notCollectedCollapse">
                         <i class="fas fa-check-circle me-2"></i>
-                        מוכנים לאיסוף ({{ repairs_not_collected.count }})
+                        אופניים מוכנים לאיסוף  ({{ repairs_not_collected.count }})
                     </button>
                 </h2>
                 <div id="notCollectedCollapse" class="accordion-collapse collapse" aria-labelledby="notCollectedHeading" data-bs-parent="#repairCategoriesAccordion">
