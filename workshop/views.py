@@ -347,9 +347,7 @@ def link_customer_to_user(request):
 def manager_dashboard(request):
     """דשבורד למנהל - מציג תיקונים שדורשים אבחון או עדכון"""
     
-    print("DEBUG: נכנסתי לדשבורד")
-    print("DEBUG: has_quality_fields =", has_quality)
-    print("DEBUG: awaiting_quality_check count =", len(awaiting_quality_check))
+    
 
     try:
         # תיקונים שהמכונאי סימן כתקועים
@@ -383,6 +381,10 @@ def manager_dashboard(request):
         
         has_quality = has_quality_fields()
         
+        print("DEBUG: נכנסתי לדשבורד")
+        print("DEBUG: has_quality_fields =", has_quality)
+        
+        
         if has_quality:
             awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
         
@@ -400,6 +402,8 @@ def manager_dashboard(request):
             repairs_not_collected = RepairJob.objects.filter(
                 status='quality_approved'
             ).select_related('bike', 'bike__customer')
+            
+            print("DEBUG: awaiting_quality_check count =", len(awaiting_quality_check))
         
         # ספירה מתוקנת
         waiting_to_start_count = 0
