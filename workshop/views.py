@@ -346,6 +346,11 @@ def link_customer_to_user(request):
 @manager_required
 def manager_dashboard(request):
     """דשבורד למנהל - מציג תיקונים שדורשים אבחון או עדכון"""
+    
+    print("DEBUG: נכנסתי לדשבורד")
+    print("DEBUG: has_quality_fields =", has_quality)
+    print("DEBUG: awaiting_quality_check count =", len(awaiting_quality_check))
+
     try:
         # תיקונים שהמכונאי סימן כתקועים
         stuck_repairs = RepairJob.objects.filter(
@@ -455,6 +460,8 @@ def manager_dashboard(request):
             'blocked_tasks_count': 0,
             'all_repairs_count': 0,
         }
+        
+        
         return render(request, 'workshop/manager_dashboard.html', context)
 
 @login_required
