@@ -44,16 +44,33 @@ def customer_required(view_func):
     return user_passes_test(is_customer)(view_func)
 
 def has_quality_fields():
-    """בדיקה אם השדות החדשים לבדיקת איכות קיימים במסד הנתונים"""
-    from django.db import connection
     try:
-        cursor = connection.cursor()
-        cursor.execute("PRAGMA table_info(workshop_repairjob);")
-        columns = [row[1] for row in cursor.fetchall()]
-        required_fields = ['quality_checked_by_id', 'quality_check_date', 'quality_notes']
-        return all(field in columns for field in required_fields)
-    except:
+        # רשימת השדות שמחויבים כדי שקטע בקרת האיכות יעבוד
+        required_fields = [
+            'quality_check_date',
+            'ready_for_pickup_date',
+            'available_for_pickup'
+        ]
+
+        # קבלת כל שמות השדות של המודל RepairJob
+        existing_fields = [field.name for field in RepairJob._meta.get_fields()]
+
+        # בדיקה אילו שדות חסרים
+        missing_fields = [field for field in required_fields if field not in existing_fields]
+
+        # דיווח בדיבוג
+        if missing_fields:
+            print("DEBUG: חסרים השדות הבאים ב-RepairJob:", missing_fields)
+        else:
+            print("DEBUG: כל שדות בקרת האיכות קיימים")
+
+        # מחזיר True רק אם כל השדות קיימים
+        return not missing_fields
+
+    except Exception as e:
+        print("DEBUG: שגיאה בבדיקת שדות בקרת איכות:", e)
         return False
+
 
 
 @login_required
