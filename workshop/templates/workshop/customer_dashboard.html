@@ -1,0 +1,41 @@
+{% extends 'workshop/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>שלום {{ customer.name }} 👋</h2>
+
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h4>האופניים שלי</h4>
+        <a href="{% url 'customer_bike_add' customer.id %}" class="btn btn-outline-secondary btn-sm">הוסף אופניים</a>
+    </div>
+
+    {% if bikes %}
+        <ul class="list-group mt-2">
+            {% for bike in bikes %}
+                <li class="list-group-item">{{ bike }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted mt-2">לא נמצאו אופניים.</p>
+    {% endif %}
+
+    <div class="text-center mt-4">
+        <a href="#" class="btn btn-primary btn-lg disabled" aria-disabled="true">
+            🚲 הכנס אופניים לתיקון (בפיתוח)
+        </a>
+    </div>
+
+    <h4 class="mt-5">היסטוריית התיקונים שלך</h4>
+    {% if repairs %}
+        <ul class="list-group mt-2">
+            {% for repair in repairs %}
+                <li class="list-group-item">
+                    {{ repair.bike }} - {{ repair.get_status_display }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted mt-2">אין היסטוריית תיקונים.</p>
+    {% endif %}
+</div>
+{% endblock %}

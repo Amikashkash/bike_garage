@@ -15,6 +15,7 @@ urlpatterns = [
     path('customers/', views.customer_list, name='customer_list'),
     path('customers/link/', views.link_customer_to_user, name='link_customer_user'),
     path('bike/new/', views.bike_form, name='bike_form'),
+     path('customer/dashboard/', views.customer_dashboard, name='customer_dashboard'),
     
     # Customer and Bike management (for managers)
     path('manager/customer-bike/new/', views.customer_with_bike_form, name='customer_with_bike_new'),

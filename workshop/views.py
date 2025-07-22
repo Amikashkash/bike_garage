@@ -11,6 +11,9 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404
+from .models import Customer, Bike, RepairJob
 
 from .models import (
     Customer, Bike, RepairCategory, RepairSubCategory, RepairJob,
@@ -42,6 +45,18 @@ def mechanic_required(view_func):
 
 def customer_required(view_func):
     return user_passes_test(is_customer)(view_func)
+
+@login_required
+def customer_dashboard(request):
+    customer = get_object_or_404(Customer, user=request.user)
+    bikes = Bike.objects.filter(customer=customer)
+    repairs = RepairJob.objects.filter(bike__in=bikes).select_related('bike')
+    
+    return render(request, 'workshop/customer_dashboard.html', {
+        'customer': customer,
+        'bikes': bikes,
+        'repairs': repairs,
+    })
 
 def has_quality_fields():
     try:

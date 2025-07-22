@@ -57,10 +57,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'crispy_forms',
     'workshop.apps.WorkshopConfig',
 
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+
 
 MIDDLEWARE = [
     'workshop.middleware.DatabaseFixMiddleware',  # תיקון אוטומטי של מסד הנתונים
