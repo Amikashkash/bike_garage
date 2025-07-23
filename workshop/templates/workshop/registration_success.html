@@ -1,0 +1,41 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+{% block title %}הרשמה הושלמה{% endblock %}
+{% block content %}
+
+<style>
+    body {
+        background-color: #1c1c1c;
+        color: #fff;
+        font-family: 'Segoe UI', sans-serif;
+        text-align: center;
+        padding-top: 10vh;
+    }
+    .confirmation-box {
+        background-color: #2a2a2a;
+        padding: 3rem;
+        border-radius: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        display: inline-block;
+    }
+    .btn-orange {
+        background-color: #ff6a00;
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        margin-top: 1.5rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+</style>
+
+<div class="confirmation-box">
+    <img src="{% static 'images/logo.png' %}" alt="Yakir's Bikes Logo" style="width: 120px; margin-bottom: 1rem;">
+    <h2>הרשמתך הושלמה בהצלחה!</h2>
+    <p>כעת תוכל להתחבר למערכת ולהתחיל לנהל את האופניים שלך.</p>
+    <a href="{% url 'login' %}" class="btn-orange">המשך להתחברות</a>
+</div>
+
+{% endblock %}

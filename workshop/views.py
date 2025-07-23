@@ -241,6 +241,8 @@ def home(request):
                 pending_diagnosis = RepairJob.objects.filter(status='reported').count()
                 pending_approval = RepairJob.objects.filter(status='diagnosed').count()
                 in_progress = RepairJob.objects.filter(status='in_progress').count()
+                blocked_tasks_count = RepairJob.objects.filter(status='stuck').count()
+
                 
                 # תיקונים מוקצים למנהל כמכונאי
                 assigned_repairs = RepairJob.objects.filter(
@@ -253,6 +255,8 @@ def home(request):
                     'pending_approval_count': pending_approval,
                     'in_progress_count': in_progress,
                     'assigned_repairs': assigned_repairs,
+                    'blocked_tasks_count': blocked_tasks_count,
+
                 })
     except Exception as e:
         # לוג השגיאה אבל תמשיך להציג את הדף

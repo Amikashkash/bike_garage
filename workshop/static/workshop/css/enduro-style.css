@@ -1,1495 +1,200 @@
-/* =============================================================================
-   ENDURO BIKE GARAGE - MODERN EXTREME DESIGN
-   עיצוב אקסטרימי מודרני למוסך אופני אנדורו
-   ============================================================================= */
-
-/* Import Modern Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
-
-/* =============================================================================
-   ROOT VARIABLES - צבעי אנדורו
-   ============================================================================= */
-:root {
-  /* Enduro Colors */
-  --enduro-orange: #FF6B35;
-  --enduro-dark-orange: #E55A2B;
-  --enduro-black: #1A1A1A;
-  --enduro-dark-gray: #2D2D2D;
-  --enduro-light-gray: #4A4A4A;
-  --enduro-white: #FFFFFF;
-  --enduro-lime: #BBFF00;
-  --enduro-yellow: #FFD700;
-  
-  /* Gradients */
-  --enduro-gradient-primary: linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%);
-  --enduro-gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
-  --enduro-gradient-success: linear-gradient(135deg, #BBFF00 0%, #A6E600 100%);
-  --enduro-gradient-warning: linear-gradient(135deg, #FFD700 0%, #FFC700 100%);
-  
-  /* Shadows */
-  --shadow-light: 0 2px 10px rgba(255, 107, 53, 0.2);
-  --shadow-medium: 0 4px 20px rgba(255, 107, 53, 0.3);
-  --shadow-heavy: 0 8px 30px rgba(26, 26, 26, 0.4);
-  
-  /* Animations */
-  --animation-fast: 0.2s ease-in-out;
-  --animation-medium: 0.4s ease-in-out;
-  --animation-slow: 0.6s ease-in-out;
-}
-
-/* =============================================================================
-   GLOBAL STYLES
-   ============================================================================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* enduro-style.css - unified styling including former <style> content */
 
 body {
-  font-family: 'Rajdhani', sans-serif;
-  background: var(--enduro-gradient-dark);
-  color: var(--enduro-white);
-  line-height: 1.6;
-  overflow-x: hidden;
-  position: relative;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #1c1c1c;
+    color: #fff;
+    direction: rtl;
 }
 
-/* רקע אקסטרימי עם אפקט particles */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(187, 255, 0, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
-  z-index: -2;
-  pointer-events: none;
-  animation: backgroundShift 15s ease-in-out infinite;
+header {
+    background-color: #2a2a2a;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    margin-bottom: 1rem;
 }
 
-@keyframes backgroundShift {
-  0%, 100% { 
-    transform: translate(0, 0) scale(1);
-    opacity: 0.8;
-  }
-  50% { 
-    transform: translate(-20px, -10px) scale(1.1);
-    opacity: 1;
-  }
+header img {
+    height: 50px;
+    max-width: 100%;
 }
 
-/* Background Pattern */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(187, 255, 0, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
-  z-index: -1;
-  animation: backgroundPulse 8s ease-in-out infinite;
+.content {
+    padding: 2rem;
 }
 
-@keyframes backgroundPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+footer {
+    background-color: #2a2a2a;
+    color: #ccc;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.85rem;
+    margin-top: 2rem;
 }
 
-/* =============================================================================
-   TYPOGRAPHY
-   ============================================================================= */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Orbitron', monospace;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+a {
+    color: #00bcd4; /* refreshed turquoise */
+    text-decoration: none;
 }
 
-h1 {
-  font-size: 2.5rem;
-  font-weight: 900;
-  background: var(--enduro-gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: titleGlow 3s ease-in-out infinite;
+a:hover {
+    text-decoration: underline;
 }
 
-@keyframes titleGlow {
-  0%, 100% { filter: drop-shadow(0 0 5px rgba(255, 107, 53, 0.5)); }
-  50% { filter: drop-shadow(0 0 15px rgba(255, 107, 53, 0.8)); }
+.btn-primary, .btn-orange {
+    background-color: #ff6a00; /* primary orange */
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    display: inline-block;
 }
 
-.subtitle {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 300;
-  margin-bottom: 2rem;
-}
-
-/* =============================================================================
-   CARDS & CONTAINERS
-   ============================================================================= */
-.card {
-  background: rgba(45, 45, 45, 0.9);
-  border: 1px solid rgba(255, 107, 53, 0.3);
-  border-radius: 15px;
-  box-shadow: var(--shadow-medium);
-  backdrop-filter: blur(10px);
-  transition: all var(--animation-medium);
-  overflow: hidden;
-  position: relative;
-}
-
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: var(--enduro-gradient-primary);
-  transition: left var(--animation-medium);
-}
-
-.card:hover::before {
-  left: 0;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-heavy);
-  border-color: var(--enduro-orange);
-}
-
-.card-header {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  font-family: 'Orbitron', monospace;
-  font-weight: 600;
-  border-bottom: none;
-  padding: 1rem 1.5rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.card-header::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: -50px;
-  width: 100px;
-  height: 100%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100px); }
-  100% { transform: translateX(calc(100vw + 100px)); }
-}
-
-/* =============================================================================
-   BUTTONS
-   ============================================================================= */
-.btn {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: 25px;
-  padding: 0.7rem 1.5rem;
-  border: none;
-  transition: all var(--animation-medium);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left var(--animation-medium);
-}
-
-.btn:hover::before {
-  left: 100%;
-}
-
-.btn-primary {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  color: var(--enduro-white);
+.btn-primary:hover, .btn-orange:hover {
+    background-color: #e55b00;
 }
 
 .btn-success {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  box-shadow: var(--shadow-light);
+    background-color: #388E3C; /* green dark */
+    color: white;
 }
 
-.btn-warning {
-  background: var(--enduro-gradient-warning);
-  color: var(--enduro-black);
-  box-shadow: var(--shadow-light);
+.btn-success:hover {
+    background-color: #2e7d32;
 }
 
 .btn-danger {
-  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
+    background-color: #C62828; /* dark red */
+    color: white;
 }
 
-.btn-info {
-  background: linear-gradient(135deg, #00CCFF 0%, #0099CC 100%);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
+.btn-danger:hover {
+    background-color: #b71c1c;
 }
 
 .btn-secondary {
-  background: var(--enduro-gradient-dark);
-  color: var(--enduro-white);
-  border: 1px solid var(--enduro-light-gray);
-  box-shadow: var(--shadow-light);
+    background-color: #424242; /* dark gray */
+    color: white;
 }
 
-/* =============================================================================
-   TABLES
-   ============================================================================= */
-.table {
-  background: rgba(45, 45, 45, 0.9);
-  color: var(--enduro-white);
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: var(--shadow-medium);
+.btn-secondary:hover {
+    background-color: #333;
 }
 
-.table thead {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  font-family: 'Orbitron', monospace;
-  font-weight: 600;
+.btn-link {
+    color: #00bcd4; /* turquoise */
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    text-decoration: underline;
+    cursor: pointer;
 }
 
-.table th {
-  border: none;
-  padding: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.9rem;
+.btn-block {
+    width: 100%;
+    padding: 1rem 0;
+    font-size: 1.1rem;
+    text-align: center;
 }
 
-.table td {
-  border-color: rgba(255, 107, 53, 0.2);
-  padding: 1rem;
-  vertical-align: middle;
+.btn-quick-action {
+    background-color: transparent;
+    border: 1px solid #2196f3;
+    color: #2196f3;
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(255, 107, 53, 0.1);
+.btn-quick-action:hover {
+    background-color: #2196f3;
+    color: #fff;
 }
 
-.table tr:hover {
-  background-color: rgba(255, 107, 53, 0.2);
-  transform: scale(1.01);
-  transition: all var(--animation-fast);
+
+
+/* Text color fixes on dark background */
+.text-danger {
+    color: #ff5c5c !important;
+}
+.text-warning {
+    color: #ffc107 !important;
+}
+.text-info {
+    color: #4fc3f7 !important;
+}
+.text-primary {
+    color: #42a5f5 !important;
 }
 
-/* =============================================================================
-   BADGES
-   ============================================================================= */
-.badge {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border-radius: 15px;
-  padding: 0.4rem 0.8rem;
-  font-size: 0.8rem;
-  animation: badgePulse 2s ease-in-out infinite;
+.border-danger {
+    border: 2px solid #ff5c5c !important;
+}
+.border-warning {
+    border: 2px solid #ffc107 !important;
+}
+.border-info {
+    border: 2px solid #4fc3f7 !important;
+}
+.border-primary {
+    border: 2px solid #42a5f5 !important;
 }
 
-@keyframes badgePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
 
-.badge-success {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-}
-
-.badge-warning {
-  background: var(--enduro-gradient-warning);
-  color: var(--enduro-black);
-}
-
-.badge-danger {
-  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
-  color: var(--enduro-white);
-}
-
-.badge-info {
-  background: linear-gradient(135deg, #00CCFF 0%, #0099CC 100%);
-  color: var(--enduro-white);
-}
-
-.badge-primary {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-}
-
-/* =============================================================================
-   PROGRESS BARS
-   ============================================================================= */
-.progress {
-  background-color: rgba(26, 26, 26, 0.5);
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.progress-bar {
-  background: var(--enduro-gradient-success);
-  border-radius: 15px;
-  transition: width var(--animation-slow);
-  position: relative;
-  overflow: hidden;
-}
-
-.progress-bar::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  animation: progressShine 2s infinite;
-}
-
-@keyframes progressShine {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-/* =============================================================================
-   FORMS
-   ============================================================================= */
-.form-control {
-  background: rgba(45, 45, 45, 0.9);
-  border: 2px solid rgba(255, 107, 53, 0.3);
-  border-radius: 10px;
-  color: var(--enduro-white);
-  padding: 0.7rem 1rem;
-  transition: all var(--animation-medium);
-}
-
-.form-control:focus {
-  background: rgba(45, 45, 45, 1);
-  border-color: var(--enduro-orange);
-  box-shadow: 0 0 10px rgba(255, 107, 53, 0.4);
-  color: var(--enduro-white);
-}
-
-.form-control::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-/* =============================================================================
-   NAVIGATION
-   ============================================================================= */
-.breadcrumb {
-  background: rgba(45, 45, 45, 0.7);
-  border-radius: 25px;
-  padding: 0.7rem 1.5rem;
-  margin-bottom: 2rem;
-  backdrop-filter: blur(5px);
-}
-
-.breadcrumb-item {
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 500;
-}
-
-.breadcrumb-item.active {
-  color: var(--enduro-orange);
-  font-weight: 600;
-}
-
-.breadcrumb-item + .breadcrumb-item::before {
-  content: "🚵‍♂️";
-  color: var(--enduro-orange);
-}
-
-/* =============================================================================
-   ALERTS
-   ============================================================================= */
-.alert {
-  border-radius: 15px;
-  border: none;
-  padding: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
-  backdrop-filter: blur(10px);
-  position: relative;
-  overflow: hidden;
-}
-
-.alert::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: currentColor;
-}
 
 .alert-success {
-  background: rgba(187, 255, 0, 0.2);
-  color: var(--enduro-lime);
-  border-left: 4px solid var(--enduro-lime);
-}
-
-.alert-warning {
-  background: rgba(255, 215, 0, 0.2);
-  color: var(--enduro-yellow);
-  border-left: 4px solid var(--enduro-yellow);
+    background-color: #2e7d32;
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
 }
 
 .alert-danger {
-  background: rgba(255, 68, 68, 0.2);
-  color: #FF4444;
-  border-left: 4px solid #FF4444;
-}
-
-.alert-info {
-  background: rgba(0, 204, 255, 0.2);
-  color: #00CCFF;
-  border-left: 4px solid #00CCFF;
-}
-
-/* =============================================================================
-   SPECIAL EFFECTS
-   ============================================================================= */
-
-/* Enduro Icons */
-.enduro-icon {
-  filter: drop-shadow(0 0 5px rgba(255, 107, 53, 0.5));
-  animation: iconFloat 3s ease-in-out infinite;
-}
-
-@keyframes iconFloat {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
-}
-
-/* Glitch Effect for Headers */
-.glitch {
-  position: relative;
-  animation: glitch 2s infinite;
-}
-
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.glitch::before {
-  animation: glitch-1 0.5s infinite;
-  color: #FF6B35;
-  z-index: -1;
-}
-
-.glitch::after {
-  animation: glitch-2 0.5s infinite;
-  color: #BBFF00;
-  z-index: -2;
-}
-
-@keyframes glitch {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(-2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(2px, -2px); }
-}
-
-@keyframes glitch-1 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(2px, -2px); }
-  40% { transform: translate(-2px, 2px); }
-  60% { transform: translate(-2px, -2px); }
-  80% { transform: translate(2px, 2px); }
-}
-
-@keyframes glitch-2 {
-  0%, 100% { transform: translate(0); }
-  20% { transform: translate(-2px, 2px); }
-  40% { transform: translate(2px, -2px); }
-  60% { transform: translate(2px, 2px); }
-  80% { transform: translate(-2px, -2px); }
-}
-
-/* =============================================================================
-   RESPONSIVE DESIGN
-   ============================================================================= */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 2rem;
-  }
-  
-  .card-header {
-    padding: 0.8rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-  }
-  
-  .table th,
-  .table td {
-    padding: 0.7rem 0.5rem;
-    font-size: 0.9rem;
-  }
-}
-
-/* =============================================================================
-   CONTAINER IMPROVEMENTS
-   ============================================================================= */
-.container-fluid {
-  padding: 2rem;
-}
-
-.row {
-  margin-bottom: 2rem;
-}
-
-/* Custom spacing */
-.mb-enduro {
-  margin-bottom: 2rem;
-}
-
-.mt-enduro {
-  margin-top: 2rem;
-}
-
-/* =============================================================================
-   SCROLLBAR STYLING
-   ============================================================================= */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--enduro-dark-gray);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--enduro-gradient-primary);
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--enduro-dark-orange);
-}
-
-/* =============================================================================
-   ENDURO HERO HEADER
-   ============================================================================= */
-.enduro-hero-header {
-  background: var(--enduro-gradient-dark);
-  padding: 3rem 0;
-  margin-bottom: 2rem;
-  position: relative;
-  overflow: hidden;
-}
-
-.enduro-hero-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="%23FF6B35" opacity="0.1"/></svg>') repeat;
-  animation: float 20s infinite linear;
-}
-
-@keyframes float {
-  0% { transform: translateY(0) translateX(0); }
-  100% { transform: translateY(-100px) translateX(100px); }
-}
-
-.enduro-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 3rem;
-  font-weight: 900;
-  color: var(--enduro-white);
-  text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
-  position: relative;
-  z-index: 2;
-}
-
-.enduro-subtitle {
-  font-size: 1.2rem;
-  color: var(--enduro-lime);
-  font-weight: 500;
-  position: relative;
-  z-index: 2;
-}
-
-.enduro-badge-new {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  margin-left: 1rem;
-  animation: pulse 2s infinite;
-}
-
-.enduro-stats-mini {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-
-.stat-item {
-  text-align: center;
-  padding: 1rem;
-  background: rgba(255, 107, 53, 0.1);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 107, 53, 0.3);
-  transition: all var(--animation-medium);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-item:hover {
-  transform: translateY(-5px) scale(1.05);
-  background: rgba(255, 107, 53, 0.2);
-  border-color: var(--enduro-orange);
-  box-shadow: 0 10px 25px rgba(255, 107, 53, 0.4);
-}
-
-.stat-item::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 107, 53, 0.1), transparent);
-  transform: rotate(45deg);
-  transition: all var(--animation-slow);
-  opacity: 0;
-}
-
-.stat-item:hover::before {
-  opacity: 1;
-  transform: rotate(45deg) translate(50%, 50%);
-}
-
-.stat-number {
-  display: block;
-  font-size: 2rem;
-  font-weight: 900;
-  color: var(--enduro-orange);
-  font-family: 'Orbitron', monospace;
-}
-
-.stat-label {
-  display: block;
-  font-size: 0.9rem;
-  color: var(--enduro-white);
-  font-weight: 500;
-}
-
-/* =============================================================================
-   ENDURO SECTIONS
-   ============================================================================= */
-.enduro-section {
-  margin-bottom: 3rem;
-  position: relative;
-}
-
-/* =============================================================================
-   ENDURO CARDS
-   ============================================================================= */
-.enduro-card {
-  background: var(--enduro-white);
-  border-radius: 20px;
-  box-shadow: var(--shadow-medium);
-  overflow: hidden;
-  transition: all var(--animation-medium);
-  border: 1px solid rgba(255, 107, 53, 0.1);
-}
-
-.enduro-card:hover {
-  transform: translateY(-8px) rotateX(2deg);
-  box-shadow: 
-    var(--shadow-heavy),
-    0 0 30px rgba(255, 107, 53, 0.3);
-}
-
-.enduro-card-warning {
-  border-left: 5px solid var(--enduro-yellow);
-}
-
-.enduro-card-info {
-  border-left: 5px solid #17a2b8;
-}
-
-.enduro-card-success {
-  border-left: 5px solid var(--enduro-lime);
-}
-
-.enduro-card-header {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  padding: 1.5rem 2rem;
-  position: relative;
-}
-
-.enduro-card-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.enduro-card-subtitle {
-  font-size: 1rem;
-  opacity: 0.9;
-  font-weight: 400;
-}
-
-.enduro-badge-count {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--enduro-white);
-  padding: 0.3rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  margin-left: auto;
-}
-
-.enduro-card-body {
-  padding: 0;
-}
-
-/* =============================================================================
-   ENDURO TABLES
-   ============================================================================= */
-.enduro-table-container {
-  overflow-x: auto;
-}
-
-.enduro-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: 'Rajdhani', sans-serif;
-}
-
-.enduro-table thead th {
-  background: var(--enduro-dark-gray);
-  color: var(--enduro-white);
-  padding: 1rem;
-  text-align: right;
-  font-weight: 600;
-  font-size: 1.1rem;
-  border: none;
-}
-
-.enduro-table thead th i {
-  margin-left: 0.5rem;
-  color: var(--enduro-orange);
-}
-
-.enduro-table-row {
-  transition: all var(--animation-fast);
-  border-bottom: 1px solid rgba(255, 107, 53, 0.1);
-}
-
-.enduro-table-row:hover {
-  background: rgba(255, 107, 53, 0.1);
-  transform: scale(1.02);
-  box-shadow: 0 4px 15px rgba(255, 107, 53, 0.2);
-  border-radius: 10px;
-}
-
-.enduro-table td {
-  padding: 1rem;
-  vertical-align: middle;
-  border: none;
-}
-
-.enduro-cell-id .enduro-id-badge {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  padding: 0.4rem 0.8rem;
-  border-radius: 15px;
-  font-weight: 700;
-  font-size: 0.9rem;
-}
-
-.bike-info .bike-name {
-  font-weight: 600;
-  color: var(--enduro-dark-gray);
-  font-size: 1.1rem;
-}
-
-.customer-info .customer-name {
-  font-weight: 500;
-  color: var(--enduro-dark-gray);
-}
-
-.problem-text {
-  color: var(--enduro-light-gray);
-  font-style: italic;
-}
-
-.date-text {
-  color: var(--enduro-light-gray);
-  font-size: 0.95rem;
-}
-
-.price-text {
-  color: var(--enduro-orange);
-  font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.tasks-text {
-  color: var(--enduro-lime);
-  font-weight: 600;
-  font-size: 1rem;
-}
-
-.enduro-mechanic-badge {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  padding: 0.3rem 0.6rem;
-  border-radius: 15px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.enduro-no-mechanic {
-  color: var(--enduro-light-gray);
-  font-style: italic;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.enduro-progress-container {
-  min-width: 120px;
-}
-
-.enduro-progress-bar {
-  background: var(--enduro-dark-gray);
-  height: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 0.3rem;
-  position: relative;
-}
-
-.enduro-progress-fill {
-  background: var(--enduro-gradient-success);
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--enduro-black);
-  font-weight: 700;
-  font-size: 0.8rem;
-  transition: width 0.5s ease;
-}
-
-.enduro-progress-text {
-  font-size: 0.75rem;
-  color: var(--enduro-light-gray);
-  text-align: center;
-}
-
-.recent-actions {
-  max-width: 150px;
-}
-
-.enduro-action-completed {
-  color: var(--enduro-lime);
-  font-size: 0.85rem;
-  margin-bottom: 0.3rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.action-time, .update-time {
-  font-size: 0.7rem;
-  color: var(--enduro-light-gray);
-}
-
-.enduro-no-data {
-  color: var(--enduro-light-gray);
-  font-style: italic;
-  font-size: 0.85rem;
-}
-
-.mechanic-notes, .recent-updates {
-  max-width: 200px;
-}
-
-.note-item, .update-item {
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-}
-
-.enduro-note-blocked {
-  background: var(--enduro-gradient-warning);
-  color: var(--enduro-black);
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.enduro-note-success {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-.note-text {
-  color: var(--enduro-dark-gray);
-  font-size: 0.8rem;
-  margin-top: 0.2rem;
-}
-
-.action-buttons-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-.enduro-btn-warning {
-  background: var(--enduro-gradient-warning);
-  color: var(--enduro-black);
-  box-shadow: var(--shadow-light);
-}
-
-.enduro-btn-warning:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  color: var(--enduro-black);
-}
-
-/* =============================================================================
-   EMPTY STATE
-   ============================================================================= */
-.enduro-empty-state {
-  text-align: center;
-  padding: 4rem 2rem;
-  background: var(--enduro-white);
-  border-radius: 20px;
-  box-shadow: var(--shadow-light);
-}
-
-.empty-state-icon {
-  font-size: 4rem;
-  color: var(--enduro-orange);
-  margin-bottom: 1rem;
-  animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(-20px);
-  }
-  60% {
-    transform: translateY(-10px);
-  }
-}
-
-.empty-state-title {
-  font-family: 'Orbitron', monospace;
-  font-size: 1.8rem;
-  font-weight: 700;
-  color: var(--enduro-dark-gray);
-  margin-bottom: 0.5rem;
-}
-
-.empty-state-text {
-  font-size: 1.1rem;
-  color: var(--enduro-light-gray);
-}
-
-/* =============================================================================
-   QUICK ACTIONS
-   ============================================================================= */
-.quick-actions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.enduro-quick-action {
-  background: var(--enduro-white);
-  border: 2px solid rgba(255, 107, 53, 0.2);
-  border-radius: 20px;
-  padding: 2rem 1rem;
-  text-decoration: none;
-  text-align: center;
-  transition: all var(--animation-medium);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.enduro-quick-action:hover {
-  border-color: var(--enduro-orange);
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-medium);
-  text-decoration: none;
-}
-
-.enduro-quick-action-primary {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  border-color: var(--enduro-orange);
-}
-
-.enduro-quick-action-primary:hover {
-  color: var(--enduro-white);
-  border-color: var(--enduro-dark-orange);
-}
-
-.enduro-quick-action-wide {
-  grid-column: 1 / -1;
-}
-
-.quick-action-icon {
-  font-size: 3rem;
-  color: var(--enduro-orange);
-  margin-bottom: 0.5rem;
-}
-
-.enduro-quick-action-primary .quick-action-icon {
-  color: var(--enduro-white);
-}
-
-.quick-action-text {
-  font-family: 'Rajdhani', sans-serif;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--enduro-dark-gray);
-}
-
-.enduro-quick-action-primary .quick-action-text {
-  color: var(--enduro-white);
-}
-
-.quick-action-subtitle {
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
-  font-weight: 400;
-}
-
-/* =============================================================================
-   MECHANIC INTERFACE
-   ============================================================================= */
-.enduro-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
-
-.breadcrumb-link {
-  color: var(--enduro-lime);
-  text-decoration: none;
-  transition: color var(--animation-fast);
-}
-
-.breadcrumb-link:hover {
-  color: var(--enduro-white);
-  text-decoration: none;
-}
-
-.breadcrumb-separator {
-  color: var(--enduro-orange);
-  font-weight: bold;
-}
-
-.breadcrumb-current {
-  color: var(--enduro-white);
-}
-
-.enduro-repair-status {
-  text-align: center;
-  position: relative;
-  z-index: 2;
-}
-
-.status-badge {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  padding: 1rem 1.5rem;
-  border-radius: 20px;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  display: inline-block;
-  animation: pulse 2s infinite;
-}
-
-.status-label {
-  color: var(--enduro-white);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-.repair-details-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.detail-group {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.8rem;
-  background: rgba(255, 107, 53, 0.05);
-  border-radius: 10px;
-  border-left: 4px solid var(--enduro-orange);
-}
-
-.detail-label {
-  font-weight: 700;
-  color: var(--enduro-dark-gray);
-  min-width: 80px;
-  font-family: 'Rajdhani', sans-serif;
-}
-
-.detail-value {
-  color: var(--enduro-light-gray);
-  font-weight: 500;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-}
-
-/* =============================================================================
-   ENDURO BUTTONS
-   ============================================================================= */
-.enduro-btn {
-  font-family: 'Rajdhani', sans-serif;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 25px;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  transition: all var(--animation-medium);
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  white-space: nowrap;
-}
-
-.enduro-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-  transition: left var(--animation-medium);
-}
-
-.enduro-btn:hover::before {
-  left: 100%;
-}
-
-.enduro-btn:active {
-  transform: scale(0.98);
-}
-
-.enduro-btn-primary {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
-  position: relative;
-}
-
-.enduro-btn-primary::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.2), transparent 70%);
-  opacity: 0;
-  transition: opacity var(--animation-fast);
-}
-
-.enduro-btn-primary:hover::after {
-  opacity: 1;
-  animation: shine 0.6s ease-in-out;
-}
-
-@keyframes shine {
-  0% { transform: translateX(-100%) skewX(-15deg); }
-  100% { transform: translateX(200%) skewX(-15deg); }
-}
-
-.enduro-btn-primary {
-  background: var(--enduro-gradient-primary);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
-}
-
-.enduro-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  color: var(--enduro-white);
-}
-
-.enduro-btn-info {
-  background: var(--enduro-gradient-dark);
-  color: var(--enduro-white);
-  box-shadow: var(--shadow-light);
-}
-
-.enduro-btn-info:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  color: var(--enduro-white);
-}
-
-.enduro-btn-success {
-  background: var(--enduro-gradient-success);
-  color: var(--enduro-black);
-  box-shadow: var(--shadow-light);
-}
-
-.enduro-btn-success:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-medium);
-  color: var(--enduro-black);
-}
-
-.enduro-btn-sm {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-}
-
-/* =============================================================================
-   ENDURO ICONS
-   ============================================================================= */
-.enduro-icon-spin {
-  animation: spin 3s linear infinite;
-  filter: drop-shadow(0 0 10px rgba(255, 107, 53, 0.5));
-}
-
-.enduro-icon-pulse {
-  animation: pulse 2s infinite;
-  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-/* אפקט זוהר לאייקונים */
-.fas, .far, .fab {
-  transition: all var(--animation-fast);
-}
-
-.enduro-card-title .fas:hover,
-.enduro-btn .fas:hover {
-  transform: scale(1.2) rotateZ(15deg);
-  filter: drop-shadow(0 0 10px currentColor);
-}
-
-/* =============================================================================
-   LOADING & TRANSITIONS
-   ============================================================================= */
-.enduro-loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--enduro-gradient-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity 0.5s ease-out;
-}
-
-.enduro-loading.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.loading-spinner {
-  width: 60px;
-  height: 60px;
-  border: 4px solid rgba(255, 107, 53, 0.3);
-  border-left: 4px solid var(--enduro-orange);
-  border-radius: 50%;
-  animation: loadingSpin 1s linear infinite;
-}
-
-@keyframes loadingSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-  margin-top: 1rem;
-  font-family: 'Orbitron', monospace;
-  font-size: 1.2rem;
-  color: var(--enduro-orange);
-  text-align: center;
-}
-
-/* Page Transitions */
-.page-transition {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* =============================================================================
-   RESPONSIVE ENDURO DESIGN
-   ============================================================================= */
-@media (max-width: 768px) {
-  .enduro-title {
-    font-size: 2rem;
-  }
-  
-  .enduro-stats-mini {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .enduro-card-header {
+    background-color: #b71c1c;
+    color: white;
     padding: 1rem;
-  }
-  
-  .enduro-card-title {
-    font-size: 1.2rem;
-  }
-  
-  .enduro-table {
-    font-size: 0.9rem;
-  }
-  
-  .enduro-table thead th,
-  .enduro-table td {
-    padding: 0.5rem;
-  }
-  
-  .action-buttons {
-    flex-direction: column;
-  }
-  
-  .enduro-btn {
-    font-size: 0.8rem;
-    padding: 0.4rem 0.8rem;
-  }
+    border-radius: 10px;
+    margin: 1rem 0;
 }
+
+.card {
+    background-color: #2a2a2a;
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #fff;
+    margin-bottom: 1rem;
+}
+
+.status-card {
+    min-height: 220px; /* או תתאים לפי הצורך */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-light-bg {
+    background-color: #333 !important;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+
