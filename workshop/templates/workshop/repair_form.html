@@ -1,81 +1,157 @@
 {% extends "workshop/base.html" %}
+
 {% block title %}הוסף תיקון אופניים{% endblock %}
 
 {% block content %}
-<h2>הוסף תיקון לאופניים</h2>
-<form method="post">
-  {% csrf_token %}
-
-  <div>
-    {{ form.bike.label_tag }}<br>
-    {{ form.bike }}
-  </div>
-  <br>
-
-  <div>
-    <strong>בחר קטגוריות תקלה:</strong>
-    <ul style="list-style-type: none; padding: 0;">
-      {% for cat in categories %}
-        <li>
-          <label>
-            <input type="checkbox" class="category-checkbox" data-cat-id="{{ cat.id }}">
-            {{ cat.name }}
-          </label>
-          <ul style="list-style-type: none; margin-right: 24px; display: none;" id="subcat-list-{{ cat.id }}">
-            {% for sub in cat.subcategories.all %}
-              <li>
-                <label>
-                  <input type="checkbox" name="subcategories" value="{{ sub.id }}">
-                  {{ sub.name }}
-                </label>
-              </li>
-            {% endfor %}
-          </ul>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
-  <br>
-
-  <div>
-    {{ form.problem_description.label_tag }}<br>
-    {{ form.problem_description }}
-  </div>
-  <br>
-  <div>
-    {{ form.diagnosis.label_tag }}<br>
-    {{ form.diagnosis }}
-    {% if user.userprofile.role == 'manager' %}
-    <small class="form-text text-muted">
-      <i class="fas fa-info-circle"></i>
-      אם תמלא אבחון כאן, תועבר ישירות לדף האבחון המפורט כדי להוסיף פעולות תיקון ספציפיות עם מחירים
-    </small>
-    {% endif %}
-  </div>
-  <br>
-  <div>
-    {{ form.quote_price.label_tag }}<br>
-    {{ form.quote_price }}
-  </div>
-  <br>
-  <div>
-    {{ form.is_approved }} {{ form.is_approved.label_tag }}
-  </div>
-  <br>
-  <button type="submit">שמור</button>
-  <a href="{% url 'home' %}">ביטול</a>
-</form>
+<div class="row">
+    <div class="col-md-12">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🔧 הוסף תיקון אופניים</h1>
+            <p class="text-white">צור תיקון חדש עם פרטי התקלה והאבחון</p>
+        </div>
+        
+        <div style="max-width: 800px; margin: 0 auto;">
+            <form method="post" id="repairForm">
+                {% csrf_token %}
+                
+                <!-- בחירת אופניים -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-bicycle me-2"></i>
+                            בחר אופניים:
+                        </h5>
+                        {{ form.bike }}
+                    </div>
+                </div>
+                
+                <!-- קטגוריות תקלה -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-tools me-2"></i>
+                            בחר קטגוריות התקלה:
+                        </h5>
+                        
+                        <div class="row">
+                            {% for cat in categories %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card repair-form-bg">
+                                    <div class="card-body p-3">
+                                        <label class="text-white mb-2 d-flex align-items-center category-label" style="cursor: pointer; font-weight: bold;">
+                                            <input type="checkbox" class="category-checkbox form-check-input me-2" data-cat-id="{{ cat.id }}">
+                                            <i class="fas fa-folder me-2 text-warning"></i>
+                                            {{ cat.name }}
+                                        </label>
+                                        
+                                        <div id="subcat-list-{{ cat.id }}" style="display: none;" class="mt-3">
+                                            {% for sub in cat.subcategories.all %}
+                                            <div class="form-check mb-2">
+                                                <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="form-check-input subcategory-checkbox" id="sub-{{ sub.id }}">
+                                                <label class="form-check-label text-white subcategory-label" for="sub-{{ sub.id }}">
+                                                    <i class="fas fa-wrench me-1 text-success"></i>
+                                                    {{ sub.name }}
+                                                </label>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- תיאור התקלה -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-edit me-2"></i>
+                            תיאור התקלה:
+                        </h5>
+                        {{ form.problem_description }}
+                    </div>
+                </div>
+                
+                <!-- אבחון -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-stethoscope me-2"></i>
+                            אבחון:
+                        </h5>
+                        {{ form.diagnosis }}
+                        {% if user.userprofile.role == 'manager' %}
+                        <small class="text-info mt-2 d-block">
+                            <i class="fas fa-info-circle me-1"></i>
+                            אם תמלא אבחון כאן, תועבר ישירות לדף האבחון המפורט כדי להוסיף פעולות תיקון ספציפיות עם מחירים
+                        </small>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- מחיר הצעה -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-white mb-3">
+                            <i class="fas fa-shekel-sign me-2"></i>
+                            מחיר הצעה:
+                        </h5>
+                        {{ form.quote_price }}
+                    </div>
+                </div>
+                
+                <!-- אישור -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="form-check">
+                            {{ form.is_approved }}
+                            <label class="form-check-label text-white" for="{{ form.is_approved.id_for_label }}">
+                                <i class="fas fa-check-circle me-2"></i>
+                                {{ form.is_approved.label }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- כפתורי פעולה -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-orange btn-lg px-5 py-3 me-3">
+                        <i class="fas fa-save me-2"></i>
+                        שמור תיקון
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg px-5 py-3">
+                        <i class="fas fa-times me-2"></i>
+                        ביטול
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
-  document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
-    checkbox.addEventListener('change', function() {
-      var list = document.getElementById('subcat-list-' + this.dataset.catId);
-      if (this.checked) {
-        list.style.display = 'block';
-      } else {
-        list.style.display = 'none';
-      }
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Repair form loaded');
+    
+    document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var list = document.getElementById('subcat-list-' + this.dataset.catId);
+            if (this.checked) {
+                list.style.display = 'block';
+            } else {
+                list.style.display = 'none';
+                // כשסוגרים קטגוריה, מבטלים את כל תתי הקטגוריות שבה
+                var subCheckboxes = list.querySelectorAll('input[type="checkbox"]');
+                subCheckboxes.forEach(function(subCheckbox) {
+                    subCheckbox.checked = false;
+                });
+            }
+        });
     });
-  });
+    
+    console.log('✅ Repair form category system ready');
+});
 </script>
 {% endblock %}

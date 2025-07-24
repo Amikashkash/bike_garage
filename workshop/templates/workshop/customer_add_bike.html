@@ -5,56 +5,82 @@
 {% block content %}
 <div class="row">
     <div class="col-md-6 mx-auto">
-        <h2>{{ title }}</h2>
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🚲 {{ title }}</h1>
+            <p class="text-white">הוסף אופניים חדשות למערכת</p>
+        </div>
         
-        <div class="card">
+        <div class="card add-bike-card">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-plus-circle me-2 text-success"></i>
+                    פרטי האופניים החדשים
+                </h5>
+            </div>
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
                     
-                    <div class="form-group mb-3">
-                        <label for="{{ form.brand.id_for_label }}">{{ form.brand.label }}</label>
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.brand.id_for_label }}">
+                            <i class="fas fa-industry me-2 text-orange"></i>
+                            {{ form.brand.label }}
+                        </label>
                         {{ form.brand }}
                         {% if form.brand.errors %}
-                            <div class="text-danger">{{ form.brand.errors.0 }}</div>
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.brand.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
                     
-                    <div class="form-group mb-3">
-                        <label for="{{ form.model.id_for_label }}">{{ form.model.label }}</label>
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.model.id_for_label }}">
+                            <i class="fas fa-tag me-2 text-turquoise"></i>
+                            {{ form.model.label }}
+                        </label>
                         {{ form.model }}
                         {% if form.model.errors %}
-                            <div class="text-danger">{{ form.model.errors.0 }}</div>
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.model.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
                     
-                    <div class="form-group mb-3">
-                        <label for="{{ form.color.id_for_label }}">{{ form.color.label }}</label>
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.color.id_for_label }}">
+                            <i class="fas fa-palette me-2 text-success"></i>
+                            {{ form.color.label }}
+                        </label>
                         {{ form.color }}
                         {% if form.color.errors %}
-                            <div class="text-danger">{{ form.color.errors.0 }}</div>
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.color.errors.0 }}
+                            </div>
                         {% endif %}
                     </div>
                     
-                    <div class="form-group mt-4">
-                        <button type="submit" class="btn btn-primary">הוסף אופניים</button>
-                        <a href="{% url 'customer_bikes_list' %}" class="btn btn-secondary">ביטול</a>
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-plus me-2"></i>הוסף אופניים
+                        </button>
+                        <a href="{% url 'customer_bikes_list' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>ביטול
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-white">
+                <i class="fas fa-info-circle me-1"></i>
+                לאחר הוספת האופניים תוכל לדווח על תקלות ולעקוב אחר התיקונים
+            </small>
+        </div>
     </div>
 </div>
-
-<style>
-.form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 10px;
-}
-.form-control:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-}
-</style>
 {% endblock %}
