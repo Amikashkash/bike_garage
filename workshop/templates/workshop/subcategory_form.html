@@ -1,10 +1,191 @@
 {% extends "workshop/base.html" %}
-{% block title %}הוספת תת־קטגוריה{% endblock %}
+
+{% block title %}{{ title }}{% endblock %}
+
 {% block content %}
-  <h2>הוספת תת־קטגוריה חדשה</h2>
-  <form method="post">{% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">שמור</button>
-    <a href="{% url 'category_list' %}">ביטול</a>
-  </form>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🔧 {{ title }}</h1>
+            <p class="text-white">{% if subcategory %}עריכת תת-קטגוריה קיימת{% else %}הוספת תת-קטגוריה חדשה למערכת{% endif %}</p>
+        </div>
+        
+        <div class="card subcategory-form-info-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    מידע על תתי-קטגוריות תיקון
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="subcategory-form-info-item mb-3">
+                    <i class="fas fa-wrench me-2 text-success"></i>
+                    <strong class="text-white">תתי-קטגוריות מגדירות תיקונים ספציפיים בכל קטגוריה</strong>
+                </div>
+                <div class="subcategory-form-info-item mb-3">
+                    <i class="fas fa-cog me-2 text-turquoise"></i>
+                    <strong class="text-white">כל תת-קטגוריה משויכת לקטגוריה ראשית אחת</strong>
+                </div>
+                <div class="subcategory-form-info-item mb-0">
+                    <i class="fas fa-tools me-2 text-orange"></i>
+                    <strong class="text-white">דוגמאות: "החלפת רפידות", "כיוונון בלמים", "תיקון פנצ'ר"</strong>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card subcategory-form-card">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-edit me-2"></i>
+                    {% if subcategory %}עריכת תת-קטגוריה: {{ subcategory.name }}{% else %}פרטי התת-קטגוריה החדשה{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.category.id_for_label }}">
+                            <i class="fas fa-folder me-2 text-warning"></i>
+                            {{ form.category.label }}
+                        </label>
+                        {{ form.category }}
+                        {% if form.category.help_text %}
+                            <div class="form-text text-white mt-2">
+                                <i class="fas fa-lightbulb me-1 text-warning"></i>
+                                {{ form.category.help_text }}
+                            </div>
+                        {% endif %}
+                        {% if form.category.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.category.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.name.id_for_label }}">
+                            <i class="fas fa-wrench me-2 text-success"></i>
+                            {{ form.name.label }}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.help_text %}
+                            <div class="form-text text-white mt-2">
+                                <i class="fas lightbulb me-1 text-info"></i>
+                                {{ form.name.help_text }}
+                            </div>
+                        {% endif %}
+                        {% if form.name.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.name.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.description %}
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.description.id_for_label }}">
+                            <i class="fas fa-align-left me-2 text-turquoise"></i>
+                            {{ form.description.label }}
+                        </label>
+                        {{ form.description }}
+                        {% if form.description.help_text %}
+                            <div class="form-text text-white mt-2">
+                                <i class="fas fa-info-circle me-1 text-info"></i>
+                                {{ form.description.help_text }}
+                            </div>
+                        {% endif %}
+                        {% if form.description.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.description.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-save me-2"></i>
+                            {% if subcategory %}עדכן תת-קטגוריה{% else %}שמור תת-קטגוריה{% endif %}
+                        </button>
+                        <a href="{% url 'category_list' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>ביטול
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if subcategory %}
+        <div class="card subcategory-existing-info-card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-info-circle me-2 text-warning"></i>
+                    מידע על התת-קטגוריה הנוכחית
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="existing-subcategory-stats">
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-folder text-warning"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-label text-white">קטגוריה ראשית</span>
+                            <span class="stat-value">{{ subcategory.category.name }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">
+                            <i class="fas fa-tools text-success"></i>
+                        </div>
+                        <div class="stat-content">
+                            <span class="stat-label text-white">תיקונים</span>
+                            <span class="stat-value">{{ subcategory.total_repairs|default:0 }}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="parent-category-info mt-4">
+                    <h6 class="text-white mb-3">
+                        <i class="fas fa-folder me-2 text-warning"></i>
+                        קטגוריה ראשית: {{ subcategory.category.name }}
+                    </h6>
+                    <div class="parent-category-details">
+                        <p class="text-white mb-2">
+                            <i class="fas fa-list-ul me-2 text-primary"></i>
+                            סה"כ {{ subcategory.category.subcategories.count }} תתי-קטגוריות בקטגוריה זו
+                        </p>
+                        {% if subcategory.category.subcategories.count > 1 %}
+                        <div class="sibling-subcategories">
+                            <small class="text-white">תתי-קטגוריות אחרות:</small>
+                            <div class="siblings-list mt-2">
+                                {% for sibling in subcategory.category.subcategories.all %}
+                                    {% if sibling != subcategory %}
+                                    <span class="sibling-subcategory-tag">
+                                        <i class="fas fa-cog me-1"></i>
+                                        {{ sibling.name }}
+                                    </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <div class="text-center mt-4">
+            <small class="text-white subcategory-form-help-text">
+                <i class="fas fa-lightbulb me-1"></i>
+                לאחר שמירת התת-קטגוריה, היא תופיע ברשימת הקטגוריות תחת הקטגוריה הראשית שנבחרה
+            </small>
+        </div>
+    </div>
+</div>
 {% endblock %}

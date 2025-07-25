@@ -1,21 +1,176 @@
 {% extends "workshop/base.html" %}
+
 {% block title %}ניהול קטגוריות תיקון{% endblock %}
+
 {% block content %}
-  <h2>קטגוריות תיקון</h2>
-  <a href="{% url 'category_create' %}">+ קטגוריה חדשה</a> |
-  <a href="{% url 'subcategory_create' %}">+ תת־קטגוריה חדשה</a>
-  <ul>
-    {% for cat in categories %}
-      <li>
-        <strong>{{ cat.name }}</strong>
-        <ul>
-          {% for sub in cat.subcategories.all %}
-            <li>{{ sub.name }}</li>
-          {% empty %}
-            <li><em>אין תתי־קטגוריות</em></li>
-          {% endfor %}
-        </ul>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🔧 ניהול קטגוריות תיקון</h1>
+            <p class="text-white">ניהול וארגון קטגוריות ותתי-קטגוריות לתיקונים</p>
+        </div>
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-white">קטגוריות תיקון</h2>
+            <div class="category-list-actions">
+                <a href="{% url 'category_create' %}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-2"></i>קטגוריה חדשה
+                </a>
+                <a href="{% url 'subcategory_create' %}" class="btn btn-success">
+                    <i class="fas fa-plus-circle me-2"></i>תת־קטגוריה חדשה
+                </a>
+            </div>
+        </div>
+
+        {% if categories %}
+            <div class="categories-accordion">
+                {% for category in categories %}
+                <div class="category-accordion-item">
+                    <div class="category-accordion-header" data-bs-toggle="collapse" data-bs-target="#category-{{ category.id }}" aria-expanded="false">
+                        <div class="category-main-info">
+                            <div class="category-icon-title">
+                                <i class="fas fa-folder category-folder-icon"></i>
+                                <h5 class="category-name">{{ category.name }}</h5>
+                            </div>
+                            <div class="category-stats">
+                                <span class="subcategory-count">
+                                    <i class="fas fa-list-ul me-1"></i>
+                                    {{ category.subcategories.count }} תתי-קטגוריות
+                                </span>
+                            </div>
+                        </div>
+                        <div class="category-controls">
+                            <a href="#" class="btn btn-sm btn-outline-primary category-edit-btn" onclick="event.stopPropagation();">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <i class="fas fa-chevron-down accordion-arrow"></i>
+                        </div>
+                    </div>
+                    
+                    <div id="category-{{ category.id }}" class="collapse category-accordion-body">
+                        <div class="category-content">
+                            {% with category.subcategories.all as subcategories %}
+                                {% if subcategories %}
+                                    <div class="subcategories-container">
+                                        <div class="subcategories-header">
+                                            <h6 class="text-white mb-3">
+                                                <i class="fas fa-wrench me-2 text-success"></i>
+                                                תתי-קטגוריות ({{ subcategories.count }})
+                                            </h6>
+                                        </div>
+                                        <div class="subcategories-grid">
+                                            {% for subcategory in subcategories %}
+                                            <div class="subcategory-card">
+                                                <div class="subcategory-info">
+                                                    <i class="fas fa-cog subcategory-icon"></i>
+                                                    <span class="subcategory-name">{{ subcategory.name }}</span>
+                                                </div>
+                                                <div class="subcategory-actions">
+                                                    <a href="#" class="btn btn-xs btn-outline-secondary">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="no-subcategories-message">
+                                        <div class="empty-state-icon">
+                                            <i class="fas fa-exclamation-circle"></i>
+                                        </div>
+                                        <div class="empty-state-content">
+                                            <p class="text-white mb-2">אין תתי-קטגוריות עדיין בקטגוריה זו</p>
+                                            <a href="{% url 'subcategory_create' %}" class="btn btn-sm btn-success">
+                                                <i class="fas fa-plus me-1"></i>הוסף תת-קטגוריה ראשונה
+                                            </a>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-categories-state">
+                <div class="empty-state-card">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-folder-open"></i>
+                    </div>
+                    <div class="empty-state-content">
+                        <h4 class="text-white mb-3">אין קטגוריות תיקון במערכת</h4>
+                        <p class="text-white mb-4">צור קטגוריה ראשונה כדי להתחיל לארגן את התיקונים</p>
+                        <a href="{% url 'category_create' %}" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i>צור קטגוריה ראשונה
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- הסבר על המערכת -->
+        <div class="category-info-section mt-5">
+            <div class="info-header">
+                <h5 class="text-white mb-4">
+                    <i class="fas fa-lightbulb me-2 text-primary"></i>
+                    איך עובד ארגון הקטגוריות?
+                </h5>
+            </div>
+            <div class="info-cards-row">
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="info-card-content">
+                        <h6 class="text-white">קטגוריות ראשיות</h6>
+                        <p class="text-white">כמו "בלמים", "גלגלים", "הילוכים"</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <div class="info-card-content">
+                        <h6 class="text-white">תתי-קטגוריות</h6>
+                        <p class="text-white">תיקונים ספציפיים בכל קטגוריה</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-icon">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="info-card-content">
+                        <h6 class="text-white">תיקונים</h6>
+                        <p class="text-white">מבוססים על התתי-קטגוריות</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <i class="fas fa-home me-2"></i>חזרה לדף הבית
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth accordion behavior
+    const accordionHeaders = document.querySelectorAll('.category-accordion-header');
+    
+    accordionHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const arrow = this.querySelector('.accordion-arrow');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            // Toggle arrow rotation
+            arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+    });
+});
+</script>
 {% endblock %}

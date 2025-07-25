@@ -1,12 +1,163 @@
 {% extends "workshop/base.html" %}
 
-{% block title %}אופניים חדשים{% endblock %}
+{% block title %}אופניים חדשות{% endblock %}
 
 {% block content %}
-<h2>הוסף אופניים חדשים</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">שמור</button>
-</form>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🚲 הוסף אופניים חדשות</h1>
+            <p class="text-white">הוסף אופניים חדשות למערכת המוסך</p>
+        </div>
+        
+        <div class="card bike-form-info-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    מידע חשוב לגבי הוספת אופניים
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-item mb-3">
+                    <i class="fas fa-user me-2 text-turquoise"></i>
+                    <strong class="text-white">האופניים יוקצו ללקוח קיים במערכת</strong>
+                </div>
+                <div class="info-item mb-3">
+                    <i class="fas fa-bicycle me-2 text-orange"></i>
+                    <strong class="text-white">ניתן להוסיף פרטים נוספים אחרי יצירת האופניים</strong>
+                </div>
+                <div class="info-item mb-0">
+                    <i class="fas fa-tools me-2 text-success"></i>
+                    <strong class="text-white">אחרי ההוספה ניתן לפתוח תיקונים חדשים לאופניים</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card bike-form-card">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-bicycle me-2"></i>
+                    פרטי האופניים החדשות
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.customer.id_for_label }}">
+                            <i class="fas fa-user me-2 text-primary"></i>
+                            {{ form.customer.label }}
+                        </label>
+                        {{ form.customer }}
+                        {% if form.customer.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.customer.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.brand.id_for_label }}">
+                            <i class="fas fa-industry me-2 text-orange"></i>
+                            {{ form.brand.label }}
+                        </label>
+                        {{ form.brand }}
+                        {% if form.brand.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.brand.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.model.id_for_label }}">
+                            <i class="fas fa-tag me-2 text-turquoise"></i>
+                            {{ form.model.label }}
+                        </label>
+                        {{ form.model }}
+                        {% if form.model.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.model.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.color.id_for_label }}">
+                            <i class="fas fa-palette me-2 text-success"></i>
+                            {{ form.color.label }}
+                        </label>
+                        {{ form.color }}
+                        {% if form.color.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.color.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.serial_number %}
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.serial_number.id_for_label }}">
+                            <i class="fas fa-barcode me-2 text-primary"></i>
+                            {{ form.serial_number.label }}
+                        </label>
+                        {{ form.serial_number }}
+                        {% if form.serial_number.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.serial_number.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            שדה זה אינו חובה
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    {% if form.notes %}
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.notes.id_for_label }}">
+                            <i class="fas fa-sticky-note me-2 text-orange"></i>
+                            {{ form.notes.label }}
+                        </label>
+                        {{ form.notes }}
+                        {% if form.notes.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.notes.errors.0 }}
+                            </div>
+                        {% endif %}
+                        <small class="form-text text-muted mt-2">
+                            <i class="fas fa-info-circle me-1"></i>
+                            הערות נוספות על האופניים (אינו חובה)
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-save me-2"></i>שמור אופניים
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>חזור לדף הבית
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-white bike-form-help-text">
+                <i class="fas fa-lightbulb me-1"></i>
+                לאחר שמירת האופניים, תוכל לפתוח תיקונים חדשים ולנהל את המעקב שלהם
+            </small>
+        </div>
+    </div>
+</div>
 {% endblock %}

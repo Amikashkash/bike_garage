@@ -10,51 +10,70 @@
             <p class="text-white">צור תיקון חדש עם פרטי התקלה והאבחון</p>
         </div>
         
-        <div style="max-width: 800px; margin: 0 auto;">
+        <div class="repair-form-container">
             <form method="post" id="repairForm">
                 {% csrf_token %}
                 
                 <!-- בחירת אופניים -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
+                <div class="card repair-form-bike-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">
                             <i class="fas fa-bicycle me-2"></i>
-                            בחר אופניים:
+                            בחירת אופניים
                         </h5>
-                        {{ form.bike }}
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label text-white" for="{{ form.bike.id_for_label }}">
+                                <i class="fas fa-bicycle me-2 text-primary"></i>
+                                {{ form.bike.label }}
+                            </label>
+                            {{ form.bike }}
+                            {% if form.bike.errors %}
+                                <div class="form-error mt-2">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ form.bike.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 
                 <!-- קטגוריות תקלה -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
+                <div class="card repair-form-categories-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">
                             <i class="fas fa-tools me-2"></i>
-                            בחר קטגוריות התקלה:
+                            קטגוריות התקלה
                         </h5>
-                        
-                        <div class="row">
+                    </div>
+                    <div class="card-body">
+                        <div class="categories-grid">
                             {% for cat in categories %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card repair-form-bg">
-                                    <div class="card-body p-3">
-                                        <label class="text-white mb-2 d-flex align-items-center category-label" style="cursor: pointer; font-weight: bold;">
-                                            <input type="checkbox" class="category-checkbox form-check-input me-2" data-cat-id="{{ cat.id }}">
-                                            <i class="fas fa-folder me-2 text-warning"></i>
-                                            {{ cat.name }}
-                                        </label>
-                                        
-                                        <div id="subcat-list-{{ cat.id }}" style="display: none;" class="mt-3">
-                                            {% for sub in cat.subcategories.all %}
-                                            <div class="form-check mb-2">
-                                                <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="form-check-input subcategory-checkbox" id="sub-{{ sub.id }}">
-                                                <label class="form-check-label text-white subcategory-label" for="sub-{{ sub.id }}">
-                                                    <i class="fas fa-wrench me-1 text-success"></i>
-                                                    {{ sub.name }}
-                                                </label>
+                            <div class="category-item">
+                                <div class="category-card">
+                                    <div class="category-header">
+                                        <label class="category-label">
+                                            <input type="checkbox" class="category-checkbox" data-cat-id="{{ cat.id }}">
+                                            <div class="category-content">
+                                                <i class="fas fa-folder me-2 text-warning"></i>
+                                                <span>{{ cat.name }}</span>
                                             </div>
-                                            {% endfor %}
+                                        </label>
+                                    </div>
+                                    
+                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list">
+                                        {% for sub in cat.subcategories.all %}
+                                        <div class="subcategory-item">
+                                            <label class="subcategory-label">
+                                                <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="subcategory-checkbox" id="sub-{{ sub.id }}">
+                                                <div class="subcategory-content">
+                                                    <i class="fas fa-wrench me-1 text-success"></i>
+                                                    <span>{{ sub.name }}</span>
+                                                </div>
+                                            </label>
                                         </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
@@ -64,64 +83,125 @@
                 </div>
                 
                 <!-- תיאור התקלה -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
+                <div class="card repair-form-description-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">
                             <i class="fas fa-edit me-2"></i>
-                            תיאור התקלה:
+                            תיאור התקלה
                         </h5>
-                        {{ form.problem_description }}
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-label text-white" for="{{ form.problem_description.id_for_label }}">
+                                <i class="fas fa-comment-alt me-2 text-orange"></i>
+                                {{ form.problem_description.label }}
+                            </label>
+                            {{ form.problem_description }}
+                            {% if form.problem_description.errors %}
+                                <div class="form-error mt-2">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ form.problem_description.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
                 
                 <!-- אבחון -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
+                <div class="card repair-form-diagnosis-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">
                             <i class="fas fa-stethoscope me-2"></i>
-                            אבחון:
+                            אבחון ופתרון
                         </h5>
-                        {{ form.diagnosis }}
-                        {% if user.userprofile.role == 'manager' %}
-                        <small class="text-info mt-2 d-block">
-                            <i class="fas fa-info-circle me-1"></i>
-                            אם תמלא אבחון כאן, תועבר ישירות לדף האבחון המפורט כדי להוסיף פעולות תיקון ספציפיות עם מחירים
-                        </small>
-                        {% endif %}
                     </div>
-                </div>
-                
-                <!-- מחיר הצעה -->
-                <div class="card mb-4">
                     <div class="card-body">
-                        <h5 class="text-white mb-3">
-                            <i class="fas fa-shekel-sign me-2"></i>
-                            מחיר הצעה:
-                        </h5>
-                        {{ form.quote_price }}
-                    </div>
-                </div>
-                
-                <!-- אישור -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="form-check">
-                            {{ form.is_approved }}
-                            <label class="form-check-label text-white" for="{{ form.is_approved.id_for_label }}">
-                                <i class="fas fa-check-circle me-2"></i>
-                                {{ form.is_approved.label }}
+                        <div class="form-group">
+                            <label class="form-label text-white" for="{{ form.diagnosis.id_for_label }}">
+                                <i class="fas fa-microscope me-2 text-turquoise"></i>
+                                {{ form.diagnosis.label }}
                             </label>
+                            {{ form.diagnosis }}
+                            {% if form.diagnosis.errors %}
+                                <div class="form-error mt-2">
+                                    <i class="fas fa-exclamation-triangle me-1"></i>
+                                    {{ form.diagnosis.errors.0 }}
+                                </div>
+                            {% endif %}
+                            {% if user.userprofile.role == 'manager' %}
+                            <div class="diagnosis-help-text mt-2">
+                                <i class="fas fa-info-circle me-1"></i>
+                                אם תמלא אבחון כאן, תועבר ישירות לדף האבחון המפורט כדי להוסיף פעולות תיקון ספציפיות עם מחירים
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- מחיר הצעה ואישור -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card repair-form-price-card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-shekel-sign me-2"></i>
+                                    מחיר הצעה
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group">
+                                    <label class="form-label text-white" for="{{ form.quote_price.id_for_label }}">
+                                        <i class="fas fa-calculator me-2 text-success"></i>
+                                        {{ form.quote_price.label }}
+                                    </label>
+                                    {{ form.quote_price }}
+                                    {% if form.quote_price.errors %}
+                                        <div class="form-error mt-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            {{ form.quote_price.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card repair-form-approval-card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0 text-white">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    אישור תיקון
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="approval-checkbox-wrapper">
+                                    <label class="approval-checkbox-label">
+                                        {{ form.is_approved }}
+                                        <div class="approval-content">
+                                            <i class="fas fa-user-check me-2 text-primary"></i>
+                                            <span>{{ form.is_approved.label }}</span>
+                                        </div>
+                                    </label>
+                                    {% if form.is_approved.errors %}
+                                        <div class="form-error mt-2">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                            {{ form.is_approved.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- כפתורי פעולה -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-orange btn-lg px-5 py-3 me-3">
+                <div class="repair-form-actions text-center">
+                    <button type="submit" class="btn btn-success btn-lg me-3">
                         <i class="fas fa-save me-2"></i>
                         שמור תיקון
                     </button>
-                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg px-5 py-3">
+                    <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
                         <i class="fas fa-times me-2"></i>
                         ביטול
                     </a>
@@ -138,15 +218,31 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             var list = document.getElementById('subcat-list-' + this.dataset.catId);
+            var categoryCard = this.closest('.category-card');
+            
             if (this.checked) {
-                list.style.display = 'block';
+                list.classList.add('show');
+                categoryCard.classList.add('expanded');
             } else {
-                list.style.display = 'none';
+                list.classList.remove('show');
+                categoryCard.classList.remove('expanded');
                 // כשסוגרים קטגוריה, מבטלים את כל תתי הקטגוריות שבה
                 var subCheckboxes = list.querySelectorAll('input[type="checkbox"]');
                 subCheckboxes.forEach(function(subCheckbox) {
                     subCheckbox.checked = false;
                 });
+            }
+        });
+    });
+    
+    // Enhanced subcategory interaction
+    document.querySelectorAll('.subcategory-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var subcategoryItem = this.closest('.subcategory-item');
+            if (this.checked) {
+                subcategoryItem.classList.add('selected');
+            } else {
+                subcategoryItem.classList.remove('selected');
             }
         });
     });

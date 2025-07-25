@@ -3,41 +3,121 @@
 {% block title %}לקוח חדש{% endblock %}
 
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;">
-    <h2>📝 הוסף לקוח חדש</h2>
-    
-    <div style="background-color: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #b3d9ff;">
-        <h4>💡 מידע חשוב:</h4>
-        <p>• לקוח זה יוסף כפרטי קשר בלבד</p>
-        <p>• הלקוח לא יוכל להתחבר למערכת</p>
-        <p>• אם הלקוח רוצה לדווח תקלות בעצמו, עליו להירשם דרך דף "הרשמה"</p>
-    </div>
-
-    <form method="post" style="background-color: #f9f9f9; padding: 20px; border-radius: 8px;">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <div style="margin-top: 20px;">
-            <button type="submit" style="background-color: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
-                💾 שמור לקוח
-            </button>
-            <a href="{% url 'home' %}" style="margin-right: 10px; color: #6c757d; text-decoration: none;">
-                ← חזור לדף הבית
-            </a>
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">📝 הוסף לקוח חדש</h1>
+            <p class="text-white">הוסף פרטי קשר של לקוח למערכת</p>
         </div>
-    </form>
-</div>
+        
+        <div class="card customer-form-info-card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    מידע חשוב לגבי הוספת לקוח
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-item mb-3">
+                    <i class="fas fa-user-plus me-2 text-turquoise"></i>
+                    <strong class="text-white">לקוח זה יוסף כפרטי קשר בלבד</strong>
+                </div>
+                <div class="info-item mb-3">
+                    <i class="fas fa-lock me-2 text-orange"></i>
+                    <strong class="text-white">הלקוח לא יוכל להתחבר למערכת</strong>
+                </div>
+                <div class="info-item mb-0">
+                    <i class="fas fa-user-check me-2 text-success"></i>
+                    <strong class="text-white">אם הלקוח רוצה לדווח תקלות בעצמו, עליו להירשם דרך דף "הרשמה"</strong>
+                </div>
+            </div>
+        </div>
 
-<style>
-    form input, form select, form textarea {
-        width: 100%;
-        padding: 8px;
-        margin: 5px 0;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        box-sizing: border-box;
-    }
-    button:hover {
-        background-color: #218838 !important;
-    }
-</style>
+        <div class="card customer-form-card">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-address-card me-2"></i>
+                    פרטי הלקוח החדש
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.name.id_for_label }}">
+                            <i class="fas fa-user me-2 text-primary"></i>
+                            {{ form.name.label }}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.name.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.phone.id_for_label }}">
+                            <i class="fas fa-phone me-2 text-turquoise"></i>
+                            {{ form.phone.label }}
+                        </label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.phone.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.email.id_for_label }}">
+                            <i class="fas fa-envelope me-2 text-orange"></i>
+                            {{ form.email.label }}
+                        </label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.email.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="form-label text-white" for="{{ form.address.id_for_label }}">
+                            <i class="fas fa-map-marker-alt me-2 text-success"></i>
+                            {{ form.address.label }}
+                        </label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="form-error mt-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                {{ form.address.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg me-3">
+                            <i class="fas fa-save me-2"></i>שמור לקוח
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>חזור לדף הבית
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-white customer-form-help-text">
+                <i class="fas fa-lightbulb me-1"></i>
+                לאחר שמירת הלקוח, תוכל להוסיף לו אופניים ולפתוח תיקונים חדשים
+            </small>
+        </div>
+    </div>
+</div>
 {% endblock %}

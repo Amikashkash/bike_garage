@@ -5,11 +5,21 @@
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1>עדכון ביצוע תיקון #{{ repair_job.id }}</h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'mechanic_dashboard' %}">דשבורד מכונאי</a></li>
-                <li class="breadcrumb-item active">עדכון תיקון #{{ repair_job.id }}</li>
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">🔧 עדכון ביצוע תיקון #{{ repair_job.id }}</h1>
+            <p class="text-white">עדכן את סטטוס הפעולות והוסף הערות לכל פריט</p>
+        </div>
+        
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb mechanic-breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'mechanic_dashboard' %}">
+                        <i class="fas fa-tachometer-alt me-1"></i>דשבורד מכונאי
+                    </a>
+                </li>
+                <li class="breadcrumb-item active text-white">
+                    <i class="fas fa-wrench me-1"></i>עדכון תיקון #{{ repair_job.id }}
+                </li>
             </ol>
         </nav>
     </div>
@@ -18,29 +28,55 @@
 <div class="row">
     <!-- פרטי תיקון - עמודה קבועה -->
     <div class="col-lg-4 col-md-5">
-        <div class="card sticky-top" style="top: 20px;">
+        <div class="card mechanic-info-card sticky-top">
             <div class="card-header">
-                <h5><i class="fas fa-info-circle"></i> פרטי התיקון</h5>
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-info-circle me-2"></i>פרטי התיקון
+                </h5>
             </div>
             <div class="card-body">
-                <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
-                <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
-                <p><strong>טלפון:</strong> {{ repair_job.bike.customer.phone }}</p>
+                <div class="repair-info-item mb-3">
+                    <i class="fas fa-bicycle me-2 text-primary"></i>
+                    <strong class="text-white">אופניים:</strong> 
+                    <span class="text-white">{{ repair_job.bike }}</span>
+                </div>
+                
+                <div class="repair-info-item mb-3">
+                    <i class="fas fa-user me-2 text-turquoise"></i>
+                    <strong class="text-white">לקוח:</strong> 
+                    <span class="text-white">{{ repair_job.bike.customer.name }}</span>
+                </div>
+                
+                <div class="repair-info-item mb-3">
+                    <i class="fas fa-phone me-2 text-orange"></i>
+                    <strong class="text-white">טלפון:</strong> 
+                    <span class="text-white">{{ repair_job.bike.customer.phone }}</span>
+                </div>
                 
                 {% if repair_job.problem_description %}
-                <p><strong>תקלה:</strong></p>
-                <p class="small bg-light p-2 rounded">{{ repair_job.problem_description|truncatechars:100 }}</p>
+                <div class="repair-problem-section mb-3">
+                    <strong class="text-white mb-2 d-block">
+                        <i class="fas fa-exclamation-triangle me-2 text-warning"></i>תקלה:
+                    </strong>
+                    <div class="mechanic-problem-description">
+                        {{ repair_job.problem_description|truncatechars:100 }}
+                    </div>
+                </div>
                 {% endif %}
                 
-                <div class="mt-3">
-                    <strong>התקדמות:</strong>
-                    <div class="progress mt-2">
-                        <div class="progress-bar bg-success" role="progressbar" 
+                <div class="progress-section">
+                    <strong class="text-white mb-2 d-block">
+                        <i class="fas fa-chart-line me-2 text-success"></i>התקדמות:
+                    </strong>
+                    <div class="progress mechanic-progress">
+                        <div class="progress-bar" role="progressbar" 
                              style="width: {{ repair_job.progress_percentage }}%;">
                             {{ repair_job.progress_percentage|floatformat:0 }}%
                         </div>
                     </div>
-                    <small class="text-muted">{{ repair_job.completed_count }}/{{ repair_job.approved_count }} הושלמו</small>
+                    <small class="text-white mt-2 d-block">
+                        {{ repair_job.completed_count }}/{{ repair_job.approved_count }} הושלמו
+                    </small>
                 </div>
             </div>
         </div>
@@ -51,85 +87,108 @@
         <form method="post">
             {% csrf_token %}
             
-            <div class="card">
+            <div class="card mechanic-tasks-card">
                 <div class="card-header">
-                    <h5><i class="fas fa-tasks"></i> עדכון סטטוס פעולות</h5>
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-tasks me-2"></i>עדכון סטטוס פעולות
+                    </h5>
                 </div>
                 <div class="card-body">
                     {% if task_form.completed_items.field.queryset %}
                         {% for item in task_form.completed_items.field.queryset %}
-                        <div class="border rounded p-3 mb-3 item-card">
+                        <div class="mechanic-item-card mb-3">
                             <!-- כותרת הפעולה -->
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h6 class="mb-0">{{ item.description }}</h6>
-                                <span class="text-muted">₪{{ item.price }}</span>
+                            <div class="item-header d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0 text-white">
+                                    <i class="fas fa-wrench me-2 text-orange"></i>
+                                    {{ item.description }}
+                                </h6>
+                                <span class="badge badge-success">₪{{ item.price }}</span>
                             </div>
                             
-                            <!-- בחירת סטטוס בשורה אחת -->
-                            <div class="btn-group-toggle mb-2" data-toggle="buttons">
+                            <!-- בחירת סטטוס -->
+                            <div class="status-selection mb-3">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <label class="btn btn-outline-success btn-sm w-100 status-btn {% if item.status == 'completed' %}active{% endif %}">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="status-option status-completed {% if item.status == 'completed' %}active{% endif %}">
                                             <input type="radio" name="item_status_{{ item.id }}" value="completed" 
                                                    {% if item.status == 'completed' %}checked{% endif %}>
-                                            <i class="fas fa-check"></i> הושלם
+                                            <div class="status-content">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span>הושלם</span>
+                                            </div>
                                         </label>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label class="btn btn-outline-danger btn-sm w-100 status-btn {% if item.status == 'blocked' %}active{% endif %}">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="status-option status-blocked {% if item.status == 'blocked' %}active{% endif %}">
                                             <input type="radio" name="item_status_{{ item.id }}" value="blocked" 
                                                    {% if item.status == 'blocked' %}checked{% endif %}>
-                                            <i class="fas fa-times"></i> תקוע
+                                            <div class="status-content">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <span>תקוע</span>
+                                            </div>
                                         </label>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label class="btn btn-outline-warning btn-sm w-100 status-btn {% if item.status == 'pending' or not item.status %}active{% endif %}">
+                                    <div class="col-md-4 mb-2">
+                                        <label class="status-option status-pending {% if item.status == 'pending' or not item.status %}active{% endif %}">
                                             <input type="radio" name="item_status_{{ item.id }}" value="pending" 
                                                    {% if item.status == 'pending' or not item.status %}checked{% endif %}>
-                                            <i class="fas fa-clock"></i> ממתין
+                                            <div class="status-content">
+                                                <i class="fas fa-clock"></i>
+                                                <span>ממתין</span>
+                                            </div>
                                         </label>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- תיבת הערות מתקפלת -->
+                            <!-- תיבת הערות -->
                             <div class="notes-section">
-                                <button type="button" class="btn btn-link btn-sm p-0" onclick="toggleNotes({{ item.id }})">
-                                    <i class="fas fa-comment-alt"></i> הערות 
-                                    <span id="notes-icon-{{ item.id }}" class="fas fa-chevron-down"></span>
+                                <button type="button" class="notes-toggle-btn" onclick="toggleNotes({{ item.id }})">
+                                    <i class="fas fa-comment-alt me-2"></i>
+                                    הערות 
+                                    <i id="notes-icon-{{ item.id }}" class="fas fa-chevron-down ms-2"></i>
                                 </button>
-                                <div id="notes-{{ item.id }}" class="collapse {% if item.notes %}show{% endif %} mt-2">
+                                <div id="notes-{{ item.id }}" class="notes-content {% if item.notes %}show{% endif %}">
                                     <textarea name="notes_{{ item.id }}" 
-                                              class="form-control form-control-sm" 
-                                              rows="2" 
-                                              placeholder="הערות, בעיות, חלקים חסרים...">{{ item.notes|default:'' }}</textarea>
+                                              class="form-control notes-textarea" 
+                                              rows="3" 
+                                              placeholder="הערות, בעיות, חלקים חסרים, הוראות מיוחדות...">{{ item.notes|default:'' }}</textarea>
                                 </div>
                             </div>
                         </div>
                         {% endfor %}
                         
                         <!-- הערות כלליות -->
-                        <div class="card bg-light mt-3">
-                            <div class="card-body py-2">
-                                <label class="small font-weight-bold">הערות כלליות על התיקון:</label>
+                        <div class="card general-notes-card">
+                            <div class="card-body">
+                                <label class="text-white mb-2 d-block">
+                                    <i class="fas fa-sticky-note me-2 text-primary"></i>
+                                    <strong>הערות כלליות על התיקון:</strong>
+                                </label>
                                 <textarea name="general_notes" 
-                                          class="form-control form-control-sm" 
-                                          rows="2" 
-                                          placeholder="הערות כלליות..."></textarea>
+                                          class="form-control general-notes-textarea" 
+                                          rows="3" 
+                                          placeholder="הערות כלליות, המלצות ללקוח, תחזוקה נדרשת..."></textarea>
                             </div>
                         </div>
                         
-                        <div class="mt-3 text-center">
-                            <button type="submit" class="btn btn-success btn-lg px-5">
-                                <i class="fas fa-check"></i> עדכן ביצוע
+                        <div class="action-buttons text-center">
+                            <button type="submit" class="btn btn-success btn-lg me-3">
+                                <i class="fas fa-save me-2"></i>עדכן ביצוע
                             </button>
-                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary ml-2">חזור</a>
+                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-arrow-left me-2"></i>חזור לדשבורד
+                            </a>
                         </div>
                     {% else %}
-                        <div class="alert alert-success text-center">
-                            <h5><i class="fas fa-check-circle"></i> כל הפעולות הושלמו!</h5>
-                            <p class="mb-0">כל הפעולות שאושרו על ידי הלקוח כבר סומנו כמושלמות.</p>
-                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-primary mt-2">חזור לדשבורד</a>
+                        <div class="completion-success-card text-center">
+                            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                            <h5 class="text-white mb-3">כל הפעולות הושלמו בהצלחה!</h5>
+                            <p class="text-white mb-4">כל הפעולות שאושרו על ידי הלקוח כבר סומנו כמושלמות.</p>
+                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-tachometer-alt me-2"></i>חזור לדשבורד
+                            </a>
                         </div>
                     {% endif %}
                 </div>
@@ -156,62 +215,46 @@ function toggleNotes(itemId) {
 
 // הפעלת הסטיילינג של הכפתורים
 document.addEventListener('DOMContentLoaded', function() {
+    // Handle radio button changes
     const radioButtons = document.querySelectorAll('input[type="radio"]');
     radioButtons.forEach(radio => {
         radio.addEventListener('change', function() {
             // הסרת active מכל הכפתורים באותה קבוצה
             const groupName = this.name;
             document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
-                r.closest('label').classList.remove('active');
+                r.closest('.status-option').classList.remove('active');
             });
             
             // הוספת active לכפתור הנבחר
-            this.closest('label').classList.add('active');
+            this.closest('.status-option').classList.add('active');
         });
     });
+    
+    // Fix notes display - only show if there are actual notes
+    document.querySelectorAll('[id^="notes-"]').forEach(notesDiv => {
+        if (notesDiv.id.startsWith('notes-') && notesDiv.id !== 'notes-icon') {
+            const textarea = notesDiv.querySelector('textarea');
+            const iconId = notesDiv.id.replace('notes-', 'notes-icon-');
+            const icon = document.getElementById(iconId);
+            
+            if (textarea && icon) {
+                const hasNotes = textarea.value.trim() !== '';
+                
+                if (!hasNotes) {
+                    notesDiv.classList.remove('show');
+                    icon.classList.remove('fa-chevron-up');
+                    icon.classList.add('fa-chevron-down');
+                } else {
+                    notesDiv.classList.add('show');
+                    icon.classList.remove('fa-chevron-down');
+                    icon.classList.add('fa-chevron-up');
+                }
+            }
+        }
+    });
+    
+    console.log('✅ Mechanic task completion page ready');
 });
 </script>
-
-<style>
-.status-btn {
-    transition: all 0.2s;
-}
-
-.status-btn.active {
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.item-card {
-    background: #fafafa;
-    transition: all 0.2s;
-}
-
-.item-card:hover {
-    background: #f0f0f0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.sticky-top {
-    z-index: 1;
-}
-
-.notes-section .btn-link {
-    text-decoration: none;
-    color: #6c757d;
-}
-
-.notes-section .btn-link:hover {
-    color: #495057;
-}
-
-@media (max-width: 768px) {
-    .col-md-4 {
-        margin-bottom: 5px;
-    }
-    
-    .sticky-top {
-        position: relative !important;
-    }
-}
-</style>
 {% endblock %}
+

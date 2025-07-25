@@ -3,144 +3,264 @@
 {% block title %}רשימת לקוחות{% endblock %}
 
 {% block content %}
-<div style="max-width: 1000px; margin: 0 auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>👥 רשימת לקוחות</h2>
-        <div style="display: flex; gap: 10px;">
-            <a href="{% url 'customer_form' %}" style="background-color: #007bff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                ➕ הוסף לקוח חדש
-            </a>
-            <a href="{% url 'customer_with_bike_new' %}" style="background-color: #28a745; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">
-                👥🚲 לקוח + אופניים
-            </a>
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="text-center mt-4 mb-5">
+            <h1 class="text-white">👥 רשימת לקוחות</h1>
+            <p class="text-white">ניהול ומעקב אחר לקוחות המוסך</p>
         </div>
-    </div>
-
-    <!-- לקוחות עם חשבון משתמש -->
-    <div style="margin-bottom: 30px;">
-        <h3 style="color: #28a745;">🟢 לקוחות רשומים במערכת ({{ customers_with_user.count }})</h3>
-        <p style="color: #666; font-size: 0.9em;">לקוחות שנרשמו בעצמם ויכולים להתחבר למערכת</p>
         
-        {% if customers_with_user %}
-        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #dee2e6;">
-            {% for customer in customers_with_user %}
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: white; border-radius: 8px; border: 1px solid #4caf50; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <div style="flex-grow: 1;">
-                    <strong style="font-size: 1.1em;">{{ customer.name }}</strong>
-                    <br>
-                    <small style="color: #666;">
-                        📞 {{ customer.phone }} 
-                        {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
-                        | 👤 {{ customer.user.username }}
-                    </small>
-                    {% with customer.bikes.all as bikes %}
-                        {% if bikes %}
-                            <br>
-                            <small style="color: #2196f3;">
-                                🚲 {{ bikes.count }} אופניים: 
-                                {% for bike in bikes %}
-                                    {{ bike.brand }} {{ bike.model|default:"" }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </small>
-                        {% else %}
-                            <br>
-                            <small style="color: #ff9800;">⚠️ אין אופניים רשומות</small>
-                        {% endif %}
-                    {% endwith %}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-white">לקוחות המוסך</h2>
+            <div class="customer-list-actions">
+                <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+                </a>
+                <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success">
+                    <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
+                </a>
+            </div>
+        </div>
+
+        <!-- לקוחות עם חשבון משתמש -->
+        <div class="customer-section mb-5">
+            <div class="card customer-registered-card">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-user-check me-2 text-success"></i>
+                        לקוחות רשומים במערכת ({{ customers_with_user.count }})
+                    </h5>
+                    <p class="mb-0 text-white customer-section-description">
+                        לקוחות שנרשמו בעצמם ויכולים להתחבר למערכת
+                    </p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <span style="background-color: #4caf50; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">
-                        ✅ רשום
-                    </span>
-                    {% with customer.bikes.first as first_bike %}
-                        {% if first_bike %}
-                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                               style="background-color: #2196f3; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
-                                ✏️ ערוך
-                            </a>
-                        {% else %}
-                            <a href="{% url 'customer_bike_add' customer.id %}" 
-                               style="background-color: #ff9800; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
-                                ➕ הוסף אופניים
-                            </a>
-                        {% endif %}
-                    {% endwith %}
+                <div class="card-body">
+                    {% if customers_with_user %}
+                        <div class="customers-grid">
+                            {% for customer in customers_with_user %}
+                            <div class="customer-item registered-customer">
+                                <div class="customer-header">
+                                    <div class="customer-main-info">
+                                        <h6 class="customer-name text-white">
+                                            <i class="fas fa-user me-2 text-primary"></i>
+                                            {{ customer.name }}
+                                        </h6>
+                                        <div class="customer-contact">
+                                            <small class="text-white">
+                                                <i class="fas fa-phone me-1 text-turquoise"></i>
+                                                {{ customer.phone }}
+                                                {% if customer.email %}
+                                                    <span class="ms-2">
+                                                        <i class="fas fa-envelope me-1 text-orange"></i>
+                                                        {{ customer.email }}
+                                                    </span>
+                                                {% endif %}
+                                            </small>
+                                            <br>
+                                            <small class="text-white">
+                                                <i class="fas fa-user-tag me-1 text-success"></i>
+                                                משתמש: {{ customer.user.username }}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="customer-status">
+                                        <span class="badge badge-success customer-type-badge">
+                                            <i class="fas fa-check-circle me-1"></i>רשום
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-bikes-info">
+                                    {% with customer.bikes.all as bikes %}
+                                        {% if bikes %}
+                                            <div class="bikes-summary">
+                                                <i class="fas fa-bicycle me-2 text-primary"></i>
+                                                <strong class="text-white">{{ bikes.count }} אופניים:</strong>
+                                                <div class="bikes-list mt-1">
+                                                    {% for bike in bikes %}
+                                                    <span class="bike-tag">
+                                                        {{ bike.brand }} {{ bike.model|default:"" }}
+                                                    </span>
+                                                    {% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="no-bikes-warning">
+                                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                                                <span class="text-warning">אין אופניים רשומות</span>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    {% with customer.bikes.first as first_bike %}
+                                        {% if first_bike %}
+                                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit me-1"></i>ערוך
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'customer_bike_add' customer.id %}" 
+                                               class="btn btn-sm btn-orange">
+                                                <i class="fas fa-plus me-1"></i>הוסף אופניים
+                                            </a>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-customers-message">
+                            <i class="fas fa-users fa-2x text-secondary mb-2"></i>
+                            <p class="text-white">אין לקוחות רשומים עדיין</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <p style="color: #666; font-style: italic;">אין לקוחות רשומים עדיין</p>
-        {% endif %}
-    </div>
 
-    <!-- לקוחות ללא חשבון משתמש -->
-    <div>
-        <h3 style="color: #ffc107;">🟡 פרטי קשר בלבד ({{ customers_without_user.count }})</h3>
-        <p style="color: #666; font-size: 0.9em;">לקוחות שנוצרו ע"י המנהל - ללא אפשרות התחברות</p>
-        
-        {% if customers_without_user %}
-        <div style="background-color: #fff8e1; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2;">
-            {% for customer in customers_without_user %}
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; margin-bottom: 15px; background-color: white; border-radius: 8px; border: 1px solid #ffcc02; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <div style="flex-grow: 1;">
-                    <strong style="font-size: 1.1em;">{{ customer.name }}</strong>
-                    <br>
-                    <small style="color: #666;">
-                        📞 {{ customer.phone }} 
-                        {% if customer.email %}| 📧 {{ customer.email }}{% endif %}
-                    </small>
-                    {% with customer.bikes.all as bikes %}
-                        {% if bikes %}
-                            <br>
-                            <small style="color: #2196f3;">
-                                🚲 {{ bikes.count }} אופניים: 
-                                {% for bike in bikes %}
-                                    {{ bike.brand }} {{ bike.model|default:"" }}{% if not forloop.last %}, {% endif %}
-                                {% endfor %}
-                            </small>
-                        {% else %}
-                            <br>
-                            <small style="color: #ff9800;">⚠️ אין אופניים רשומות</small>
-                        {% endif %}
-                    {% endwith %}
+        <!-- לקוחות ללא חשבון משתמש -->
+        <div class="customer-section mb-5">
+            <div class="card customer-contact-card">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">
+                        <i class="fas fa-address-book me-2 text-warning"></i>
+                        פרטי קשר בלבד ({{ customers_without_user.count }})
+                    </h5>
+                    <p class="mb-0 text-white customer-section-description">
+                        לקוחות שנוצרו ע"י המנהל - ללא אפשרות התחברות
+                    </p>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <span style="background-color: #ff8f00; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em;">
-                        ⚠️ פרטי קשר
-                    </span>
-                    {% with customer.bikes.first as first_bike %}
-                        {% if first_bike %}
-                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                               style="background-color: #2196f3; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
-                                ✏️ ערוך
-                            </a>
-                        {% else %}
-                            <a href="{% url 'customer_bike_add' customer.id %}" 
-                               style="background-color: #ff9800; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em;">
-                                ➕ הוסף אופניים
-                            </a>
-                        {% endif %}
-                    {% endwith %}
+                <div class="card-body">
+                    {% if customers_without_user %}
+                        <div class="customers-grid">
+                            {% for customer in customers_without_user %}
+                            <div class="customer-item contact-customer">
+                                <div class="customer-header">
+                                    <div class="customer-main-info">
+                                        <h6 class="customer-name text-white">
+                                            <i class="fas fa-user me-2 text-primary"></i>
+                                            {{ customer.name }}
+                                        </h6>
+                                        <div class="customer-contact">
+                                            <small class="text-white">
+                                                <i class="fas fa-phone me-1 text-turquoise"></i>
+                                                {{ customer.phone }}
+                                                {% if customer.email %}
+                                                    <span class="ms-2">
+                                                        <i class="fas fa-envelope me-1 text-orange"></i>
+                                                        {{ customer.email }}
+                                                    </span>
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                    <div class="customer-status">
+                                        <span class="badge badge-warning customer-type-badge">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>פרטי קשר
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="customer-bikes-info">
+                                    {% with customer.bikes.all as bikes %}
+                                        {% if bikes %}
+                                            <div class="bikes-summary">
+                                                <i class="fas fa-bicycle me-2 text-primary"></i>
+                                                <strong class="text-white">{{ bikes.count }} אופניים:</strong>
+                                                <div class="bikes-list mt-1">
+                                                    {% for bike in bikes %}
+                                                    <span class="bike-tag">
+                                                        {{ bike.brand }} {{ bike.model|default:"" }}
+                                                    </span>
+                                                    {% if not forloop.last %}, {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="no-bikes-warning">
+                                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
+                                                <span class="text-warning">אין אופניים רשומות</span>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                                
+                                <div class="customer-actions">
+                                    {% with customer.bikes.first as first_bike %}
+                                        {% if first_bike %}
+                                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-edit me-1"></i>ערוך
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'customer_bike_add' customer.id %}" 
+                                               class="btn btn-sm btn-orange">
+                                                <i class="fas fa-plus me-1"></i>הוסף אופניים
+                                            </a>
+                                        {% endif %}
+                                    {% endwith %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="no-customers-message">
+                            <i class="fas fa-address-book fa-2x text-secondary mb-2"></i>
+                            <p class="text-white">אין פרטי קשר שנוצרו ע"י המנהל</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
         </div>
-        {% else %}
-        <p style="color: #666; font-style: italic;">אין פרטי קשר שנוצרו ע"י המנהל</p>
-        {% endif %}
-    </div>
 
-    <!-- הסבר -->
-    <div style="margin-top: 30px; padding: 15px; background-color: #e3f2fd; border-radius: 8px; border: 1px solid #bbdefb;">
-        <h4>💡 הסבר על סוגי הלקוחות:</h4>
-        <ul style="margin: 10px 0;">
-            <li><strong>לקוחות רשומים (ירוק):</strong> נרשמו בעצמם דרך דף ההרשמה, יכולים להתחבר ולדווח תקלות</li>
-            <li><strong>פרטי קשר (צהוב):</strong> נוצרו ע"י המנהל/מכונאי, משמשים רק לתיעוד ויצירת תיקונים</li>
-        </ul>
-        <p style="margin: 10px 0; color: #1565c0;">
-            <strong>המלצה:</strong> עודד לקוחות להירשם בעצמם כדי שיוכלו לעקוב אחר התיקונים ולדווח תקלות.
-        </p>
+        <!-- הסבר -->
+        <div class="card customer-info-card">
+            <div class="card-header">
+                <h5 class="mb-0 text-white">
+                    <i class="fas fa-lightbulb me-2 text-primary"></i>
+                    הסבר על סוגי הלקוחות
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="customer-info-grid">
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-user-check text-success"></i>
+                        </div>
+                        <div class="info-content">
+                            <h6 class="text-white mb-1">לקוחות רשומים (ירוק)</h6>
+                            <p class="text-white mb-0">נרשמו בעצמם דרך דף ההרשמה, יכולים להתחבר ולדווח תקלות</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">
+                            <i class="fas fa-address-book text-warning"></i>
+                        </div>
+                        <div class="info-content">
+                            <h6 class="text-white mb-1">פרטי קשר (צהוב)</h6>
+                            <p class="text-white mb-0">נוצרו ע"י המנהל/מכונאי, משמשים רק לתיעוד ויצירת תיקונים</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendation-box mt-4">
+                    <i class="fas fa-info-circle me-2 text-primary"></i>
+                    <strong class="text-white">המלצה:</strong>
+                    <span class="text-white">עודד לקוחות להירשם בעצמם כדי שיוכלו לעקוב אחר התיקונים ולדווח תקלות.</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <i class="fas fa-home me-2"></i>חזרה לדף הבית
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}
