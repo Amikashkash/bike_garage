@@ -489,12 +489,6 @@ small.text-info {
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
-}
-
 /* Badge Colors for Dark Theme */
 .badge-success {
     background-color: #388E3C;
@@ -519,43 +513,6 @@ small.text-info {
 .badge-primary {
     background-color: #42a5f5;
 }
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .row .col-md-4 {
-        margin-bottom: 1rem;
-    }
-    
-    .item-header .d-flex {
-        flex-direction: column;
-        align-items: flex-start !important;
-    }
-    
-    .item-info {
-        margin-top: 0.75rem;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .item-price, .item-status {
-        margin-right: 0 !important;
-        min-width: auto;
-        text-align: left;
-    }
-    
-    
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .col-md-4 {
-        margin-bottom: 1rem;
-    }
-}
-
-
-
-
 
 .repair-item-card.blocked-item {
     border: 2px solid #dc3545;
@@ -618,12 +575,6 @@ small.text-info {
     animation: pulse 2s infinite;
 }
 
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
-}
-
 /* Badge Colors for Dark Theme */
 .badge-success {
     background-color: #388E3C;
@@ -647,32 +598,6 @@ small.text-info {
 
 .badge-primary {
     background-color: #42a5f5;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 768px) {
-    .row .col-md-4 {
-        margin-bottom: 1rem;
-    }
-    
-    
-    
-    .item-info {
-        margin-top: 0.75rem;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    
-    
-    
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .col-md-4 {
-        margin-bottom: 1rem;
-    }
 }
 
 /* Customer Bikes List Styling */
@@ -848,28 +773,6 @@ small.text-info {
     left: 100%;
 }
 
-/* Responsive Design for Bike Cards */
-@media (max-width: 768px) {
-    .bike-card .card-header h5 {
-        font-size: 1.1rem;
-    }
-    
-  
-    
-    .repair-item {
-        padding: 0.5rem;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .repair-actions {
-        align-self: flex-start;
-    }
-}
-
 /* Animation for page load */
 
 
@@ -879,17 +782,6 @@ small.text-info {
 
 .bike-card:nth-child(3n) {
     animation-delay: 0.2s;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Enhanced Card Borders */
@@ -1060,47 +952,6 @@ small.text-info {
 
 .add-bike-card .form-group:hover::before {
     opacity: 1;
-}
-
-/* Slide In Animation */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Shake Animation for Errors */
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
-/* Responsive Design for Add Bike Form */
-@media (max-width: 768px) {
-    .add-bike-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .add-bike-card .form-control,
-    .add-bike-card .form-select {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
 }
 
 /* Focus Indication Enhancement */
@@ -1361,60 +1212,6 @@ small.text-info {
     display: inline-block;
     max-width: 400px;
     line-height: 1.4;
-}
-
-/* Animations */
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .customer-approval-info-card,
-    .customer-approval-form-card {
-        margin-bottom: 2rem;
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .approval-item-row {
-        padding: 0.75rem;
-    }
-    
-    .approval-item-row .d-flex {
-        flex-direction: column;
-        align-items: flex-start !important;
-    }
-    
-    .approval-item-price {
-        margin-top: 0.5rem;
-        align-self: flex-end;
-    }
-    
-    .approval-summary-box {
-        padding: 1rem;
-    }
-    
-    .summary-stat {
-        margin-bottom: 0.5rem;
-    }
 }
 
 /* Scrollbar Styling for Approval List */
@@ -1837,73 +1634,6 @@ small.text-info {
     box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
 }
 
-/* Animations */
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .mechanic-info-card {
-        position: relative !important;
-        top: auto !important;
-        margin-bottom: 2rem;
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .status-selection .col-md-4 {
-        margin-bottom: 0.5rem;
-    }
-    
-    .status-content {
-        min-height: 60px;
-        padding: 0.75rem;
-    }
-    
-    .status-content i {
-        font-size: 1.2rem;
-        margin-bottom: 0.25rem;
-    }
-    
-    .mechanic-item-card {
-        padding: 1rem;
-    }
-    
-    .action-buttons .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .action-buttons .btn:last-child {
-        margin-bottom: 0;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .mechanic-info-card {
-        margin-bottom: 2rem;
-    }
-}
-
 /* Enhanced Focus States */
 .status-option:focus-within .status-content {
     border-color: #00bcd4;
@@ -2152,18 +1882,6 @@ small.text-info {
     line-height: 1.4;
 }
 
-/* Animations */
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 /* Focus Indication Enhancement */
 .customer-form-card .form-group:focus-within {
     transform: scale(1.02);
@@ -2174,33 +1892,6 @@ small.text-info {
     color: #388E3C !important;
 }
 
-/* Responsive Design for Customer Form */
-@media (max-width: 768px) {
-    .customer-form-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .customer-form-card .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .customer-form-card .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .customer-form-card .form-control,
-    .customer-form-card .form-select,
-    .customer-form-card textarea {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-    
-    .customer-form-info-card,
-    .customer-form-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-}
 
 /* Enhanced Card Hover Effects */
 .customer-form-info-card:hover {
@@ -2456,33 +2147,6 @@ small.text-info {
     color: #42a5f5 !important;
 }
 
-/* Responsive Design for Bike Form */
-@media (max-width: 768px) {
-    .bike-form-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .bike-form-card .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .bike-form-card .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .bike-form-card .form-control,
-    .bike-form-card .form-select,
-    .bike-form-card textarea {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-    
-    .bike-form-info-card,
-    .bike-form-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-}
 
 /* Enhanced Card Hover Effects for Bike Form */
 .bike-form-info-card:hover {
@@ -3000,110 +2664,6 @@ small.text-info {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInRight {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .repair-form-container {
-        padding: 0 1rem;
-    }
-    
-    .categories-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    .category-card,
-    .repair-form-bike-card,
-    .repair-form-categories-card,
-    .repair-form-description-card,
-    .repair-form-diagnosis-card,
-    .repair-form-price-card,
-    .repair-form-approval-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .repair-form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.75rem;
-        padding: 12px 20px;
-        font-size: 1.1rem;
-    }
-    
-    .repair-form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .approval-checkbox-label {
-        padding: 0.75rem 1.5rem;
-    }
-    
-    .subcategories-list.show {
-        padding: 0.75rem;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .categories-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 /* Enhanced Select Styling */
 .repair-form-container select.form-select {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
@@ -3539,67 +3099,6 @@ small.text-info {
     left: 100%;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .customers-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    .customer-list-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .customer-list-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .customer-list-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .customer-header {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .customer-status {
-        margin-left: 0;
-        align-self: flex-start;
-    }
-    
-    .customer-info-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .bikes-list {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .bike-tag {
-        align-self: flex-start;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .customers-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .customer-info-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* Enhanced Badge Colors */
 .customer-registered-card .badge-success {
     background: linear-gradient(135deg, #388E3C 0%, #2e7d32 100%);
@@ -3621,15 +3120,6 @@ small.text-info {
     animation: shimmer 1.5s infinite;
 }
 
-@keyframes shimmer {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 100%;
-    }
-}
-
 /* Focus States */
 .customer-item:focus-within {
     outline: 2px solid #00bcd4;
@@ -3639,18 +3129,6 @@ small.text-info {
 .info-item:focus-within {
     outline: 2px solid #42a5f5;
     outline-offset: 2px;
-}
-
-/* Print Styles */
-@media print {
-    .customer-list-actions,
-    .customer-actions {
-        display: none;
-    }
-    
-    .customer-item {
-        break-inside: avoid;
-    }
 }
 
 /* Customer with Bike Form Page Styling */
@@ -3961,44 +3439,6 @@ small.text-info {
     color: #388E3C !important;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .customer-with-bike-form-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .customer-section,
-    .bike-section {
-        padding: 1rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    .customer-with-bike-form-card .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .customer-with-bike-form-card .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .customer-with-bike-form-card .form-control,
-    .customer-with-bike-form-card .form-select,
-    .customer-with-bike-form-card textarea {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-    
-    .customer-with-bike-info-card,
-    .customer-with-bike-form-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .section-divider {
-        margin: 1.5rem 0;
-    }
-}
-
 /* Enhanced Card Hover Effects */
 .customer-with-bike-info-card:hover {
     transform: translateY(-2px);
@@ -4086,19 +3526,6 @@ small.text-info {
     z-index: 1;
 }
 
-/* Print Styles */
-@media print {
-    .customer-with-bike-form-card .form-actions,
-    .customer-with-bike-info-card {
-        display: none;
-    }
-    
-    .customer-section,
-    .bike-section {
-        break-inside: avoid;
-    }
-}
-
 /* Enhanced Select Styling */
 .customer-with-bike-form-card select.form-select {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
@@ -4120,34 +3547,6 @@ small.text-info {
 .customer-with-bike-form-card .form-select:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
-}
-
-/* High Contrast Mode Support */
-@media (prefers-contrast: more) {
-    .customer-section,
-    .bike-section {
-        border-width: 2px;
-    }
-    
-    .customer-with-bike-form-card .form-control,
-    .customer-with-bike-form-card .form-select {
-        border-width: 2px;
-    }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-    .customer-section,
-    .bike-section,
-    .customer-with-bike-info-card,
-    .customer-with-bike-form-card {
-        animation: none;
-    }
-    
-    .customer-with-bike-form-card .form-group::before,
-    .section-divider::before {
-        transition: none;
-    }
 }
 
 /* Category List Page Styling */
@@ -4550,63 +3949,6 @@ small.text-info {
     box-shadow: 0 8px 25px rgba(66, 165, 245, 0.3);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .categories-management-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .category-list-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-    
-    .category-list-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .category-list-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .d-flex.justify-content-between {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-
-    .category-actions {
-        align-self: flex-end;
-    }
-    
-    .subcategory-content {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .subcategory-actions {
-        align-self: flex-end;
-    }
-    
-    .category-info-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .categories-management-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .category-info-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* Enhanced Card Borders */
 .category-management-card:nth-child(odd)::before {
     background: linear-gradient(180deg, #42a5f5 0%, #00bcd4 100%);
@@ -4626,15 +3968,6 @@ small.text-info {
     animation: shimmer 1.5s infinite;
 }
 
-@keyframes shimmer {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 100%;
-    }
-}
-
 /* Focus States */
 .category-management-card:focus-within {
     outline: 2px solid #00bcd4;
@@ -4644,19 +3977,6 @@ small.text-info {
 .subcategory-item:focus-within {
     outline: 2px solid #42a5f5;
     outline-offset: 2px;
-}
-
-/* Print Styles */
-@media print {
-    .category-list-actions,
-    .category-actions,
-    .subcategory-actions {
-        display: none;
-    }
-    
-    .category-management-card {
-        break-inside: avoid;
-    }
 }
 
 /* Enhanced Button Styling */
@@ -4710,46 +4030,6 @@ small.text-info {
     outline-offset: 2px;
 }
 
-/* High Contrast Mode Support */
-@media (prefers-contrast: more) {
-    .category-management-card,
-    .subcategory-item {
-        border-width: 2px;
-    }
-    
-    .category-management-card .btn,
-    .subcategory-actions .btn {
-        border-width: 2px;
-    }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-    .category-management-card,
-    .category-info-card {
-        animation: none;
-    }
-    
-    .category-management-card::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(180deg, #42a5f5 0%, #00bcd4 100%) !important;
-    border-radius: 2px 0 0 2px;
-    opacity: 0.7;
-    transition: opacity 0.3s ease;
-    }
-
-
-
-    .category-management-card::after {
-        transition: none;
-    }
-}
-
 /* Empty State Animations */
 .no-categories-card {
     animation: pulse 3s ease-in-out infinite;
@@ -4757,17 +4037,6 @@ small.text-info {
 
 .no-subcategories-section {
     animation: fadeIn 1s ease-out;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
 
 /* Interactive Subcategory Hover */
@@ -5118,84 +4387,6 @@ small.text-info {
     line-height: 1.4;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .category-accordion-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    
-    .category-controls {
-        align-self: flex-end;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .category-main-info {
-        width: 100%;
-    }
-    
-    .category-icon-title {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .subcategories-grid {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-    
-    .subcategory-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-    
-    .subcategory-actions {
-        align-self: flex-end;
-    }
-    
-    .no-subcategories-message {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .info-cards-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .category-content {
-        padding: 1.5rem 1rem;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .subcategories-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .info-cards-row {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Animation Enhancements */
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* Accessibility Improvements */
 .category-accordion-header:focus {
@@ -5206,19 +4397,6 @@ small.text-info {
 .subcategory-card:focus-within {
     outline: 2px solid #388E3C;
     outline-offset: 2px;
-}
-
-/* Print Styles */
-@media print {
-    .category-controls,
-    .subcategory-actions,
-    .category-list-actions {
-        display: none;
-    }
-    
-    .category-accordion-item {
-        break-inside: avoid;
-    }
 }
 
 /* Category Form Page Styling */
@@ -5587,46 +4765,6 @@ small.text-info {
     min-height: 100px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .category-form-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .category-form-card .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .category-form-card .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .category-form-card .form-control,
-    .category-form-card textarea {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-    
-    .category-form-info-card,
-    .category-form-card,
-    .category-existing-info-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .existing-category-stats {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .stat-item {
-        justify-content: center;
-    }
-    
-    .subcategories-preview {
-        justify-content: center;
-    }
-}
 
 /* Enhanced Card Hover Effects */
 .category-form-info-card:hover {
@@ -5666,79 +4804,11 @@ small.text-info {
     display: none;
 }
 
-/* Animations */
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    75% { transform: translateX(5px); }
-}
-
 /* Accessibility Enhancements */
 .category-form-card .form-control:focus,
 .category-form-card textarea:focus {
     outline: 2px solid transparent;
     outline-offset: 2px;
-}
-
-/* High Contrast Mode Support */
-@media (prefers-contrast: more) {
-    .category-form-card .form-control,
-    .category-form-card textarea {
-        border-width: 2px;
-    }
-    
-    .stat-item,
-    .existing-subcategories {
-        border-width: 2px;
-    }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-    .category-form-info-card,
-    .category-form-card,
-    .category-existing-info-card {
-        animation: none;
-    }
-    
-    .category-form-card .form-group::before,
-    .category-form-info-item {
-        transition: none;
-    }
-}
-
-/* Print Styles */
-@media print {
-    .category-form-card .form-actions {
-        display: none;
-    }
-    
-    .category-form-info-card,
-    .category-existing-info-card {
-        break-inside: avoid;
-    }
 }
 
 /* Special styling for required fields */
@@ -6137,47 +5207,6 @@ small.text-info {
     min-height: 100px;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .subcategory-form-card .card-body {
-        padding: 1.5rem;
-    }
-    
-    .subcategory-form-card .form-actions .btn {
-        width: 100%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .subcategory-form-card .form-actions .btn:last-child {
-        margin-bottom: 0;
-    }
-    
-    .subcategory-form-card .form-control,
-    .subcategory-form-card .form-select,
-    .subcategory-form-card textarea {
-        padding: 12px;
-        font-size: 0.95rem;
-    }
-    
-    .subcategory-form-info-card,
-    .subcategory-form-card,
-    .subcategory-existing-info-card {
-        animation: slideInUp 0.6s ease-out;
-    }
-    
-    .existing-subcategory-stats {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    
-    .existing-subcategory-stats .stat-item {
-        justify-content: center;
-    }
-    
-    .siblings-list {
-        justify-content: center;
-    }
-}
 
 /* Enhanced Card Hover Effects */
 .subcategory-form-info-card:hover {
@@ -6232,45 +5261,6 @@ small.text-info {
     outline-offset: 2px;
 }
 
-/* High Contrast Mode Support */
-@media (prefers-contrast: more) {
-    .subcategory-form-card .form-control,
-    .subcategory-form-card .form-select,
-    .subcategory-form-card textarea {
-        border-width: 2px;
-    }
-    
-    .existing-subcategory-stats .stat-item,
-    .parent-category-info {
-        border-width: 2px;
-    }
-}
-
-/* Reduced Motion Support */
-@media (prefers-reduced-motion: reduce) {
-    .subcategory-form-info-card,
-    .subcategory-form-card,
-    .subcategory-existing-info-card {
-        animation: none;
-    }
-    
-    .subcategory-form-card .form-group::before,
-    .subcategory-form-info-item {
-        transition: none;
-    }
-}
-
-/* Print Styles */
-@media print {
-    .subcategory-form-card .form-actions {
-        display: none;
-    }
-    
-    .subcategory-form-info-card,
-    .subcategory-existing-info-card {
-        break-inside: avoid;
-    }
-}
 
 /* Enhanced focus states */
 .existing-subcategory-stats .stat-item:focus-within {
@@ -7063,110 +6053,6 @@ small.text-info {
     width: 20px;
     text-align: center;
 }
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .dashboard-accordion-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    
-    .section-controls {
-        align-self: flex-end;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .section-main-info {
-        width: 100%;
-    }
-    
-    .section-icon-title {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .repairs-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .repair-card {
-        padding: 0.75rem;
-    }
-    
-    .repair-body {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .repair-actions {
-        align-self: flex-end;
-        width: 100%;
-        justify-content: flex-end;
-    }
-    
-    .section-content {
-        padding: 1.5rem 1rem;
-    }
-    
-    .stat-card {
-        padding: 1rem;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-    }
-    
-    .repair-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .repair-priority-badge,
-    .repair-status-badge {
-        align-self: flex-end;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stat-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.75rem;
-    }
-    
-    .repair-actions .btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .repairs-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 /* Manager Dashboard Styling */
 .dashboard-stats-overview {
     margin-bottom: 2rem;
@@ -7865,109 +6751,6 @@ small.text-info {
 .manager-response-modal .form-label i {
     width: 20px;
     text-align: center;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1rem;
-    }
-    
-    .dashboard-accordion-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 1rem;
-    }
-    
-    .section-controls {
-        align-self: flex-end;
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .section-main-info {
-        width: 100%;
-    }
-    
-    .section-icon-title {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .repairs-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .repair-card {
-        padding: 0.75rem;
-    }
-    
-    .repair-body {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .repair-actions {
-        align-self: flex-end;
-        width: 100%;
-        justify-content: flex-end;
-    }
-    
-    .section-content {
-        padding: 1.5rem 1rem;
-    }
-    
-    .stat-card {
-        padding: 1rem;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-    }
-    
-    .repair-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .repair-priority-badge,
-    .repair-status-badge {
-        align-self: flex-end;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stat-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.75rem;
-    }
-    
-    .repair-actions .btn {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-}
-
-/* Tablet Responsiveness */
-@media (max-width: 992px) and (min-width: 769px) {
-    .repairs-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 
 /* Home Page Styling */
@@ -8690,105 +7473,16 @@ small.text-info {
     transform: scale(1.05);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .home-actions-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    
-    .home-action-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .home-action-card .action-icon {
-        margin-bottom: 0.5rem;
-    }
-    
-    .recent-repairs-grid,
-    .mechanic-repairs-grid,
-    .manager-repairs-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .manager-stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-    }
-    
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.75rem;
-    }
-    
-    .repair-item-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .repair-item-body {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .pending-repair-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
-    
-    .pending-repair-item .repair-actions {
-        align-self: flex-end;
-    }
-    
-    .login-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .login-actions .btn {
-        width: 100%;
-        max-width: 200px;
-    }
-    
-    .home-user-welcome-card .card-body,
-    .home-recent-repairs-card .card-body,
-    .home-mechanic-repairs-card .card-body,
-    .home-manager-stats-card .card-body,
-    .home-manager-repairs-card .card-body,
-    .home-quick-actions-card .card-body {
-        padding: 1.5rem;
-    }
-}
 
-@media (max-width: 480px) {
-    .manager-stats-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .quick-actions-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stat-item {
-        flex-direction: column;
-        text-align: center;
-        gap: 0.75rem;
-    }
-    
-    .home-alert-card {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-}
 
-/* Tablet Responsiveness */
+/* Tablet Design - 992px and below, 769px and above */
 @media (max-width: 992px) and (min-width: 769px) {
+    /* General Layout */
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    /* Home Page */
     .home-actions-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -8806,39 +7500,356 @@ small.text-info {
     .quick-actions-grid {
         grid-template-columns: repeat(4, 1fr);
     }
-}
-
-/* Animation Enhancements */
-@keyframes slideInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-30px);
+    
+    /* Dashboard */
+    .repairs-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
     }
-}
-
-@keyframes slideInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
+    
+    .mechanic-info-card {
+        margin-bottom: 2rem;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    /* Category Management */
+    .categories-management-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+    
+    .subcategories-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    .info-cards-row {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    /* Customer Management */
+    .customers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .customer-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Repair Forms */
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Bike Management */
+    .bikes-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Form Cards */
+    .form-cards-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Stats and Info Cards */
+    .info-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Action Cards */
+    .actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Repair Items */
+    .repair-items-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    /* Header Adjustments */
+    .dashboard-accordion-header,
+    .category-accordion-header {
+        padding: 1rem;
+    }
+    
+    /* Card Body Padding */
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Button Adjustments */
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Form Controls */
+    .form-control,
+    .form-select {
+        font-size: 0.95rem;
+        padding: 10px 12px;
+    }
+    
+    /* Modal Adjustments */
+    .modal-dialog {
+        margin: 1rem;
+        max-width: calc(100% - 2rem);
+    }
+    
+    /* Navigation */
+    .nav-tabs {
+        flex-direction: column;
+    }
+    
+    .nav-tabs .nav-link {
+        text-align: center;
+        margin-bottom: 0.25rem;
+    }
+    
+    /* Tables */
+    .table-responsive {
+        font-size: 0.9rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem;
+    }
+    
+    /* Alerts */
+    .alert {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Progress Bars */
+    .progress {
+        height: 1rem;
+    }
+    
+    /* Badges */
+    .badge {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    /* Breadcrumbs */
+    .breadcrumb {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Pagination */
+    .pagination {
+        justify-content: center;
+    }
+    
+    .page-link {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Dropdowns */
+    .dropdown-menu {
+        min-width: 200px;
+    }
+    
+    /* List Groups */
+    .list-group-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Input Groups */
+    .input-group {
+        flex-direction: column;
+    }
+    
+    .input-group .form-control,
+    .input-group .btn {
+        border-radius: 0.25rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .input-group .btn:last-child,
+    .input-group .form-control:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Card Decks */
+    .card-deck {
+        flex-direction: column;
+    }
+    
+    .card-deck .card {
+        margin-bottom: 1rem;
+    }
+    
+    /* Flex Utilities */
+    .d-md-flex {
+        display: flex !important;
+    }
+    
+    .flex-md-column {
+        flex-direction: column !important;
+    }
+    
+    .flex-md-row {
+        flex-direction: row !important;
+    }
+    
+    /* Text Alignment */
+    .text-md-center {
+        text-align: center !important;
+    }
+    
+    .text-md-left {
+        text-align: left !important;
+    }
+    
+    .text-md-right {
+        text-align: right !important;
+    }
+    
+    /* Margin and Padding */
+    .mb-md-0 {
+        margin-bottom: 0 !important;
+    }
+    
+    .mb-md-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .pb-md-0 {
+        padding-bottom: 0 !important;
+    }
+    
+    /* Width Utilities */
+    .w-md-100 {
+        width: 100% !important;
+    }
+    
+    .w-md-75 {
+        width: 75% !important;
+    }
+    
+    .w-md-50 {
+        width: 50% !important;
+    }
+    
+    /* Display Utilities */
+    .d-md-none {
+        display: none !important;
+    }
+    
+    .d-md-block {
+        display: block !important;
+    }
+    
+    .d-md-inline {
+        display: inline !important;
+    }
+    
+    .d-md-inline-block {
+        display: inline-block !important;
+    }
+    
+    /* Position Utilities */
+    .position-md-relative {
+        position: relative !important;
+    }
+    
+    .position-md-absolute {
+        position: absolute !important;
+    }
+    
+    /* Border Utilities */
+    .border-md-0 {
+        border: 0 !important;
+    }
+    
+    .border-md-top-0 {
+        border-top: 0 !important;
+    }
+    
+    .border-md-bottom-0 {
+        border-bottom: 0 !important;
+    }
+    
+    /* Shadow Utilities */
+    .shadow-md-none {
+        box-shadow: none !important;
+    }
+    
+    .shadow-md-sm {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    }
+    
+    /* Overflow Utilities */
+    .overflow-md-hidden {
+        overflow: hidden !important;
+    }
+    
+    .overflow-md-auto {
+        overflow: auto !important;
+    }
+    
+    /* Specific Component Adjustments */
+    .diagnosis-items-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .mechanic-tasks-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .approval-items-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .repair-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Enhanced Tablet Specific Styles */
+    .tablet-stack {
+        flex-direction: column;
+    }
+    
+    .tablet-center {
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .tablet-full-width {
+        width: 100%;
+    }
+    
+    /* Animation Adjustments for Tablet */
+    .animation-delay-tablet {
+        animation-delay: 0.1s;
+    }
+    
+    /* Tablet Specific Hover Effects */
+    .tablet-hover-scale:hover {
+        transform: scale(1.02);
+    }
+    
+    /* Tablet Typography */
+    .tablet-text-lg {
+        font-size: 1.1rem;
+    }
+    
+    .tablet-text-sm {
+        font-size: 0.9rem;
     }
 }
 
@@ -8863,15 +7874,6 @@ small.text-info {
     animation: shimmer 1.5s infinite;
 }
 
-@keyframes shimmer {
-    0% {
-        left: -100%;
-    }
-    100% {
-        left: 100%;
-    }
-}
-
 /* Focus States */
 .home-action-card:focus,
 .quick-action-card:focus {
@@ -8886,24 +7888,355 @@ small.text-info {
     outline-offset: 2px;
 }
 
-/* Print Styles */
+
+
+/* Print Styles - Single consolidated block */
 @media print {
+    /* Hide interactive elements that shouldn't appear in print */
+    .customer-list-actions,
+    .customer-actions,
+    .category-list-actions,
+    .category-actions,
+    .subcategory-actions,
+    .category-controls,
+    .section-controls,
+    .repair-actions,
+    .action-buttons,
+    .form-actions,
+    .category-form-card .form-actions,
+    .subcategory-form-card .form-actions,
+    .customer-form-card .form-actions,
+    .bike-form-card .form-actions,
+    .customer-with-bike-form-card .form-actions,
+    .customer-approval-form-card .form-actions,
+    .diagnosis-actions,
     .home-alert-card,
     .pending-repairs-list,
     .home-actions-grid,
-    .login-actions {
-        display: none;
+    .login-actions,
+    .manager-response-modal,
+    .notes-toggle-btn,
+    .add-item-section,
+    .quick-actions-grid {
+        display: none !important;
     }
     
+    /* Ensure good page breaks */
+    .customer-item,
+    .category-management-card,
+    .subcategory-item,
+    .bike-card,
+    .repair-item-card,
+    .mechanic-item-card,
+    .repair-card,
+    .dashboard-accordion-item,
+    .category-accordion-item,
     .recent-repair-item,
     .mechanic-repair-item,
-    .manager-repair-item {
+    .manager-repair-item,
+    .customer-form-info-card,
+    .customer-form-card,
+    .bike-form-info-card,
+    .bike-form-card,
+    .category-form-info-card,
+    .category-form-card,
+    .category-existing-info-card,
+    .subcategory-form-info-card,
+    .subcategory-form-card,
+    .subcategory-existing-info-card,
+    .customer-with-bike-info-card,
+    .customer-with-bike-form-card,
+    .diagnosis-info-card,
+    .diagnosis-form-card,
+    .diagnosis-items-card {
         break-inside: avoid;
+        page-break-inside: avoid;
+    }
+    
+    /* Adjust layouts for print */
+    .customers-grid,
+    .categories-management-grid,
+    .repairs-grid,
+    .stats-grid,
+    .recent-repairs-grid,
+    .mechanic-repairs-grid,
+    .manager-repairs-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    
+    /* Remove shadows and animations for print */
+    * {
+        box-shadow: none !important;
+        animation: none !important;
+        transition: none !important;
+        transform: none !important;
+    }
+    
+    /* Ensure proper spacing */
+    .card,
+    .customer-item,
+    .category-management-card,
+    .repair-card,
+    .stat-card {
+        margin-bottom: 1rem !important;
+        border: 1px solid #333 !important;
+    }
+    
+    /* Text adjustments for print */
+    body {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
+        background: white !important;
+    }
+    
+    .text-white,
+    .card-header,
+    .section-name,
+    .category-name,
+    .repair-bike,
+    .customer-name {
+        color: #000 !important;
+    }
+    
+    /* Background adjustments for print */
+    .card,
+    .card-header,
+    .customer-item,
+    .category-management-card,
+    .repair-card,
+    .stat-card,
+    .diagnosis-info-card,
+    .diagnosis-form-card,
+    .diagnosis-items-card {
+        background: white !important;
+        background-color: white !important;
+        background-image: none !important;
+    }
+    
+    /* Border adjustments for print */
+    .card,
+    .customer-item,
+    .category-management-card,
+    .repair-card {
+        border: 1px solid #333 !important;
+    }
+    
+    /* Remove gradients and fancy styling */
+    .btn,
+    .badge,
+    .alert {
+        background: white !important;
+        background-image: none !important;
+        border: 1px solid #333 !important;
+        color: #000 !important;
+    }
+    
+    /* Header styling for print */
+    .card-header {
+        border-bottom: 2px solid #333 !important;
+        font-weight: bold !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* Icon adjustments */
+    .fas,
+    .far,
+    .fab {
+        font-family: "Font Awesome 5 Free" !important;
+    }
+    
+    /* Table styling for print */
+    .table {
+        border-collapse: collapse !important;
+    }
+    
+    .table th,
+    .table td {
+        border: 1px solid #333 !important;
+        padding: 0.5rem !important;
+    }
+    
+    /* Page layout adjustments */
+    @page {
+        margin: 1cm;
+        size: A4;
+    }
+    
+    /* Header and footer for print */
+    .print-header {
+        display: block !important;
+        text-align: center;
+        font-size: 18pt;
+        font-weight: bold;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #333;
+        padding-bottom: 0.5rem;
+    }
+    
+    .print-footer {
+        display: block !important;
+        text-align: center;
+        font-size: 10pt;
+        margin-top: 1rem;
+        border-top: 1px solid #333;
+        padding-top: 0.5rem;
+    }
+    
+    /* Hide decorative elements */
+    .stat-icon,
+    .detail-icon,
+    .action-icon,
+    .alert-icon,
+    .category-folder-icon,
+    .section-icon {
+        display: none !important;
+    }
+    
+    /* Simplify complex layouts */
+    .repair-header,
+    .customer-header,
+    .category-accordion-header,
+    .dashboard-accordion-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+    
+    /* Ensure readability */
+    .repair-id,
+    .category-name,
+    .customer-name {
+        font-weight: bold !important;
+        font-size: 14pt !important;
+    }
+    
+    /* Remove hover effects */
+    *:hover {
+        background: inherit !important;
+        color: inherit !important;
+        transform: none !important;
+    }
+    
+    /* Pagination */
+    .page-break-before {
+        page-break-before: always;
+    }
+    
+    .page-break-after {
+        page-break-after: always;
+    }
+    
+    .no-page-break {
+        page-break-inside: avoid;
+    }
+    
+    /* Print-specific visibility */
+    .print-only {
+        display: block !important;
+    }
+    
+    .no-print {
+        display: none !important;
+    }
+    
+    /* Form field styling for print */
+    .form-control,
+    .form-select,
+    textarea {
+        border: 1px solid #333 !important;
+        background: white !important;
+        color: #000 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Status and priority badges */
+    .badge,
+    .priority-badge,
+    .status-badge {
+        border: 1px solid #333 !important;
+        padding: 2px 6px !important;
+        font-weight: bold !important;
+    }
+    
+    /* Diagnostic page specific */
+    .diagnosis-breadcrumb-card,
+    .diagnosis-alert-card {
+        border: 2px solid #333 !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .repair-detail-item {
+        border-left: 3px solid #333 !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Lists and grids simplification */
+    .categories-list,
+    .subcategories-list,
+    .bikes-list {
+        display: block !important;
+    }
+    
+    .category-tag,
+    .bike-tag,
+    .subcategory-preview-tag {
+        display: inline-block !important;
+        margin: 2px !important;
+        padding: 2px 6px !important;
+        border: 1px solid #333 !important;
     }
 }
 
-/* High Contrast Mode Support */
+/* High Contrast Mode Support - Single consolidated block */
 @media (prefers-contrast: more) {
+    /* Customer with Bike Form */
+    .customer-with-bike-form-card .form-control,
+    .customer-with-bike-form-card .form-select,
+    .customer-with-bike-form-card textarea {
+        border-width: 2px;
+    }
+    
+    .customer-section,
+    .bike-section {
+        border-width: 2px;
+    }
+    
+    /* Category Form */
+    .category-form-card .form-control,
+    .category-form-card textarea {
+        border-width: 2px;
+    }
+    
+    .stat-item,
+    .existing-subcategories {
+        border-width: 2px;
+    }
+    
+    /* Subcategory Form */
+    .subcategory-form-card .form-control,
+    .subcategory-form-card .form-select,
+    .subcategory-form-card textarea {
+        border-width: 2px;
+    }
+    
+    .existing-subcategory-stats .stat-item,
+    .parent-category-info {
+        border-width: 2px;
+    }
+    
+    /* Category Management */
+    .category-management-card,
+    .subcategory-item {
+        border-width: 2px;
+    }
+    
+    .category-management-card .btn,
+    .subcategory-actions .btn {
+        border-width: 2px;
+    }
+    
+    /* Home Page */
     .home-action-card,
     .recent-repair-item,
     .mechanic-repair-item,
@@ -8912,10 +8245,244 @@ small.text-info {
     .quick-action-card {
         border-width: 2px;
     }
+    
+    /* General Form Controls */
+    .form-control,
+    .form-select,
+    textarea {
+        border-width: 2px !important;
+    }
+    
+    /* Card Elements */
+    .card,
+    .repair-item-card,
+    .customer-item,
+    .category-item,
+    .subcategory-item,
+    .bike-card,
+    .stat-card,
+    .action-card {
+        border-width: 2px;
+    }
+    
+    /* Button Elements */
+    .btn {
+        border-width: 2px;
+    }
+    
+    /* Navigation Elements */
+    .breadcrumb-item,
+    .nav-link,
+    .navbar-nav .nav-item {
+        border-width: 2px;
+    }
+    
+    /* Modal Elements */
+    .modal-content,
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        border-width: 2px;
+    }
+    
+    /* Table Elements */
+    .table,
+    .table th,
+    .table td {
+        border-width: 2px;
+    }
+    
+    /* Alert Elements */
+    .alert,
+    .alert-success,
+    .alert-danger,
+    .alert-warning,
+    .alert-info {
+        border-width: 2px;
+    }
+    
+    /* Badge Elements */
+    .badge {
+        border: 2px solid currentColor;
+    }
+    
+    /* Input Group Elements */
+    .input-group .form-control,
+    .input-group .form-select,
+    .input-group .btn {
+        border-width: 2px;
+    }
+    
+    /* Dropdown Elements */
+    .dropdown-menu,
+    .dropdown-item {
+        border-width: 2px;
+    }
+    
+    /* Progress Elements */
+    .progress,
+    .progress-bar {
+        border-width: 2px;
+    }
+    
+    /* Pagination Elements */
+    .pagination .page-link {
+        border-width: 2px;
+    }
+    
+    /* Enhanced Visual Separators */
+    .border,
+    .border-top,
+    .border-bottom,
+    .border-left,
+    .border-right {
+        border-width: 2px !important;
+    }
+    
+    /* Diagnosis Page Specific */
+    .diagnosis-breadcrumb-card,
+    .diagnosis-alert-card,
+    .diagnosis-info-card,
+    .diagnosis-form-card,
+    .diagnosis-items-card {
+        border-width: 2px;
+    }
+    
+    .repair-detail-item,
+    .existing-item-card,
+    .repair-item-row {
+        border-width: 2px;
+    }
+    
+    /* Dashboard Specific */
+    .dashboard-accordion-item,
+    .repair-card {
+        border-width: 2px;
+    }
+    
+    /* Mechanic Task Specific */
+    .mechanic-info-card,
+    .mechanic-tasks-card,
+    .mechanic-item-card {
+        border-width: 2px;
+    }
+    
+    .status-content {
+        border-width: 2px;
+    }
+    
+    /* Customer Approval Specific */
+    .customer-approval-info-card,
+    .customer-approval-form-card,
+    .approval-item-row {
+        border-width: 2px;
+    }
+    
+    /* Repair Form Specific */
+    .repair-form-bike-card,
+    .repair-form-categories-card,
+    .repair-form-description-card,
+    .repair-form-diagnosis-card,
+    .repair-form-price-card,
+    .repair-form-approval-card {
+        border-width: 2px;
+    }
+    
+    .category-card,
+    .subcategory-item {
+        border-width: 2px;
+    }
+    
+    /* Enhanced Contrast Colors */
+    .text-muted {
+        color: #fff !important;
+    }
+    
+    .text-secondary {
+        color: #fff !important;
+    }
+    
+    /* Enhanced Background Contrasts */
+    .bg-light {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+    
+    .bg-secondary {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+    
+    /* Enhanced Focus States */
+    *:focus {
+        outline: 3px solid #fff !important;
+        outline-offset: 2px !important;
+    }
+    
+    /* Enhanced Hover States */
+    .btn:hover,
+    .card:hover,
+    .form-control:hover {
+        border-color: #fff !important;
+    }
+    
+    /* Enhanced Active States */
+    .btn:active,
+    .form-control:focus {
+        border-color: #fff !important;
+        box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5) !important;
+    }
 }
 
-/* Reduced Motion Support */
+/* Reduced Motion Support - Single consolidated block */
 @media (prefers-reduced-motion: reduce) {
+    /* Customer with Bike Form */
+    .customer-with-bike-info-card,
+    .customer-with-bike-form-card {
+        animation: none;
+    }
+    
+    .customer-with-bike-form-card .form-group::before,
+    .customer-with-bike-info-item {
+        transition: none;
+    }
+    
+    /* Category Management */
+    .category-management-card,
+    .category-info-card {
+        animation: none;
+    }
+    
+    .category-management-card::before,
+    .category-management-card::after {
+        transition: none;
+    }
+    
+    /* Category Form */
+    .category-form-info-card,
+    .category-form-card,
+    .category-existing-info-card {
+        animation: none;
+    }
+    
+    .category-form-card .form-group::before,
+    .category-form-info-item {
+        transition: none;
+    }
+    
+    /* Subcategory Form */
+    .subcategory-form-info-card,
+    .subcategory-form-card,
+    .subcategory-existing-info-card {
+        animation: none;
+    }
+    
+    .subcategory-form-card .form-group::before,
+    .subcategory-form-info-item {
+        transition: none;
+    }
+    
+    /* Home Page */
     .home-user-welcome-card,
     .home-recent-repairs-card,
     .home-mechanic-repairs-card,
@@ -8931,6 +8498,59 @@ small.text-info {
     .mechanic-repair-item,
     .manager-repair-item {
         transition: none;
+    }
+    
+    /* Diagnosis Page */
+    .diagnosis-breadcrumb-card,
+    .diagnosis-alert-card,
+    .diagnosis-info-card,
+    .diagnosis-form-card,
+    .diagnosis-items-card {
+        animation: none;
+    }
+    
+    .diagnosis-form-card .form-group::before,
+    .diagnosis-info-item {
+        transition: none;
+    }
+    
+    /* General Animation Disabling */
+    .slide-in-up,
+    .slide-in-down,
+    .slide-in-left,
+    .slide-in-right,
+    .fade-in-up,
+    .fade-in,
+    .pulse-animation {
+        animation: none !important;
+    }
+    
+    /* General Transition Disabling */
+    .btn,
+    .card,
+    .form-control,
+    .form-select,
+    .repair-item,
+    .customer-item,
+    .category-item,
+    .subcategory-item,
+    .bike-card,
+    .stat-card,
+    .action-card {
+        transition: none !important;
+    }
+    
+    /* Hover Effects Disabling */
+    *:hover {
+        transform: none !important;
+    }
+    
+    /* Disable Transform Animations */
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
 
@@ -9431,8 +9051,433 @@ small.text-info {
     font-style: italic;
 }
 
-/* Responsive Design */
+
+
+
+
+
+/* Tablet/Mobile Responsive Design - 768px and below */
 @media (max-width: 768px) {
+    /* General Layout */
+    .row .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    /* Bike Cards */
+    .bike-card .card-header h5 {
+        font-size: 1.1rem;
+    }
+    
+    .repair-item {
+        padding: 0.5rem;
+    }
+    
+    .repair-actions {
+        align-self: flex-start;
+    }
+    
+    /* Customer Styles */
+    .customer-list-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .customer-list-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .customer-list-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .customer-header {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .customer-status {
+        margin-left: 0;
+        align-self: flex-start;
+    }
+    
+    .customer-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .bikes-list {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .bike-tag {
+        align-self: flex-start;
+    }
+    
+    .customers-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    /* Category Management */
+    .categories-management-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .category-accordion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .section-controls {
+        align-self: flex-end;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .category-main-info,
+    .section-main-info {
+        width: 100%;
+    }
+    
+    .category-icon-title,
+    .section-icon-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .subcategories-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .subcategory-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .subcategory-actions {
+        align-self: flex-end;
+    }
+    
+    .no-subcategories-message {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .info-cards-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .category-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    /* Forms */
+    .add-bike-card .card-body,
+    .category-form-card .card-body,
+    .subcategory-form-card .card-body,
+    .customer-form-card .card-body,
+    .bike-form-card .card-body,
+    .customer-with-bike-form-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions .btn,
+    .category-form-card .form-actions .btn,
+    .subcategory-form-card .form-actions .btn,
+    .customer-form-card .form-actions .btn,
+    .bike-form-card .form-actions .btn,
+    .customer-with-bike-form-card .form-actions .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-actions .btn:last-child,
+    .category-form-card .form-actions .btn:last-child,
+    .subcategory-form-card .form-actions .btn:last-child,
+    .customer-form-card .form-actions .btn:last-child,
+    .bike-form-card .form-actions .btn:last-child,
+    .customer-with-bike-form-card .form-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .add-bike-card .form-control,
+    .add-bike-card .form-select,
+    .category-form-card .form-control,
+    .category-form-card textarea,
+    .subcategory-form-card .form-control,
+    .subcategory-form-card .form-select,
+    .subcategory-form-card textarea,
+    .customer-form-card .form-control,
+    .customer-form-card .form-select,
+    .customer-form-card textarea,
+    .bike-form-card .form-control,
+    .bike-form-card .form-select,
+    .bike-form-card textarea,
+    .customer-with-bike-form-card .form-control,
+    .customer-with-bike-form-card .form-select,
+    .customer-with-bike-form-card textarea {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    
+    /* Form Sections */
+    .customer-section,
+    .bike-section {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .section-divider {
+        margin: 1.5rem 0;
+    }
+    
+    .existing-category-stats,
+    .existing-subcategory-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .stat-item {
+        justify-content: center;
+    }
+    
+    .subcategories-preview,
+    .siblings-list {
+        justify-content: center;
+    }
+    
+    /* Repair Forms */
+    .repair-form-container {
+        padding: 0 1rem;
+    }
+    
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .repair-form-actions .btn {
+        width: 100%;
+        margin-bottom: 0.75rem;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+    }
+    
+    .repair-form-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .approval-checkbox-label {
+        padding: 0.75rem 1.5rem;
+    }
+    
+    .subcategories-list.show {
+        padding: 0.75rem;
+    }
+    
+    /* Mechanic Task Completion */
+    .mechanic-info-card {
+        position: relative !important;
+        top: auto !important;
+        margin-bottom: 2rem;
+        animation: slideInUp 0.6s ease-out;
+    }
+    
+    .status-selection .col-md-4 {
+        margin-bottom: 0.5rem;
+    }
+    
+    .status-content {
+        min-height: 60px;
+        padding: 0.75rem;
+    }
+    
+    .status-content i {
+        font-size: 1.2rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .mechanic-item-card {
+        padding: 1rem;
+    }
+    
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .action-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Customer Approval */
+    .approval-item-row {
+        padding: 0.75rem;
+    }
+    
+    .approval-item-row .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .approval-item-price {
+        margin-top: 0.5rem;
+        align-self: flex-end;
+    }
+    
+    .approval-summary-box {
+        padding: 1rem;
+    }
+    
+    .summary-stat {
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Dashboard */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .dashboard-accordion-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .repairs-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .repair-card {
+        padding: 0.75rem;
+    }
+    
+    .repair-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .repair-actions {
+        align-self: flex-end;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .section-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .repair-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .repair-priority-badge,
+    .repair-status-badge {
+        align-self: flex-end;
+    }
+    
+    /* Home Page */
+    .home-actions-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .home-action-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .home-action-card .action-icon {
+        margin-bottom: 0.5rem;
+    }
+    
+    .recent-repairs-grid,
+    .mechanic-repairs-grid,
+    .manager-repairs-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .manager-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .repair-item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .repair-item-body {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .pending-repair-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .pending-repair-item .repair-actions {
+        align-self: flex-end;
+    }
+    
+    .login-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .login-actions .btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .home-user-welcome-card .card-body,
+    .home-recent-repairs-card .card-body,
+    .home-mechanic-repairs-card .card-body,
+    .home-manager-stats-card .card-body,
+    .home-manager-repairs-card .card-body,
+    .home-quick-actions-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Diagnosis Page */
     .repair-detail-item {
         padding: 0.75rem;
     }
@@ -9479,9 +9524,74 @@ small.text-info {
         gap: 0.75rem;
         text-align: center;
     }
+    
+    /* General Card Headers */
+    .customer-form-info-card,
+    .customer-form-card,
+    .bike-form-info-card,
+    .bike-form-card,
+    .category-form-info-card,
+    .category-form-card,
+    .category-existing-info-card,
+    .subcategory-form-info-card,
+    .subcategory-form-card,
+    .subcategory-existing-info-card,
+    .customer-with-bike-info-card,
+    .customer-with-bike-form-card,
+    .customer-approval-info-card,
+    .customer-approval-form-card,
+    .repair-form-bike-card,
+    .repair-form-categories-card,
+    .repair-form-description-card,
+    .repair-form-diagnosis-card,
+    .repair-form-approval-card {
+        animation: slideInUp 0.6s ease-out;
+    }
+    
+    /* Item Layout Fix */
+    .item-header .d-flex {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+    
+    .item-info {
+        margin-top: 0.75rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .item-price, .item-status {
+        margin-right: 0 !important;
+        min-width: auto;
+        text-align: left;
+    }
 }
 
+/* Mobile Responsive Design - 480px and below */
+
 @media (max-width: 480px) {
+    /* Home Page Mobile Styles */
+    .manager-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .home-alert-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    /* Diagnosis Page Mobile Styles */
     .diagnosis-alert-card {
         flex-direction: column;
         text-align: center;
@@ -9502,5 +9612,131 @@ small.text-info {
     .existing-item-card {
         padding: 1rem;
     }
+    
+    /* Dashboard Mobile Styles */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .repair-actions .btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    /* Form Mobile Styles */
+    .category-form-card .card-body,
+    .subcategory-form-card .card-body,
+    .customer-form-card .card-body,
+    .bike-form-card .card-body,
+    .customer-with-bike-form-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    /* Add any other mobile-specific styles here */
 }
 
+
+/* ===== KEYFRAME ANIMATIONS - Single consolidated section ===== */
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes pulse {
+    0% { 
+        opacity: 1; 
+    }
+    50% { 
+        opacity: 0.6; 
+    }
+    100% { 
+        opacity: 1; 
+    }
+}
+
+@keyframes shake {
+    0%, 100% { 
+        transform: translateX(0); 
+    }
+    25% { 
+        transform: translateX(-5px); 
+    }
+    75% { 
+        transform: translateX(5px); 
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
