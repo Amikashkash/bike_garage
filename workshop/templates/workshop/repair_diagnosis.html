@@ -1,175 +1,300 @@
 {% extends 'workshop/base.html' %}
 
-{% block title %}אבחון תיקון{% endblock %}
+{% block title %}אבחון תיקון #{{ repair_job.id }}{% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-12">
-        <h1>
-            {% if is_editing %}
-                עריכת אבחון תיקון #{{ repair_job.id }}
-            {% else %}
-                אבחון תיקון #{{ repair_job.id }}
-            {% endif %}
-        </h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'manager_dashboard' %}">דשבורד מנהל</a></li>
-                <li class="breadcrumb-item active">
-                    {% if is_editing %}
-                        עריכת אבחון תיקון #{{ repair_job.id }}
-                    {% else %}
-                        אבחון תיקון #{{ repair_job.id }}
-                    {% endif %}
-                </li>
-            </ol>
-        </nav>
-        
+    <div class="col-md-10 mx-auto">
+        <!-- Page Header -->
+        <div class="text-center mb-4">
+            <h1 class="text-white">
+                🔍 אבחון תיקון #{{ repair_job.id }}
+            </h1>
+            <p class="text-white">
+                {% if is_editing %}
+                    עריכת אבחון והצעת מחיר מפורטת
+                {% else %}
+                    אבחון מקצועי והצעת מחיר מדויקת
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Breadcrumb -->
+        <div class="diagnosis-breadcrumb-card mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item">
+                        <a href="{% url 'manager_dashboard' %}">
+                            <i class="fas fa-tachometer-alt me-2"></i>דשבורד מנהל
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">
+                        <i class="fas fa-stethoscope me-2"></i>
+                        {% if is_editing %}
+                            עריכת אבחון #{{ repair_job.id }}
+                        {% else %}
+                            אבחון #{{ repair_job.id }}
+                        {% endif %}
+                    </li>
+                </ol>
+            </nav>
+        </div>
+
+        <!-- Instructions Alert -->
         {% if not repair_job.repair_items.exists %}
-        <div class="alert alert-info">
-            <i class="fas fa-lightbulb me-2"></i>
-            <strong>הוראות לאבחון:</strong>
-            תיקון זה עדיין לא מכיל פעולות תיקון ספציפיות. הוסף להלן את כל הפעולות הנדרשות עם מחירים מדויקים, 
-            וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.
+        <div class="diagnosis-alert-card mb-4">
+            <div class="alert-icon">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="alert-content">
+                <h6 class="text-white mb-2">הוראות לאבחון מדויק</h6>
+                <p class="text-white mb-0">
+                    הוסף להלן את כל הפעולות הנדרשות עם מחירים מדויקים, 
+                    וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.
+                </p>
+            </div>
         </div>
         {% endif %}
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>פרטי התיקון</h5>
-            </div>
-            <div class="card-body">
-                <p><strong>אופניים:</strong> {{ repair_job.bike }}</p>
-                <p><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
-                <p><strong>טלפון:</strong> {{ repair_job.bike.customer.phone }}</p>
-                <p><strong>תאריך דיווח:</strong> {{ repair_job.created_at|date:"d/m/Y H:i" }}</p>
-                
-                {% if repair_job.subcategories.exists %}
-                <p><strong>קטגוריות תקלה:</strong></p>
-                <ul>
-                    {% for subcategory in repair_job.subcategories.all %}
-                    <li>{{ subcategory }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                
-                {% if repair_job.problem_description %}
-                <p><strong>תיאור התקלה:</strong></p>
-                <p class="bg-light p-2 rounded">{{ repair_job.problem_description }}</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <form method="post" id="diagnosisForm">
-            {% csrf_token %}
-            
-            <div class="card">
-                <div class="card-header">
-                    <h5>אבחון והצעת מחיר</h5>
-                </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        {{ diagnosis_form.diagnosis.label_tag }}
-                        {{ diagnosis_form.diagnosis }}
-                        {% if diagnosis_form.diagnosis.help_text %}
-                        <small class="form-text text-muted">{{ diagnosis_form.diagnosis.help_text }}</small>
+        <div class="row">
+            <!-- Repair Details Card -->
+            <div class="col-md-6 mb-4">
+                <div class="diagnosis-info-card">
+                    <div class="card-header">
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-info-circle me-2 text-primary"></i>
+                            פרטי התיקון
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="repair-detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-bicycle"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">אופניים</span>
+                                <span class="detail-value">{{ repair_job.bike }}</span>
+                            </div>
+                        </div>
+
+                        <div class="repair-detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">לקוח</span>
+                                <span class="detail-value">{{ repair_job.bike.customer.name }}</span>
+                            </div>
+                        </div>
+
+                        <div class="repair-detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">טלפון</span>
+                                <span class="detail-value">{{ repair_job.bike.customer.phone|default:"לא צוין" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="repair-detail-item">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="detail-content">
+                                <span class="detail-label">תאריך דיווח</span>
+                                <span class="detail-value">{{ repair_job.created_at|date:"d/m/Y H:i" }}</span>
+                            </div>
+                        </div>
+
+                        {% if repair_job.subcategories.exists %}
+                        <div class="categories-section mt-4">
+                            <h6 class="text-white mb-3">
+                                <i class="fas fa-tags me-2 text-warning"></i>
+                                קטגוריות התקלה
+                            </h6>
+                            <div class="categories-list">
+                                {% for subcategory in repair_job.subcategories.all %}
+                                <div class="category-tag">
+                                    <i class="fas fa-tag me-1"></i>
+                                    {{ subcategory }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if repair_job.problem_description %}
+                        <div class="problem-section mt-4">
+                            <h6 class="text-white mb-3">
+                                <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
+                                תיאור התקלה
+                            </h6>
+                            <div class="problem-description">
+                                {{ repair_job.problem_description }}
+                            </div>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
-            
-            <div class="card mt-3">
-                <div class="card-header">
-                    <h5>פעולות תיקון ומחירים</h5>
-                    <small class="text-muted">הוסף את כל הפעולות הנדרשות עם מחירים</small>
-                </div>
-                <div class="card-body">
+
+            <!-- Diagnosis Form -->
+            <div class="col-md-6 mb-4">
+                <form method="post" id="diagnosisForm">
+                    {% csrf_token %}
                     
-                    <!-- הצגת פעולות קיימות אם יש -->
-                    {% if repair_job.repair_items.exists %}
-                    <div class="alert alert-info">
-                        <h6><i class="fas fa-list"></i> פעולות תיקון קיימות:</h6>
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                    <tr>
-                                        <th>תיאור</th>
-                                        <th>מחיר (₪)</th>
-                                        <th>סטטוס</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    <!-- Diagnosis Card -->
+                    <div class="diagnosis-form-card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0 text-white">
+                                <i class="fas fa-stethoscope me-2 text-success"></i>
+                                אבחון והצעת מחיר
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label text-white">
+                                    <i class="fas fa-clipboard-list me-2 text-primary"></i>
+                                    {{ diagnosis_form.diagnosis.label }}
+                                </label>
+                                {{ diagnosis_form.diagnosis }}
+                                {% if diagnosis_form.diagnosis.help_text %}
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    {{ diagnosis_form.diagnosis.help_text }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Repair Items Card -->
+                    <div class="diagnosis-items-card">
+                        <div class="card-header">
+                            <h5 class="mb-0 text-white">
+                                <i class="fas fa-tools me-2 text-warning"></i>
+                                פעולות תיקון ומחירים
+                            </h5>
+                            <small class="text-white d-block mt-2 diagnosis-subtitle">
+                                הוסף את כל הפעולות הנדרשות עם מחירים מדויקים
+                            </small>
+                        </div>
+                        <div class="card-body">
+                            
+                            <!-- Existing Items -->
+                            {% if repair_job.repair_items.exists %}
+                            <div class="existing-items-section mb-4">
+                                <h6 class="text-white mb-3">
+                                    <i class="fas fa-list me-2 text-info"></i>
+                                    פעולות תיקון קיימות
+                                </h6>
+                                
+                                <div class="existing-items-grid">
                                     {% for item in repair_job.repair_items.all %}
-                                    <tr>
-                                        <td>{{ item.description }}</td>
-                                        <td>₪{{ item.price }}</td>
-                                        <td>
-                                            {% if item.is_approved_by_customer %}
-                                                <span class="badge badge-success">אושר</span>
-                                            {% else %}
-                                                <span class="badge badge-warning">ממתין לאישור</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
+                                    <div class="existing-item-card">
+                                        <div class="item-header">
+                                            <div class="item-description">
+                                                <i class="fas fa-wrench me-2 text-primary"></i>
+                                                {{ item.description }}
+                                            </div>
+                                            <div class="item-status">
+                                                {% if item.is_approved_by_customer %}
+                                                    <span class="badge badge-success">
+                                                        <i class="fas fa-check me-1"></i>אושר
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge badge-warning">
+                                                        <i class="fas fa-clock me-1"></i>ממתין
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="item-price">
+                                            <span class="price-value">₪{{ item.price }}</span>
+                                        </div>
+                                    </div>
                                     {% endfor %}
-                                </tbody>
-                                <tfoot>
-                                    <tr class="table-info">
-                                        <th>סה"כ:</th>
-                                        <th>₪{{ repair_job.get_total_price|floatformat:2 }}</th>
-                                        <th></th>
-                                    </tr>
-                                </tfoot>
-                            </table>
+                                </div>
+                                
+                                <div class="existing-total">
+                                    <div class="total-display">
+                                        <span class="total-label">סה"כ קיים:</span>
+                                        <span class="total-value">₪{{ repair_job.get_total_price|floatformat:2 }}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="section-divider">
+                                    <h6 class="text-white">
+                                        <i class="fas fa-plus me-2 text-success"></i>
+                                        הוסף פעולות נוספות
+                                    </h6>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- New Items Container -->
+                            <div class="new-items-section">
+                                <div id="repair-items-container">
+                                    <div class="repair-item-row">
+                                        <div class="item-input-group">
+                                            <div class="description-input">
+                                                <input type="text" 
+                                                       name="item_0_description" 
+                                                       class="form-control" 
+                                                       placeholder="תיאור הפעולה (לדוגמה: החלפת בלמים קדמיים)" 
+                                                       required>
+                                            </div>
+                                            <div class="price-input">
+                                                <input type="number" 
+                                                       name="item_0_price" 
+                                                       class="form-control" 
+                                                       placeholder="מחיר (₪)" 
+                                                       step="0.01" 
+                                                       min="0" 
+                                                       required>
+                                            </div>
+                                            <div class="action-input">
+                                                <button type="button" class="btn btn-danger btn-sm remove-item" style="display: none;">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="add-item-section">
+                                    <button type="button" id="add-item" class="btn btn-outline-success">
+                                        <i class="fas fa-plus me-2"></i>הוסף פעולה נוספת
+                                    </button>
+                                </div>
+                                
+                                <div class="new-items-total">
+                                    <div class="total-calculator">
+                                        <span class="total-label">סה"כ פעולות חדשות:</span>
+                                        <span class="total-value">₪<span id="total-price">0.00</span></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <h6><i class="fas fa-plus"></i> הוסף פעולות נוספות:</h6>
-                    {% endif %}
-                    
-                    <div id="repair-items-container">
-                        <div class="repair-item row mb-3">
-                            <div class="col-md-8">
-                                <input type="text" name="item_0_description" class="form-control" placeholder="תיאור הפעולה (לדוגמה: החלפת בלמים קדמיים)" required>
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" name="item_0_price" class="form-control" placeholder="מחיר (₪)" step="0.01" min="0" required>
-                            </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn btn-danger btn-sm remove-item" style="display: none;">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
+
+                    <!-- Form Actions -->
+                    <div class="diagnosis-actions mt-4">
+                        <button type="submit" class="btn btn-success btn-lg diagnosis-submit-btn">
+                            {% if is_editing %}
+                                <i class="fas fa-save me-2"></i>עדכן אבחון ושלח ללקוח
+                            {% else %}
+                                <i class="fas fa-check me-2"></i>שמור אבחון ושלח ללקוח
+                            {% endif %}
+                        </button>
+                        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times me-2"></i>ביטול
+                        </a>
                     </div>
-                    
-                    <button type="button" id="add-item" class="btn btn-secondary btn-sm">
-                        <i class="fas fa-plus"></i> הוסף פעולה נוספת
-                    </button>
-                    
-                    <div class="mt-3">
-                        <strong>סה"כ כולל: ₪<span id="total-price">0.00</span></strong>
-                    </div>
-                </div>
+                </form>
             </div>
-            
-            <div class="mt-3">
-                <button type="submit" class="btn btn-success btn-lg">
-                    {% if is_editing %}
-                        <i class="fas fa-save"></i> עדכן אבחון ושלח ללקוח
-                    {% else %}
-                        <i class="fas fa-check"></i> שמור אבחון ושלח ללקוח
-                    {% endif %}
-                </button>
-                <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary">ביטול</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -180,65 +305,103 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateTotal() {
         let total = 0;
         document.querySelectorAll('input[name$="_price"]').forEach(function(input) {
-            if (input.value) {
-                total += parseFloat(input.value) || 0;
+            if (input.value && !isNaN(input.value)) {
+                total += parseFloat(input.value);
             }
         });
         document.getElementById('total-price').textContent = total.toFixed(2);
     }
     
     function updateRemoveButtons() {
-        const items = document.querySelectorAll('.repair-item');
-        items.forEach(function(item, index) {
+        const items = document.querySelectorAll('.repair-item-row');
+        const showRemoveButtons = items.length > 1;
+        
+        items.forEach(function(item) {
             const removeBtn = item.querySelector('.remove-item');
-            if (items.length > 1) {
-                removeBtn.style.display = 'block';
-            } else {
-                removeBtn.style.display = 'none';
-            }
+            removeBtn.style.display = showRemoveButtons ? 'block' : 'none';
         });
+    }
+    
+    function animateNewItem(element) {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        
+        requestAnimationFrame(() => {
+            element.style.transition = 'all 0.3s ease';
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        });
+    }
+    
+    function removeItemWithAnimation(item) {
+        item.style.transition = 'all 0.3s ease';
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-100px)';
+        
+        setTimeout(() => {
+            item.remove();
+            updateTotal();
+            updateRemoveButtons();
+        }, 300);
     }
     
     document.getElementById('add-item').addEventListener('click', function() {
         const container = document.getElementById('repair-items-container');
         const newItem = document.createElement('div');
-        newItem.className = 'repair-item row mb-3';
+        
+        newItem.className = 'repair-item-row';
         newItem.innerHTML = `
-            <div class="col-md-8">
-                <input type="text" name="item_${itemIndex}_description" class="form-control" placeholder="תיאור הפעולה" required>
-            </div>
-            <div class="col-md-3">
-                <input type="number" name="item_${itemIndex}_price" class="form-control" placeholder="מחיר (₪)" step="0.01" min="0" required>
-            </div>
-            <div class="col-md-1">
-                <button type="button" class="btn btn-danger btn-sm remove-item">
-                    <i class="fas fa-trash"></i>
-                </button>
+            <div class="item-input-group">
+                <div class="description-input">
+                    <input type="text" 
+                           name="item_${itemIndex}_description" 
+                           class="form-control" 
+                           placeholder="תיאור הפעולה" 
+                           required>
+                </div>
+                <div class="price-input">
+                    <input type="number" 
+                           name="item_${itemIndex}_price" 
+                           class="form-control" 
+                           placeholder="מחיר (₪)" 
+                           step="0.01" 
+                           min="0" 
+                           required>
+                </div>
+                <div class="action-input">
+                    <button type="button" class="btn btn-danger btn-sm remove-item">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
             </div>
         `;
+        
         container.appendChild(newItem);
         itemIndex++;
-        updateRemoveButtons();
         
-        // Add event listeners for new price input
-        newItem.querySelector('input[name$="_price"]').addEventListener('input', updateTotal);
+        const priceInput = newItem.querySelector('input[name$="_price"]');
+        priceInput.addEventListener('input', updateTotal);
+        
+        updateRemoveButtons();
+        animateNewItem(newItem);
     });
     
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-item') || e.target.parentElement.classList.contains('remove-item')) {
-            const item = e.target.closest('.repair-item');
-            item.remove();
-            updateTotal();
-            updateRemoveButtons();
+        const removeButton = e.target.closest('.remove-item');
+        if (removeButton) {
+            const item = removeButton.closest('.repair-item-row');
+            removeItemWithAnimation(item);
         }
     });
     
-    // Add event listeners for existing price inputs
     document.querySelectorAll('input[name$="_price"]').forEach(function(input) {
         input.addEventListener('input', updateTotal);
     });
     
     updateRemoveButtons();
+    updateTotal();
 });
 </script>
+
+
 {% endblock %}

@@ -230,7 +230,7 @@ a:hover {
 
 .form-check-input:checked {
     background-color: #388E3C;
-    border-color: #388E3C;
+    border-color: #286a2b;
 }
 
 .form-check-input:focus {
@@ -424,7 +424,15 @@ small.text-info {
 }
 
 
-
+.notes-content {
+    color: #fff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    font-size: 0.95em;
+    margin: 0;
+}
 
 /* Timeline Styling */
 .timeline {
@@ -490,9 +498,7 @@ small.text-info {
 /* Badge Colors for Dark Theme */
 .badge-success {
     background-color: #388E3C;
-    background: linear-gradient(135deg, #388E3C 0%, #2e7d32 100%);
 }
-
 
 .badge-danger {
     background-color: #dc3545;
@@ -500,26 +506,19 @@ small.text-info {
 
 .badge-warning {
     background-color: #ff6a00;
-    background: linear-gradient(135deg, #ff6a00 0%, #e55b00 100%);
 }
-
 
 .badge-secondary {
-    background-color: #6c757d; 
-    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
-
+    background-color: #6c757d;
 }
-
 
 .badge-info {
     background-color: #42a5f5;
 }
 
 .badge-primary {
-    background-color: #42a5f5; 
-    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+    background-color: #42a5f5;
 }
-
 
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
@@ -564,7 +563,11 @@ small.text-info {
     position: relative;
 }
 
-
+/* Timeline Styling */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
 
 .timeline::before {
     content: '';
@@ -576,7 +579,101 @@ small.text-info {
     background: #444;
 }
 
+.timeline-item {
+    position: relative;
+}
 
+.timeline-marker {
+    position: absolute;
+    left: -2.25rem;
+    top: 0.25rem;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 50%;
+    border: 2px solid #2a2a2a;
+}
+
+.timeline-content {
+    background: #2a2a2a;
+    padding: 0.75rem;
+    border-radius: 0.25rem;
+    border-left: 3px solid #42a5f5;
+}
+
+/* Manager Response Card */
+.manager-response-card {
+    border: 2px solid #ffc107;
+    background-color: #2a2a2a;
+}
+
+.manager-previous-response {
+    background-color: #1e3a1e;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #388E3C;
+}
+
+/* Pulse Animation */
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+/* Badge Colors for Dark Theme */
+.badge-success {
+    background-color: #388E3C;
+}
+
+.badge-danger {
+    background-color: #dc3545;
+}
+
+.badge-warning {
+    background-color: #ff6a00;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+}
+
+.badge-info {
+    background-color: #42a5f5;
+}
+
+.badge-primary {
+    background-color: #42a5f5;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .row .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    
+    
+    .item-info {
+        margin-top: 0.75rem;
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    
+    
+    
+}
+
+/* Tablet Responsiveness */
+@media (max-width: 992px) and (min-width: 769px) {
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+}
 
 /* Customer Bikes List Styling */
 .bike-card {
@@ -686,13 +783,11 @@ small.text-info {
     background: transparent;
 }
 
-
 .btn-outline-primary:hover {
     background-color: #42a5f5;
     color: white;
     border-color: #42a5f5;
 }
-
 
 /* Badge Enhancements for Bike Cards */
 .bike-card .badge {
@@ -1625,18 +1720,12 @@ small.text-info {
 }
 
 .notes-content {
-    color: #fff;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    white-space: pre-wrap;
-    line-height: 1.5;
-    font-size: 0.95em;
-    margin: 0;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease;
     margin-top: 1rem;
 }
+
 
 .notes-content.show {
     max-height: 200px;
@@ -1853,7 +1942,6 @@ small.text-info {
 .status-option span {
     color: #ffffff !important;
 }
-
 /* Customer Form Page Styling */
 .customer-form-info-card {
     border: 1px solid #444;
@@ -4035,7 +4123,7 @@ small.text-info {
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     .customer-section,
     .bike-section {
         border-width: 2px;
@@ -4571,9 +4659,18 @@ small.text-info {
     }
 }
 
+/* Enhanced Button Styling */
+.btn-outline-primary {
+    border-color: #42a5f5;
+    color: #42a5f5;
+    background: transparent;
+}
 
-
-
+.btn-outline-primary:hover {
+    background-color: #42a5f5;
+    color: white;
+    border-color: #42a5f5;
+}
 
 .btn-outline-secondary {
     border-color: #6c757d;
@@ -4614,7 +4711,7 @@ small.text-info {
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     .category-management-card,
     .subcategory-item {
         border-width: 2px;
@@ -5606,7 +5703,7 @@ small.text-info {
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     .category-form-card .form-control,
     .category-form-card textarea {
         border-width: 2px;
@@ -6136,7 +6233,7 @@ small.text-info {
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     .subcategory-form-card .form-control,
     .subcategory-form-card .form-select,
     .subcategory-form-card textarea {
@@ -8806,7 +8903,7 @@ small.text-info {
 }
 
 /* High Contrast Mode Support */
-@media (prefers-contrast: high) {
+@media (prefers-contrast: more) {
     .home-action-card,
     .recent-repair-item,
     .mechanic-repair-item,
@@ -8845,13 +8942,21 @@ small.text-info {
 }
 
 /* Enhanced Badge Styling */
+.badge-success {
+    background: linear-gradient(135deg, #388E3C 0%, #2e7d32 100%);
+}
 
+.badge-primary {
+    background: linear-gradient(135deg, #42a5f5 0%, #1976d2 100%);
+}
 
+.badge-warning {
+    background: linear-gradient(135deg, #ff6a00 0%, #e55b00 100%);
+}
 
-
-
-
-
+.badge-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
 
 /* Card Border Variations */
 .recent-repair-item:nth-child(odd)::before {
@@ -8889,3 +8994,513 @@ small.text-info {
 .quick-action-card:hover {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
+/* Add this to the end of your CSS file */
+
+/* Diagnosis Page Styling - Manager Dashboard Style */
+
+/* Breadcrumb Card */
+
+.diagnosis-breadcrumb-card {
+    background: linear-gradient(90deg, rgba(255, 106, 0, 0.1) 0%, rgba(0, 188, 212, 0.1) 100%);
+    border: 1px solid #444;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.diagnosis-breadcrumb-card .breadcrumb-item a {
+    color: #00bcd4;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.diagnosis-breadcrumb-card .breadcrumb-item a:hover {
+    color: #ff6a00;
+}
+
+/* Alert Card */
+.diagnosis-alert-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 2rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 106, 0, 0.1) 100%);
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    border-left: 4px solid #ffc107;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
+}
+
+.diagnosis-alert-card .alert-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgba(255, 193, 7, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #ffc107;
+}
+
+.diagnosis-alert-card .alert-content {
+    flex-grow: 1;
+}
+
+/* Info Card */
+.diagnosis-info-card {
+    border: 1px solid #444;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a2a2a 0%, #2f2f2f 100%);
+    border-top: 4px solid #42a5f5;
+    box-shadow: 0 4px 15px rgba(66, 165, 245, 0.2);
+    transition: all 0.3s ease;
+}
+
+.diagnosis-info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(66, 165, 245, 0.3);
+}
+
+.diagnosis-info-card .card-header {
+    background: linear-gradient(90deg, #42a5f5 0%, #00bcd4 100%);
+    border-bottom: 2px solid #444;
+    padding: 1.5rem;
+}
+
+/* Repair Detail Items */
+.repair-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid #444;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.repair-detail-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #00bcd4;
+    transform: translateX(4px);
+}
+
+.repair-detail-item .detail-icon {
+    flex-shrink: 0;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background-color: rgba(66, 165, 245, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #42a5f5;
+}
+
+.repair-detail-item .detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.repair-detail-item .detail-label {
+    font-size: 0.9rem;
+    color: #aaa;
+    font-weight: 500;
+}
+
+.repair-detail-item .detail-value {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* Categories Section */
+.categories-section {
+    padding: 1.5rem;
+    background-color: rgba(255, 193, 7, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.category-tag {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    transition: all 0.3s ease;
+}
+
+.category-tag:hover {
+    background-color: rgba(255, 193, 7, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Problem Section */
+.problem-section {
+    padding: 1.5rem;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.problem-description {
+    background-color: #333;
+    color: #fff;
+    padding: 1.2rem;
+    border-radius: 10px;
+    border-left: 4px solid #dc3545;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+/* Form Cards */
+.diagnosis-form-card {
+    border: 1px solid #444;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a2a2a 0%, #2f2f2f 100%);
+    border-top: 4px solid #388E3C;
+    box-shadow: 0 4px 15px rgba(56, 142, 60, 0.2);
+    transition: all 0.3s ease;
+}
+
+.diagnosis-form-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
+}
+
+.diagnosis-form-card .card-header {
+    background: linear-gradient(90deg, #388E3C 0%, #00bcd4 100%);
+    border-bottom: 2px solid #444;
+    padding: 1.5rem;
+}
+
+.diagnosis-items-card {
+    border: 1px solid #444;
+    border-radius: 16px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #2a2a2a 0%, #2f2f2f 100%);
+    border-top: 4px solid #ff6a00;
+    box-shadow: 0 4px 15px rgba(255, 106, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.diagnosis-items-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 106, 0, 0.3);
+}
+
+.diagnosis-items-card .card-header {
+    background: linear-gradient(90deg, #ff6a00 0%, #388E3C 100%);
+    border-bottom: 2px solid #444;
+    padding: 1.5rem;
+}
+
+.diagnosis-subtitle {
+    opacity: 0.9;
+}
+
+/* Existing Items */
+.existing-items-section {
+    padding: 1.5rem;
+    background-color: rgba(66, 165, 245, 0.1);
+    border-radius: 12px;
+    border: 1px solid rgba(66, 165, 245, 0.3);
+    margin-bottom: 2rem;
+}
+
+.existing-items-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.existing-item-card {
+    background: linear-gradient(135deg, #333 0%, #2a2a2a 100%);
+    border: 1px solid #555;
+    border-radius: 12px;
+    padding: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.existing-item-card:hover {
+    background: linear-gradient(135deg, #3a3a3a 0%, #333 100%);
+    border-color: #42a5f5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(66, 165, 245, 0.2);
+}
+
+.existing-item-card .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+}
+
+.existing-item-card .item-description {
+    color: #fff;
+    font-weight: 600;
+    flex-grow: 1;
+}
+
+.existing-item-card .item-price {
+    text-align: center;
+    padding-top: 0.5rem;
+}
+
+.price-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #388E3C;
+}
+
+.existing-total {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid #444;
+}
+
+.total-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.total-display .total-label {
+    color: #42a5f5;
+}
+
+.total-display .total-value {
+    color: #388E3C;
+    font-size: 1.4rem;
+}
+
+.section-divider {
+    margin: 2rem 0;
+    padding: 1.5rem 0;
+    border-top: 2px dashed #555;
+    text-align: center;
+}
+
+/* New Items Section */
+.new-items-section {
+    margin-top: 1rem;
+}
+
+.repair-item-row {
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+}
+
+.item-input-group {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1rem;
+    align-items: center;
+}
+
+.description-input {
+    min-width: 0;
+}
+
+.price-input {
+    width: 140px;
+}
+
+.action-input {
+    width: 60px;
+    text-align: center;
+}
+
+.add-item-section {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.add-item-section .btn {
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.add-item-section .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(56, 142, 60, 0.3);
+}
+
+.new-items-total {
+    margin-top: 1.5rem;
+    padding: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border: 1px solid #444;
+}
+
+.total-calculator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.total-calculator .total-label {
+    color: #ff6a00;
+}
+
+.total-calculator .total-value {
+    color: #388E3C;
+    font-size: 1.4rem;
+}
+
+/* Form Actions */
+.diagnosis-actions {
+    text-align: center;
+    padding: 2rem 0;
+    border-top: 2px solid #444;
+}
+
+.diagnosis-actions .btn {
+    border-radius: 15px;
+    padding: 15px 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.diagnosis-submit-btn {
+    background: linear-gradient(135deg, #388E3C 0%, #2e7d32 100%);
+    border: none;
+    box-shadow: 0 4px 15px rgba(56, 142, 60, 0.3);
+}
+
+.diagnosis-submit-btn:hover {
+    background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(56, 142, 60, 0.4);
+}
+
+/* Enhanced Form Controls */
+.diagnosis-form-card .form-control,
+.diagnosis-items-card .form-control {
+    background-color: #333 !important;
+    border: 2px solid #555;
+    color: #fff !important;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.diagnosis-form-card .form-control:focus,
+.diagnosis-items-card .form-control:focus {
+    background-color: #333 !important;
+    border-color: #388E3C;
+    color: #fff !important;
+    box-shadow: 0 0 0 0.25rem rgba(56, 142, 60, 0.25);
+    transform: translateY(-2px);
+}
+
+.diagnosis-form-card .form-control:hover,
+.diagnosis-items-card .form-control:hover {
+    border-color: #00bcd4;
+    background-color: #353535 !important;
+}
+
+.diagnosis-form-card .form-control::placeholder,
+.diagnosis-items-card .form-control::placeholder {
+    color: #aaa !important;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .repair-detail-item {
+        padding: 0.75rem;
+    }
+    
+    .repair-detail-item .detail-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+    }
+    
+    .item-input-group {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .price-input,
+    .action-input {
+        width: 100%;
+    }
+    
+    .existing-item-card .item-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .categories-list {
+        gap: 0.5rem;
+    }
+    
+    .category-tag {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+    
+    .diagnosis-actions .btn {
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+    
+    .total-display,
+    .total-calculator {
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .diagnosis-alert-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .diagnosis-alert-card .alert-icon {
+        align-self: center;
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    
+    .existing-items-grid {
+        gap: 0.75rem;
+    }
+    
+    .existing-item-card {
+        padding: 1rem;
+    }
+}
+
