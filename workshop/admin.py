@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.urls import path
 from django.http import HttpResponse
 from django.template.response import TemplateResponse
+from django.contrib.admin import AdminSite
 from .models import (
     UserProfile,
     Customer,
@@ -15,6 +16,34 @@ from .models import (
     RepairItem,
     RepairUpdate,
 )
+
+# Custom Admin Site for organized menu
+class BikeGarageAdminSite(AdminSite):
+    site_header = 'ניהול מוסך האופניים'
+    site_title = 'מוסך האופניים'
+    index_title = 'ברוכים הבאים למערכת ניהול המוסך'
+    
+    def index(self, request, extra_context=None):
+        """Custom admin index with grouped content and counts"""
+        extra_context = extra_context or {}
+        
+        # Get counts for display
+        extra_context.update({
+            'customer_count': Customer.objects.count(),
+            'bike_count': Bike.objects.count(),
+            'repair_count': RepairJob.objects.count(),
+            'category_count': RepairCategory.objects.count(),
+            'user_count': User.objects.count(),
+        })
+        
+        # Get recent actions
+        from django.contrib.admin.models import LogEntry
+        extra_context['recent_actions'] = LogEntry.objects.select_related('user').order_by('-action_time')[:10]
+        
+        return super().index(request, extra_context)
+
+# Create custom admin site instance
+admin_site = BikeGarageAdminSite(name='bikegarage_admin')
 
 # פונקציית עזר ליצירת טכנאי מהירה
 def create_mechanic_view(request):
@@ -153,7 +182,19 @@ class CustomUserAdmin(UserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
 
-@admin.register(UserProfile)
+# Register models with custom admin site
+from django.contrib.auth.models import Group
+from django.contrib.sessions.models import Session
+from django.contrib.admin.models import LogEntry
+from django.contrib.contenttypes.models import ContentType
+
+admin_site.register(User, UserAdmin)
+admin_site.register(Group)
+admin_site.register(Session)
+admin_site.register(LogEntry)
+admin_site.register(ContentType)
+
+@admin.register(UserProfile, site=admin_site)
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'get_role_display', 'user_email', 'user_full_name')
     list_filter = ('role',)
@@ -168,7 +209,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         return f"{obj.user.first_name} {obj.user.last_name}".strip()
     user_full_name.short_description = 'שם מלא'
 
-@admin.register(Customer)
+@admin.register(Customer, site=admin_site)
 class CustomerAdmin(admin.ModelAdmin):
     list_display = ('name', 'phone', 'email', 'user', 'has_user_account')
     search_fields = ('name', 'phone', 'email')
@@ -178,7 +219,7 @@ class CustomerAdmin(admin.ModelAdmin):
     has_user_account.boolean = True
     has_user_account.short_description = 'יש חשבון משתמש'
 
-@admin.register(Bike)
+@admin.register(Bike, site=admin_site)
 class BikeAdmin(admin.ModelAdmin):
     list_display = ('brand', 'model', 'color', 'customer', 'get_repairs_count')
     list_filter = ('brand', 'color')
@@ -188,7 +229,7 @@ class BikeAdmin(admin.ModelAdmin):
         return obj.repairjob_set.count()
     get_repairs_count.short_description = 'מספר תיקונים'
 
-@admin.register(RepairCategory)
+@admin.register(RepairCategory, site=admin_site)
 class RepairCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'get_subcategories_count')
     search_fields = ('name',)
@@ -197,7 +238,7 @@ class RepairCategoryAdmin(admin.ModelAdmin):
         return obj.subcategories.count()
     get_subcategories_count.short_description = 'מספר תת-קטגוריות'
 
-@admin.register(RepairSubCategory)
+@admin.register(RepairSubCategory, site=admin_site)
 class RepairSubCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'category', 'get_jobs_count')
     list_filter = ('category',)
@@ -207,7 +248,7 @@ class RepairSubCategoryAdmin(admin.ModelAdmin):
         return obj.repair_jobs.count()
     get_jobs_count.short_description = 'מספר תיקונים'
 
-@admin.register(RepairJob)
+@admin.register(RepairJob, site=admin_site)
 class RepairJobAdmin(admin.ModelAdmin):
     list_display = ('job_number', 'bike', 'customer_name', 'status', 'assigned_mechanic', 'is_stuck', 'created_at', 'get_total_price')
     list_filter = ('status', 'is_stuck', 'created_at', 'assigned_mechanic')
@@ -256,7 +297,7 @@ class RepairJobAdmin(admin.ModelAdmin):
         return f"₪{obj.get_total_price()}"
     get_total_price.short_description = 'סה"כ מחיר'
 
-@admin.register(RepairItem)
+@admin.register(RepairItem, site=admin_site)
 class RepairItemAdmin(admin.ModelAdmin):
     list_display = ('description', 'job_number', 'price', 'is_approved_by_customer', 'status')
     list_filter = ('is_approved_by_customer', 'status', 'repair_job__status')
@@ -269,7 +310,7 @@ class RepairItemAdmin(admin.ModelAdmin):
     job_number.short_description = 'מספר תיקון'
     job_number.admin_order_field = 'repair_job__id'
 
-@admin.register(RepairUpdate)
+@admin.register(RepairUpdate, site=admin_site)
 class RepairUpdateAdmin(admin.ModelAdmin):
     list_display = ('job_number', 'user', 'message_preview', 'created_at', 'is_visible_to_customer')
     list_filter = ('is_visible_to_customer', 'created_at')
@@ -287,10 +328,8 @@ class RepairUpdateAdmin(admin.ModelAdmin):
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
     message_preview.short_description = 'תוכן ההודעה'
 
-# הוספת כותרת מותאמת אישית לאדמין
-admin.site.site_header = "🔧 מערכת ניהול מוסך אופניים"
-admin.site.site_title = "מוסך אופניים - אדמין"
-admin.site.index_title = "לוח בקרה ראשי"
+# Custom admin site is now configured above
+# All models are registered with the BikeGarageAdminSite instance
 
 # Add custom admin view
 def get_admin_urls():
