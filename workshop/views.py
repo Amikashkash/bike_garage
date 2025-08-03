@@ -1437,3 +1437,230 @@ def print_labels_menu(request):
         'total_repairs': active_repairs.count(),
     })
 
+
+@login_required
+@manager_required
+def backup_customer_data(request):
+    """גיבוי נתוני לקוחות - יצוא לקובץ Excel"""
+    import openpyxl
+    from openpyxl.utils import get_column_letter
+    from openpyxl.styles import Font, PatternFill, Alignment
+    from django.http import HttpResponse
+    from datetime import datetime
+    import io
+    
+    # יצירת workbook חדש
+    wb = openpyxl.Workbook()
+    
+    # גיליון לקוחות
+    ws_customers = wb.active
+    ws_customers.title = "לקוחות"
+    
+    # כותרות עבור גיליון לקוחות
+    customer_headers = [
+        'מספר לקוח', 'שם', 'טלפון', 'אימייל', 
+        'תאריך הרשמה', 'משתמש מקושר', 'הערות'
+    ]
+    
+    # הוספת כותרות
+    for col, header in enumerate(customer_headers, 1):
+        cell = ws_customers.cell(row=1, column=col, value=header)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color="366092", end_color="366092", fill_type="solid")
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.alignment = Alignment(horizontal="center")
+    
+    # הוספת נתוני לקוחות
+    customers = Customer.objects.select_related('user').all().order_by('name')
+    for row, customer in enumerate(customers, 2):
+        ws_customers.cell(row=row, column=1, value=customer.id)
+        ws_customers.cell(row=row, column=2, value=customer.name)
+        ws_customers.cell(row=row, column=3, value=customer.phone or '')
+        ws_customers.cell(row=row, column=4, value=customer.email or '')
+        ws_customers.cell(row=row, column=5, value=customer.created_at.strftime('%d/%m/%Y %H:%M') if hasattr(customer, 'created_at') else '')
+        ws_customers.cell(row=row, column=6, value=customer.user.username if customer.user else 'לא מקושר')
+        ws_customers.cell(row=row, column=7, value=getattr(customer, 'notes', '') or '')
+    
+    # התאמת רוחב עמודות
+    for col in range(1, len(customer_headers) + 1):
+        ws_customers.column_dimensions[get_column_letter(col)].width = 15
+    
+    # גיליון אופניים
+    ws_bikes = wb.create_sheet(title="אופניים")
+    bike_headers = [
+        'מספר אופניים', 'מספר לקוח', 'שם לקוח', 'מותג', 'דגם', 
+        'צבע', 'הערות'
+    ]
+    
+    for col, header in enumerate(bike_headers, 1):
+        cell = ws_bikes.cell(row=1, column=col, value=header)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color="70AD47", end_color="70AD47", fill_type="solid")
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.alignment = Alignment(horizontal="center")
+    
+    bikes = Bike.objects.select_related('customer').all().order_by('customer__name', 'brand')
+    for row, bike in enumerate(bikes, 2):
+        ws_bikes.cell(row=row, column=1, value=bike.id)
+        ws_bikes.cell(row=row, column=2, value=bike.customer.id)
+        ws_bikes.cell(row=row, column=3, value=bike.customer.name)
+        ws_bikes.cell(row=row, column=4, value=bike.brand or '')
+        ws_bikes.cell(row=row, column=5, value=bike.model or '')
+        ws_bikes.cell(row=row, column=6, value=bike.color or '')
+        ws_bikes.cell(row=row, column=7, value=getattr(bike, 'notes', '') or '')
+    
+    for col in range(1, len(bike_headers) + 1):
+        ws_bikes.column_dimensions[get_column_letter(col)].width = 15
+    
+    # גיליון תיקונים
+    ws_repairs = wb.create_sheet(title="תיקונים")
+    repair_headers = [
+        'מספר תיקון', 'מספר אופניים', 'שם לקוח', 'אופניים', 'בעיה',
+        'אבחון', 'סטטוס', 'מכונאי', 'תאריך קבלה', 'תאריך אבחון',
+        'מחיר כולל', 'הערות'
+    ]
+    
+    for col, header in enumerate(repair_headers, 1):
+        cell = ws_repairs.cell(row=1, column=col, value=header)
+        cell.font = Font(bold=True)
+        cell.fill = PatternFill(start_color="D83B01", end_color="D83B01", fill_type="solid")
+        cell.font = Font(bold=True, color="FFFFFF")
+        cell.alignment = Alignment(horizontal="center")
+    
+    repairs = RepairJob.objects.select_related(
+        'bike', 'bike__customer', 'assigned_mechanic'
+    ).prefetch_related('repair_items').all().order_by('-created_at')
+    
+    for row, repair in enumerate(repairs, 2):
+        ws_repairs.cell(row=row, column=1, value=repair.id)
+        ws_repairs.cell(row=row, column=2, value=repair.bike.id)
+        ws_repairs.cell(row=row, column=3, value=repair.bike.customer.name)
+        ws_repairs.cell(row=row, column=4, value=f"{repair.bike.brand} {repair.bike.model or ''}".strip())
+        ws_repairs.cell(row=row, column=5, value=repair.problem_description or '')
+        ws_repairs.cell(row=row, column=6, value=repair.diagnosis or '')
+        ws_repairs.cell(row=row, column=7, value=repair.get_status_display())
+        ws_repairs.cell(row=row, column=8, value=repair.assigned_mechanic.get_full_name() if repair.assigned_mechanic else '')
+        ws_repairs.cell(row=row, column=9, value=repair.created_at.strftime('%d/%m/%Y %H:%M'))
+        ws_repairs.cell(row=row, column=10, value=repair.diagnosed_at.strftime('%d/%m/%Y %H:%M') if repair.diagnosed_at else '')
+        
+        # חישוב מחיר כולל
+        total_price = sum(item.price for item in repair.repair_items.all())
+        ws_repairs.cell(row=row, column=11, value=total_price)
+        
+        # הערות מפעולות התיקון
+        repair_notes = '; '.join([item.notes for item in repair.repair_items.all() if item.notes])
+        ws_repairs.cell(row=row, column=12, value=repair_notes or '')
+    
+    for col in range(1, len(repair_headers) + 1):
+        ws_repairs.column_dimensions[get_column_letter(col)].width = 15
+    
+    # גיליון סטטיסטיקות
+    ws_stats = wb.create_sheet(title="סטטיסטיקות")
+    
+    # כותרת
+    ws_stats.cell(row=1, column=1, value="דוח סטטיסטיקות - גיבוי נתונים")
+    ws_stats.cell(row=1, column=1).font = Font(bold=True, size=16)
+    ws_stats.cell(row=2, column=1, value=f"נוצר ב: {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    
+    # סטטיסטיקות
+    stats = [
+        ("סך הכל לקוחות:", customers.count()),
+        ("לקוחות עם משתמש מקושר:", customers.filter(user__isnull=False).count()),
+        ("לקוחות ללא משתמש:", customers.filter(user__isnull=True).count()),
+        ("סך הכל אופניים:", bikes.count()),
+        ("סך הכל תיקונים:", repairs.count()),
+        ("תיקונים פעילים:", repairs.filter(status__in=['reported', 'diagnosed', 'approved', 'in_progress']).count()),
+        ("תיקונים שהושלמו:", repairs.filter(status__in=['completed', 'delivered']).count()),
+    ]
+    
+    for i, (label, value) in enumerate(stats, 4):
+        ws_stats.cell(row=i, column=1, value=label)
+        ws_stats.cell(row=i, column=2, value=value)
+        ws_stats.cell(row=i, column=1).font = Font(bold=True)
+    
+    # התאמת רוחב עמודות
+    ws_stats.column_dimensions['A'].width = 25
+    ws_stats.column_dimensions['B'].width = 15
+    
+    # שמירה לזיכרון
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+    
+    # יצירת תגובה להורדה
+    response = HttpResponse(
+        output.getvalue(),
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    
+    filename = f"backup_customers_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    return response
+
+
+@login_required
+@manager_required  
+def backup_menu(request):
+    """תפריט גיבויים - אפשרויות גיבוי שונות"""
+    
+    # סטטיסטיקות לתצוגה
+    customers_count = Customer.objects.count()
+    bikes_count = Bike.objects.count()
+    repairs_count = RepairJob.objects.count()
+    active_repairs = RepairJob.objects.filter(
+        status__in=['reported', 'diagnosed', 'approved', 'in_progress']
+    ).count()
+    
+    context = {
+        'customers_count': customers_count,
+        'bikes_count': bikes_count,
+        'repairs_count': repairs_count,
+        'active_repairs': active_repairs,
+    }
+    
+    return render(request, 'workshop/backup_menu.html', context)
+
+
+@login_required
+@manager_required
+def backup_customers_csv(request):
+    """גיבוי לקוחות פשוט בפורמט CSV"""
+    import csv
+    from django.http import HttpResponse
+    from datetime import datetime
+    
+    response = HttpResponse(content_type='text/csv; charset=utf-8')
+    filename = f"customers_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    
+    # הוספת BOM עבור UTF-8 כדי שExcel יזהה עברית
+    response.write('\ufeff')
+    
+    writer = csv.writer(response)
+    
+    # כותרות
+    writer.writerow([
+        'מספר לקוח', 'שם', 'טלפון', 'אימייל', 
+        'משתמש מקושר', 'מספר אופניים', 'סה"כ תיקונים'
+    ])
+    
+    # נתוני לקוחות
+    customers = Customer.objects.select_related('user').prefetch_related('bikes', 'bikes__repairjob_set').all()
+    
+    for customer in customers:
+        bikes_count = customer.bikes.count()
+        repairs_count = sum(bike.repairjob_set.count() for bike in customer.bikes.all())
+        
+        writer.writerow([
+            customer.id,
+            customer.name,
+            customer.phone or '',
+            customer.email or '',
+            customer.user.username if customer.user else 'לא מקושר',
+            bikes_count,
+            repairs_count
+        ])
+    
+    return response
+

@@ -41,6 +41,11 @@ urlpatterns = [
     path('repair/<int:repair_id>/print-label/', views.print_bike_label, name='print_bike_label'),
     path('print-labels/', views.print_labels_menu, name='print_labels_menu'),
     
+    # Backup system
+    path('backup/', views.backup_menu, name='backup_menu'),
+    path('backup/customers/', views.backup_customer_data, name='backup_customer_data'),
+    path('backup/customers-csv/', views.backup_customers_csv, name='backup_customers_csv'),
+    
     # Customer approval
     path('repair/<int:repair_id>/approve/', views.customer_approval, name='customer_approval'),
     

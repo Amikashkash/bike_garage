@@ -1,0 +1,223 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}גיבוי נתונים{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4 mb-5">
+    <h1 class="text-white">💾 גיבוי נתוני המוסך</h1>
+    <p class="text-white">יצוא וגיבוי של כל נתוני הלקוחות, האופניים והתיקונים</p>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <!-- סטטיסטיקות כלליות -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white text-center">
+                    <div class="card-body">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4>{{ customers_count }}</h4>
+                        <small>לקוחות</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white text-center">
+                    <div class="card-body">
+                        <i class="fas fa-bicycle fa-2x mb-2"></i>
+                        <h4>{{ bikes_count }}</h4>
+                        <small>אופניים</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white text-center">
+                    <div class="card-body">
+                        <i class="fas fa-wrench fa-2x mb-2"></i>
+                        <h4>{{ repairs_count }}</h4>
+                        <small>תיקונים</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-white text-center">
+                    <div class="card-body">
+                        <i class="fas fa-cogs fa-2x mb-2"></i>
+                        <h4>{{ active_repairs }}</h4>
+                        <small>פעילים</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- אפשרויות גיבוי -->
+        <div class="card bg-dark border-info mb-4">
+            <div class="card-header bg-info text-dark">
+                <h5 class="mb-0">
+                    <i class="fas fa-download me-2"></i>
+                    אפשרויות גיבוי
+                </h5>
+            </div>
+            <div class="card-body">
+                <!-- גיבוי מלא לקוחות -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h6 class="text-white">
+                            <i class="fas fa-file-excel text-success me-2"></i>
+                            גיבוי מלא - נתוני לקוחות, אופניים ותיקונים
+                        </h6>
+                        <p class="text-muted mb-0">
+                            קובץ Excel עם 4 גיליונות: לקוחות, אופניים, תיקונים וסטטיסטיקות.
+                            כולל את כל הנתונים במערכת.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{% url 'backup_customer_data' %}" class="btn btn-success btn-lg">
+                            <i class="fas fa-download me-2"></i>
+                            הורד גיבוי מלא
+                        </a>
+                    </div>
+                </div>
+
+                <!-- גיבוי CSV פשוט -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <h6 class="text-white">
+                            <i class="fas fa-file-csv text-info me-2"></i>
+                            גיבוי מהיר - לקוחות בלבד (CSV)
+                        </h6>
+                        <p class="text-muted mb-0">
+                            קובץ CSV פשוט עם נתוני לקוחות בסיסיים. מתאים לייבוא לתוכנות אחרות
+                            או לעיון מהיר.
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{% url 'backup_customers_csv' %}" class="btn btn-info btn-lg">
+                            <i class="fas fa-download me-2"></i>
+                            הורד CSV מהיר
+                        </a>
+                    </div>
+                </div>
+
+                <!-- הפרדה -->
+                <hr class="border-secondary">
+
+                <!-- אפשרויות נוספות (לעתיד) -->
+                <div class="row mb-3">
+                    <div class="col-md-8">
+                        <h6 class="text-white">
+                            <i class="fas fa-database text-warning me-2"></i>
+                            גיבוי מסד נתונים מלא
+                        </h6>
+                        <p class="text-muted mb-0">
+                            גיבוי טכני מלא של מסד הנתונים (דורש הרשאות מנהל מערכת).
+                            <small class="text-info">בפיתוח</small>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-clock me-2"></i>
+                            בקרוב
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6 class="text-white">
+                            <i class="fas fa-calendar text-info me-2"></i>
+                            גיבוי אוטומטי יומי
+                        </h6>
+                        <p class="text-muted mb-0">
+                            הגדרת גיבויים אוטומטיים שיופעלו באופן קבוע.
+                            <small class="text-info">בפיתוח</small>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-secondary btn-lg" disabled>
+                            <i class="fas fa-clock me-2"></i>
+                            בקרוב
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- מידע חשוב -->
+        <div class="card bg-dark border-warning">
+            <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    מידע חשוב על גיבויים
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="text-white mb-0" style="font-size: 14px;">
+                    <li><strong>תדירות מומלצת:</strong> בצע גיבוי לפחות פעם בשבוע</li>
+                    <li><strong>אחסון בטוח:</strong> שמור את קבצי הגיבוי במקום נפרד מהמחשב הראשי</li>
+                    <li><strong>בדיקה:</strong> בדוק מדי פעם שקבצי הגיבוי נפתחים כראוי</li>
+                    <li><strong>פרטיות:</strong> קבצי הגיבוי מכילים מידע רגיש - שמור אותם בבטחה</li>
+                    <li><strong>פורמט:</strong> הגיבוי ייצא כקובץ Excel שניתן לפתוח בכל מחשב</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- הוראות שימוש -->
+        <div class="card bg-dark border-info mt-4">
+            <div class="card-header bg-info text-dark">
+                <h6 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>
+                    איך להשתמש בגיבוי
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-info">ליצירת גיבוי:</h6>
+                        <ol class="text-white" style="font-size: 14px;">
+                            <li>לחץ על "הורד גיבוי מלא"</li>
+                            <li>הקובץ יורד אוטומטיות למחשב</li>
+                            <li>שמור את הקובץ במקום בטוח</li>
+                        </ol>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-info">לשחזור נתונים:</h6>
+                        <ol class="text-white" style="font-size: 14px;">
+                            <li>פתח את קובץ הגיבוי</li>
+                            <li>בחר את הגיליון הרלוונטי</li>
+                            <li>העתק את הנתונים הדרושים</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.card-body i.fa-2x {
+    margin-bottom: 10px;
+}
+
+.border-info {
+    border-color: #17a2b8 !important;
+}
+
+.border-warning {
+    border-color: #ffc107 !important;
+}
+</style>
+{% endblock %}
