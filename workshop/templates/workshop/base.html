@@ -29,6 +29,106 @@
     
     <!-- Custom RTL dropdown styling -->
     <style>
+        /* Header and Logo Styling */
+        header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-bottom: 3px solid #3498db;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        /* Floating bike icons animation */
+        header::after {
+            content: "🚲 מוסך האופניים המקצועי 🔧";
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+            animation: titleShimmer 4s ease-in-out infinite;
+        }
+        
+        @keyframes titleShimmer {
+            0%, 100% { 
+                color: rgba(255, 255, 255, 0.8);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            }
+            50% { 
+                color: rgba(52, 152, 219, 1);
+                text-shadow: 1px 1px 4px rgba(52, 152, 219, 0.5);
+            }
+        }
+        
+        header a {
+            display: inline-block;
+            position: relative;
+            z-index: 1;
+            transition: transform 0.3s ease;
+        }
+        
+        header a:hover {
+            transform: scale(1.05);
+        }
+        
+        header img {
+            height: 90px; /* 50% bigger than typical 60px */
+            width: auto;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            padding: 8px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            animation: logoPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% { 
+                transform: scale(1);
+                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+            }
+            50% { 
+                transform: scale(1.02);
+                filter: drop-shadow(0 6px 12px rgba(52, 152, 219, 0.3));
+            }
+        }
+        
+        header img:hover {
+            filter: drop-shadow(0 6px 16px rgba(52, 152, 219, 0.6));
+            border-color: rgba(52, 152, 219, 0.8);
+            background: linear-gradient(145deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
+            animation: none; /* Stop pulse on hover */
+            transform: scale(1.08);
+        }
+        
+        /* Enhanced navbar brand */
+        .navbar-brand:hover {
+            color: #3498db !important;
+            transform: scale(1.05);
+            text-shadow: 2px 2px 8px rgba(52, 152, 219, 0.8) !important;
+        }
+        
         .dropdown-menu {
             direction: rtl;
             text-align: right;
@@ -81,6 +181,20 @@
                 background: rgba(255,255,255,.1);
                 color: #fff;
             }
+            
+            /* Mobile header adjustments */
+            header {
+                padding: 15px 0;
+            }
+            
+            header img {
+                height: 75px; /* Slightly smaller on mobile */
+            }
+            
+            header::after {
+                font-size: 12px;
+                bottom: 3px;
+            }
         }
     </style>
 </head>
@@ -92,9 +206,11 @@
 </header>
 
     <!-- נאבבר רספונסיבי עם Bootstrap -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #34495e 0%, #2c3e50 50%, #34495e 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
         <div class="container-fluid px-3">
-            <a class="navbar-brand" href="{% url 'home' %}">🚲 מוסך האופניים</a>
+            <a class="navbar-brand" href="{% url 'home' %}" style="font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: all 0.3s ease;">
+                🚲 מוסך האופניים
+            </a>
             
             <!-- כפתור hamburger למובייל -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
