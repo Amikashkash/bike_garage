@@ -1,0 +1,166 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}הדפסת מדבקות אופניים{% endblock %}
+
+{% block content %}
+<div class="text-center mt-4 mb-5">
+    <h1 class="text-white">🏷️ הדפסת מדבקות אופניים</h1>
+    <p class="text-white">בחר תיקון להדפסת מדבקה זיהוי לאופניים</p>
+</div>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <!-- סטטיסטיקות -->
+        <div class="card bg-dark border-info mb-4">
+            <div class="card-body text-center">
+                <h5 class="text-info mb-3">
+                    <i class="fas fa-info-circle me-2"></i>
+                    סך הכל {{ total_repairs }} תיקונים פעילים
+                </h5>
+                <p class="text-white mb-0">לחץ על כפתור ההדפסה ליד כל תיקון כדי להדפיס מדבקה</p>
+            </div>
+        </div>
+
+        {% if repairs_by_status %}
+            {% for status, repairs in repairs_by_status.items %}
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-tag me-2"></i>
+                        {{ status }} ({{ repairs|length }})
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for repair in repairs %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="border border-secondary rounded p-3 h-100">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="text-white mb-1">
+                                        <i class="fas fa-hashtag text-primary me-1"></i>
+                                        תיקון #{{ repair.id }}
+                                    </h6>
+                                    <a href="{% url 'print_bike_label' repair.id %}" 
+                                       class="btn btn-sm btn-primary" 
+                                       target="_blank"
+                                       title="הדפס מדבקה">
+                                        <i class="fas fa-print"></i>
+                                    </a>
+                                </div>
+                                
+                                <div class="info-row mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user me-1"></i>
+                                        <strong>לקוח:</strong> {{ repair.bike.customer.name }}
+                                    </small>
+                                </div>
+                                
+                                <div class="info-row mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-bicycle me-1"></i>
+                                        <strong>אופניים:</strong> {{ repair.bike.make }} {{ repair.bike.model|default:"" }}
+                                        {% if repair.bike.color %} - {{ repair.bike.color }}{% endif %}
+                                    </small>
+                                </div>
+                                
+                                {% if repair.assigned_mechanic %}
+                                <div class="info-row mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-user-cog me-1"></i>
+                                        <strong>מכונאי:</strong> {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="info-row mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-clock me-1"></i>
+                                        <strong>נתקבל:</strong> {{ repair.created_at|date:"d/m/Y H:i" }}
+                                    </small>
+                                </div>
+                                
+                                {% if repair.problem_description %}
+                                <div class="info-row">
+                                    <small class="text-muted">
+                                        <i class="fas fa-exclamation-triangle me-1"></i>
+                                        <strong>בעיה:</strong> {{ repair.problem_description|truncatechars:50 }}
+                                    </small>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- כפתורים נוספים -->
+                                <div class="mt-3 d-flex gap-2">
+                                    <a href="{% url 'repair_status' repair.id %}" 
+                                       class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye me-1"></i>צפה
+                                    </a>
+                                    
+                                    {% if repair.status == 'approved' and not repair.assigned_mechanic %}
+                                    <a href="{% url 'assign_mechanic' repair.id %}" 
+                                       class="btn btn-sm btn-outline-warning">
+                                        <i class="fas fa-user-cog me-1"></i>הקצה מכונאי
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="card bg-dark border-warning">
+                <div class="card-body text-center">
+                    <h5 class="text-warning">
+                        <i class="fas fa-info-circle me-2"></i>
+                        אין תיקונים פעילים כרגע
+                    </h5>
+                    <p class="text-white mb-0">כשיהיו תיקונים פעילים, הם יופיעו כאן עם אפשרות הדפסה</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        <!-- עזרה והסבר -->
+        <div class="card bg-dark border-info mt-4">
+            <div class="card-header bg-info text-dark">
+                <h6 class="mb-0">
+                    <i class="fas fa-question-circle me-2"></i>
+                    איך להשתמש במדבקות
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="text-white mb-0" style="font-size: 14px;">
+                    <li>לחץ על כפתור ההדפסה <i class="fas fa-print text-primary"></i> ליד התיקון הרצוי</li>
+                    <li>המדבקה תיפתח בחלון חדש במידות מותאמות להדפסה (10x7 ס"מ)</li>
+                    <li>השתמש בכפתור ההדפסה שבדף או במקש Ctrl+P</li>
+                    <li>הדבק את המדבקה על האופניים לזיהוי במוסך</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.info-row {
+    margin-bottom: 4px;
+}
+
+.info-row i {
+    width: 16px;
+    text-align: center;
+}
+
+.border-secondary {
+    border-color: #6c757d !important;
+}
+
+.card-body .row .col-lg-6:nth-child(odd) .border {
+    border-left: 3px solid var(--bs-primary) !important;
+}
+
+.card-body .row .col-lg-6:nth-child(even) .border {
+    border-left: 3px solid var(--bs-info) !important;
+}
+</style>
+{% endblock %}

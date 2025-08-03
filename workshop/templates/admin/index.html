@@ -1,5 +1,5 @@
 {% extends "admin/base_site.html" %}
-{% load i18n static admin_urls %}
+{% load i18n static %}
 
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
@@ -8,272 +8,41 @@
 {% block extrahead %}
 {{ block.super }}
 <style>
-    /* Custom styling for Hebrew admin dashboard */
-    .dashboard .module table th,
-    .dashboard .module table td {
-        text-align: right;
-        direction: rtl;
-    }
-    
-    .module h2 {
-        background: linear-gradient(135deg, #3498db, #2980b9);
-        color: white;
-        direction: rtl;
-        text-align: center;
-        font-weight: bold;
-        border-radius: 5px 5px 0 0;
-        padding: 15px;
-        margin: 0;
-    }
-    
-    .module {
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
-        border: 1px solid #e1e4e8;
-        overflow: hidden;
-    }
-    
-    .module table {
-        width: 100%;
-        margin: 0;
-    }
-    
-    .module table th,
-    .module table td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #f1f3f4;
-        text-align: right;
-        direction: rtl;
-    }
-    
-    .module table tr:last-child td {
-        border-bottom: none;
-    }
-    
-    .module table tr:hover {
-        background-color: #f8f9fa;
-    }
-    
-    .addlink, .changelink {
-        direction: rtl;
-        text-align: right;
-        text-decoration: none;
-        color: #007cba;
-        font-weight: 500;
-    }
-    
-    .addlink:hover, .changelink:hover {
-        color: #005a87;
-    }
-    
-    .addlink:before {
-        content: "➕ ";
-        margin-left: 5px;
-    }
-    
-    .changelink:before {
-        content: "✏️ ";
-        margin-left: 5px;
-    }
-    
+    /* Test custom styling */
     #content h1 {
-        direction: rtl;
+        color: red !important;
+        font-size: 2em !important;
+        text-align: center !important;
+    }
+    
+    .dashboard .module {
+        display: none !important;
+    }
+    
+    .custom-admin-message {
+        background: green;
+        color: white;
+        padding: 20px;
         text-align: center;
-        color: #2c3e50;
-        margin-bottom: 30px;
-        font-size: 2.2em;
-        font-weight: 300;
-    }
-    
-    .dashboard-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 25px;
+        font-size: 1.5em;
         margin: 20px 0;
-    }
-    
-    /* Specific colors for different sections */
-    .customers-section .module h2 {
-        background: linear-gradient(135deg, #e74c3c, #c0392b);
-    }
-    
-    .bikes-section .module h2 {
-        background: linear-gradient(135deg, #f39c12, #d68910);
-    }
-    
-    .repairs-section .module h2 {
-        background: linear-gradient(135deg, #27ae60, #229954);
-    }
-    
-    .users-section .module h2 {
-        background: linear-gradient(135deg, #8e44ad, #7d3c98);
-    }
-    
-    .system-section .module h2 {
-        background: linear-gradient(135deg, #34495e, #2c3e50);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<h1>{% trans 'ניהול מוסך האופניים' %}</h1>
-
-<div class="dashboard-section">
-    <!-- לקוחות ואופניים -->
-    <div class="customers-section">
-        <div class="module">
-            <h2>👥 ניהול לקוחות ואופניים</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_customer_changelist' %}" class="changelink">לקוחות ({{ customer_count }})</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_customer_add' %}" class="addlink">הוסף לקוח חדש</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_bike_changelist' %}" class="changelink">אופניים ({{ bike_count }})</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_bike_add' %}" class="addlink">הוסף אופניים חדשים</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- תיקונים -->
-    <div class="repairs-section">
-        <div class="module">
-            <h2>🔧 ניהול תיקונים</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_repairjob_changelist' %}" class="changelink">תיקונים ({{ repair_count }})</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_repairjob_add' %}" class="addlink">צור תיקון חדש</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_repairitem_changelist' %}" class="changelink">פריטי תיקון</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_repairupdate_changelist' %}" class="changelink">עדכוני תיקונים</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- קטגוריות -->
-    <div class="bikes-section">
-        <div class="module">
-            <h2>📋 קטגוריות ותיוג</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_category_changelist' %}" class="changelink">קטגוריות ({{ category_count }})</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_category_add' %}" class="addlink">הוסף קטגוריה</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_subcategory_changelist' %}" class="changelink">תת-קטגוריות</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_subcategory_add' %}" class="addlink">הוסף תת-קטגוריה</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- משתמשים ופרופילים -->
-    <div class="users-section">
-        <div class="module">
-            <h2>👤 משתמשים והרשאות</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="{% url 'admin:auth_user_changelist' %}" class="changelink">משתמשים ({{ user_count }})</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:auth_user_add' %}" class="addlink">הוסף משתמש</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:workshop_userprofile_changelist' %}" class="changelink">פרופילי משתמשים</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:auth_group_changelist' %}" class="changelink">קבוצות הרשאות</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- ניהול מערכת -->
-    <div class="system-section">
-        <div class="module">
-            <h2>⚙️ ניהול מערכת</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="{% url 'admin:sessions_session_changelist' %}" class="changelink">סשנים פעילים</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:admin_logentry_changelist' %}" class="changelink">יומן פעילות מנהל</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="{% url 'admin:contenttypes_contenttype_changelist' %}" class="changelink">סוגי תוכן</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- קיצורי דרך מהירים -->
-    <div class="customers-section">
-        <div class="module">
-            <h2>⚡ פעולות מהירות</h2>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><a href="/manager/dashboard/" class="changelink">דשבורד מנהל</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="/mechanic/dashboard/" class="changelink">דשבורד מכונאי</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="/customer/dashboard/" class="changelink">דשבורד לקוח</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="/customers/" class="changelink">רשימת לקוחות</a></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="custom-admin-message">
+    🔧 זהו המסך המותאם שלנו! Custom Admin Template Working! 🔧
 </div>
 
-{% if recent_actions %}
-<div class="module">
-    <h2>📊 פעילות אחרונה</h2>
-    <table>
-        <tbody>
-            {% for entry in recent_actions %}
-            <tr>
-                <td>
-                    {% if entry.is_addition %}➕{% elif entry.is_change %}✏️{% elif entry.is_deletion %}🗑️{% endif %}
-                    {{ entry.object_repr|truncatechars:50 }}
-                    <small>({{ entry.action_time|timesince }} ago)</small>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h1>מערכת ניהול מוסך האופניים - גרסה מותאמת</h1>
+
+<p>אם אתה רואה את ההודעה הזו, הטמפלייט המותאם עובד!</p>
+
+<!-- Hide the original content for now -->
+<div style="display: none;">
+{{ block.super }}
 </div>
-{% endif %}
 {% endblock %}
         text-align: center;
         color: #2c3e50;

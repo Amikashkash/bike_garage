@@ -2,52 +2,373 @@
 
 {% block title %}רשימת לקוחות{% endblock %}
 
+{% block extra_css %}
+<style>
+.stat-card {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #bdc3c7;
+    margin-top: 5px;
+}
+
+.customers-table-container {
+    background: rgba(52, 73, 94, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.pagination .page-link {
+    background-color: #34495e;
+    border-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #3498db;
+    border-color: #3498db;
+}
+
+.pagination .page-link:hover {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.search-filter-section {
+    background: rgba(52, 73, 94, 0.6);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.quick-actions {
+    text-align: center;
+}
+
+.contact-info div {
+    margin-bottom: 5px;
+}
+
+.action-buttons .btn {
+    margin-right: 5px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
-    <div class="col-md-10 mx-auto">
-        <div class="text-center mt-4 mb-5">
+    <div class="col-md-11 mx-auto">
+        <div class="text-center mt-4 mb-4">
             <h1 class="text-white">👥 רשימת לקוחות</h1>
             <p class="text-white">ניהול ומעקב אחר לקוחות המוסך</p>
         </div>
         
-        <!-- Search and Actions Section -->
-        <div class="search-and-actions-section mb-4">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <h2 class="text-white mb-2">לקוחות המוסך</h2>
-                    <div class="search-box">
-                        <div class="input-group">
-                            <span class="input-group-text bg-dark border-secondary">
-                                <i class="fas fa-search text-primary"></i>
-                            </span>
-                            <input type="text" 
-                                   id="customerSearch" 
-                                   class="form-control bg-dark border-secondary text-white" 
-                                   placeholder="חיפוש לקוח לפי שם, טלפון או אימייל..."
-                                   autocomplete="off">
-                            <button class="btn btn-outline-secondary" type="button" id="clearSearch">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 text-end">
-                    <div class="customer-list-actions">
-                        <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
-                            <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
-                        </a>
-                        <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success">
-                            <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
-                        </a>
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{ total_customers }}</span>
+                        <span class="stat-label">סה"כ לקוחות</span>
                     </div>
                 </div>
             </div>
-            
-            <!-- Search Results Counter -->
-            <div class="search-results-info mt-3">
-                <small class="text-white">
-                    <span id="searchResultsText">מציג את כל הלקוחות</span>
-                    <span class="ms-2">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{ customers_with_user }}</span>
+                        <span class="stat-label">עם חשבון</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{ customers_without_user }}</span>
+                        <span class="stat-label">ללא חשבון</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-filter"></i></div>
+                    <div class="stat-content">
+                        <span class="stat-number">{{ filtered_count }}</span>
+                        <span class="stat-label">בתצוגה</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section mb-4">
+            <form method="GET" class="row align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label text-white">חיפוש לקוחות</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary">
+                            <i class="fas fa-search text-primary"></i>
+                        </span>
+                        <input type="text" 
+                               name="search"
+                               value="{{ search_query }}"
+                               class="form-control bg-dark border-secondary text-white" 
+                               placeholder="שם, טלפון, אימייל או שם משתמש..."
+                               autocomplete="off">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label text-white">סינון</label>
+                    <select name="filter" class="form-select bg-dark border-secondary text-white">
+                        <option value="all" {% if filter_type == 'all' %}selected{% endif %}>כל הלקוחות</option>
+                        <option value="with_user" {% if filter_type == 'with_user' %}selected{% endif %}>עם חשבון משתמש</option>
+                        <option value="without_user" {% if filter_type == 'without_user' %}selected{% endif %}>ללא חשבון משתמש</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>חפש
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary w-100">
+                        <i class="fas fa-times me-2"></i>נקה
+                    </a>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Results Info -->
+        {% if search_query or filter_type != 'all' %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            מציג {{ filtered_count }} לקוחות
+            {% if search_query %}מתוך חיפוש עבור "{{ search_query }}"{% endif %}
+            {% if filter_type != 'all' %}
+                {% if filter_type == 'with_user' %}
+                    (עם חשבון משתמש)
+                {% elif filter_type == 'without_user' %}
+                    (ללא חשבון משתמש)
+                {% endif %}
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <!-- Quick Actions -->
+        <div class="quick-actions mb-4">
+            <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
+                <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+            </a>
+            <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success me-2">
+                <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
+            </a>
+            <a href="{% url 'link_customer_user' %}" class="btn btn-warning">
+                <i class="fas fa-link me-2"></i>חבר לקוח למשתמש
+            </a>
+        </div>
+        
+        <!-- Customers Table -->
+        {% if page_obj %}
+        <div class="customers-table-container">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>שם הלקוח</th>
+                            <th>פרטי קשר</th>
+                            <th>סטטוס חשבון</th>
+                            <th>אופניים</th>
+                            <th>תיקונים</th>
+                            <th>פעולות</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in page_obj %}
+                        <tr>
+                            <td>
+                                <div class="customer-name-cell">
+                                    <strong>{{ customer.name }}</strong>
+                                    {% if customer.user %}
+                                        <br><small class="text-muted">{{ customer.user.username }}</small>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="contact-info">
+                                    {% if customer.phone %}
+                                        <div><i class="fas fa-phone me-2"></i>{{ customer.phone }}</div>
+                                    {% endif %}
+                                    {% if customer.email %}
+                                        <div><i class="fas fa-envelope me-2"></i>{{ customer.email }}</div>
+                                    {% elif customer.user.email %}
+                                        <div><i class="fas fa-envelope me-2"></i>{{ customer.user.email }}</div>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if customer.user %}
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-user-check me-1"></i>עם חשבון
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-user-plus me-1"></i>ללא חשבון
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">
+                                    <i class="fas fa-bicycle me-1"></i>{{ customer.bikes.count }}
+                                </span>
+                            </td>
+                            <td>
+                                {% with repair_count=customer.bikes.all|length %}
+                                    {% if repair_count > 0 %}
+                                        <span class="badge bg-primary">
+                                            <i class="fas fa-wrench me-1"></i>
+                                            {% for bike in customer.bikes.all %}{{ bike.repairs.count }}{% if not forloop.last %} + {% endif %}{% endfor %}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">
+                                            <i class="fas fa-minus me-1"></i>0
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'customer_with_bike_edit' customer.id customer.bikes.first.id %}" 
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="עריכת לקוח">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if customer.bikes.exists %}
+                                        <a href="{% url 'customer_bike_add' customer.id %}" 
+                                           class="btn btn-sm btn-outline-success"
+                                           title="הוסף אופניים">
+                                            <i class="fas fa-bicycle"></i>
+                                        </a>
+                                    {% endif %}
+                                    <a href="/admin/workshop/customer/{{ customer.id }}/change/" 
+                                       class="btn btn-sm btn-outline-warning"
+                                       title="ניהול מתקדם">
+                                        <i class="fas fa-cog"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                <i class="fas fa-search fa-2x mb-3"></i>
+                                <p>לא נמצאו לקוחות התואמים לחיפוש</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+        <nav aria-label="רשימת לקוחות - דפדוף">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page=1">
+                            <i class="fas fa-angle-double-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                            <i class="fas fa-angle-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ num }}</span>
+                        </li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.next_page_number }}">
+                            <i class="fas fa-angle-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
+                            <i class="fas fa-angle-double-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        
+        <!-- Pagination Info -->
+        <div class="pagination-info text-center text-white mt-3">
+            <small>
+                מציג לקוחות {{ page_obj.start_index }}-{{ page_obj.end_index }} 
+                מתוך {{ page_obj.paginator.count }} לקוחות
+                (עמוד {{ page_obj.number }} מתוך {{ page_obj.paginator.num_pages }})
+            </small>
+        </div>
+        {% endif %}
+        
+        {% else %}
+        <div class="text-center text-white py-5">
+            <i class="fas fa-users fa-3x mb-3"></i>
+            <h3>אין לקוחות במערכת</h3>
+            <p>התחל בהוספת הלקוח הראשון</p>
+            <a href="{% url 'customer_form' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
                         (<span id="totalCustomers">{{ customers_with_user.count|add:customers_without_user.count }}</span> לקוחות במערכת)
                     </span>
                 </small>

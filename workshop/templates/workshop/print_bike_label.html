@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדבקה לאופניים - תיקון #{{ repair_job.id }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            direction: rtl;
+        }
+        
+        .label-container {
+            width: 10cm;
+            height: 7cm;
+            background: white;
+            border: 2px solid #333;
+            padding: 10px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+        
+        .workshop-name {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .job-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #d63384;
+            margin: 2px 0;
+        }
+        
+        .info-section {
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+            align-items: center;
+        }
+        
+        .label-field {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .field-value {
+            color: #000;
+            text-align: left;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .status-reported { background-color: #ffc107; color: #000; }
+        .status-diagnosed { background-color: #17a2b8; }
+        .status-approved { background-color: #28a745; }
+        .status-in_progress { background-color: #007bff; }
+        .status-awaiting_quality_check { background-color: #fd7e14; }
+        .status-quality_approved { background-color: #20c997; }
+        .status-delivered { background-color: #6c757d; }
+        .status-stuck { background-color: #dc3545; }
+        
+        .bottom-section {
+            border-top: 1px solid #ddd;
+            padding-top: 5px;
+            margin-top: 8px;
+            font-size: 9px;
+            color: #666;
+        }
+        
+        .print-controls {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .print-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 0 5px;
+        }
+        
+        .print-btn:hover {
+            background: #0056b3;
+        }
+        
+        .back-btn {
+            background: #6c757d;
+        }
+        
+        .back-btn:hover {
+            background: #545b62;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .print-controls {
+                display: none;
+            }
+            
+            .label-container {
+                width: 10cm;
+                height: 7cm;
+                border: 2px solid #333;
+                margin: 0;
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+        }
+        
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+    </style>
+</head>
+<body>
+    <div class="print-controls">
+        <button class="print-btn" onclick="window.print()">🖨️ הדפס מדבקה</button>
+        <button class="print-btn back-btn" onclick="history.back()">🔙 חזור</button>
+    </div>
+
+    <div class="label-container">
+        <div class="header">
+            <h2 class="workshop-name">מוסך האופניים</h2>
+            <div class="job-number">תיקון #{{ repair_job.id }}</div>
+        </div>
+        
+        <div class="info-section">
+            <div class="info-row">
+                <span class="label-field">לקוח:</span>
+                <span class="field-value">{{ repair_job.bike.customer.name }}</span>
+            </div>
+            
+            <div class="info-row">
+                <span class="label-field">טלפון:</span>
+                <span class="field-value">{{ repair_job.bike.customer.phone|default:"לא צוין" }}</span>
+            </div>
+            
+            <div class="info-row">
+                <span class="label-field">אופניים:</span>
+                <span class="field-value">{{ repair_job.bike.make }} {{ repair_job.bike.model|default:"" }}</span>
+            </div>
+            
+            {% if repair_job.bike.color %}
+            <div class="info-row">
+                <span class="label-field">צבע:</span>
+                <span class="field-value">{{ repair_job.bike.color }}</span>
+            </div>
+            {% endif %}
+            
+            {% if repair_job.assigned_mechanic %}
+            <div class="info-row">
+                <span class="label-field">מכונאי:</span>
+                <span class="field-value">{{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}</span>
+            </div>
+            {% endif %}
+            
+            <div class="info-row">
+                <span class="label-field">סטטוס:</span>
+                <span class="field-value">
+                    <span class="status-badge status-{{ repair_job.status }}">
+                        {{ repair_job.get_status_display }}
+                    </span>
+                </span>
+            </div>
+            
+            {% if repair_job.problem_description %}
+            <div class="info-row">
+                <span class="label-field">בעיה:</span>
+                <span class="field-value" style="font-size: 10px;">
+                    {{ repair_job.problem_description|truncatechars:40 }}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="bottom-section">
+            <div style="text-align: center;">
+                נתקבל: {{ repair_job.created_at|date:"d/m/Y H:i" }}
+                {% if repair_job.diagnosed_at %}
+                | אובחן: {{ repair_job.diagnosed_at|date:"d/m/Y" }}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // הדפסה אוטומטית בקליק על Ctrl+P
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                window.print();
+            }
+        });
+        
+        // הדפסה אוטומטית בעת טעינת הדף (אופציונלי - הערה זו כרגע)
+        // window.addEventListener('load', function() {
+        //     setTimeout(() => window.print(), 500);
+        // });
+    </script>
+</body>
+</html>

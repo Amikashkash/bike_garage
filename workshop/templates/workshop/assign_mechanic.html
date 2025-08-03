@@ -30,11 +30,17 @@
     <div class="col-md-10 mx-auto">
         <!-- Repair Job Details Card -->
         <div class="card bg-dark border-primary mb-4">
-            <div class="card-header bg-primary text-white">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">
                     <i class="fas fa-info-circle me-2"></i>
                     פרטי התיקון #{{ repair_job.id }}
                 </h5>
+                <div>
+                    <a href="{% url 'print_bike_label' repair_job.id %}" class="btn btn-light btn-sm" target="_blank">
+                        <i class="fas fa-print me-1"></i>
+                        הדפס מדבקה
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">

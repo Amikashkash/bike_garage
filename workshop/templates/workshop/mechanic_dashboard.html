@@ -137,12 +137,12 @@
                     {% endif %}
 
                     <div class="row mt-4">
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-orange btn-lg btn-block">
                                 <i class="fas fa-edit"></i> עדכן התקדמות
                             </a>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <a href="{% url 'repair_status' repair.id %}" class="btn btn-info btn-lg btn-block">
                                 <i class="fas fa-eye"></i> צפה בפרטים
                             </a>
@@ -157,6 +157,11 @@
                                 <i class="fas fa-play"></i> המשך עבודה
                             </button>
                             {% endif %}
+                        </div>
+                        <div class="col-md-3">
+                            <a href="{% url 'print_bike_label' repair.id %}" class="btn btn-primary btn-lg btn-block" target="_blank">
+                                <i class="fas fa-print"></i> הדפס מדבקה
+                            </a>
                         </div>
                     </div>
                 </div>

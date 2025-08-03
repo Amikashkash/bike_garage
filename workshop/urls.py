@@ -37,6 +37,10 @@ urlpatterns = [
     path('manager/repair/<int:repair_id>/assign/', views.assign_mechanic, name='assign_mechanic'),
     path('manager/response-stuck/', views.manager_response_stuck, name='manager_response_stuck'),
     
+    # Print labels
+    path('repair/<int:repair_id>/print-label/', views.print_bike_label, name='print_bike_label'),
+    path('print-labels/', views.print_labels_menu, name='print_labels_menu'),
+    
     # Customer approval
     path('repair/<int:repair_id>/approve/', views.customer_approval, name='customer_approval'),
     

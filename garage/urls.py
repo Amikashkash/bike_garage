@@ -16,10 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from workshop.admin import create_mechanic_view, admin_site
+from workshop.admin import create_mechanic_view
 
 urlpatterns = [
-    path('admin/', admin_site.urls),
+    path('admin/', admin.site.urls),
     path('admin/create-mechanic/', create_mechanic_view, name='create_mechanic'),
     path('', include('workshop.urls')),
     

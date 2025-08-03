@@ -26,6 +26,63 @@
    
 
     {% block extra_css %}{% endblock %}
+    
+    <!-- Custom RTL dropdown styling -->
+    <style>
+        .dropdown-menu {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        .dropdown-item {
+            direction: rtl;
+            text-align: right;
+            padding: 8px 16px;
+        }
+        
+        .dropdown-item i {
+            margin-left: 8px;
+            margin-right: 0;
+            width: 16px;
+        }
+        
+        .dropdown-header {
+            direction: rtl;
+            text-align: right;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .dropdown-item-text {
+            direction: rtl;
+            text-align: right;
+            font-size: 0.85em;
+        }
+        
+        .navbar-nav .dropdown-toggle::after {
+            margin-right: 0.255em;
+            margin-left: 0;
+        }
+        
+        @media (max-width: 991.98px) {
+            .dropdown-menu {
+                background: none;
+                border: none;
+                box-shadow: none;
+                padding-right: 20px;
+            }
+            
+            .dropdown-item {
+                color: rgba(255,255,255,.85);
+                padding: 4px 0;
+            }
+            
+            .dropdown-item:hover {
+                background: rgba(255,255,255,.1);
+                color: #fff;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -47,63 +104,94 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
+                        
+                        <!-- תפריט ללקוחות -->
                         {% if user.userprofile.role == 'customer' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'customer_dashboard' %}">הדשבורד שלי</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'customer_report' %}">דווח על תקלה</a>
                             </li>
                         {% endif %}
-                        {% if user.userprofile.role == 'mechanic' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'mechanic_dashboard' %}">דשבורד מכונאי</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'repair_form' %}">תיקון חדש</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'bike_form' %}">אופניים חדשים</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'customer_form' %}">לקוח חדש</a>
-                            </li>
-                        {% endif %}
+                        
+        <!-- תפריט למכונאים -->
+        {% if user.userprofile.role == 'mechanic' %}
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'mechanic_dashboard' %}"><i class="fas fa-tools"></i> דשבורד מכונאי</a>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus"></i> הוסף חדש
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="{% url 'repair_form' %}"><i class="fas fa-wrench"></i> תיקון חדש</a></li>
+                    <li><a class="dropdown-item" href="{% url 'bike_form' %}"><i class="fas fa-bicycle"></i> אופניים חדשים</a></li>
+                    <li><a class="dropdown-item" href="{% url 'customer_form' %}"><i class="fas fa-user-plus"></i> לקוח חדש</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'print_labels_menu' %}"><i class="fas fa-print"></i> מדבקות</a>
+            </li>
+        {% endif %}                        <!-- תפריט למנהלים -->
                         {% if user.userprofile.role == 'manager' %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'manager_dashboard' %}">דשבורד מנהל</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-tachometer-alt"></i> דשבורדים
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{% url 'manager_dashboard' %}"><i class="fas fa-chart-line"></i> דשבורד מנהל</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'mechanic_dashboard' %}"><i class="fas fa-tools"></i> דשבורד מכונאי</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'mechanic_dashboard' %}">דשבורד מכונאי</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-plus"></i> הוסף חדש
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{% url 'repair_form' %}"><i class="fas fa-wrench"></i> תיקון חדש</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'bike_form' %}"><i class="fas fa-bicycle"></i> אופניים חדשים</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'customer_form' %}"><i class="fas fa-user-plus"></i> לקוח חדש</a></li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'repair_form' %}">תיקון חדש</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'bike_form' %}">אופניים חדשים</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'customer_form' %}">לקוח חדש</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'customer_list' %}">רשימת לקוחות</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'category_list' %}">קטגוריות</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/admin/">ניהול</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'link_customer_user' %}">חיבור לקוחות</a>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-list"></i> רשימות וניהול
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item" href="{% url 'customer_list' %}"><i class="fas fa-users"></i> רשימת לקוחות</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'category_list' %}"><i class="fas fa-tags"></i> קטגוריות</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'link_customer_user' %}"><i class="fas fa-link"></i> חיבור לקוחות</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'print_labels_menu' %}"><i class="fas fa-print"></i> הדפסת מדבקות</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="/admin/"><i class="fas fa-cog"></i> ניהול מתקדם</a></li>
+                                </ul>
                             </li>
                         {% endif %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">התנתק ({{ user.username }})</a>
+                        
+                        <!-- פרופיל והתנתקות -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user"></i> {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><h6 class="dropdown-header">{{ user.get_full_name|default:user.username }}</h6></li>
+                                <li><small class="dropdown-item-text text-muted">{{ user.userprofile.get_role_display }}</small></li>
+                                <li><hr class="dropdown-divider"></li>
+                                {% if user.userprofile.role == 'customer' %}
+                                    <li><a class="dropdown-item" href="{% url 'customer_dashboard' %}"><i class="fas fa-user-circle"></i> הפרופיל שלי</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> התנתק</a></li>
+                            </ul>
                         </li>
+                        
                     {% else %}
+                        <!-- תפריט לאורחים -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">התחבר</a>
+                            <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> התחבר</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'register' %}">הרשם</a>
+                            <a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> הרשם</a>
                         </li>
                     {% endif %}
                 </ul>

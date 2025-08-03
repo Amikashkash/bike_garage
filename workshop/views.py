@@ -332,16 +332,55 @@ def register(request):
 @login_required
 @manager_required
 def customer_list(request):
-    """רשימת כל הלקוחות - מחולקת לפי סוג"""
-    # לקוחות עם חשבון משתמש (נרשמו בעצמם)
-    customers_with_user = Customer.objects.filter(user__isnull=False).select_related('user')
+    """רשימת כל הלקוחות - עם חיפוש ו-pagination"""
+    from django.core.paginator import Paginator
+    from django.db.models import Q
     
-    # לקוחות ללא חשבון משתמש (נוצרו ע"י מנהל)
-    customers_without_user = Customer.objects.filter(user__isnull=True)
+    # קבלת פרמטרי חיפוש וסינון
+    search_query = request.GET.get('search', '').strip()
+    filter_type = request.GET.get('filter', 'all')  # all, with_user, without_user
+    
+    # בניית שאילתה בסיסית
+    customers = Customer.objects.select_related('user').prefetch_related('bikes')
+    
+    # סינון לפי סוג לקוח
+    if filter_type == 'with_user':
+        customers = customers.filter(user__isnull=False)
+    elif filter_type == 'without_user':
+        customers = customers.filter(user__isnull=True)
+    
+    # חיפוש טקסט
+    if search_query:
+        customers = customers.filter(
+            Q(name__icontains=search_query) |
+            Q(phone__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(user__username__icontains=search_query) |
+            Q(user__first_name__icontains=search_query) |
+            Q(user__last_name__icontains=search_query)
+        )
+    
+    # מיון לפי שם
+    customers = customers.order_by('name')
+    
+    # Pagination - 25 לקוחות לעמוד
+    paginator = Paginator(customers, 25)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    # סטטיסטיקות
+    total_customers = Customer.objects.count()
+    customers_with_user = Customer.objects.filter(user__isnull=False).count()
+    customers_without_user = Customer.objects.filter(user__isnull=True).count()
     
     context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'filter_type': filter_type,
+        'total_customers': total_customers,
         'customers_with_user': customers_with_user,
         'customers_without_user': customers_without_user,
+        'filtered_count': paginator.count,
     }
     return render(request, 'workshop/customer_list.html', context)
 
@@ -1363,4 +1402,38 @@ def manager_notify_customer(request, repair_id):
     
     return JsonResponse({'success': False, 'error': 'שיטה לא נתמכת'})
 
+
+@login_required
+@user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
+def print_bike_label(request, repair_id):
+    """הדפסת מדבקה לאופניים עם פרטי התיקון"""
+    repair_job = get_object_or_404(RepairJob, id=repair_id)
+    
+    return render(request, 'workshop/print_bike_label.html', {
+        'repair_job': repair_job,
+    })
+
+
+@login_required
+@user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
+def print_labels_menu(request):
+    """תפריט הדפסת מדבקות - רשימת תיקונים פעילים"""
+    
+    # תיקונים פעילים לפי קטגוריות
+    active_repairs = RepairJob.objects.filter(
+        status__in=['reported', 'diagnosed', 'approved', 'in_progress', 'awaiting_quality_check']
+    ).select_related('bike', 'bike__customer', 'assigned_mechanic').order_by('-created_at')
+    
+    # קיבוץ לפי סטטוס
+    repairs_by_status = {}
+    for repair in active_repairs:
+        status = repair.get_status_display()
+        if status not in repairs_by_status:
+            repairs_by_status[status] = []
+        repairs_by_status[status].append(repair)
+    
+    return render(request, 'workshop/print_labels_menu.html', {
+        'repairs_by_status': repairs_by_status,
+        'total_repairs': active_repairs.count(),
+    })
 
