@@ -116,7 +116,7 @@
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-user-check"></i></div>
                     <div class="stat-content">
-                        <span class="stat-number">{{ customers_with_user }}</span>
+                        <span class="stat-number">{{ customers_with_user_count }}</span>
                         <span class="stat-label">עם חשבון</span>
                     </div>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
                     <div class="stat-content">
-                        <span class="stat-number">{{ customers_without_user }}</span>
+                        <span class="stat-number">{{ customers_without_user_count }}</span>
                         <span class="stat-label">ללא חשבון</span>
                     </div>
                 </div>
@@ -278,11 +278,19 @@
                             </td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{% url 'customer_with_bike_edit' customer.id customer.bikes.first.id %}" 
-                                       class="btn btn-sm btn-outline-primary"
-                                       title="עריכת לקוח">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    {% if customer.bikes.exists %}
+                                        <a href="{% url 'customer_with_bike_edit' customer.id customer.bikes.first.id %}" 
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="עריכת לקוח">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'customer_bike_add' customer.id %}" 
+                                           class="btn btn-sm btn-outline-success"
+                                           title="הוסף אופניים ללקוח">
+                                            <i class="fas fa-bicycle"></i>
+                                        </a>
+                                    {% endif %}
                                     {% if customer.bikes.exists %}
                                         <a href="{% url 'customer_bike_add' customer.id %}" 
                                            class="btn btn-sm btn-outline-success"
@@ -378,8 +386,7 @@
     </div>
 </div>
 
-{% endblock %}
-                        (<span id="totalCustomers">{{ customers_with_user.count|add:customers_without_user.count }}</span> לקוחות במערכת)
+                        (<span id="totalCustomers">{{ customers_with_user_count|add:customers_without_user_count }}</span> לקוחות במערכת)
                     </span>
                 </small>
             </div>

@@ -370,16 +370,20 @@ def customer_list(request):
     
     # סטטיסטיקות
     total_customers = Customer.objects.count()
-    customers_with_user = Customer.objects.filter(user__isnull=False).count()
-    customers_without_user = Customer.objects.filter(user__isnull=True).count()
+    customers_with_user_qs = Customer.objects.filter(user__isnull=False)
+    customers_without_user_qs = Customer.objects.filter(user__isnull=True)
+    customers_with_user = customers_with_user_qs.count()
+    customers_without_user = customers_without_user_qs.count()
     
     context = {
         'page_obj': page_obj,
         'search_query': search_query,
         'filter_type': filter_type,
         'total_customers': total_customers,
-        'customers_with_user': customers_with_user,
-        'customers_without_user': customers_without_user,
+        'customers_with_user': customers_with_user_qs,  # queryset for iteration
+        'customers_without_user': customers_without_user_qs,  # queryset for iteration
+        'customers_with_user_count': customers_with_user,  # count for display
+        'customers_without_user_count': customers_without_user,  # count for display
         'filtered_count': paginator.count,
     }
     return render(request, 'workshop/customer_list.html', context)
@@ -437,7 +441,7 @@ def manager_dashboard(request):
         
         # הפרדה נכונה: תיקונים מאושרים ממתינים להקצאת מכונאי vs בביצוע
         approved_waiting_for_mechanic = RepairJob.objects.filter(
-            status='approved', 
+            status__in=['approved', 'partially_approved'], 
             assigned_mechanic__isnull=True
         ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
         
@@ -447,7 +451,7 @@ def manager_dashboard(request):
         
         # תיקונים מאושרים עם מכונאי מוקצה אבל עדיין לא התחילו
         approved_with_mechanic = RepairJob.objects.filter(
-            status='approved',
+            status__in=['approved', 'partially_approved'],
             assigned_mechanic__isnull=False
         ).select_related('bike', 'bike__customer', 'assigned_mechanic').prefetch_related('repair_items')
         
