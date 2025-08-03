@@ -1,0 +1,241 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* RTL list styling */
+    #changelist {
+        direction: rtl;
+    }
+    
+    #changelist table {
+        direction: rtl;
+    }
+    
+    #changelist th {
+        text-align: right;
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+        color: white;
+        font-weight: bold;
+        padding: 12px;
+        border-bottom: 2px solid #3498db;
+    }
+    
+    #changelist td {
+        text-align: right;
+        padding: 10px 12px;
+        border-bottom: 1px solid #ecf0f1;
+    }
+    
+    #changelist tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    #changelist tr:hover {
+        background: #e3f2fd;
+    }
+    
+    /* Search box */
+    #toolbar {
+        direction: rtl;
+        text-align: right;
+        background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        border: 2px solid #3498db;
+    }
+    
+    #searchbar {
+        direction: rtl;
+        text-align: right;
+        font-family: "Segoe UI", Arial, sans-serif;
+        padding: 8px;
+        border: 2px solid #3498db;
+        border-radius: 5px;
+        width: 300px;
+    }
+    
+    #searchbar:focus {
+        outline: none;
+        border-color: #2980b9;
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+    
+    /* Action buttons */
+    .actions {
+        direction: rtl;
+        text-align: right;
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        border-right: 4px solid #f39c12;
+    }
+    
+    .actions select {
+        direction: rtl;
+        text-align: right;
+        margin-left: 10px;
+        padding: 5px;
+        border: 1px solid #bdc3c7;
+        border-radius: 3px;
+    }
+    
+    .actions button {
+        background: #f39c12;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    
+    .actions button:hover {
+        background: #e67e22;
+    }
+    
+    /* Filters */
+    #changelist-filter {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    #changelist-filter h3 {
+        background: linear-gradient(135deg, #8e44ad, #7d3c98);
+        color: white;
+        padding: 10px;
+        margin: 0;
+        border-radius: 5px 5px 0 0;
+        font-size: 14px;
+    }
+    
+    #changelist-filter ul {
+        background: white;
+        border: 1px solid #8e44ad;
+        border-top: none;
+        border-radius: 0 0 5px 5px;
+        margin-bottom: 15px;
+        padding: 0;
+    }
+    
+    #changelist-filter li {
+        border-bottom: 1px solid #ecf0f1;
+        padding: 0;
+    }
+    
+    #changelist-filter li a {
+        display: block;
+        padding: 8px 12px;
+        color: #2c3e50;
+        text-decoration: none;
+        direction: rtl;
+        text-align: right;
+    }
+    
+    #changelist-filter li a:hover {
+        background: #f8f9fa;
+        color: #8e44ad;
+    }
+    
+    #changelist-filter li.selected a {
+        background: #8e44ad;
+        color: white;
+        font-weight: bold;
+    }
+    
+    /* Pagination */
+    .paginator {
+        direction: rtl;
+        text-align: center;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        margin-top: 20px;
+        border: 2px solid #3498db;
+    }
+    
+    .paginator a {
+        background: #3498db;
+        color: white;
+        padding: 8px 12px;
+        margin: 0 2px;
+        border-radius: 3px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .paginator a:hover {
+        background: #2980b9;
+    }
+    
+    .paginator .this-page {
+        background: #e74c3c;
+        color: white;
+        padding: 8px 12px;
+        margin: 0 2px;
+        border-radius: 3px;
+        font-weight: bold;
+    }
+    
+    /* Add button */
+    .addlink {
+        direction: rtl;
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white !important;
+        padding: 12px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+        display: inline-block;
+        margin-bottom: 20px;
+        border: 2px solid #27ae60;
+    }
+    
+    .addlink:hover {
+        background: linear-gradient(135deg, #229954, #1e8449);
+        border-color: #229954;
+    }
+    
+    .addlink:before {
+        content: "➕ ";
+        margin-left: 5px;
+    }
+    
+    /* Object tools */
+    .object-tools {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    .object-tools li {
+        margin-left: 0;
+        margin-right: 10px;
+    }
+    
+    .object-tools a {
+        background: #17a2b8;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .object-tools a:hover {
+        background: #138496;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">🏠 עמוד ראשי</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a>
+    &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* RTL form styling */
+    .form-row {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    .form-row label {
+        font-weight: bold;
+        color: #2c3e50;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+    
+    .form-row input, .form-row select, .form-row textarea {
+        direction: rtl;
+        text-align: right;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+    
+    .help {
+        direction: rtl;
+        text-align: right;
+        font-style: italic;
+        color: #666;
+    }
+    
+    .errorlist {
+        direction: rtl;
+        text-align: right;
+        color: #d32f2f;
+        font-weight: bold;
+    }
+    
+    .submit-row {
+        direction: rtl;
+        text-align: left;
+        padding: 20px 0;
+        border-top: 2px solid #3498db;
+        margin-top: 20px;
+    }
+    
+    .submit-row input {
+        margin-right: 10px;
+        margin-left: 0;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .default {
+        background: #3498db;
+        border: none;
+        color: white;
+    }
+    
+    .default:hover {
+        background: #2980b9;
+    }
+    
+    /* Breadcrumbs styling */
+    .breadcrumbs {
+        direction: rtl;
+        text-align: right;
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+        padding: 10px 20px;
+        color: white;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+    
+    .breadcrumbs a {
+        color: #3498db;
+        text-decoration: none;
+    }
+    
+    .breadcrumbs a:hover {
+        color: #5dade2;
+        text-decoration: underline;
+    }
+    
+    /* Field boxes */
+    .field-box {
+        margin-bottom: 15px;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 5px;
+        border-right: 4px solid #3498db;
+    }
+    
+    /* Better styling for Hebrew text in selects */
+    select option {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* Inline forms */
+    .inline-group {
+        direction: rtl;
+    }
+    
+    .inline-group h2 {
+        direction: rtl;
+        text-align: right;
+        background: linear-gradient(135deg, #27ae60, #229954);
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+    }
+    
+    .inline-related {
+        direction: rtl;
+        text-align: right;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+{% if not is_popup %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">🏠 עמוד ראשי</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; {% if has_change_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+    &rsaquo; {% if add %}הוספת {{ opts.verbose_name }}{% else %}עריכת {{ opts.verbose_name }}{% endif %}
+</div>
+{% endif %}
+{% endblock %}

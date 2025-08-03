@@ -1,0 +1,75 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name" style="direction: rtl; text-align: center;">
+    <a href="{% url 'admin:index' %}" style="color: #f8f9fa; text-decoration: none;">
+        🔧 מערכת ניהול מוסך אופניים
+    </a>
+</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* RTL support for admin */
+    body {
+        direction: rtl;
+    }
+    
+    #header {
+        background: linear-gradient(135deg, #2c3e50, #34495e);
+        border-bottom: 3px solid #3498db;
+    }
+    
+    #site-name a {
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #f8f9fa !important;
+    }
+    
+    .breadcrumbs {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* Improve Hebrew text rendering */
+    .form-row label,
+    .field-box label,
+    th,
+    td {
+        font-family: "Segoe UI", Arial, sans-serif;
+        font-size: 14px;
+    }
+    
+    /* Better styling for Hebrew content */
+    .module h2, .module caption, .inline-group h2 {
+        direction: rtl;
+        text-align: right;
+    }
+    
+    /* Fix table headers */
+    #result_list th {
+        text-align: right;
+    }
+    
+    /* Fix form fields */
+    .form-row {
+        direction: rtl;
+    }
+    
+    /* Better button styling */
+    .submit-row {
+        direction: rtl;
+        text-align: left;
+    }
+    
+    .submit-row input {
+        margin-left: 0;
+        margin-right: 15px;
+    }
+</style>
+{% endblock %}

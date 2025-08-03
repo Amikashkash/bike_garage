@@ -368,12 +368,25 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentInput = getCurrentDescriptionInput();
             
             if (currentInput) {
-                // If input is empty, set the category text directly
-                if (!currentInput.value.trim()) {
-                    currentInput.value = categoryText;
+                // If input already has content, add a new item first
+                if (currentInput.value.trim()) {
+                    // Click add-item to create a new box
+                    document.getElementById('add-item').click();
+                    
+                    // Wait for the new item to be created, then fill it
+                    setTimeout(() => {
+                        const newInput = getCurrentDescriptionInput();
+                        if (newInput && newInput !== currentInput) {
+                            newInput.value = categoryText;
+                            newInput.focus();
+                            newInput.setSelectionRange(newInput.value.length, newInput.value.length);
+                        }
+                    }, 100);
                 } else {
-                    // If input has text, append the category with a separator
-                    currentInput.value += ' - ' + categoryText;
+                    // If input is empty, set the category text directly
+                    currentInput.value = categoryText;
+                    currentInput.focus();
+                    currentInput.setSelectionRange(currentInput.value.length, currentInput.value.length);
                 }
                 
                 // Add visual feedback
@@ -381,19 +394,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     categoryElement.classList.remove('category-added');
                 }, 600);
-                
-                // Focus on the input for immediate editing
-                currentInput.focus();
-                currentInput.setSelectionRange(currentInput.value.length, currentInput.value.length);
-                
-                // If this was the last input and it's now filled, auto-add a new item
-                const allInputs = document.querySelectorAll('input[name$="_description"]');
-                const isLastInput = currentInput === allInputs[allInputs.length - 1];
-                const allFilled = Array.from(allInputs).every(input => input.value.trim());
-                
-                if (isLastInput && allFilled) {
-                    document.getElementById('add-item').click();
-                }
             }
         }
     });

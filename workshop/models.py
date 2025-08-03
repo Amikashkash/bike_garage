@@ -10,35 +10,51 @@ class UserProfile(models.Model):
         ('manager', 'מנהל'),
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=USER_ROLES, default='customer')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="משתמש")
+    role = models.CharField(max_length=20, choices=USER_ROLES, default='customer', verbose_name="תפקיד")
+
+    class Meta:
+        verbose_name = "פרופיל משתמש"
+        verbose_name_plural = "פרופילי משתמשים"
 
     def __str__(self):
         return f"{self.user.username} ({self.get_role_display()})"
 
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
-    email = models.EmailField(blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, verbose_name="משתמש")
+    name = models.CharField(max_length=100, verbose_name="שם")
+    phone = models.CharField(max_length=20, verbose_name="טלפון")
+    email = models.EmailField(blank=True, verbose_name="אימייל")
+
+    class Meta:
+        verbose_name = "לקוח"
+        verbose_name_plural = "לקוחות"
 
     def __str__(self):
         return self.name
 
 
 class Bike(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bikes')
-    brand = models.CharField(max_length=100)
-    model = models.CharField(max_length=100, blank=True)
-    color = models.CharField(max_length=50, blank=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='bikes', verbose_name="לקוח")
+    brand = models.CharField(max_length=100, verbose_name="מותג")
+    model = models.CharField(max_length=100, blank=True, verbose_name="דגם")
+    color = models.CharField(max_length=50, blank=True, verbose_name="צבע")
+
+    class Meta:
+        verbose_name = "אופניים"
+        verbose_name_plural = "אופניים"
 
     def __str__(self):
         return f"{self.brand} {self.model or ''} ({self.customer.name})"
 
 
 class RepairCategory(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    name = models.CharField(max_length=100, unique=True, verbose_name="שם")
+
+    class Meta:
+        verbose_name = "קטגורית תיקון"
+        verbose_name_plural = "קטגוריות תיקונים"
 
     def __str__(self):
         return self.name
@@ -48,12 +64,15 @@ class RepairSubCategory(models.Model):
     category = models.ForeignKey(
         RepairCategory,
         on_delete=models.CASCADE,
-        related_name='subcategories'
+        related_name='subcategories',
+        verbose_name="קטגוריה"
     )
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, verbose_name="שם")
 
     class Meta:
         unique_together = ('category', 'name')
+        verbose_name = "תת-קטגורית תיקון"
+        verbose_name_plural = "תת-קטגוריות תיקונים"
 
     def __str__(self):
         return f"{self.category.name} > {self.name}"
@@ -72,20 +91,21 @@ class RepairJob(models.Model):
         ('delivered', 'נמסר ללקוח'),
     ]
     
-    bike = models.ForeignKey(Bike, on_delete=models.CASCADE)
+    bike = models.ForeignKey(Bike, on_delete=models.CASCADE, verbose_name="אופניים")
     subcategories = models.ManyToManyField(
         RepairSubCategory,
         blank=True,
-        related_name='repair_jobs'
+        related_name='repair_jobs',
+        verbose_name="תת-קטגוריות"
     )
     problem_description = models.TextField(blank=True, verbose_name="תיאור התקלה")
     diagnosis = models.TextField(blank=True, verbose_name="אבחון")
     
     # פרטי סטטוס
-    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='reported')
-    created_at = models.DateTimeField(auto_now_add=True)
-    diagnosed_at = models.DateTimeField(null=True, blank=True)
-    approved_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default='reported', verbose_name="סטטוס")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
+    diagnosed_at = models.DateTimeField(null=True, blank=True, verbose_name="אובחן בתאריך")
+    approved_at = models.DateTimeField(null=True, blank=True, verbose_name="אושר בתאריך")
     
     # משתמשים במעורבות
     assigned_mechanic = models.ForeignKey(
@@ -93,7 +113,8 @@ class RepairJob(models.Model):
         on_delete=models.SET_NULL, 
         null=True, 
         blank=True,
-        related_name='assigned_repairs'
+        related_name='assigned_repairs',
+        verbose_name="מכונאי מוקצה"
     )
     
     # סטטוס "תקוע" למכונאי
@@ -132,6 +153,11 @@ class RepairJob(models.Model):
 
     def __str__(self):
         return f"תיקון {self.bike} - {self.get_status_display()}"
+    
+    class Meta:
+        verbose_name = "תיקון"
+        verbose_name_plural = "תיקונים"
+        ordering = ['-created_at']
     
     def get_total_price(self):
         """סה"כ מחיר כל הפעולות"""
@@ -205,7 +231,7 @@ class RepairItem(models.Model):
         ('blocked', 'תקוע'),
     ]
     
-    repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='repair_items')
+    repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='repair_items', verbose_name="תיקון")
     description = models.CharField(max_length=200, verbose_name="תיאור הפעולה")
     price = models.DecimalField(max_digits=8, decimal_places=2, verbose_name="מחיר")
     is_approved_by_customer = models.BooleanField(default=False, verbose_name="אושר על ידי לקוח")
@@ -222,8 +248,12 @@ class RepairItem(models.Model):
         blank=True,
         verbose_name="בוצע על ידי"
     )
-    completed_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך ביצוע")
     notes = models.TextField(blank=True, verbose_name="הערות")
+
+    class Meta:
+        verbose_name = "פריט תיקון"
+        verbose_name_plural = "פריטי תיקון"
 
     def save(self, *args, **kwargs):
         """שמירה עם עדכון שדות ישנים לתאימות לאחור"""
@@ -285,14 +315,16 @@ class RepairItem(models.Model):
 
 class RepairUpdate(models.Model):
     """עדכונים על התיקון"""
-    repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='updates')
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='updates', verbose_name="תיקון")
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, verbose_name="משתמש")
     message = models.TextField(verbose_name="הודעה")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
     is_visible_to_customer = models.BooleanField(default=True, verbose_name="גלוי ללקוח")
 
     class Meta:
         ordering = ['-created_at']
+        verbose_name = "עדכון תיקון"
+        verbose_name_plural = "עדכוני תיקונים"
 
     def __str__(self):
         return f"עדכון על {self.repair_job} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"

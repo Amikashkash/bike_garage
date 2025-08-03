@@ -140,6 +140,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'userprofile__role')
     actions = [make_mechanic, make_manager, make_customer]
     
+    # תרגום כותרות עמודות לעברית
     def get_role(self, obj):
         try:
             return obj.userprofile.get_role_display()
@@ -169,45 +170,91 @@ class UserProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'email', 'user')
+    list_display = ('name', 'phone', 'email', 'user', 'has_user_account')
     search_fields = ('name', 'phone', 'email')
+    
+    def has_user_account(self, obj):
+        return obj.user is not None
+    has_user_account.boolean = True
+    has_user_account.short_description = 'יש חשבון משתמש'
 
 @admin.register(Bike)
 class BikeAdmin(admin.ModelAdmin):
-    list_display = ('brand', 'model', 'color', 'customer')
-    list_filter = ('brand',)
+    list_display = ('brand', 'model', 'color', 'customer', 'get_repairs_count')
+    list_filter = ('brand', 'color')
     search_fields = ('brand', 'model', 'customer__name')
+    
+    def get_repairs_count(self, obj):
+        return obj.repairjob_set.count()
+    get_repairs_count.short_description = 'מספר תיקונים'
 
 @admin.register(RepairCategory)
 class RepairCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'get_subcategories_count')
     search_fields = ('name',)
+    
+    def get_subcategories_count(self, obj):
+        return obj.subcategories.count()
+    get_subcategories_count.short_description = 'מספר תת-קטגוריות'
 
 @admin.register(RepairSubCategory)
 class RepairSubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category')
+    list_display = ('name', 'category', 'get_jobs_count')
     list_filter = ('category',)
     search_fields = ('name', 'category__name')
+    
+    def get_jobs_count(self, obj):
+        return obj.repair_jobs.count()
+    get_jobs_count.short_description = 'מספר תיקונים'
 
 @admin.register(RepairJob)
 class RepairJobAdmin(admin.ModelAdmin):
-    list_display = ('job_number', 'bike', 'customer_name', 'status', 'assigned_mechanic', 'is_stuck', 'created_at')
+    list_display = ('job_number', 'bike', 'customer_name', 'status', 'assigned_mechanic', 'is_stuck', 'created_at', 'get_total_price')
     list_filter = ('status', 'is_stuck', 'created_at', 'assigned_mechanic')
-    search_fields = ('id', 'bike__brand', 'bike__customer__name')
+    search_fields = ('id', 'bike__brand', 'bike__customer__name', 'problem_description')
     readonly_fields = ('created_at', 'diagnosed_at', 'approved_at')
     ordering = ('-created_at',)
+    filter_horizontal = ('subcategories',)
+    
+    fieldsets = (
+        ('מידע בסיסי', {
+            'fields': ('bike', 'subcategories', 'problem_description', 'diagnosis')
+        }),
+        ('סטטוס ומועדים', {
+            'fields': ('status', 'assigned_mechanic', 'created_at', 'diagnosed_at', 'approved_at')
+        }),
+        ('תקיעות ובעיות', {
+            'fields': ('is_stuck', 'stuck_reason', 'stuck_at', 'stuck_resolved', 'manager_response'),
+            'classes': ('collapse',)
+        }),
+        ('בדיקת איכות', {
+            'fields': ('quality_checked_by', 'quality_check_date', 'quality_notes', 'ready_for_pickup_date', 'customer_notified'),
+            'classes': ('collapse',)
+        }),
+        ('תפיסה ראשונה', {
+            'fields': ('available_for_pickup', 'pickup_priority'),
+            'classes': ('collapse',)
+        }),
+    )
     
     def job_number(self, obj):
         """Display job number with # prefix"""
         return f"#{obj.id}"
-    job_number.short_description = 'Job #'
+    job_number.short_description = 'מספר תיקון'
     job_number.admin_order_field = 'id'
     
     def customer_name(self, obj):
         """Display customer name"""
         return obj.bike.customer.name
-    customer_name.short_description = 'Customer'
+    customer_name.short_description = 'לקוח'
     customer_name.admin_order_field = 'bike__customer__name'
+    
+    def get_total_price(self, obj):
+        """Display total price"""
+    def get_total_price(self, obj):
+        """Display total price"""
+        return f"₪{obj.get_total_price()}"
+    get_total_price.short_description = 'סה"כ מחיר'
 
 @admin.register(RepairItem)
 class RepairItemAdmin(admin.ModelAdmin):
@@ -219,7 +266,7 @@ class RepairItemAdmin(admin.ModelAdmin):
     def job_number(self, obj):
         """Display job number with # prefix"""
         return f"#{obj.repair_job.id}"
-    job_number.short_description = 'Job #'
+    job_number.short_description = 'מספר תיקון'
     job_number.admin_order_field = 'repair_job__id'
 
 @admin.register(RepairUpdate)
@@ -232,15 +279,24 @@ class RepairUpdateAdmin(admin.ModelAdmin):
     def job_number(self, obj):
         """Display job number with # prefix"""
         return f"#{obj.repair_job.id}"
-    job_number.short_description = 'Job #'
+    job_number.short_description = 'מספר תיקון'
     job_number.admin_order_field = 'repair_job__id'
     
     def message_preview(self, obj):
         """Display first 50 characters of message"""
         return obj.message[:50] + '...' if len(obj.message) > 50 else obj.message
-    message_preview.short_description = 'Message'
+    message_preview.short_description = 'תוכן ההודעה'
 
 # הוספת כותרת מותאמת אישית לאדמין
 admin.site.site_header = "🔧 מערכת ניהול מוסך אופניים"
-admin.site.site_title = "מוסך אופניים"
-admin.site.index_title = "לוח ניהול מוסך"
+admin.site.site_title = "מוסך אופניים - אדמין"
+admin.site.index_title = "לוח בקרה ראשי"
+
+# Add custom admin view
+def get_admin_urls():
+    from django.urls import path
+    return [
+        path('create-mechanic/', create_mechanic_view, name='create_mechanic'),
+    ]
+
+# Store the function for use in urls.py if needed

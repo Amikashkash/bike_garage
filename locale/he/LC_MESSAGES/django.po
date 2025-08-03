@@ -1,0 +1,196 @@
+# Hebrew translation overrides for Django admin
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: he\n"
+"Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;\n"
+
+# Common admin interface terms
+msgid "Add"
+msgstr "הוסף"
+
+msgid "Change"
+msgstr "ערוך"
+
+msgid "Delete"
+msgstr "מחק"
+
+msgid "Save"
+msgstr "שמור"
+
+msgid "Save and continue editing"
+msgstr "שמור והמשך עריכה"
+
+msgid "Save and add another"
+msgstr "שמור והוסף נוסף"
+
+msgid "Delete selected %(verbose_name_plural)s"
+msgstr "מחק %(verbose_name_plural)s נבחרים"
+
+msgid "Are you sure?"
+msgstr "האם אתה בטוח?"
+
+msgid "Home"
+msgstr "בית"
+
+msgid "Administration"
+msgstr "ניהול"
+
+msgid "Log in"
+msgstr "התחבר"
+
+msgid "Log out"
+msgstr "התנתק"
+
+msgid "Password"
+msgstr "סיסמה"
+
+msgid "Username"
+msgstr "שם משתמש"
+
+msgid "Welcome,"
+msgstr "ברוך הבא,"
+
+msgid "View on site"
+msgstr "צפה באתר"
+
+msgid "Recent actions"
+msgstr "פעולות אחרונות"
+
+msgid "My actions"
+msgstr "הפעולות שלי"
+
+msgid "None"
+msgstr "ללא"
+
+msgid "Unknown"
+msgstr "לא ידוע"
+
+msgid "Yes"
+msgstr "כן"
+
+msgid "No"
+msgstr "לא"
+
+msgid "All"
+msgstr "הכל"
+
+msgid "Any date"
+msgstr "כל תאריך"
+
+msgid "Today"
+msgstr "היום"
+
+msgid "Past 7 days"
+msgstr "7 ימים אחרונים"
+
+msgid "This month"
+msgstr "החודש"
+
+msgid "This year"
+msgstr "השנה"
+
+msgid "No date"
+msgstr "ללא תאריך"
+
+msgid "Has date"
+msgstr "יש תאריך"
+
+msgid "Empty"
+msgstr "ריק"
+
+msgid "Not empty"
+msgstr "לא ריק"
+
+msgid "Search"
+msgstr "חיפוש"
+
+msgid "Go"
+msgstr "בצע"
+
+msgid "Clear"
+msgstr "נקה"
+
+msgid "Filter"
+msgstr "סנן"
+
+msgid "Actions"
+msgstr "פעולות"
+
+msgid "action"
+msgstr "פעולה"
+
+msgid "%(count)d %(name)s was changed successfully."
+msgid_plural "%(count)d %(name)s were changed successfully."
+msgstr[0] "%(name)s אחד שונה בהצלחה."
+msgstr[1] "%(count)d %(name)s שונו בהצלחה."
+msgstr[2] "%(count)d %(name)s שונו בהצלחה."
+msgstr[3] "%(count)d %(name)s שונו בהצלחה."
+
+msgid "%(name)s \"%(obj)s\" was added successfully."
+msgstr "%(name)s \"%(obj)s\" נוסף בהצלחה."
+
+msgid "%(name)s \"%(obj)s\" was changed successfully."
+msgstr "%(name)s \"%(obj)s\" שונה בהצלחה."
+
+msgid "%(name)s \"%(obj)s\" was deleted successfully."
+msgstr "%(name)s \"%(obj)s\" נמחק בהצלחה."
+
+msgid "The %(name)s \"%(obj)s\" was added successfully. You may edit it again below."
+msgstr "%(name)s \"%(obj)s\" נוסף בהצלחה. ניתן לערוך אותו שוב למטה."
+
+msgid "Add another %(verbose_name)s"
+msgstr "הוסף %(verbose_name)s נוסף"
+
+msgid "Change %(verbose_name)s"
+msgstr "ערוך %(verbose_name)s"
+
+msgid "Delete %(verbose_name)s"
+msgstr "מחק %(verbose_name)s"
+
+msgid "Delete multiple objects"
+msgstr "מחק אובייקטים מרובים"
+
+msgid "History"
+msgstr "היסטוריה"
+
+msgid "View"
+msgstr "צפה"
+
+msgid "Object"
+msgstr "אובייקט"
+
+msgid "Date/time"
+msgstr "תאריך/שעה"
+
+msgid "User"
+msgstr "משתמש"
+
+msgid "Action"
+msgstr "פעולה"
+
+msgid "Change message"
+msgstr "הודעת שינוי"
+
+msgid "entry"
+msgstr "רשומה"
+
+msgid "entries"
+msgstr "רשומות"
+
+msgid "Site administration"
+msgstr "ניהול האתר"
+
+msgid "%(model_name)s with this %(field_labels)s already exists."
+msgstr "%(model_name)s עם %(field_labels)s זה כבר קיים."
+
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] "אנא תקן את השגיאה למטה."
+msgstr[1] "אנא תקן את השגיאות למטה."
+msgstr[2] "אנא תקן את השגיאות למטה."
+msgstr[3] "אנא תקן את השגיאות למטה."

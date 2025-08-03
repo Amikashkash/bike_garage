@@ -10,209 +10,253 @@
             <p class="text-white">ניהול ומעקב אחר לקוחות המוסך</p>
         </div>
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-white">לקוחות המוסך</h2>
-            <div class="customer-list-actions">
-                <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
-                    <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
-                </a>
-                <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success">
-                    <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
-                </a>
+        <!-- Search and Actions Section -->
+        <div class="search-and-actions-section mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h2 class="text-white mb-2">לקוחות המוסך</h2>
+                    <div class="search-box">
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary">
+                                <i class="fas fa-search text-primary"></i>
+                            </span>
+                            <input type="text" 
+                                   id="customerSearch" 
+                                   class="form-control bg-dark border-secondary text-white" 
+                                   placeholder="חיפוש לקוח לפי שם, טלפון או אימייל..."
+                                   autocomplete="off">
+                            <button class="btn btn-outline-secondary" type="button" id="clearSearch">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 text-end">
+                    <div class="customer-list-actions">
+                        <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
+                            <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+                        </a>
+                        <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success">
+                            <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Search Results Counter -->
+            <div class="search-results-info mt-3">
+                <small class="text-white">
+                    <span id="searchResultsText">מציג את כל הלקוחות</span>
+                    <span class="ms-2">
+                        (<span id="totalCustomers">{{ customers_with_user.count|add:customers_without_user.count }}</span> לקוחות במערכת)
+                    </span>
+                </small>
             </div>
         </div>
 
-        <!-- לקוחות עם חשבון משתמש -->
-        <div class="customer-section mb-5">
-            <div class="card customer-registered-card">
+        <!-- All Customers Unified List -->
+        <div class="customer-section">
+            <div class="card customer-unified-card">
                 <div class="card-header">
-                    <h5 class="mb-0 text-white">
-                        <i class="fas fa-user-check me-2 text-success"></i>
-                        לקוחות רשומים במערכת ({{ customers_with_user.count }})
-                    </h5>
-                    <p class="mb-0 text-white customer-section-description">
-                        לקוחות שנרשמו בעצמם ויכולים להתחבר למערכת
-                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 text-white">
+                            <i class="fas fa-users me-2 text-primary"></i>
+                            רשימת לקוחות
+                        </h5>
+                        <div class="customer-type-filters">
+                            <button class="btn btn-sm btn-outline-success filter-btn active" data-filter="all">
+                                <i class="fas fa-users me-1"></i>הכל
+                            </button>
+                            <button class="btn btn-sm btn-outline-success filter-btn" data-filter="registered">
+                                <i class="fas fa-user-check me-1"></i>רשומים
+                            </button>
+                            <button class="btn btn-sm btn-outline-warning filter-btn" data-filter="contact-only">
+                                <i class="fas fa-address-book me-1"></i>פרטי קשר
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% if customers_with_user %}
-                        <div class="customers-grid">
-                            {% for customer in customers_with_user %}
-                            <div class="customer-item registered-customer">
-                                <div class="customer-header">
-                                    <div class="customer-main-info">
-                                        <h6 class="customer-name text-white">
-                                            <i class="fas fa-user me-2 text-primary"></i>
-                                            {{ customer.name }}
-                                        </h6>
-                                        <div class="customer-contact">
-                                            <small class="text-white">
+                <div class="card-body p-0">
+                    <div class="customers-table-container">
+                        <div class="table-responsive">
+                            <table class="table table-dark table-hover customers-table mb-0">
+                                <thead class="table-header">
+                                    <tr>
+                                        <th width="5%">
+                                            <i class="fas fa-user"></i>
+                                        </th>
+                                        <th width="25%">שם לקוח</th>
+                                        <th width="20%">פרטי קשר</th>
+                                        <th width="10%">סוג</th>
+                                        <th width="25%">אופניים</th>
+                                        <th width="15%">פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody">
+                                    <!-- Registered Customers -->
+                                    {% for customer in customers_with_user %}
+                                    <tr class="customer-row registered-customer-row" 
+                                        data-search-content="{{ customer.name|lower }} {{ customer.phone|lower }} {{ customer.email|lower|default:'' }} {{ customer.user.username|lower }}">
+                                        <td class="customer-avatar">
+                                            <div class="avatar-circle registered-avatar">
+                                                <i class="fas fa-user-check"></i>
+                                            </div>
+                                        </td>
+                                        <td class="customer-name-cell">
+                                            <div class="customer-name-primary">{{ customer.name }}</div>
+                                            <div class="customer-username">
+                                                <i class="fas fa-user-tag me-1"></i>{{ customer.user.username }}
+                                            </div>
+                                        </td>
+                                        <td class="customer-contact-cell">
+                                            <div class="contact-item">
                                                 <i class="fas fa-phone me-1 text-turquoise"></i>
-                                                {{ customer.phone }}
-                                                {% if customer.email %}
-                                                    <span class="ms-2">
-                                                        <i class="fas fa-envelope me-1 text-orange"></i>
-                                                        {{ customer.email }}
+                                                <span>{{ customer.phone }}</span>
+                                            </div>
+                                            {% if customer.email %}
+                                            <div class="contact-item">
+                                                <i class="fas fa-envelope me-1 text-orange"></i>
+                                                <span>{{ customer.email }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </td>
+                                        <td class="customer-type-cell">
+                                            <span class="badge badge-success customer-type-compact">
+                                                <i class="fas fa-check-circle me-1"></i>רשום
+                                            </span>
+                                        </td>
+                                        <td class="customer-bikes-cell">
+                                            {% with customer.bikes.all as bikes %}
+                                                {% if bikes %}
+                                                    <div class="bikes-compact">
+                                                        <span class="bikes-count">
+                                                            <i class="fas fa-bicycle me-1 text-primary"></i>
+                                                            {{ bikes.count }}
+                                                        </span>
+                                                        <div class="bikes-preview">
+                                                            {% for bike in bikes|slice:":2" %}
+                                                                <small class="bike-preview-item">{{ bike.brand }} {{ bike.model|default:""|truncatechars:15 }}</small>
+                                                                {% if not forloop.last %}<br>{% endif %}
+                                                            {% endfor %}
+                                                            {% if bikes.count > 2 %}
+                                                                <small class="text-muted">+{{ bikes.count|add:"-2" }} נוספים</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="no-bikes-compact">
+                                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                                        אין אופניים
                                                     </span>
                                                 {% endif %}
-                                            </small>
-                                            <br>
-                                            <small class="text-white">
-                                                <i class="fas fa-user-tag me-1 text-success"></i>
-                                                משתמש: {{ customer.user.username }}
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="customer-status">
-                                        <span class="badge badge-success customer-type-badge">
-                                            <i class="fas fa-check-circle me-1"></i>רשום
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-bikes-info">
-                                    {% with customer.bikes.all as bikes %}
-                                        {% if bikes %}
-                                            <div class="bikes-summary">
-                                                <i class="fas fa-bicycle me-2 text-primary"></i>
-                                                <strong class="text-white">{{ bikes.count }} אופניים:</strong>
-                                                <div class="bikes-list mt-1">
-                                                    {% for bike in bikes %}
-                                                    <span class="bike-tag">
-                                                        {{ bike.brand }} {{ bike.model|default:"" }}
-                                                    </span>
-                                                    {% if not forloop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                </div>
+                                            {% endwith %}
+                                        </td>
+                                        <td class="customer-actions-cell">
+                                            {% with customer.bikes.first as first_bike %}
+                                                {% if first_bike %}
+                                                    <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                                                       class="btn btn-xs btn-outline-primary me-1" title="ערוך לקוח">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'customer_bike_add' customer.id %}" 
+                                                       class="btn btn-xs btn-orange me-1" title="הוסף אופניים">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    
+                                    <!-- Contact-Only Customers -->
+                                    {% for customer in customers_without_user %}
+                                    <tr class="customer-row contact-customer-row" 
+                                        data-search-content="{{ customer.name|lower }} {{ customer.phone|lower }} {{ customer.email|lower|default:'' }}">
+                                        <td class="customer-avatar">
+                                            <div class="avatar-circle contact-avatar">
+                                                <i class="fas fa-address-book"></i>
                                             </div>
-                                        {% else %}
-                                            <div class="no-bikes-warning">
-                                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
-                                                <span class="text-warning">אין אופניים רשומות</span>
+                                        </td>
+                                        <td class="customer-name-cell">
+                                            <div class="customer-name-primary">{{ customer.name }}</div>
+                                            <div class="customer-note">
+                                                <i class="fas fa-info-circle me-1"></i>נוצר ע"י המנהל
                                             </div>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    {% with customer.bikes.first as first_bike %}
-                                        {% if first_bike %}
-                                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit me-1"></i>ערוך
-                                            </a>
-                                        {% else %}
-                                            <a href="{% url 'customer_bike_add' customer.id %}" 
-                                               class="btn btn-sm btn-orange">
-                                                <i class="fas fa-plus me-1"></i>הוסף אופניים
-                                            </a>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="no-customers-message">
-                            <i class="fas fa-users fa-2x text-secondary mb-2"></i>
-                            <p class="text-white">אין לקוחות רשומים עדיין</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- לקוחות ללא חשבון משתמש -->
-        <div class="customer-section mb-5">
-            <div class="card customer-contact-card">
-                <div class="card-header">
-                    <h5 class="mb-0 text-white">
-                        <i class="fas fa-address-book me-2 text-warning"></i>
-                        פרטי קשר בלבד ({{ customers_without_user.count }})
-                    </h5>
-                    <p class="mb-0 text-white customer-section-description">
-                        לקוחות שנוצרו ע"י המנהל - ללא אפשרות התחברות
-                    </p>
-                </div>
-                <div class="card-body">
-                    {% if customers_without_user %}
-                        <div class="customers-grid">
-                            {% for customer in customers_without_user %}
-                            <div class="customer-item contact-customer">
-                                <div class="customer-header">
-                                    <div class="customer-main-info">
-                                        <h6 class="customer-name text-white">
-                                            <i class="fas fa-user me-2 text-primary"></i>
-                                            {{ customer.name }}
-                                        </h6>
-                                        <div class="customer-contact">
-                                            <small class="text-white">
+                                        </td>
+                                        <td class="customer-contact-cell">
+                                            <div class="contact-item">
                                                 <i class="fas fa-phone me-1 text-turquoise"></i>
-                                                {{ customer.phone }}
-                                                {% if customer.email %}
-                                                    <span class="ms-2">
-                                                        <i class="fas fa-envelope me-1 text-orange"></i>
-                                                        {{ customer.email }}
+                                                <span>{{ customer.phone }}</span>
+                                            </div>
+                                            {% if customer.email %}
+                                            <div class="contact-item">
+                                                <i class="fas fa-envelope me-1 text-orange"></i>
+                                                <span>{{ customer.email }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </td>
+                                        <td class="customer-type-cell">
+                                            <span class="badge badge-warning customer-type-compact">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>קשר
+                                            </span>
+                                        </td>
+                                        <td class="customer-bikes-cell">
+                                            {% with customer.bikes.all as bikes %}
+                                                {% if bikes %}
+                                                    <div class="bikes-compact">
+                                                        <span class="bikes-count">
+                                                            <i class="fas fa-bicycle me-1 text-primary"></i>
+                                                            {{ bikes.count }}
+                                                        </span>
+                                                        <div class="bikes-preview">
+                                                            {% for bike in bikes|slice:":2" %}
+                                                                <small class="bike-preview-item">{{ bike.brand }} {{ bike.model|default:""|truncatechars:15 }}</small>
+                                                                {% if not forloop.last %}<br>{% endif %}
+                                                            {% endfor %}
+                                                            {% if bikes.count > 2 %}
+                                                                <small class="text-muted">+{{ bikes.count|add:"-2" }} נוספים</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <span class="no-bikes-compact">
+                                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                                                        אין אופניים
                                                     </span>
                                                 {% endif %}
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="customer-status">
-                                        <span class="badge badge-warning customer-type-badge">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>פרטי קשר
-                                        </span>
-                                    </div>
-                                </div>
-                                
-                                <div class="customer-bikes-info">
-                                    {% with customer.bikes.all as bikes %}
-                                        {% if bikes %}
-                                            <div class="bikes-summary">
-                                                <i class="fas fa-bicycle me-2 text-primary"></i>
-                                                <strong class="text-white">{{ bikes.count }} אופניים:</strong>
-                                                <div class="bikes-list mt-1">
-                                                    {% for bike in bikes %}
-                                                    <span class="bike-tag">
-                                                        {{ bike.brand }} {{ bike.model|default:"" }}
-                                                    </span>
-                                                    {% if not forloop.last %}, {% endif %}
-                                                    {% endfor %}
-                                                </div>
-                                            </div>
-                                        {% else %}
-                                            <div class="no-bikes-warning">
-                                                <i class="fas fa-exclamation-triangle me-1 text-warning"></i>
-                                                <span class="text-warning">אין אופניים רשומות</span>
-                                            </div>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                                
-                                <div class="customer-actions">
-                                    {% with customer.bikes.first as first_bike %}
-                                        {% if first_bike %}
-                                            <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="fas fa-edit me-1"></i>ערוך
-                                            </a>
-                                        {% else %}
-                                            <a href="{% url 'customer_bike_add' customer.id %}" 
-                                               class="btn btn-sm btn-orange">
-                                                <i class="fas fa-plus me-1"></i>הוסף אופניים
-                                            </a>
-                                        {% endif %}
-                                    {% endwith %}
-                                </div>
-                            </div>
-                            {% endfor %}
+                                            {% endwith %}
+                                        </td>
+                                        <td class="customer-actions-cell">
+                                            {% with customer.bikes.first as first_bike %}
+                                                {% if first_bike %}
+                                                    <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
+                                                       class="btn btn-xs btn-outline-primary me-1" title="ערוך לקוח">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                {% else %}
+                                                    <a href="{% url 'customer_bike_add' customer.id %}" 
+                                                       class="btn btn-xs btn-orange me-1" title="הוסף אופניים">
+                                                        <i class="fas fa-plus"></i>
+                                                    </a>
+                                                {% endif %}
+                                            {% endwith %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
-                    {% else %}
-                        <div class="no-customers-message">
-                            <i class="fas fa-address-book fa-2x text-secondary mb-2"></i>
-                            <p class="text-white">אין פרטי קשר שנוצרו ע"י המנהל</p>
+                        
+                        <!-- No Results Message -->
+                        <div id="noResultsMessage" class="no-results-message text-center py-4" style="display: none;">
+                            <i class="fas fa-search fa-2x text-secondary mb-2"></i>
+                            <p class="text-white">לא נמצאו לקוחות התואמים לחיפוש</p>
+                            <button class="btn btn-outline-primary btn-sm" id="clearSearchFromNoResults">
+                                <i class="fas fa-times me-1"></i>נקה חיפוש
+                            </button>
                         </div>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -263,4 +307,115 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('customerSearch');
+    const clearSearchBtn = document.getElementById('clearSearch');
+    const clearSearchFromNoResultsBtn = document.getElementById('clearSearchFromNoResults');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const customerRows = document.querySelectorAll('.customer-row');
+    const noResultsMessage = document.getElementById('noResultsMessage');
+    const searchResultsText = document.getElementById('searchResultsText');
+    const totalCustomers = document.getElementById('totalCustomers');
+    
+    let currentFilter = 'all';
+    
+    // Search functionality
+    function performSearch() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+        let visibleCount = 0;
+        
+        customerRows.forEach(row => {
+            const searchContent = row.getAttribute('data-search-content');
+            const matchesSearch = searchTerm === '' || searchContent.includes(searchTerm);
+            const matchesFilter = currentFilter === 'all' || 
+                                (currentFilter === 'registered' && row.classList.contains('registered-customer-row')) ||
+                                (currentFilter === 'contact-only' && row.classList.contains('contact-customer-row'));
+            
+            const shouldShow = matchesSearch && matchesFilter;
+            row.style.display = shouldShow ? '' : 'none';
+            
+            if (shouldShow) {
+                visibleCount++;
+            }
+        });
+        
+        // Update search results text
+        if (searchTerm) {
+            if (visibleCount === 0) {
+                searchResultsText.textContent = `לא נמצאו תוצאות עבור "${searchTerm}"`;
+            } else if (visibleCount === 1) {
+                searchResultsText.textContent = `נמצא לקוח אחד עבור "${searchTerm}"`;
+            } else {
+                searchResultsText.textContent = `נמצאו ${visibleCount} לקוחות עבור "${searchTerm}"`;
+            }
+        } else {
+            if (currentFilter === 'all') {
+                searchResultsText.textContent = 'מציג את כל הלקוחות';
+            } else if (currentFilter === 'registered') {
+                searchResultsText.textContent = 'מציג לקוחות רשומים';
+            } else if (currentFilter === 'contact-only') {
+                searchResultsText.textContent = 'מציג פרטי קשר בלבד';
+            }
+        }
+        
+        // Show/hide no results message
+        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
+        document.querySelector('.customers-table-container .table-responsive').style.display = 
+            visibleCount === 0 ? 'none' : 'block';
+    }
+    
+    // Filter functionality
+    function applyFilter(filterType) {
+        currentFilter = filterType;
+        
+        // Update active filter button
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-filter') === filterType) {
+                btn.classList.add('active');
+            }
+        });
+        
+        performSearch();
+    }
+    
+    // Clear search
+    function clearSearch() {
+        searchInput.value = '';
+        performSearch();
+        searchInput.focus();
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Escape') {
+            clearSearch();
+        }
+    });
+    
+    clearSearchBtn.addEventListener('click', clearSearch);
+    clearSearchFromNoResultsBtn.addEventListener('click', clearSearch);
+    
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            applyFilter(this.getAttribute('data-filter'));
+        });
+    });
+    
+    // Focus search input with Ctrl+F
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+    
+    // Initial search to set up display
+    performSearch();
+});
+</script>
+
 {% endblock %}

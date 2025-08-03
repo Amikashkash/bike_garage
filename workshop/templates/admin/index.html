@@ -1,0 +1,328 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard rtl{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<style>
+    /* Custom styling for Hebrew admin dashboard */
+    .dashboard .module table th,
+    .dashboard .module table td {
+        text-align: right;
+        direction: rtl;
+    }
+    
+    .module h2 {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        direction: rtl;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 5px 5px 0 0;
+    }
+    
+    .module {
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .addlink, .changelink {
+        direction: rtl;
+        text-align: right;
+        padding-right: 20px;
+    }
+    
+    .addlink:before {
+        content: "➕ ";
+        margin-left: 5px;
+    }
+    
+    .changelink:before {
+        content: "✏️ ";
+        margin-left: 5px;
+    }
+    
+    #content h1 {
+        direction: rtl;
+        text-align: center;
+        color: #2c3e50;
+        font-size: 2em;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+        border-radius: 10px;
+        border: 2px solid #3498db;
+    }
+    
+    /* Quick actions box */
+    .quick-actions {
+        background: linear-gradient(135deg, #e8f5e8, #d4edda);
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px 0;
+        direction: rtl;
+        text-align: center;
+    }
+    
+    .quick-actions h3 {
+        color: #155724;
+        margin-bottom: 15px;
+    }
+    
+    .quick-actions a {
+        display: inline-block;
+        background: #28a745;
+        color: white;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    
+    .quick-actions a:hover {
+        background: #218838;
+    }
+    
+    /* Custom grouped modules */
+    .grouped-modules {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+    
+    .custom-module {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .custom-module:hover {
+        border-color: #3498db;
+        transform: translateY(-2px);
+    }
+    
+    .module-header {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+    
+    .module-content {
+        padding: 20px;
+    }
+    
+    .module-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #ecf0f1;
+        direction: rtl;
+    }
+    
+    .module-item:last-child {
+        border-bottom: none;
+    }
+    
+    .module-item-name {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    
+    .module-item-actions {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .module-item-actions a {
+        padding: 5px 10px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.9em;
+        color: white;
+        font-weight: bold;
+    }
+    
+    .add-action {
+        background: #27ae60;
+    }
+    
+    .change-action {
+        background: #f39c12;
+    }
+    
+    .add-action:hover {
+        background: #229954;
+    }
+    
+    .change-action:hover {
+        background: #e67e22;
+    }
+    
+    /* Icons for different sections */
+    .customers-icon:before { content: "👥 "; }
+    .repairs-icon:before { content: "🔧 "; }
+    .system-icon:before { content: "⚙️ "; }
+    .users-icon:before { content: "👤 "; }
+    
+    /* Hide default app list */
+    #content-main .app-list {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quick-actions">
+    <h3>🚀 פעולות מהירות</h3>
+    <a href="{% url 'admin:workshop_customer_add' %}">הוסף לקוח חדש</a>
+    <a href="{% url 'admin:workshop_bike_add' %}">הוסף אופניים</a>
+    <a href="{% url 'admin:workshop_repairjob_add' %}">צור תיקון חדש</a>
+    <a href="{% url 'home' %}">חזרה לאתר הראשי</a>
+</div>
+
+<div class="grouped-modules">
+    <!-- ניהול לקוחות ואופניים -->
+    <div class="custom-module">
+        <div class="module-header customers-icon">
+            ניהול לקוחות ואופניים
+        </div>
+        <div class="module-content">
+            <div class="module-item">
+                <span class="module-item-name">לקוחות</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_customer_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_customer_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">אופניים</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_bike_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_bike_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ניהול תיקונים -->
+    <div class="custom-module">
+        <div class="module-header repairs-icon">
+            ניהול תיקונים
+        </div>
+        <div class="module-content">
+            <div class="module-item">
+                <span class="module-item-name">תיקונים</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_repairjob_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_repairjob_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">פריטי תיקון</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_repairitem_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_repairitem_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">עדכוני תיקון</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_repairupdate_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_repairupdate_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- הגדרות מערכת -->
+    <div class="custom-module">
+        <div class="module-header system-icon">
+            הגדרות מערכת
+        </div>
+        <div class="module-content">
+            <div class="module-item">
+                <span class="module-item-name">קטגוריות תיקון</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_repaircategory_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_repaircategory_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">תת-קטגוריות</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_repairsubcategory_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_repairsubcategory_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ניהול משתמשים -->
+    <div class="custom-module">
+        <div class="module-header users-icon">
+            ניהול משתמשים
+        </div>
+        <div class="module-content">
+            <div class="module-item">
+                <span class="module-item-name">משתמשים</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:auth_user_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">פרופילי משתמשים</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:workshop_userprofile_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:workshop_userprofile_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+            <div class="module-item">
+                <span class="module-item-name">קבוצות</span>
+                <div class="module-item-actions">
+                    <a href="{% url 'admin:auth_group_add' %}" class="add-action">הוסף</a>
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="change-action">צפה/ערוך</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div style="margin-top: 40px; padding: 20px; background: linear-gradient(135deg, #f8f9fa, #e9ecef); border-radius: 10px; border: 2px solid #6c757d;">
+    <h3 style="text-align: center; color: #495057; margin-bottom: 20px;">📊 סטטיסטיקות מהירות</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; text-align: center;">
+        <div style="background: white; padding: 15px; border-radius: 5px; border-right: 4px solid #3498db;">
+            <strong style="color: #2c3e50;">סה"כ לקוחות</strong><br>
+            <span style="font-size: 1.5em; color: #3498db;">{{ total_customers|default:"0" }}</span>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; border-right: 4px solid #27ae60;">
+            <strong style="color: #2c3e50;">אופניים במערכת</strong><br>
+            <span style="font-size: 1.5em; color: #27ae60;">{{ total_bikes|default:"0" }}</span>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; border-right: 4px solid #f39c12;">
+            <strong style="color: #2c3e50;">תיקונים פעילים</strong><br>
+            <span style="font-size: 1.5em; color: #f39c12;">{{ active_repairs|default:"0" }}</span>
+        </div>
+        <div style="background: white; padding: 15px; border-radius: 5px; border-right: 4px solid #e74c3c;">
+            <strong style="color: #2c3e50;">תיקונים תקועים</strong><br>
+            <span style="font-size: 1.5em; color: #e74c3c;">{{ stuck_repairs|default:"0" }}</span>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

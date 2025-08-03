@@ -2,6 +2,22 @@
 
 {% block title %}דשבורד מנהל{% endblock %}
 
+{% block extra_css %}
+<style>
+.blocked-item-info {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 3px solid #dc3545;
+    padding: 8px 12px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+.blocked-item-info .text-white {
+    font-size: 0.9em;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="row">
     <div class="col-md-10 mx-auto">
@@ -105,8 +121,27 @@
                                         </div>
                                         <div class="detail-item">
                                             <i class="fas fa-exclamation-circle me-2 text-warning"></i>
-                                            <span class="text-white">{{ repair.stuck_reason|default:"לא צוין" }}</span>
+                                            <span class="text-white">
+                                                {% if repair.stuck_reason %}
+                                                    {{ repair.stuck_reason }}
+                                                {% else %}
+                                                    לא צוין סיבה
+                                                {% endif %}
+                                            </span>
                                         </div>
+                                        {% for blocked_item in repair.repair_items.all %}
+                                            {% if blocked_item.status == 'blocked' %}
+                                                <div class="detail-item blocked-item-info">
+                                                    <i class="fas fa-ban me-2 text-danger"></i>
+                                                    <span class="text-white">
+                                                        <strong>{{ blocked_item.description }}</strong>
+                                                        {% if blocked_item.notes %}
+                                                            - {{ blocked_item.notes }}
+                                                        {% endif %}
+                                                    </span>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
                                     </div>
                                     <div class="repair-actions">
                                         <a href="{% url 'repair_status' repair.id %}" class="btn btn-sm btn-outline-primary">
@@ -115,7 +150,7 @@
                                         <button class="btn btn-sm btn-success respond-btn" 
                                                 data-repair-id="{{ repair.id }}"
                                                 data-mechanic="{{ repair.assigned_mechanic.get_full_name|default:'לא הוקצה' }}"
-                                                data-problem="{{ repair.stuck_reason|default:'לא צוין' }}">
+                                                data-problem="{% if repair.stuck_reason %}{{ repair.stuck_reason }}{% endif %}{% for blocked_item in repair.repair_items.all %}{% if blocked_item.status == 'blocked' %}{% if repair.stuck_reason %} | {% endif %}{{ blocked_item.description }}{% if blocked_item.notes %}: {{ blocked_item.notes }}{% endif %}{% endif %}{% endfor %}">
                                             <i class="fas fa-reply"></i>
                                         </button>
                                     </div>
@@ -534,8 +569,10 @@
                         <p class="text-white" id="mechanicName"></p>
                     </div>
                     <div class="response-info-item">
-                        <label class="text-white"><strong>תיאור הבעיה:</strong></label>
-                        <p class="text-white" id="problemDescription"></p>
+                        <label class="text-white"><strong>תיאור הבעיה/סיבת התקיעות:</strong></label>
+                        <div class="problem-description-box">
+                            <p class="text-white mb-0" id="problemDescription" style="white-space: pre-wrap; max-height: 120px; overflow-y: auto; background-color: rgba(255,255,255,0.1); padding: 10px; border-radius: 5px;"></p>
+                        </div>
                     </div>
                 </div>
                 
@@ -722,7 +759,7 @@ function initJQueryCode() {
             
             $('#responseRepairId').val(repairId);
             $('#mechanicName').text(mechanic || 'לא צוין');
-            $('#problemDescription').text(problem || 'לא צוין');
+            $('#problemDescription').text(problem || 'לא צוין סיבת התקיעות מפורטת');
             $('#managerResponse').val('');
             $('#markResolved').prop('checked', false);
             
