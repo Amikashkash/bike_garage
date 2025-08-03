@@ -113,11 +113,14 @@
                                 <i class="fas fa-tags me-2 text-warning"></i>
                                 קטגוריות התקלה
                             </h6>
-                            <div class="categories-list">
+                            <div class="categories-list-vertical">
                                 {% for subcategory in repair_job.subcategories.all %}
-                                <div class="category-tag">
-                                    <i class="fas fa-tag me-1"></i>
-                                    {{ subcategory }}
+                                <div class="category-row">
+                                    <div class="category-tag-block clickable-category" data-category-text="{{ subcategory }}" title="לחץ להוספה לתיאור הפעולה">
+                                        <i class="fas fa-tag me-1"></i>
+                                        {{ subcategory }}
+                                        <i class="fas fa-plus-circle ms-2 category-add-icon"></i>
+                                    </div>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -344,6 +347,56 @@ document.addEventListener('DOMContentLoaded', function() {
             updateRemoveButtons();
         }, 300);
     }
+    
+    // Function to get the current active description input
+    function getCurrentDescriptionInput() {
+        const inputs = document.querySelectorAll('input[name$="_description"]');
+        // Find the first empty input, or the last one if all are filled
+        for (let input of inputs) {
+            if (!input.value.trim()) {
+                return input;
+            }
+        }
+        return inputs[inputs.length - 1]; // Return last input if all are filled
+    }
+    
+    // Handle category click to insert text into description
+    document.addEventListener('click', function(e) {
+        const categoryElement = e.target.closest('.clickable-category');
+        if (categoryElement) {
+            const categoryText = categoryElement.getAttribute('data-category-text');
+            const currentInput = getCurrentDescriptionInput();
+            
+            if (currentInput) {
+                // If input is empty, set the category text directly
+                if (!currentInput.value.trim()) {
+                    currentInput.value = categoryText;
+                } else {
+                    // If input has text, append the category with a separator
+                    currentInput.value += ' - ' + categoryText;
+                }
+                
+                // Add visual feedback
+                categoryElement.classList.add('category-added');
+                setTimeout(() => {
+                    categoryElement.classList.remove('category-added');
+                }, 600);
+                
+                // Focus on the input for immediate editing
+                currentInput.focus();
+                currentInput.setSelectionRange(currentInput.value.length, currentInput.value.length);
+                
+                // If this was the last input and it's now filled, auto-add a new item
+                const allInputs = document.querySelectorAll('input[name$="_description"]');
+                const isLastInput = currentInput === allInputs[allInputs.length - 1];
+                const allFilled = Array.from(allInputs).every(input => input.value.trim());
+                
+                if (isLastInput && allFilled) {
+                    document.getElementById('add-item').click();
+                }
+            }
+        }
+    });
     
     document.getElementById('add-item').addEventListener('click', function() {
         const container = document.getElementById('repair-items-container');

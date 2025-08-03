@@ -8770,6 +8770,97 @@ small.text-info {
     transform: translateY(-2px);
 }
 
+/* Category tags - block display for separate lines */
+.category-tag-block {
+    display: block;
+    background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+    color: #1a1a1a;
+    padding: 15px 20px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: 2px solid rgba(255, 193, 7, 0.5);
+    transition: all 0.3s ease;
+    margin: 0.6rem 0;
+    width: 100%;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.category-tag-block:hover {
+    background: linear-gradient(135deg, #ffb300 0%, #ff8f00 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(255, 193, 7, 0.5);
+    border-color: #ff8f00;
+}
+
+.category-tag-block i {
+    margin-left: 0.8rem;
+    font-size: 1.2rem;
+    color: #1a1a1a;
+    text-shadow: none;
+}
+
+/* Clickable category styling */
+.clickable-category {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.clickable-category:hover {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border-color: #28a745;
+}
+
+.clickable-category:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.category-add-icon {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    float: left;
+    margin-left: 0.5rem;
+}
+
+.clickable-category:hover .category-add-icon {
+    opacity: 1;
+}
+
+/* Pulse animation for added effect */
+.category-added {
+    animation: categoryPulse 0.6s ease-out;
+}
+
+@keyframes categoryPulse {
+    0% { 
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        transform: scale(1.05);
+    }
+    50% { 
+        background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+        transform: scale(1.08);
+    }
+    100% { 
+        background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+        transform: scale(1);
+    }
+}
+
+/* Force vertical display for categories */
+.categories-list-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.category-row {
+    display: block;
+    width: 100%;
+    clear: both;
+}
+
 /* Problem Section */
 .problem-section {
     padding: 1.5rem;
