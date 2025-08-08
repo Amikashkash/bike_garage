@@ -5583,19 +5583,6 @@ small.text-info {
     border-left-color: #388E3C;
 }
 
-/* Manager Dashboard Styles */
-.blocked-item-info {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-left: 3px solid #dc3545;
-    padding: 8px 12px;
-    margin: 5px 0;
-    border-radius: 4px;
-}
-
-.blocked-item-info .text-white {
-    font-size: 0.9em;
-}
-
 /* Manager Dashboard Styling */
 .dashboard-stats-overview {
     margin-bottom: 2rem;

@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/**
+  * A catch-all path to Django template files, JavaScript, and Python files
+  * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
+  *
+  * If your final CSS file is not being updated after code changes, you may want to broaden or narrow
+  * the scope of this path.
+  */
+@source "../../../**/*.{html,py,js}";
+
+/* Custom daisyUI theme: garageDark */
+@theme {
+  --color-base-100: oklch(18% 0.02 250);  /* deep blue-gray for body */
+  --color-base-200: oklch(24% 0.02 250);  /* cards */
+  --color-base-300: oklch(30% 0.02 250);  /* borders */
+  --color-content: oklch(92% 0 0);        /* text */
+  --color-primary: oklch(64% 0.21 260);   /* electric blue accent */
+  --color-secondary: oklch(70% 0.15 140); /* lime for optional chips */
+  --color-accent: var(--color-primary);
+  --color-warning: oklch(78% 0.19 85);
+  --color-success: oklch(70% 0.16 145);
+  --color-info: oklch(70% 0.17 235);
+  --color-error: oklch(64% 0.24 30);
+}
+
+html[data-theme="garageDark"] {
+  background-color: var(--color-base-100);
+  color: var(--color-content);
+}
+
+/* Card elevation tweaks */
+.card { border: 1px solid var(--color-base-300); }
+.card:hover { box-shadow: 0 10px 24px rgba(0,0,0,.35); }
+
+/* Accent utilities */
+.text-accent { color: var(--color-accent); }
+.border-accent { border-color: var(--color-accent); }
+.bg-accent { background-color: var(--color-accent); }

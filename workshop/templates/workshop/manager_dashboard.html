@@ -3,6 +3,7 @@
 {% block title %}דשבורד מנהל{% endblock %}
 
 {% block content %}
+
 <div class="row">
     <div class="col-md-10 mx-auto">
         <div class="text-center mt-4 mb-5">
@@ -11,15 +12,13 @@
                     <h1 class="text-white">🎯 דשבורד מנהל</h1>
                     <p class="text-white">ניהול תיקונים וזרימת עבודה - מבט כולל על כל הפעילות</p>
                 </div>
+                {% url "backup_menu" as backup_url %}
+                {% url "print_labels_menu" as labels_url %}
                 <div class="d-flex gap-2">
-                    <a href="{% url 'backup_menu' %}" class="btn btn-warning btn-sm" title="גיבוי נתונים">
-                        <i class="fas fa-download me-1"></i>
-                        גיבוי
-                    </a>
-                    <a href="{% url 'print_labels_menu' %}" class="btn btn-info btn-sm" title="הדפסת מדבקות">
-                        <i class="fas fa-print me-1"></i>
-                        מדבקות
-                    </a>
+                    
+                     {% include 'workshop/components/button.html' with href=backup_url style='warning' text='גיבוי' icon='fas fa-download' title='גיבוי נתונים' extra_classes='btn-sm' %}
+                     {% include 'workshop/components/button.html' with href=labels_url style='info' text='מדבקות' icon='fas fa-print' title='הדפסת מדבקות' extra_classes='btn-sm' %}
+
                 </div>
             </div>
         </div>
@@ -27,45 +26,18 @@
         <!-- Dashboard Stats Overview -->
         <div class="dashboard-stats-overview mb-4">
             <div class="stats-grid">
-                <div class="stat-card urgent">
-                    <div class="stat-icon">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ stuck_repairs.count }}</span>
-                        <span class="stat-label">תיקונים תקועים</span>
-                    </div>
-                </div>
                 
-                <div class="stat-card warning">
-                    <div class="stat-icon">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ approved_waiting_for_mechanic.count }}</span>
-                        <span class="stat-label">ממתינים למכונאי</span>
-                    </div>
-                </div>
+                {% include 'workshop/components/stat_card.html' with number=stuck_repairs.count label='תיקונים תקועים' icon='fas fa-exclamation-triangle' color='error' %}
+                {% include 'workshop/components/stat_card.html' with number=approved_waiting_for_mechanic.count label='ממתינים למכונאי' icon='fas fa-user-plus' color='yellow' %}
+                {% include 'workshop/components/stat_card.html' with number=in_progress.count label='האופניים בעבודה' icon='fas fa-cogs' color='success' %}
+                {% include 'workshop/components/stat_card.html' with number=repairs_not_collected.count label='מוכנים לאיסוף' icon='fas fa-check-circle' color='info' %}
                 
-                <div class="stat-card active">
-                    <div class="stat-icon">
-                        <i class="fas fa-cogs"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ in_progress.count }}</span>
-                        <span class="stat-label">בעבודה</span>
-                    </div>
-                </div>
+
                 
-                <div class="stat-card success">
-                    <div class="stat-icon">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ repairs_not_collected.count }}</span>
-                        <span class="stat-label">מוכנים לאיסוף</span>
-                    </div>
-                </div>
+                
+                
+                
+                
             </div>
         </div>
 

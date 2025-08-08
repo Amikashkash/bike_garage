@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import dj_database_url
 from decouple import config
+import shutil
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -57,12 +58,23 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
     'workshop.apps.WorkshopConfig',
+    'tailwind',
+    'theme',  
 
 ]
+TAILWIND_APP_NAME = 'theme'
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
 
+NPM_BIN_PATH = shutil.which("npm")
 
+# Debug output (you can remove this later)
+if NPM_BIN_PATH:
+    print(f"Found npm at: {NPM_BIN_PATH}")
+else:
+    print("npm not found")
 
 
 

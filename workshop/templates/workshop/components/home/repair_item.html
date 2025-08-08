@@ -1,0 +1,31 @@
+<!-- A compact repair item row/card for lists -->
+<div class="bg-base-200 rounded-lg p-3 border border-base-300 relative overflow-hidden">
+  <span class="absolute right-0 top-0 h-full w-1 bg-base-300"></span>
+  <div class="flex items-center justify-between gap-3">
+    <div class="min-w-0">
+      <div class="flex items-center gap-2">
+        {% if id %}<span class="text-xs text-gray-400">#{{ id }}</span>{% endif %}
+        <span class="text-white truncate">{{ bike }}</span>
+      </div>
+      <div class="text-xs text-gray-400 mt-1 flex items-center gap-2">
+        <i class="fas fa-calendar text-primary"></i>
+        <span>{{ created_at }}</span>
+      </div>
+    </div>
+    <div class="flex items-center gap-2 shrink-0">
+      {% if status_label %}
+      <span class="badge{% if status_color %} badge-{{ status_color }}{% else %}
+                   {% if status == 'completed' %} badge-success
+                   {% elif status == 'in_progress' %} badge-primary
+                   {% elif status == 'diagnosed' %} badge-warning
+                   {% else %} badge-secondary{% endif %}{% endif %}">{{ status_label }}</span>
+      {% endif %}
+      {% if primary_href %}
+      <a href="{{ primary_href }}" class="btn btn-xs btn-success"><i class="fas fa-check"></i> אשר</a>
+      {% endif %}
+      {% if secondary_href %}
+      <a href="{{ secondary_href }}" class="btn btn-xs btn-info"><i class="fas fa-eye"></i> צפה</a>
+      {% endif %}
+    </div>
+  </div>
+</div>

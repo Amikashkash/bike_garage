@@ -1,0 +1,12 @@
+<!-- Reusable section/card header with icon and title -->
+<div class="px-4 py-3 border-b border-base-300 flex items-center justify-between gap-3">
+  <div class="flex items-center gap-2 min-w-0">
+    <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-base-300 text-{{ color|default:'primary' }}">
+      <i class="{{ icon }}"></i>
+    </span>
+    <h5 class="m-0 text-white text-base md:text-lg truncate">{{ title }}</h5>
+  </div>
+  {% if subtitle %}
+    <span class="text-xs md:text-sm text-gray-400 truncate">{{ subtitle }}</span>
+  {% endif %}
+</div>

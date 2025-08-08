@@ -3,194 +3,88 @@
 {% block title %}דף הבית{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🏠 ברוכים הבאים למערכת ניהול המוסך</h1>
-            <p class="text-white">מערכת מתקדמת לניהול תיקוני אופניים ולקוחות</p>
-        </div>
+<div class="max-w-6xl md:max-w-7xl mx-auto px-4 md:px-6">
+    <div class="text-center mt-4 mb-5">
+        <h1 class="text-white text-xl md:text-2xl font-semibold">🏠 ברוכים הבאים למערכת ניהול המוסך</h1>
+        <p class="text-gray-300 text-sm md:text-base">מערכת מתקדמת לניהול תיקוני אופניים ולקוחות</p>
+    </div>
 
         {% if user.is_authenticated %}
             {% if user.userprofile.role == "customer" %}
                 <!-- Customer Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user me-2 text-primary"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-white mb-3">מה תרצה לעשות היום?</p>
+                <div class="card bg-base-200 shadow-xl">
+                    {% with name_text=user.get_full_name|default:user.username %}
+                    {% with welcome_title='שלום '|add:name_text %}
+                    {% include 'workshop/components/home/section_header.html' with icon='fas fa-user' color='primary' title=welcome_title %}
+                    {% endwith %}
+                    {% endwith %}
+                    <div class="card-body p-4">
+                        <p class="text-white mb-3 text-sm">מה תרצה לעשות היום?</p>
                         
                         {% if no_customer_profile %}
-                        <div class="home-alert-card warning-alert">
-                            <div class="alert-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="alert-content">
-                                <h6 class="text-white mb-2">לא נמצא פרופיל לקוח</h6>
-                                <p class="text-white mb-0">נראה שעדיין לא נוצר פרופיל לקוח עבורך. אנא פנה למוסך או השתמש בקישור החיבור.</p>
-                            </div>
-                        </div>
+                        {% include 'workshop/components/home/alert_card.html' with variant='warning' icon='fas fa-exclamation-triangle' title='לא נמצא פרופיל לקוח' text='נראה שעדיין לא נוצר פרופיל לקוח עבורך. אנא פנה למוסך או השתמש בקישור החיבור.' %}
                         {% endif %}
                         
                         {% if pending_approval %}
-                        <div class="home-alert-card info-alert">
-                            <div class="alert-icon">
-                                <i class="fas fa-bell"></i>
-                            </div>
-                            <div class="alert-content">
-                                <h6 class="text-white mb-2">יש לך {{ pending_approval.count }} תיקון{{ pending_approval.count|pluralize:",ים" }} הממתין{{ pending_approval.count|pluralize:",ים" }} לאישור!</h6>
-                                <div class="pending-repairs-list">
-                                    {% for repair in pending_approval %}
-                                    <div class="pending-repair-item">
-                                        <span class="repair-bike-name">{{ repair.bike }}</span>
-                                        <div class="repair-actions">
-                                            <a href="{% url 'customer_approval' repair.id %}" class="btn btn-xs btn-success">
-                                                <i class="fas fa-check"></i> אשר
-                                            </a>
-                                            <a href="{% url 'repair_status' repair.id %}" class="btn btn-xs btn-info">
-                                                <i class="fas fa-eye"></i> צפה
-                                            </a>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
+                                                                                                <div class="space-y-3">
+                                                                                                    {% with suffix=pending_approval.count|pluralize:",ים" %}
+                                                                                                    {% with info_title='יש לך '|add:pending_approval.count|add:' תיקון'|add:suffix|add:' הממתין'|add:suffix|add:' לאישור!' %}
+                                                                                                        {% include 'workshop/components/home/alert_card.html' with variant='info' icon='fas fa-bell' title=info_title %}
+                                                                                                    {% endwith %}
+                                                                                                    {% endwith %}
+                                                    <div class="space-y-2">
+                                                        {% for repair in pending_approval %}
+                                                            {% url 'customer_approval' repair.id as approve_url %}
+                                                            {% url 'repair_status' repair.id as status_url %}
+                                                            {% include 'workshop/components/home/repair_item.html' with id=repair.id bike=repair.bike created_at=repair.created_at|date:"d/m/Y" primary_href=approve_url secondary_href=status_url %}
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
                         {% endif %}
                         
-                        <div class="home-actions-grid">
-                            <a href="{% url 'customer_report' %}" class="home-action-card primary-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">דווח על תקלה</h6>
-                                    <p class="text-white">פתח תיקון חדש</p>
-                                </div>
-                            </a>
-                            
-                            <a href="{% url 'customer_bikes_list' %}" class="home-action-card info-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-bicycle"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">האופניים שלי</h6>
-                                    <p class="text-white">צפה בכל האופניים</p>
-                                </div>
-                            </a>
-                            
-                            <a href="{% url 'customer_add_bike' %}" class="home-action-card success-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">הוסף אופניים</h6>
-                                    <p class="text-white">רשום אופניים חדשים</p>
-                                </div>
-                            </a>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            {% url 'customer_report' as url_report %}
+                            {% include 'workshop/components/home/action_card.html' with href=url_report icon='fas fa-wrench' color='primary' title='דווח על תקלה' subtitle='פתח תיקון חדש' %}
+                            {% url 'customer_bikes_list' as url_bikes %}
+                            {% include 'workshop/components/home/action_card.html' with href=url_bikes icon='fas fa-bicycle' color='info' title='האופניים שלי' subtitle='צפה בכל האופניים' %}
+                            {% url 'customer_add_bike' as url_add_bike %}
+                            {% include 'workshop/components/home/action_card.html' with href=url_add_bike icon='fas fa-plus' color='success' title='הוסף אופניים' subtitle='רשום אופניים חדשים' %}
                         </div>
                     </div>
                 </div>
                 
                 {% if recent_repairs %}
-                <div class="home-recent-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-history me-2 text-primary"></i>
-                            התיקונים האחרונים שלך
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="recent-repairs-grid">
-                            {% for repair in recent_repairs %}
-                            <div class="recent-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-id-bike">
-                                        <span class="repair-id">#{{ repair.id }}</span>
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                    </div>
-                                    <div class="repair-status">
-                                        <span class="badge badge-{% if repair.status == 'completed' %}success{% elif repair.status == 'in_progress' %}primary{% elif repair.status == 'diagnosed' %}warning{% else %}secondary{% endif %}">
-                                            {{ repair.get_status_display }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="repair-item-body">
-                                    <div class="repair-date">
-                                        <i class="fas fa-calendar me-1 text-primary"></i>
-                                        {{ repair.created_at|date:"d/m/Y" }}
-                                    </div>
-                                    <div class="repair-actions">
-                                        {% if repair.status == 'diagnosed' or repair.status == 'partially_approved' %}
-                                        <a href="{% url 'customer_approval' repair.id %}" class="btn btn-xs btn-success">
-                                            <i class="fas fa-check"></i> אשר
-                                        </a>
-                                        {% else %}
-                                        <a href="{% url 'repair_status' repair.id %}" class="btn btn-xs btn-info">
-                                            <i class="fas fa-eye"></i> צפה
-                                        </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
+                                                <div class="card bg-base-200 shadow-xl mt-4">
+                                                        {% include 'workshop/components/home/section_header.html' with icon='fas fa-history' color='primary' title='התיקונים האחרונים שלך' %}
+                                                        <div class="card-body p-4">
+                                                                <div class="space-y-2">
+                                                                        {% for repair in recent_repairs %}
+                                                                            {% url 'customer_approval' repair.id as approve_url %}
+                                                                            {% url 'repair_status' repair.id as status_url %}
+                                                                            {% if repair.status == 'diagnosed' or repair.status == 'partially_approved' %}
+                                                                                {% include 'workshop/components/home/repair_item.html' with id=repair.id bike=repair.bike created_at=repair.created_at|date:"d/m/Y" status_label=repair.get_status_display status=repair.status primary_href=approve_url %}
+                                                                            {% else %}
+                                                                                {% include 'workshop/components/home/repair_item.html' with id=repair.id bike=repair.bike created_at=repair.created_at|date:"d/m/Y" status_label=repair.get_status_display status=repair.status secondary_href=status_url %}
+                                                                            {% endif %}
+                                                                        {% endfor %}
+                                                                </div>
+                                                        </div>
+                                                </div>
                 {% endif %}
                 
             {% elif user.userprofile.role == "mechanic" %}
-                <!-- Mechanic Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-tools me-2 text-warning"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mechanic-dashboard-link">
-                            <a href="{% url 'mechanic_dashboard' %}" class="home-action-card primary-action large-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h5 class="text-white">עבור לדשבורד מכונאי</h5>
-                                    <p class="text-white">ניהול התיקונים שלך</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Mechanic CTA banner (compact, informative) -->
+                {% url 'mechanic_dashboard' as mech_dash %}
+                {% include 'workshop/components/home/cta_banner.html' with href=mech_dash icon='fas fa-wrench' title='דשבורד מכונאי' subtitle='ניהול התיקונים שלך' chip1_value=assigned_repairs|length chip1_label='משימות' chip1_color='warning' chip1_icon='fas fa-list-check' %}
                 
                 {% if assigned_repairs %}
-                <div class="home-mechanic-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-clipboard-list me-2 text-warning"></i>
-                            התיקונים שלך
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mechanic-repairs-grid">
+                <div class="card bg-base-200 shadow-xl mt-4">
+                    {% include 'workshop/components/home/section_header.html' with icon='fas fa-clipboard-list' color='warning' title='התיקונים שלך' %}
+                    <div class="card-body p-4">
+                        <div class="space-y-2">
                             {% for repair in assigned_repairs %}
-                            <div class="mechanic-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-bike-customer">
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                        <span class="repair-customer">{{ repair.bike.customer.name }}</span>
-                                    </div>
-                                    <div class="repair-date">{{ repair.created_at|date:"d/m/Y" }}</div>
-                                </div>
-                                <div class="repair-item-actions">
-                                    <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> עדכן
-                                    </a>
-                                </div>
-                            </div>
+                              {% url 'mechanic_task_completion' repair.id as complete_url %}
+                              {% include 'workshop/components/home/repair_item.html' with bike=repair.bike created_at=repair.created_at|date:"d/m/Y" secondary_href=complete_url %}
                             {% endfor %}
                         </div>
                     </div>
@@ -198,109 +92,27 @@
                 {% endif %}
                 
             {% elif user.userprofile.role == "manager" %}
-                <!-- Manager Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user-tie me-2 text-success"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-dashboard-link">
-                            <a href="{% url 'manager_dashboard' %}" class="home-action-card success-action large-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h5 class="text-white">עבור לדשבורד מנהל</h5>
-                                    <p class="text-white">ניהול כלל התיקונים והמוסך</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+                <!-- Manager CTA banner (compact, informative) -->
+                {% url 'manager_dashboard' as manager_dash %}
+                {% include 'workshop/components/home/cta_banner.html' with href=manager_dash icon='fas fa-chart-line' title='דשבורד מנהל' subtitle='ניהול כלל התיקונים והמוסך' chip1_value=pending_diagnosis_count chip1_label='ממתינים לאבחון' chip1_color='warning' chip1_icon='fas fa-magnifying-glass' chip2_value=pending_approval_count chip2_label='ממתינים לאישור' chip2_color='info' chip2_icon='fas fa-clock' chip3_value=in_progress_count chip3_label='בביצוע' chip3_color='success' chip3_icon='fas fa-cogs' %}
                 
-                <div class="home-manager-stats-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-chart-bar me-2 text-info"></i>
-                            סקירה מהירה
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-stats-grid">
-                            <div class="stat-item urgent-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ blocked_tasks_count }}</span>
-                                    <span class="stat-label">עבודות תקועות</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item warning-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-search"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ pending_diagnosis_count }}</span>
-                                    <span class="stat-label">ממתינים לאבחון</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item info-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ pending_approval_count }}</span>
-                                    <span class="stat-label">ממתינים לאישור</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item primary-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-cogs"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ in_progress_count }}</span>
-                                    <span class="stat-label">תיקונים בביצוע</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    {% include 'workshop/components/stat_card.html' with icon='fas fa-exclamation-triangle' color='error' number=blocked_tasks_count label='עבודות תקועות' %}
+                    {% include 'workshop/components/stat_card.html' with icon='fas fa-search' color='warning' number=pending_diagnosis_count label='ממתינים לאבחון' %}
+                    {% include 'workshop/components/stat_card.html' with icon='fas fa-clock' color='info' number=pending_approval_count label='ממתינים לאישור' %}
+                    {% include 'workshop/components/stat_card.html' with icon='fas fa-cogs' color='info' number=in_progress_count label='תיקונים בביצוע' %}
                 </div>
                 
                 {% if assigned_repairs %}
-                <div class="home-manager-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user-cog me-2 text-warning"></i>
-                            התיקונים שלך כמכונאי ({{ assigned_repairs.count }})
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-repairs-grid">
+                <div class="card bg-base-200 shadow-xl mt-4">
+                    {% with header_txt='התיקונים שלך כמכונאי ('|add:assigned_repairs.count|add:")" %}
+                    {% include 'workshop/components/home/section_header.html' with icon='fas fa-user-cog' color='warning' title=header_txt %}
+                    {% endwith %}
+                    <div class="card-body p-4">
+                        <div class="space-y-2">
                             {% for repair in assigned_repairs %}
-                            <div class="manager-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-id-bike">
-                                        <span class="repair-id">#{{ repair.id }}</span>
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                    </div>
-                                    <div class="repair-customer">{{ repair.bike.customer.name }}</div>
-                                </div>
-                                <div class="repair-item-body">
-                                    <div class="repair-date">{{ repair.created_at|date:"d/m/Y" }}</div>
-                                    <div class="repair-actions">
-                                        <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-xs btn-warning">
-                                            <i class="fas fa-edit"></i> עדכן
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+                              {% url 'mechanic_task_completion' repair.id as complete_url %}
+                              {% include 'workshop/components/home/repair_item.html' with id=repair.id bike=repair.bike created_at=repair.created_at|date:"d/m/Y" secondary_href=complete_url %}
                             {% endfor %}
                         </div>
                     </div>
@@ -350,27 +162,13 @@
             
         {% else %}
             <!-- Not Authenticated -->
-            <div class="home-login-card">
-                <div class="empty-state-icon">
-                    <i class="fas fa-sign-in-alt"></i>
-                </div>
-                <div class="empty-state-content">
-                    <h4 class="text-white mb-3">התחברות למערכת</h4>
-                    <p class="text-white mb-4">אנא התחבר כדי להמשיך והשתמש במערכת ניהול המוסך</p>
-                    <div class="login-actions">
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-sign-in-alt me-2"></i>התחבר
-                        </a>
-                        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>הרשם
-                        </a>
-                    </div>
-                </div>
-            </div>
+            {% url 'login' as login_url %}
+            {% url 'register' as register_url %}
+            {% include 'workshop/components/home/login_card.html' with login_href=login_url register_href=register_url %}
         {% endif %}
         
         <div class="mt-4 text-center">
-            <small class="text-white home-footer-text">
+            <small class="text-gray-400">
                 <i class="fas fa-info-circle me-1"></i>
                 מערכת ניהול מוסך אופניים מתקדמת - גרסה 2.0
             </small>

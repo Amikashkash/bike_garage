@@ -8,6 +8,13 @@
 			"group": "build",
 			"isBackground": true,
 			"problemMatcher": []
+		},
+		{
+			"label": "Run Development Server",
+			"type": "shell",
+			"command": "python manage.py runserver",
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }
