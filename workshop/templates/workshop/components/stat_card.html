@@ -1,14 +1,14 @@
-<!-- Tailwind stat card component - Inline colored border -->
+<!-- Tailwind stat card component - Mobile-first design -->
 <div class="card bg-base-200 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
      style="border-left: 8px solid 
            {% if color == 'error' %}#ef4444{% endif %}
            {% if color == 'warning' or color == 'yellow' %}#eab308{% endif %}
            {% if color == 'success' %}#22c55e{% endif %}
            {% if color == 'info' %}#3b82f6{% endif %};">
-    <div class="card-body p-3 md:p-5">
-        <div class="flex items-center gap-3 md:gap-5">
-            <!-- Big colored icon (smaller on mobile) -->
-            <div class="text-3xl md:text-6xl"
+    <div class="card-body p-4">
+        <div class="flex items-center gap-4">
+            <!-- Icon - responsive sizing -->
+            <div class="text-4xl sm:text-5xl md:text-6xl shrink-0"
                  style="color:
                        {% if color == 'error' %}#ef4444{% endif %}
                        {% if color == 'warning' or color == 'yellow' %}#eab308{% endif %}
@@ -16,9 +16,10 @@
                        {% if color == 'info' %}#3b82f6{% endif %};">
                 <i class="{{ icon }}"></i>
             </div>
-            <div class="flex-1">
-                <div class="text-2xl md:text-4xl font-bold text-white">{{ number }}</div>
-                <div class="text-xs md:text-base text-gray-300">{{ label }}</div>
+            <!-- Text content - ensure visibility on mobile -->
+            <div class="flex-1 min-w-0">
+                <div class="text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight">{{ number }}</div>
+                <div class="text-sm sm:text-base md:text-lg text-gray-300 mt-1">{{ label }}</div>
             </div>
         </div>
     </div>
