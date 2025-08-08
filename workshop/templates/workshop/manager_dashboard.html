@@ -24,7 +24,7 @@
         </div>
         
         <!-- Dashboard Stats Overview -->
-        <div class="dashboard-stats-overview mb-4">
+        <div class="dashboard-stats-overview mb-4 hidden md:block">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 
                 {% include 'workshop/components/stat_card.html' with number=stuck_repairs.count label='תיקונים תקועים' icon='fas fa-exclamation-triangle' color='error' %}
