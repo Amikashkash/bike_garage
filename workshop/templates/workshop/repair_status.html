@@ -1,316 +1,347 @@
 {% extends 'workshop/base.html' %}
 
-{% block title %}סטטוס תיקון{% endblock %}
+{% block title %}סטטוס תיקון #{{ repair_job.id }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🔍 סטטוס תיקון #{{ repair_job.id }}</h1>
-            <p class="text-white">מעקב אחר התקדמות התיקון</p>
-        </div>
-    </div>
-</div>
-
-<!-- הצגת הערות חשובות מהמכונאי -->
-{% for item in repair_job.repair_items.all %}
-    {% if item.notes %}
-    <div class="row mb-3">
-        <div class="col-md-12">
-            <div class="alert alert-{% if item.status == 'blocked' %}danger{% elif item.status == 'completed' %}info{% else %}warning{% endif %}">
-                <div class="d-flex align-items-center">
-                    <div class="me-3">
-                        {% if item.status == 'blocked' %}
-                            <i class="fas fa-exclamation-triangle text-danger fa-2x pulse-animation"></i>
-                        {% elif item.status == 'completed' %}
-                            <i class="fas fa-check-circle text-success fa-2x"></i>
-                        {% else %}
-                            <i class="fas fa-exclamation-triangle text-warning fa-2x"></i>
-                        {% endif %}
-                    </div>
-                    <div class="flex-grow-1">
-                        <h6 class="mb-2 {% if item.status == 'blocked' %}text-danger{% endif %} text-white">
-                            {% if item.status == 'blocked' %}
-                                🚨 פעולה תקועה - דרושה עזרת מנהל:
-                            {% elif item.status == 'completed' %}
-                                הערת מכונאי לפעולה שהושלמה:
-                            {% else %}
-                                הערת מכונאי - בעיה או הסתייגות:
-                            {% endif %}
-                            <strong>{{ item.description }}</strong>
-                        </h6>
-                        <div class="repair-notes-box {% if item.status == 'blocked' %}blocked-note{% endif %}">
-                            {{ item.notes|linebreaks }}
-                        </div>
-                        {% if item.completed_by %}
-                            <small class="text-white mt-2 d-block">
-                                <i class="fas fa-user"></i> {{ item.completed_by.get_full_name|default:item.completed_by.username }}
-                                {% if item.completed_at %} - {{ item.completed_at|date:"d/m/Y H:i" }}{% endif %}
-                            </small>
-                        {% endif %}
-                        {% if item.status == 'blocked' %}
-                            <div class="mt-2">
-                                <small class="text-danger font-weight-bold">
-                                    <i class="fas fa-info-circle me-1"></i>המנהל יטפל בפעולה זו בהקדם
-                                </small>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
-{% endfor %}
-
-<div class="row">
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="text-white mb-3">
-                    <i class="fas fa-info-circle me-2"></i>פרטי התיקון
-                </h5>
-                <p class="text-white"><strong>אופניים:</strong> {{ repair_job.bike }}</p>
-                <p class="text-white"><strong>לקוח:</strong> {{ repair_job.bike.customer.name }}</p>
-                <p class="text-white"><strong>תאריך דיווח:</strong> {{ repair_job.created_at|date:"d/m/Y H:i" }}</p>
-                <p class="text-white"><strong>סטטוס נוכחי:</strong> 
-                    <span class="badge badge-{% if repair_job.status == 'completed' %}success{% elif repair_job.status == 'in_progress' %}primary{% elif repair_job.status == 'approved' %}info{% else %}warning{% endif %}">
-                        {{ repair_job.get_status_display }}
-                    </span>
-                </p>
-                
-                {% if repair_job.assigned_mechanic %}
-                <p class="text-white"><strong>מכונאי מטפל:</strong> {{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}</p>
-                {% endif %}
-                
-                {% if repair_job.problem_description %}
-                <p class="text-white"><strong>תיאור התקלה:</strong></p>
-                <div class="repair-status-info-box">{{ repair_job.problem_description }}</div>
-                {% endif %}
-                
-                {% if repair_job.diagnosis %}
-                <p class="text-white"><strong>אבחון:</strong></p>
-                <div class="repair-status-warning-box">{{ repair_job.diagnosis }}</div>
-                {% endif %}
-                
-                {% if repair_job.is_stuck %}
-                <div class="repair-stuck-box mt-3">
-                    <h6 class="mb-2 text-white">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        <strong>תיקון תקוע - דרושה עזרת מנהל</strong>
-                    </h6>
-                    <p class="mb-0 text-white"><strong>סיבת התקיעות:</strong></p>
-                    <p class="mb-0 text-white">{{ repair_job.stuck_reason|default:"לא צוין" }}</p>
-                    {% if repair_job.stuck_at %}
-                    <small class="mt-2 d-block text-white">
-                        <i class="fas fa-clock me-1"></i>
-                        דווח ב: {{ repair_job.stuck_at|date:"d/m/Y H:i" }}
-                    </small>
-                    {% endif %}
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        {% if repair_job.repair_items.exists %}
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="text-white mb-3">
-                    <i class="fas fa-tools me-2"></i>פעולות תיקון ({{ repair_job.repair_items.count }} פריטים)
-                </h5>
-                {% for item in repair_job.repair_items.all %}
-                <div class="repair-item-card mb-3 {% if item.status == 'blocked' %}blocked-item{% endif %}" 
-                     data-status="{% if item.status == 'completed' %}completed{% elif item.status == 'blocked' %}blocked{% elif item.is_approved_by_customer %}in_progress{% else %}pending{% endif %}">
-                    
-                    <!-- שורה עליונה: תיאור ומחיר וסטטוס -->
-                    <div class="item-header d-flex justify-content-between align-items-center">
-                        <div class="item-description flex-grow-1">
-                            <strong>
-                                {% if item.status == 'blocked' %}
-                                    <i class="fas fa-exclamation-triangle text-danger me-1"></i>
-                                {% endif %}
-                                {{ item.description }}
-                            </strong>
-                        </div>
-                        <div class="item-info d-flex align-items-center">
-                            <div class="item-price me-3">
-                                <strong>₪{{ item.price }}</strong>
-                            </div>
-                            <div class="item-status">
-                                {% if item.status == 'completed' %}
-                                    <span class="badge badge-success">
-                                        <i class="fas fa-check"></i> הושלם
-                                    </span>
-                                    {% if item.completed_at %}
-                                        <br><small class="text-white">{{ item.completed_at|date:"d/m H:i" }}</small>
-                                    {% endif %}
-                                {% elif item.status == 'blocked' %}
-                                    <span class="badge badge-danger pulse-animation">
-                                        <i class="fas fa-times"></i> תקוע - דרושה עזרה
-                                    </span>
-                                {% elif item.is_approved_by_customer %}
-                                    <span class="badge badge-warning">
-                                        <i class="fas fa-clock"></i> ממתין לביצוע
-                                    </span>
-                                {% else %}
-                                    <span class="badge badge-secondary">
-                                        <i class="fas fa-hourglass-half"></i> ממתין לאישור
-                                    </span>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- שורה תחתונה: הערות מכונאי -->
-                    {% if item.notes %}
-                    <div class="mechanic-notes-full-width {% if item.status == 'blocked' %}blocked-notes{% endif %}">
-                        <div class="d-flex align-items-center mb-2">
-                            {% if item.status == 'blocked' %}
-                                <i class="fas fa-exclamation-triangle text-danger me-2"></i>
-                                <span class="font-weight-bold text-danger">הערת מכונאי - פעולה תקועה:</span>
-                            {% else %}
-                                <i class="fas fa-sticky-note text-primary me-2"></i>
-                                <span class="font-weight-bold text-primary">הערת מכונאי:</span>
-                            {% endif %}
-                            {% if item.completed_by %}
-                                <span class="text-white me-2">
-                                    <i class="fas fa-user me-1"></i>{{ item.completed_by.get_full_name|default:item.completed_by.username }}
-                                </span>
-                            {% endif %}
-                        </div>
-                        <div class="notes-content">{{ item.notes }}</div>
-                        {% if item.status == 'blocked' %}
-                            <div class="mt-2">
-                                <small class="text-danger"><i class="fas fa-info-circle me-1"></i>פעולה זו דורשת התייחסות מנהל</small>
-                            </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-                {% empty %}
-                <div class="text-center text-white py-4">
-                    <i class="fas fa-tools fa-2x mb-2"></i>
-                    <p>אין פריטי תיקון</p>
-                </div>
-                {% endfor %}
-                
-                <div class="mt-3 pt-3 border-top">
-                    <div class="row">
-                        <div class="col-6">
-                            <small class="text-white"><strong>מאושר:</strong> ₪{{ repair_job.get_total_approved_price }}</small>
-                        </div>
-                        <div class="col-6">
-                            <small class="text-white"><strong>ממתין:</strong> ₪{{ repair_job.get_pending_approval_price }}</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="card h-100">
-            <div class="card-body text-center">
-                <h5 class="text-white mb-3">
-                    <i class="fas fa-tools me-2"></i>פעולות תיקון
-                </h5>
-                <i class="fas fa-tools fa-2x text-secondary mb-2"></i>
-                <p class="text-white">עדיין לא הוגדרו פעולות תיקון עבור תיקון זה.</p>
-            </div>
-        </div>
-        {% endif %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {% if repair_job.status == 'diagnosed' and repair_job.bike.customer.user == request.user %}
-        <div class="card mt-3">
-            <div class="card-body text-center">
-                <h6 class="text-white">פעולה נדרשת</h6>
-                <p class="text-white">התיקון מוכן לאישור שלך</p>
-                <a href="{% url 'customer_approval' repair_job.id %}" class="btn btn-success">
-                    <i class="fas fa-check"></i> אשר פעולות תיקון
-                </a>
-            </div>
-        </div>
-        {% endif %}
-    </div>
-    
-    <div class="col-md-4">
-        {% if updates %}
-        <div class="card h-100">
-            <div class="card-body">
-                <h5 class="text-white mb-3">
-                    <i class="fas fa-history me-2"></i>עדכונים
-                </h5>
-                <div class="timeline">
-                    {% for update in updates %}
-                    <div class="timeline-item mb-3">
-                        <div class="timeline-marker bg-primary"></div>
-                        <div class="timeline-content">
-                            <p class="mb-1 text-white">{{ update.message }}</p>
-                            <small class="text-white">
-                                {{ update.created_at|date:"d/m/Y H:i" }}
-                                {% if update.user %}
-                                - {{ update.user.get_full_name|default:update.user.username }}
-                                {% endif %}
-                            </small>
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-4xl font-bold gradient-text mb-2">🔍 סטטוס תיקון #{{ repair_job.id }}</h1>
+                    <p class="text-slate-300">מעקב מפורט אחר התקדמות התיקון</p>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="flex justify-center md:justify-end">
+                    <div class="px-6 py-3 rounded-2xl border-2 
+                        {% if repair_job.status == 'completed' %}bg-green-500/20 border-green-400/40 text-green-300
+                        {% elif repair_job.status == 'in_progress' %}bg-blue-500/20 border-blue-400/40 text-blue-300
+                        {% elif repair_job.status == 'approved' %}bg-purple-500/20 border-purple-400/40 text-purple-300
+                        {% elif repair_job.is_stuck %}bg-red-500/20 border-red-400/40 text-red-300 animate-pulse
+                        {% else %}bg-orange-500/20 border-orange-400/40 text-orange-300{% endif %}">
+                        <div class="flex items-center gap-2">
+                            {% if repair_job.status == 'completed' %}
+                                <i class="fas fa-check-circle"></i>
+                            {% elif repair_job.status == 'in_progress' %}
+                                <i class="fas fa-cogs animate-spin"></i>
+                            {% elif repair_job.status == 'approved' %}
+                                <i class="fas fa-thumbs-up"></i>
+                            {% elif repair_job.is_stuck %}
+                                <i class="fas fa-exclamation-triangle"></i>
+                            {% else %}
+                                <i class="fas fa-hourglass-half"></i>
+                            {% endif %}
+                            <span class="font-bold text-lg">{{ repair_job.get_status_display }}</span>
                         </div>
                     </div>
-                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Compact Alert Section -->
+        {% if repair_job.is_stuck %}
+        <div class="mb-6">
+            <div class="bg-red-900/30 border border-red-500/40 rounded-xl overflow-hidden backdrop-blur-sm">
+                <div class="px-4 py-3 bg-red-500/20 border-b border-red-500/30">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-red-500/30 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-400 animate-pulse"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white">🚨 תיקון תקוע - דרושה עזרת מנהל</h3>
+                                <p class="text-red-200 text-sm">{{ repair_job.stuck_reason|default:"לא צוין" }}</p>
+                            </div>
+                        </div>
+                        {% if repair_job.stuck_at %}
+                        <div class="text-red-200 text-sm">{{ repair_job.stuck_at|date:"d/m H:i" }}</div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
         {% endif %}
-    </div>
-</div>
 
-<!-- סעיף למנהל להוסיף תגובה לתיקון תקוע -->
-{% if show_manager_response %}
-<div class="row mt-4">
-    <div class="col-md-12">
-        <div class="card manager-response-card">
-            <div class="card-body">
-                <h5 class="mb-3 text-white">
-                    <i class="fas fa-reply me-2"></i>
-                    תגובת מנהל לתיקון תקוע
-                </h5>
+        <!-- Important Notes Alert - Compact -->
+        {% for item in repair_job.repair_items.all %}
+            {% if item.notes and item.status == 'blocked' %}
+            <div class="mb-4">
+                <div class="bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-exclamation-triangle text-red-400 mt-0.5"></i>
+                        <div class="flex-1">
+                            <span class="font-bold text-red-300">{{ item.description }}:</span>
+                            <span class="text-red-100 mr-2">{{ item.notes }}</span>
+                            {% if item.completed_by %}
+                            <span class="text-red-200 text-sm">- {{ item.completed_by.get_full_name|default:item.completed_by.username }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Compact Three-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            
+            <!-- Left Column: Repair Details - Compact -->
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-info-circle text-blue-400"></i>פרטי התיקון
+                    </h3>
+                </div>
+                
+                <div class="p-4 space-y-3">
+                    <!-- Bike & Customer Info - Inline -->
+                    <div class="flex items-center gap-3 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bicycle text-white"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-white text-sm">{{ repair_job.bike }}</h4>
+                            <p class="text-slate-300 text-xs">{{ repair_job.bike.customer.name }}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Compact Info Grid -->
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-300">תאריך:</span>
+                            <span class="text-white font-medium">{{ repair_job.created_at|date:"d/m H:i" }}</span>
+                        </div>
+                        {% if repair_job.assigned_mechanic %}
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-300">מכונאי:</span>
+                            <span class="text-white font-medium">{{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Problem & Diagnosis - Compact -->
+                    {% if repair_job.problem_description %}
+                    <div class="bg-orange-500/10 border border-orange-400/30 rounded-lg p-3">
+                        <h5 class="text-orange-300 text-sm font-medium mb-1">תיאור התקלה:</h5>
+                        <p class="text-orange-100 text-sm">{{ repair_job.problem_description }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if repair_job.diagnosis %}
+                    <div class="bg-blue-500/10 border border-blue-400/30 rounded-lg p-3">
+                        <h5 class="text-blue-300 text-sm font-medium mb-1">אבחון:</h5>
+                        <p class="text-blue-100 text-sm">{{ repair_job.diagnosis }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Middle Column: Repair Items - Compact -->
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                <div class="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-tools text-green-400"></i>פעולות תיקון
+                        </h3>
+                        {% if repair_job.repair_items.exists %}
+                        <span class="bg-green-500/30 px-2 py-1 rounded-full text-green-200 text-xs font-bold">{{ repair_job.repair_items.count }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    {% if repair_job.repair_items.exists %}
+                        <!-- Compact Items List -->
+                        <div class="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                            {% for item in repair_job.repair_items.all %}
+                            <div class="flex items-center justify-between p-3 bg-slate-700/50 border border-
+                                {% if item.status == 'completed' %}green-500/40
+                                {% elif item.status == 'blocked' %}red-500/40
+                                {% elif item.is_approved_by_customer %}blue-500/40
+                                {% else %}orange-500/40{% endif %} 
+                                rounded-lg">
+                                
+                                <div class="flex items-center gap-2 flex-1">
+                                    <div class="w-6 h-6 bg-{% if item.status == 'completed' %}green{% elif item.status == 'blocked' %}red{% elif item.is_approved_by_customer %}blue{% else %}orange{% endif %}-500/20 rounded flex items-center justify-center">
+                                        {% if item.status == 'completed' %}
+                                            <i class="fas fa-check text-green-400 text-xs"></i>
+                                        {% elif item.status == 'blocked' %}
+                                            <i class="fas fa-exclamation-triangle text-red-400 text-xs"></i>
+                                        {% elif item.is_approved_by_customer %}
+                                            <i class="fas fa-cog text-blue-400 text-xs"></i>
+                                        {% else %}
+                                            <i class="fas fa-hourglass-half text-orange-400 text-xs"></i>
+                                        {% endif %}
+                                    </div>
+                                    <span class="text-white text-sm font-medium truncate">{{ item.description }}</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-2">
+                                    <span class="text-white font-bold text-sm">₪{{ item.price }}</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
+                                        {% if item.status == 'completed' %}bg-green-500/20 text-green-300
+                                        {% elif item.status == 'blocked' %}bg-red-500/20 text-red-300
+                                        {% elif item.is_approved_by_customer %}bg-blue-500/20 text-blue-300
+                                        {% else %}bg-orange-500/20 text-orange-300{% endif %}">
+                                        {% if item.status == 'completed' %}הושלם
+                                        {% elif item.status == 'blocked' %}תקוע
+                                        {% elif item.is_approved_by_customer %}בעבודה
+                                        {% else %}ממתין{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <!-- Compact Notes Display -->
+                            {% if item.notes and item.status != 'blocked' %}
+                            <div class="mr-8 mb-2">
+                                <div class="bg-blue-500/10 border border-blue-400/30 rounded p-2">
+                                    <p class="text-blue-100 text-xs">{{ item.notes }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Compact Pricing Summary -->
+                        <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                            <div class="grid grid-cols-2 gap-3 text-center">
+                                <div>
+                                    <div class="text-lg font-bold text-green-400">₪{{ repair_job.get_total_approved_price }}</div>
+                                    <div class="text-xs text-green-300">מאושר</div>
+                                </div>
+                                <div>
+                                    <div class="text-lg font-bold text-orange-400">₪{{ repair_job.get_pending_approval_price }}</div>
+                                    <div class="text-xs text-orange-300">ממתין</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Action - Compact -->
+                        {% if repair_job.status == 'diagnosed' and repair_job.bike.customer.user == request.user %}
+                        <div class="mt-3 p-3 bg-blue-500/20 border border-blue-400/40 rounded-lg text-center">
+                            <p class="text-blue-200 text-sm mb-2">התיקון מוכן לאישור</p>
+                            <a href="{% url 'customer_approval' repair_job.id %}" class="btn-modern success sm">
+                                <i class="fas fa-check mr-2"></i>אשר
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                    {% else %}
+                        <!-- No Items State - Compact -->
+                        <div class="text-center py-6">
+                            <i class="fas fa-tools text-slate-400 text-2xl mb-2"></i>
+                            <p class="text-slate-400 text-sm">אין פריטי תיקון</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Right Column: Timeline - Compact -->
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                <div class="bg-purple-500/20 px-4 py-3 border-b border-purple-500/30">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-history text-purple-400"></i>עדכונים
+                    </h3>
+                </div>
+                
+                <div class="p-4">
+                    {% if updates %}
+                        <div class="space-y-3 max-h-64 overflow-y-auto">
+                            {% for update in updates %}
+                            <div class="flex gap-3">
+                                <div class="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                                <div class="flex-1">
+                                    <p class="text-white text-sm font-medium">{{ update.message }}</p>
+                                    <div class="text-xs text-slate-400">
+                                        {{ update.created_at|date:"d/m H:i" }}
+                                        {% if update.user %} • {{ update.user.get_full_name|default:update.user.username }}{% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <!-- No Updates State - Compact -->
+                        <div class="text-center py-6">
+                            <i class="fas fa-history text-slate-400 text-2xl mb-2"></i>
+                            <p class="text-slate-400 text-sm">אין עדכונים</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Manager Response Section - Compact -->
+        {% if show_manager_response %}
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-yellow-500/40 rounded-xl overflow-hidden">
+            <div class="bg-yellow-500/20 px-4 py-3 border-b border-yellow-500/30">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-reply text-yellow-400"></i>תגובת מנהל לתיקון תקוע
+                </h3>
+            </div>
+            
+            <div class="p-4">
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="manager_response">
                     
-                    <div class="form-group mb-3">
-                        <label class="text-white" for="managerResponse">הקלד את תגובתך למכונאי:</label>
-                        <textarea class="form-control" id="managerResponse" name="manager_response" rows="4" 
-                                  placeholder="לדוגמה: החלק נמצא במחסן, פנה לדני לקבלת הכלי המתאים, בצע בדיקה נוספת של..."
-                                  required></textarea>
-                        <small class="text-white">הסבר למכונאי איך לפתור את הבעיה או הנחיות להמשך</small>
-                    </div>
-                    
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="markResolved" name="mark_resolved" value="true">
-                        <label class="form-check-label text-white" for="markResolved">
-                            סמן את התיקון כנפתר (המכונאי יוכל להמשיך)
-                        </label>
-                    </div>
-                    
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-success">
-                            <i class="fas fa-paper-plane"></i> שלח תגובה למכונאי
-                        </button>
-                        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary ms-2">
-                            <i class="fas fa-arrow-left"></i> חזרה לדשבורד
-                        </a>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <!-- Response Text -->
+                        <div class="lg:col-span-2 space-y-3">
+                            <textarea 
+                                id="managerResponse" 
+                                name="manager_response" 
+                                rows="3" 
+                                required
+                                class="w-full bg-slate-700/70 border border-slate-500 rounded-lg px-3 py-2 text-white placeholder-slate-300 focus:border-yellow-400 focus:outline-none resize-none text-sm"
+                                placeholder="הסבר למכונאי איך לפתור את הבעיה או הנחיות להמשך"></textarea>
+                            
+                            <!-- Compact Checkbox -->
+                            <label for="markResolved" class="flex items-center gap-2 text-sm cursor-pointer">
+                                <input type="checkbox" 
+                                       id="markResolved" 
+                                       name="mark_resolved" 
+                                       value="true"
+                                       class="w-4 h-4 text-green-500 bg-slate-700 border border-slate-500 rounded">
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                <span class="text-white">סמן כנפתר</span>
+                            </label>
+                        </div>
+                        
+                        <!-- Actions -->
+                        <div class="flex flex-col gap-2">
+                            <button type="submit" class="btn-modern success sm">
+                                <i class="fas fa-paper-plane mr-2"></i>שלח תגובה
+                            </button>
+                            <a href="{% url 'manager_dashboard' %}" class="btn-modern secondary sm">
+                                <i class="fas fa-arrow-left mr-2"></i>דשבורד
+                            </a>
+                        </div>
                     </div>
                 </form>
                 
-                <!-- הצגת תגובה קיימת אם יש -->
+                <!-- Previous Response - Compact -->
                 {% if repair_job.manager_response %}
-                <div class="manager-previous-response mt-4">
-                    <h6 class="text-success">תגובה קודמת של המנהל:</h6>
-                    <p class="mb-0 text-white">{{ repair_job.manager_response|linebreaks }}</p>
+                <div class="mt-4 p-3 bg-green-900/20 border border-green-600/40 rounded-lg">
+                    <h5 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+                        <i class="fas fa-history text-green-400"></i>תגובה קודמת
+                    </h5>
+                    <p class="text-green-100 text-sm">{{ repair_job.manager_response }}</p>
                 </div>
                 {% endif %}
             </div>
         </div>
+        {% endif %}
+        
+        <!-- Back to Home -->
+        <div class="text-center mt-8">
+            <a href="{% url 'home' %}" class="btn-modern secondary">
+                <i class="fas fa-home mr-2"></i>חזרה לדף הבית
+            </a>
+        </div>
     </div>
 </div>
-{% endif %}
 {% endblock %}

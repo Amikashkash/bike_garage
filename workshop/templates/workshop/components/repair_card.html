@@ -1,0 +1,96 @@
+<div class="repair-card {{ repair.status|default:'normal' }}-status">
+    <div class="repair-header">
+        <div class="repair-id-info">
+            <div class="flex items-center space-x-reverse space-x-3">
+                <div class="repair-icon {{ repair.status|default:'normal' }}-icon">
+                    {% if repair.status == 'stuck' %}
+                        <i class="fas fa-exclamation-triangle text-red-400 animate-pulse"></i>
+                    {% elif repair.status == 'completed' %}
+                        <i class="fas fa-check-circle text-green-400"></i>
+                    {% elif repair.status == 'in_progress' %}
+                        <i class="fas fa-tools text-blue-400"></i>
+                    {% else %}
+                        <i class="fas fa-bicycle text-slate-400"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <h3 class="repair-id">#{{ repair.id }}</h3>
+                    <p class="repair-bike">{{ repair.bike }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="repair-status">
+            {% if repair.status == 'stuck' %}
+                <span class="status-badge urgent animate-pulse">
+                    {{ repair.get_status_display }}
+                </span>
+            {% elif repair.status == 'completed' %}
+                <span class="status-badge success">
+                    {{ repair.get_status_display }}
+                </span>
+            {% elif repair.status == 'in_progress' %}
+                <span class="status-badge active">
+                    {{ repair.get_status_display }}
+                </span>
+                {% if repair.progress_percentage %}
+                <div class="progress-circle">
+                    <span>{{ repair.progress_percentage|floatformat:0 }}%</span>
+                </div>
+                {% endif %}
+            {% else %}
+                <span class="status-badge pending">
+                    {{ repair.get_status_display }}
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="repair-body">
+        <div class="repair-details">
+            <div class="detail-item">
+                <i class="fas fa-user text-slate-400"></i>
+                <span class="text-white">{{ repair.bike.customer.name }}</span>
+            </div>
+            {% if repair.assigned_mechanic %}
+            <div class="detail-item">
+                <i class="fas fa-wrench text-slate-400"></i>
+                <span class="text-white">{{ repair.assigned_mechanic.get_full_name }}</span>
+            </div>
+            {% endif %}
+            {% if repair.created_at %}
+            <div class="detail-item">
+                <i class="fas fa-clock text-slate-400"></i>
+                <span class="text-white">{{ repair.created_at|timesince }}</span>
+            </div>
+            {% endif %}
+            {% if repair.is_stuck and repair.stuck_reason %}
+            <div class="stuck-info">
+                <i class="fas fa-exclamation-circle text-red-400"></i>
+                <span class="text-red-200">{{ repair.stuck_reason }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="repair-actions">
+            {% if repair.status == 'stuck' %}
+                <button class="btn-modern danger sm" onclick="respondToStuck({{ repair.id }})">
+                    <i class="fas fa-reply"></i>
+                </button>
+            {% endif %}
+            
+            <a href="{% url 'repair_status' repair.id %}" class="btn-modern primary sm">
+                <i class="fas fa-eye"></i>
+            </a>
+            
+            {% if repair.status == 'diagnosed' %}
+                <a href="{% url 'customer_approval' repair.id %}" class="btn-modern success sm">
+                    <i class="fas fa-check"></i>
+                </a>
+            {% elif repair.status == 'awaiting_quality_check' %}
+                <a href="{% url 'manager_quality_check' repair.id %}" class="btn-modern warning sm">
+                    <i class="fas fa-search-plus"></i>
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,35 +1,7 @@
-<!-- Reusable button component with Tailwind + daisyUI -->
-{% comment %}
-Usage: {% include 'workshop/components/button.html' with style='primary' text='Save' icon='fas fa-save' href='#' %}
-Styles: primary, secondary, warning, info, success, danger
-{% endcomment %}
-
-{% if href %}
-    <a href="{{ href }}" 
-       class="btn 
-              {% if style == 'primary' %}btn-primary{% endif %}
-              {% if style == 'secondary' %}btn-secondary{% endif %}
-              {% if style == 'warning' %}btn-warning{% endif %}
-              {% if style == 'info' %}btn-info{% endif %}
-              {% if style == 'success' %}btn-success{% endif %}
-              {% if style == 'danger' %}btn-error{% endif %}
-              {{ extra_classes|default:'' }}"
-       {% if title %}title="{{ title }}"{% endif %}>
-        {% if icon %}<i class="{{ icon }} me-1"></i>{% endif %}
-        {{ text }}
-    </a>
-{% else %}
-    <button type="{{ type|default:'button' }}" 
-            class="btn 
-                   {% if style == 'primary' %}btn-primary{% endif %}
-                   {% if style == 'secondary' %}btn-secondary{% endif %}
-                   {% if style == 'warning' %}btn-warning{% endif %}
-                   {% if style == 'info' %}btn-info{% endif %}
-                   {% if style == 'success' %}btn-success{% endif %}
-                   {% if style == 'danger' %}btn-error{% endif %}
-                   {{ extra_classes|default:'' }}"
-            {% if title %}title="{{ title }}"{% endif %}>
-        {% if icon %}<i class="{{ icon }} me-1"></i>{% endif %}
-        {{ text }}
-    </button>
-{% endif %}
+<a {% if href %}href="{{ href }}"{% endif %} 
+   {% if onclick %}onclick="{{ onclick }}"{% endif %}
+   class="btn-modern {{ style|default:'primary' }} {{ size|default:'md' }} {{ extra_classes|default:'' }}"
+   {% if title %}title="{{ title }}"{% endif %}>
+    {% if icon %}<i class="{{ icon }} {% if text %}ml-2{% endif %}"></i>{% endif %}
+    {% if text %}{{ text }}{% endif %}
+</a>

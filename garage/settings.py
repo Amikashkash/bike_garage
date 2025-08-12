@@ -29,7 +29,14 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-$%fb&h2%_kxy_sb4^5oh-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)  # זמני לבדיקת שגיאות
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*,localhost,127.0.0.1', cast=lambda v: [s.strip() for s in v.split(',')])
+ALLOWED_HOSTS = [
+    '*',
+    'localhost', 
+    '127.0.0.1',
+    '10.100.102.87',
+    '.onrender.com',
+    'shai-bike-garage.onrender.com'
+]
 
 # CSRF Settings - תיקון בעיות CSRF במעבר בין מכשירים
 CSRF_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
@@ -39,13 +46,13 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
     'https://shai-bike-garage.onrender.com',
     'http://localhost:8000',
+    'http://10.100.102.87:8000',
     'http://127.0.0.1:8000',
 ]
 
 # Session Settings - שיפור יציבות סשן
-SESSION_COOKIE_AGE = 3600 * 24 * 7  # שבוע
-SESSION_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
-SESSION_COOKIE_HTTPONLY = True
+
+SESSION_COOKIE_SECURE = False  # רק ב-HTTPS בייצור
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_SAVE_EVERY_REQUEST = True  # מחדש את הסשן בכל בקשה
 
@@ -60,12 +67,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'workshop.apps.WorkshopConfig',
     'tailwind',
-    'theme',  
+    'ui',  
 
 ]
-TAILWIND_APP_NAME = 'theme'
+TAILWIND_APP_NAME = 'ui'
 INTERNAL_IPS = [
     "127.0.0.1",
+    "10.100.102.87",  # Your IP for mobile access
 ]
 
 NPM_BIN_PATH = shutil.which("npm")
@@ -174,6 +182,7 @@ LOCALE_PATHS = [
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "workshop" / "static",
+    BASE_DIR / "ui" / "static",
 ]
 
 # עבור production - הגדרת תיקיית static root

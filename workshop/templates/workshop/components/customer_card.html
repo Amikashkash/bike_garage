@@ -1,0 +1,41 @@
+<div class="customer-card">
+    <div class="customer-header">
+        <div class="customer-avatar">
+            {{ customer.name|first }}{{ customer.name|last|first }}
+        </div>
+        <div class="customer-info">
+            <h3 class="customer-name">{{ customer.name }}</h3>
+            <p class="customer-type">
+                {% if customer.is_vip %}לקוח VIP{% else %}לקוח רגיל{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div class="customer-stats">
+        <div class="stat-item">
+            <i class="fas fa-bicycle text-blue-400"></i>
+            <span>{{ customer.bike_set.count }} אופניים</span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-wrench text-green-400"></i>
+            <span>{{ customer.total_repairs }} תיקונים</span>
+        </div>
+        {% if customer.phone %}
+        <div class="stat-item">
+            <i class="fas fa-phone text-cyan-400"></i>
+            <span>{{ customer.phone }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="customer-actions">
+        <button class="btn-modern primary sm" onclick="callCustomer('{{ customer.phone }}')">
+            <i class="fas fa-phone ml-2"></i>
+            התקשר
+        </button>
+        <a href="{% url 'repair_form' %}?customer={{ customer.id }}" class="btn-modern success sm">
+            <i class="fas fa-plus ml-2"></i>
+            תיקון חדש
+        </a>
+    </div>
+</div>

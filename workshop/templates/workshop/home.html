@@ -3,378 +3,119 @@
 {% block title %}דף הבית{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🏠 ברוכים הבאים למערכת ניהול המוסך</h1>
-            <p class="text-white">מערכת מתקדמת לניהול תיקוני אופניים ולקוחות</p>
-        </div>
-
-        {% if user.is_authenticated %}
-            {% if user.userprofile.role == "customer" %}
-                <!-- Customer Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user me-2 text-primary"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <p class="text-white mb-3">מה תרצה לעשות היום?</p>
-                        
-                        {% if no_customer_profile %}
-                        <div class="home-alert-card warning-alert">
-                            <div class="alert-icon">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </div>
-                            <div class="alert-content">
-                                <h6 class="text-white mb-2">לא נמצא פרופיל לקוח</h6>
-                                <p class="text-white mb-0">נראה שעדיין לא נוצר פרופיל לקוח עבורך. אנא פנה למוסך או השתמש בקישור החיבור.</p>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        {% if pending_approval %}
-                        <div class="home-alert-card info-alert">
-                            <div class="alert-icon">
-                                <i class="fas fa-bell"></i>
-                            </div>
-                            <div class="alert-content">
-                                <h6 class="text-white mb-2">יש לך {{ pending_approval.count }} תיקון{{ pending_approval.count|pluralize:",ים" }} הממתין{{ pending_approval.count|pluralize:",ים" }} לאישור!</h6>
-                                <div class="pending-repairs-list">
-                                    {% for repair in pending_approval %}
-                                    <div class="pending-repair-item">
-                                        <span class="repair-bike-name">{{ repair.bike }}</span>
-                                        <div class="repair-actions">
-                                            <a href="{% url 'customer_approval' repair.id %}" class="btn btn-xs btn-success">
-                                                <i class="fas fa-check"></i> אשר
-                                            </a>
-                                            <a href="{% url 'repair_status' repair.id %}" class="btn btn-xs btn-info">
-                                                <i class="fas fa-eye"></i> צפה
-                                            </a>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                        
-                        <div class="home-actions-grid">
-                            <a href="{% url 'customer_report' %}" class="home-action-card primary-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">דווח על תקלה</h6>
-                                    <p class="text-white">פתח תיקון חדש</p>
-                                </div>
-                            </a>
-                            
-                            <a href="{% url 'customer_bikes_list' %}" class="home-action-card info-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-bicycle"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">האופניים שלי</h6>
-                                    <p class="text-white">צפה בכל האופניים</p>
-                                </div>
-                            </a>
-                            
-                            <a href="{% url 'customer_add_bike' %}" class="home-action-card success-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-plus"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h6 class="text-white">הוסף אופניים</h6>
-                                    <p class="text-white">רשום אופניים חדשים</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+{% if user.is_authenticated %}
+    {% if user.userprofile.role == "customer" %}
+        <!-- Include the new hero section for customers -->
+        {% include "workshop/components/home/hero_section.html" %}
+    {% elif user.userprofile.role == "mechanic" %}
+        <!-- Mechanic Dashboard -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 backdrop-blur-sm mb-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-tools text-yellow-400 text-2xl ml-3"></i>
+                    <h2 class="text-2xl font-bold text-white">שלום {{ user.get_full_name|default:user.username }}!</h2>
                 </div>
+                <p class="text-slate-300 mb-6">ברוך הבא לדשבורד המכונאי</p>
                 
-                {% if recent_repairs %}
-                <div class="home-recent-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-history me-2 text-primary"></i>
-                            התיקונים האחרונים שלך
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="recent-repairs-grid">
-                            {% for repair in recent_repairs %}
-                            <div class="recent-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-id-bike">
-                                        <span class="repair-id">#{{ repair.id }}</span>
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                    </div>
-                                    <div class="repair-status">
-                                        <span class="badge badge-{% if repair.status == 'completed' %}success{% elif repair.status == 'in_progress' %}primary{% elif repair.status == 'diagnosed' %}warning{% else %}secondary{% endif %}">
-                                            {{ repair.get_status_display }}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="repair-item-body">
-                                    <div class="repair-date">
-                                        <i class="fas fa-calendar me-1 text-primary"></i>
-                                        {{ repair.created_at|date:"d/m/Y" }}
-                                    </div>
-                                    <div class="repair-actions">
-                                        {% if repair.status == 'diagnosed' or repair.status == 'partially_approved' %}
-                                        <a href="{% url 'customer_approval' repair.id %}" class="btn btn-xs btn-success">
-                                            <i class="fas fa-check"></i> אשר
-                                        </a>
-                                        {% else %}
-                                        <a href="{% url 'repair_status' repair.id %}" class="btn btn-xs btn-info">
-                                            <i class="fas fa-eye"></i> צפה
-                                        </a>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                
-            {% elif user.userprofile.role == "mechanic" %}
-                <!-- Mechanic Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-tools me-2 text-warning"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mechanic-dashboard-link">
-                            <a href="{% url 'mechanic_dashboard' %}" class="home-action-card primary-action large-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h5 class="text-white">עבור לדשבורד מכונאי</h5>
-                                    <p class="text-white">ניהול התיקונים שלך</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                {% if assigned_repairs %}
-                <div class="home-mechanic-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-clipboard-list me-2 text-warning"></i>
-                            התיקונים שלך
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mechanic-repairs-grid">
-                            {% for repair in assigned_repairs %}
-                            <div class="mechanic-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-bike-customer">
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                        <span class="repair-customer">{{ repair.bike.customer.name }}</span>
-                                    </div>
-                                    <div class="repair-date">{{ repair.created_at|date:"d/m/Y" }}</div>
-                                </div>
-                                <div class="repair-item-actions">
-                                    <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-warning btn-sm">
-                                        <i class="fas fa-edit"></i> עדכן
-                                    </a>
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-                
-            {% elif user.userprofile.role == "manager" %}
-                <!-- Manager Dashboard -->
-                <div class="home-user-welcome-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user-tie me-2 text-success"></i>
-                            שלום {{ user.get_full_name|default:user.username }}!
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-dashboard-link">
-                            <a href="{% url 'manager_dashboard' %}" class="home-action-card success-action large-action">
-                                <div class="action-icon">
-                                    <i class="fas fa-chart-line"></i>
-                                </div>
-                                <div class="action-content">
-                                    <h5 class="text-white">עבור לדשבורד מנהל</h5>
-                                    <p class="text-white">ניהול כלל התיקונים והמוסך</p>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="home-manager-stats-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-chart-bar me-2 text-info"></i>
-                            סקירה מהירה
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-stats-grid">
-                            <div class="stat-item urgent-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ blocked_tasks_count }}</span>
-                                    <span class="stat-label">עבודות תקועות</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item warning-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-search"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ pending_diagnosis_count }}</span>
-                                    <span class="stat-label">ממתינים לאבחון</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item info-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-clock"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ pending_approval_count }}</span>
-                                    <span class="stat-label">ממתינים לאישור</span>
-                                </div>
-                            </div>
-                            
-                            <div class="stat-item primary-stat">
-                                <div class="stat-icon">
-                                    <i class="fas fa-cogs"></i>
-                                </div>
-                                <div class="stat-content">
-                                    <span class="stat-number">{{ in_progress_count }}</span>
-                                    <span class="stat-label">תיקונים בביצוע</span>
-                                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <a href="{% url 'mechanic_dashboard' %}" class="bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="flex items-center">
+                            <i class="fas fa-tools text-blue-400 text-xl ml-3 group-hover:text-blue-300"></i>
+                            <div>
+                                <h3 class="text-white font-medium">דשבורד מכונאי</h3>
+                                <p class="text-slate-400 text-sm">צפה במשימות שלך</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-                
-                {% if assigned_repairs %}
-                <div class="home-manager-repairs-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-user-cog me-2 text-warning"></i>
-                            התיקונים שלך כמכונאי ({{ assigned_repairs.count }})
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="manager-repairs-grid">
-                            {% for repair in assigned_repairs %}
-                            <div class="manager-repair-item">
-                                <div class="repair-item-header">
-                                    <div class="repair-id-bike">
-                                        <span class="repair-id">#{{ repair.id }}</span>
-                                        <span class="repair-bike">{{ repair.bike }}</span>
-                                    </div>
-                                    <div class="repair-customer">{{ repair.bike.customer.name }}</div>
-                                </div>
-                                <div class="repair-item-body">
-                                    <div class="repair-date">{{ repair.created_at|date:"d/m/Y" }}</div>
-                                    <div class="repair-actions">
-                                        <a href="{% url 'mechanic_task_completion' repair.id %}" class="btn btn-xs btn-warning">
-                                            <i class="fas fa-edit"></i> עדכן
-                                        </a>
-                                    </div>
-                                </div>
+                    </a>
+                    
+                    <a href="{% url 'repair_form' %}" class="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="flex items-center">
+                            <i class="fas fa-wrench text-green-400 text-xl ml-3 group-hover:text-green-300"></i>
+                            <div>
+                                <h3 class="text-white font-medium">תיקון חדש</h3>
+                                <p class="text-slate-400 text-sm">פתח תיקון חדש</p>
                             </div>
-                            {% endfor %}
                         </div>
-                    </div>
-                </div>
-                {% endif %}
-                
-                <div class="home-quick-actions-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-bolt me-2 text-primary"></i>
-                            פעולות מהירות
-                        </h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="quick-actions-grid">
-                            <a href="{% url 'customer_form' %}" class="quick-action-card">
-                                <div class="action-icon">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <div class="action-label">לקוח חדש</div>
-                            </a>
-                            
-                            <a href="{% url 'bike_form' %}" class="quick-action-card">
-                                <div class="action-icon">
-                                    <i class="fas fa-bicycle"></i>
-                                </div>
-                                <div class="action-label">אופניים חדשים</div>
-                            </a>
-                            
-                            <a href="{% url 'repair_form' %}" class="quick-action-card">
-                                <div class="action-icon">
-                                    <i class="fas fa-wrench"></i>
-                                </div>
-                                <div class="action-label">תיקון חדש</div>
-                            </a>
-                            
-                            <a href="{% url 'customer_list' %}" class="quick-action-card">
-                                <div class="action-icon">
-                                    <i class="fas fa-list"></i>
-                                </div>
-                                <div class="action-label">רשימת לקוחות</div>
-                            </a>
+                    </a>
+                    
+                    <a href="{% url 'customer_form' %}" class="bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="flex items-center">
+                            <i class="fas fa-user-plus text-purple-400 text-xl ml-3 group-hover:text-purple-300"></i>
+                            <div>
+                                <h3 class="text-white font-medium">לקוח חדש</h3>
+                                <p class="text-slate-400 text-sm">הוסף לקוח למערכת</p>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            {% endif %}
-            
-        {% else %}
-            <!-- Not Authenticated -->
-            <div class="home-login-card">
-                <div class="empty-state-icon">
-                    <i class="fas fa-sign-in-alt"></i>
-                </div>
-                <div class="empty-state-content">
-                    <h4 class="text-white mb-3">התחברות למערכת</h4>
-                    <p class="text-white mb-4">אנא התחבר כדי להמשיך והשתמש במערכת ניהול המוסך</p>
-                    <div class="login-actions">
-                        <a href="{% url 'login' %}" class="btn btn-primary btn-lg me-3">
-                            <i class="fas fa-sign-in-alt me-2"></i>התחבר
-                        </a>
-                        <a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>הרשם
-                        </a>
-                    </div>
+                    </a>
                 </div>
             </div>
-        {% endif %}
-        
-        <div class="mt-4 text-center">
-            <small class="text-white home-footer-text">
-                <i class="fas fa-info-circle me-1"></i>
-                מערכת ניהול מוסך אופניים מתקדמת - גרסה 2.0
-            </small>
+        </div>
+    {% elif user.userprofile.role == "manager" %}
+        <!-- Manager Dashboard -->
+        <div class="max-w-6xl mx-auto">
+            <div class="bg-slate-800/50 border border-slate-700 rounded-xl p-6 backdrop-blur-sm mb-6">
+                <div class="flex items-center mb-4">
+                    <i class="fas fa-chart-line text-blue-400 text-2xl ml-3"></i>
+                    <h2 class="text-2xl font-bold text-white">שלום {{ user.get_full_name|default:user.username }}!</h2>
+                </div>
+                <p class="text-slate-300 mb-6">ברוך הבא לדשבורד המנהל</p>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="{% url 'manager_dashboard' %}" class="bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line text-blue-400 text-2xl mb-2 group-hover:text-blue-300"></i>
+                            <h3 class="text-white font-medium mb-1">דשבורד מנהל</h3>
+                            <p class="text-slate-400 text-sm">סטטיסטיקות וניהול</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'mechanic_dashboard' %}" class="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="text-center">
+                            <i class="fas fa-tools text-green-400 text-2xl mb-2 group-hover:text-green-300"></i>
+                            <h3 class="text-white font-medium mb-1">דשבורד מכונאי</h3>
+                            <p class="text-slate-400 text-sm">משימות ותיקונים</p>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'customer_list' %}" class="bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="text-center">
+                            <i class="fas fa-users text-purple-400 text-2xl mb-2 group-hover:text-purple-300"></i>
+                            <h3 class="text-white font-medium mb-1">לקוחות</h3>
+                            <p class="text-slate-400 text-sm">ניהול לקוחות</p>
+                        </div>
+                    </a>
+                    
+                    <a href="/admin/" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div class="text-center">
+                            <i class="fas fa-cog text-red-400 text-2xl mb-2 group-hover:text-red-300"></i>
+                            <h3 class="text-white font-medium mb-1">ניהול</h3>
+                            <p class="text-slate-400 text-sm">הגדרות מערכת</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% else %}
+    <!-- Guest landing page -->
+    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center">
+        <div class="text-center max-w-2xl mx-auto px-4">
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6">
+                🏠 ברוכים הבאים למוסך האופניים
+            </h1>
+            <p class="text-xl text-blue-200 mb-8">מערכת מתקדמת לניהול תיקוני אופניים ולקוחות</p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'login' %}" class="bg-blue-500 hover:bg-blue-600 text-white px-8 py-3 rounded-lg transition-colors duration-200 font-medium">
+                    <i class="fas fa-sign-in-alt ml-2"></i>
+                    התחבר למערכת
+                </a>
+                <a href="{% url 'register' %}" class="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-lg transition-colors duration-200 font-medium">
+                    <i class="fas fa-user-plus ml-2"></i>
+                    הרשם למערכת
+                </a>
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
 {% endblock %}

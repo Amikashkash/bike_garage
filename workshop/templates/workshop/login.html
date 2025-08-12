@@ -2,77 +2,66 @@
 {% load static %}
 
 {% block content %}
-<style>
-    body {
-        background-color: #1c1c1c;
-        color: #fff;
-        font-family: 'Segoe UI', sans-serif;
-    }
-    .login-container {
-        max-width: 400px;
-        margin: 5vh auto;
-        background-color: #2a2a2a;
-        padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        text-align: center;
-    }
-    .login-container img.logo {
-        width: 150px;
-        margin-bottom: 20px;
-    }
-    .login-container h2 {
-        margin-bottom: 10px;
-    }
-    .form-control {
-        background-color: #3a3a3a;
-        color: white;
-        border: none;
-        margin-bottom: 1rem;
-    }
-    .form-control::placeholder {
-        color: #aaa;
-    }
-    .btn-orange {
-        background-color: #ff6a00;
-        color: white;
-        border: none;
-        width: 100%;
-        padding: 0.75rem;
-        border-radius: 10px;
-        font-weight: bold;
-        font-size: 1rem;
-    }
-    .btn-orange:hover {
-        background-color: #e65c00;
-    }
-    .links a {
-        display: block;
-        margin-top: 10px;
-        color: #ccc;
-        text-decoration: none;
-        font-size: 0.9rem;
-    }
-    .links a:hover {
-        text-decoration: underline;
-    }
-</style>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl">
+            <!-- Logo and header -->
+            <div class="text-center">
+                <img class="mx-auto h-20 w-auto mb-4 rounded-lg" src="{% static 'images/logo.png' %}" alt="מוסך האופניים">
+                <h2 class="text-2xl font-bold text-white mb-2">ברוך הבא!</h2>
+                <p class="text-slate-300 text-sm">הזן את הפרטים שלך כדי להמשיך</p>
+            </div>
 
-<div class="login-container">
-    <img src="{% static 'images/logo.png' %}" alt="Yakir's Bikes Logo" class="logo">
-    <h2>ברוך הבא!</h2>
-    <p>הזן את הפרטים שלך כדי להמשיך</p>
+            <!-- Login form -->
+            <form class="mt-8 space-y-6" method="POST">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="username" class="sr-only">שם משתמש</label>
+                        <input id="username" 
+                               name="username" 
+                               type="text" 
+                               required 
+                               class="relative block w-full px-3 py-3 bg-slate-700/50 border border-slate-600 placeholder-slate-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 transition-colors duration-200" 
+                               placeholder="שם משתמש">
+                    </div>
+                    <div>
+                        <label for="password" class="sr-only">סיסמה</label>
+                        <input id="password" 
+                               name="password" 
+                               type="password" 
+                               required 
+                               class="relative block w-full px-3 py-3 bg-slate-700/50 border border-slate-600 placeholder-slate-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 transition-colors duration-200" 
+                               placeholder="סיסמה">
+                    </div>
+                </div>
 
-    <form method="POST">
-        {% csrf_token %}
-        <input type="text" name="username" class="form-control" placeholder="שם משתמש" required>
-        <input type="password" name="password" class="form-control" placeholder="סיסמה" required>
-        <button type="submit" class="btn btn-orange">כניסה</button>
-    </form>
+                <!-- Submit button -->
+                <div>
+                    <button type="submit" 
+                            class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 transform hover:scale-105">
+                        <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                            <i class="fas fa-sign-in-alt text-blue-300 group-hover:text-blue-200"></i>
+                        </span>
+                        כניסה
+                    </button>
+                </div>
 
-    <div class="links">
-        <a href="#">שכחת סיסמה?</a>
-        <a href="{% url 'register' %}">אין לך חשבון? הרשם עכשיו</a>
+                <!-- Links -->
+                <div class="text-center space-y-2">
+                    <a href="#" 
+                       class="text-sm text-slate-400 hover:text-blue-400 transition-colors duration-200">
+                        שכחת סיסמה?
+                    </a>
+                    <div>
+                        <a href="{% url 'register' %}" 
+                           class="text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200">
+                            אין לך חשבון? הרשם עכשיו
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}

@@ -1,0 +1,314 @@
+<!-- Customer Hero Section with Mercury Design -->
+<div class="relative min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 overflow-hidden">
+    <!-- Animated background elements -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-20 left-10 w-32 h-32 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>
+        <div class="absolute top-40 right-20 w-24 h-24 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-2000"></div>
+        <div class="absolute bottom-40 left-20 w-28 h-28 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse animation-delay-4000"></div>
+    </div>
+    
+    <!-- Main content -->
+    <div class="relative z-10 flex flex-col min-h-screen">
+        <!-- Welcome header -->
+        <div class="text-center pt-8 pb-4">
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                🏠 ברוכים הבאים למערכת ניהול המוסך
+            </h1>
+            <p class="text-blue-200 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-4">
+                מערכת מתקדמת לניהול תיקוני אופניים ולקוחות
+            </p>
+        </div>
+
+        <!-- Customer Dashboard Content -->
+        {% if user.is_authenticated and user.userprofile.role == "customer" %}
+        <div class="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-8">
+            <!-- Welcome card -->
+            <div class="max-w-6xl mx-auto w-full">
+                <!-- User greeting -->
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/20 rounded-full mb-4">
+                        <i class="fas fa-user text-2xl text-blue-300"></i>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-semibold text-white mb-2">
+                        שלום {{ user.get_full_name|default:user.username }}!
+                    </h2>
+                    <p class="text-blue-200">מה תרצה לעשות היום?</p>
+                </div>
+
+                <!-- Alert notifications -->
+                {% if no_customer_profile %}
+                <div class="mb-6 mx-auto max-w-lg">
+                    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4 backdrop-blur-sm">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-yellow-400 text-lg"></i>
+                            </div>
+                            <div class="mr-3">
+                                <h3 class="text-sm font-medium text-yellow-200">לא נמצא פרופיל לקוח</h3>
+                                <p class="mt-1 text-sm text-yellow-300">
+                                    נראה שעדיין לא נוצר פרופיל לקוח עבורך. אנא פנה למוסך או השתמש בקישור החיבור.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pending_approval %}
+                <div class="mb-6 mx-auto max-w-lg">
+                    <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 backdrop-blur-sm">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-bell text-blue-400 text-lg"></i>
+                            </div>
+                            <div class="mr-3">
+                                <h3 class="text-sm font-medium text-blue-200">
+                                    יש לך {{ pending_approval.count }} תיקון{{ pending_approval.count|pluralize:",ים" }} הממתין{{ pending_approval.count|pluralize:",ים" }} לאישור!
+                                </h3>
+                                <div class="mt-2 space-y-2">
+                                    {% for repair in pending_approval %}
+                                    <div class="flex items-center justify-between bg-blue-900/30 rounded-md p-2">
+                                        <span class="text-white text-sm">{{ repair.bike }}</span>
+                                        <div class="flex gap-2">
+                                            <a href="{% url 'customer_approval' repair.id %}" 
+                                               class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                                <i class="fas fa-check"></i> אשר
+                                            </a>
+                                            <a href="{% url 'repair_status' repair.id %}" 
+                                               class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                                <i class="fas fa-eye"></i> צפה
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Action cards grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 max-w-4xl mx-auto mb-8">
+                    <!-- Report issue card -->
+                    <div class="group cursor-pointer" onclick="openModal('reportModal')">
+                        <div class="bg-red-500/10 border border-red-500/20 rounded-xl p-6 backdrop-blur-sm hover:bg-red-500/20 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            <div class="text-center">
+                                <div class="inline-flex items-center justify-center w-12 h-12 bg-red-500/20 rounded-full mb-4 group-hover:bg-red-500/30 transition-colors duration-300">
+                                    <i class="fas fa-wrench text-2xl text-red-400 group-hover:text-red-300"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white mb-2">דווח על תקלה</h3>
+                                <p class="text-red-200 text-sm">פתח תיקון חדש</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- My bikes card -->
+                    <div class="group cursor-pointer" onclick="openModal('bikesModal')">
+                        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 backdrop-blur-sm hover:bg-blue-500/20 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            <div class="text-center">
+                                <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-500/20 rounded-full mb-4 group-hover:bg-blue-500/30 transition-colors duration-300">
+                                    <i class="fas fa-bicycle text-2xl text-blue-400 group-hover:text-blue-300"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white mb-2">האופניים שלי</h3>
+                                <p class="text-blue-200 text-sm">צפה בכל האופניים</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add bike card -->
+                    <div class="group cursor-pointer" onclick="openModal('addBikeModal')">
+                        <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-6 backdrop-blur-sm hover:bg-green-500/20 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            <div class="text-center">
+                                <div class="inline-flex items-center justify-center w-12 h-12 bg-green-500/20 rounded-full mb-4 group-hover:bg-green-500/30 transition-colors duration-300">
+                                    <i class="fas fa-plus text-2xl text-green-400 group-hover:text-green-300"></i>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white mb-2">הוסף אופניים</h3>
+                                <p class="text-green-200 text-sm">רשום אופניים חדשים</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent repairs section -->
+                {% if recent_repairs %}
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-slate-800/30 border border-slate-700/50 rounded-xl p-6 backdrop-blur-sm">
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-history text-blue-400 text-lg ml-2"></i>
+                            <h3 class="text-lg font-semibold text-white">התיקונים האחרונים שלך</h3>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {% for repair in recent_repairs %}
+                            <div class="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <span class="text-blue-300 text-sm font-medium">#{{ repair.id }}</span>
+                                        <h4 class="text-white font-medium">{{ repair.bike }}</h4>
+                                    </div>
+                                    <span class="px-2 py-1 rounded text-xs font-medium
+                                        {% if repair.status == 'completed' %}bg-green-500/20 text-green-300 border border-green-500/30
+                                        {% elif repair.status == 'in_progress' %}bg-blue-500/20 text-blue-300 border border-blue-500/30
+                                        {% elif repair.status == 'diagnosed' %}bg-yellow-500/20 text-yellow-300 border border-yellow-500/30
+                                        {% else %}bg-gray-500/20 text-gray-300 border border-gray-500/30{% endif %}">
+                                        {{ repair.get_status_display }}
+                                    </span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-400 text-sm">
+                                        <i class="fas fa-calendar text-blue-400 ml-1"></i>
+                                        {{ repair.created_at|date:"d/m/Y" }}
+                                    </span>
+                                    <div class="flex gap-2">
+                                        {% if repair.status == 'diagnosed' or repair.status == 'partially_approved' %}
+                                        <a href="{% url 'customer_approval' repair.id %}" 
+                                           class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                            <i class="fas fa-check"></i> אשר
+                                        </a>
+                                        {% else %}
+                                        <a href="{% url 'repair_status' repair.id %}" 
+                                           class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                            <i class="fas fa-eye"></i> צפה
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal overlays -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden opacity-0 transition-all duration-300" onclick="closeAllModals()"></div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0 transform scale-95 transition-all duration-300">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-4">
+                    <i class="fas fa-wrench text-2xl text-red-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">דווח על תקלה</h3>
+                <p class="text-slate-300 mb-6">פתח תיקון חדש לאופניים שלך</p>
+                <div class="flex gap-3">
+                    <a href="{% url 'customer_report' %}" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        פתח תיקון
+                    </a>
+                    <button onclick="closeAllModals()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        ביטול
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bikes Modal -->
+    <div id="bikesModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0 transform scale-95 transition-all duration-300">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/20 rounded-full mb-4">
+                    <i class="fas fa-bicycle text-2xl text-blue-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">האופניים שלי</h3>
+                <p class="text-slate-300 mb-6">צפה ונהל את כל האופניים שלך</p>
+                <div class="flex gap-3">
+                    <a href="{% url 'customer_bikes_list' %}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        צפה באופניים
+                    </a>
+                    <button onclick="closeAllModals()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        ביטול
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bike Modal -->
+    <div id="addBikeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden opacity-0 transform scale-95 transition-all duration-300">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-green-500/20 rounded-full mb-4">
+                    <i class="fas fa-plus text-2xl text-green-400"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-white mb-2">הוסף אופניים</h3>
+                <p class="text-slate-300 mb-6">רשום אופניים חדשים במערכת</p>
+                <div class="flex gap-3">
+                    <a href="{% url 'customer_add_bike' %}" class="flex-1 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        הוסף אופניים
+                    </a>
+                    <button onclick="closeAllModals()" class="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                        ביטול
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(modalId) {
+    const overlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById(modalId);
+    
+    // Show overlay and modal
+    overlay.classList.remove('hidden');
+    modal.classList.remove('hidden');
+    
+    // Trigger animation
+    setTimeout(() => {
+        overlay.classList.remove('opacity-0');
+        modal.classList.remove('opacity-0', 'scale-95');
+        modal.classList.add('opacity-100', 'scale-100');
+    }, 10);
+}
+
+function closeAllModals() {
+    const overlay = document.getElementById('modalOverlay');
+    const modals = ['reportModal', 'bikesModal', 'addBikeModal'];
+    
+    // Start close animation
+    overlay.classList.add('opacity-0');
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        modal.classList.add('opacity-0', 'scale-95');
+        modal.classList.remove('opacity-100', 'scale-100');
+    });
+    
+    // Hide after animation
+    setTimeout(() => {
+        overlay.classList.add('hidden');
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('hidden');
+        });
+    }, 300);
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeAllModals();
+    }
+});
+</script>
+
+<style>
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.animation-delay-2000 {
+    animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+    animation-delay: 4s;
+}
+</style>

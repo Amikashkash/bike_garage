@@ -1,0 +1,30 @@
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog {{ size|default:'modal-lg' }}">
+        <div class="modal-content modern-modal">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {% if icon %}<i class="{{ icon }} mr-2"></i>{% endif %}
+                    {{ title }}
+                </h5>
+                <button type="button" class="modal-close" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                {{ content|safe }}
+            </div>
+            {% if actions %}
+            <div class="modal-footer">
+                {% for action in actions %}
+                    <button type="button" class="btn-modern {{ action.style|default:'secondary' }}" 
+                            {% if action.action %}onclick="{{ action.action }}"{% endif %}
+                            {% if action.dismiss %}data-bs-dismiss="modal"{% endif %}>
+                        {% if action.icon %}<i class="{{ action.icon }} mr-2"></i>{% endif %}
+                        {{ action.text }}
+                    </button>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

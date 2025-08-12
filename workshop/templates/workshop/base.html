@@ -1,263 +1,664 @@
 {% load static tailwind_tags %}
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-    {% load static %}
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="theme-color" content="#333333">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f172a">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <meta name="csrf-param" content="csrfmiddlewaretoken">
 
-
-    <!-- הוספה לבית המסך -->
+    <!-- Progressive Web App -->
     <link rel="manifest" href="/static/workshop/manifest.json">
-    <title>{% block title %}מוסך אופניים{% endblock %}</title>
+    <title>{% block title %} מוסך אופניים מתקדם{% endblock %}</title>
 
-    <!-- Tailwind CSS with daisyUI -->
+    <!-- Tailwind CSS -->
     {% tailwind_css %}
     
-    <!-- Bootstrap CSS RTL -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'workshop/css/enduro-style.css' %}">
-   
-
-    {% block extra_css %}{% endblock %}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'workshop/css/components.css' %}">
     
-    <!-- Custom RTL dropdown styling -->
-    <style>
-        /* Header and Logo Styling */
-        header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
-            padding: 20px 0;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            border-bottom: 3px solid #3498db;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        
-        /* Floating bike icons animation */
-        header::after {
-            content: "🚲 מוסך האופניים המקצועי 🔧";
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            font-weight: 600;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            letter-spacing: 1px;
-            animation: titleShimmer 4s ease-in-out infinite;
-        }
-        
-        @keyframes titleShimmer {
-            0%, 100% { 
-                color: rgba(255, 255, 255, 0.8);
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-            }
-            50% { 
-                color: rgba(52, 152, 219, 1);
-                text-shadow: 1px 1px 4px rgba(52, 152, 219, 0.5);
-            }
-        }
-        
-        header a {
-            display: inline-block;
-            position: relative;
-            z-index: 1;
-            transition: transform 0.3s ease;
-        }
-        
-        header a:hover {
-            transform: scale(1.05);
-        }
-        
-        header img {
-            height: 90px; /* 50% bigger than typical 60px */
-            width: auto;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-            border-radius: 12px;
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            padding: 8px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            animation: logoPulse 3s ease-in-out infinite;
-        }
-
-
-        
-        @keyframes logoPulse {
-            0%, 100% { 
-                transform: scale(1);
-                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-            }
-            50% { 
-                transform: scale(1.02);
-                filter: drop-shadow(0 6px 12px rgba(52, 152, 219, 0.3));
-            }
-        }
-        
-        header img:hover {
-            filter: drop-shadow(0 6px 16px rgba(52, 152, 219, 0.6));
-            border-color: rgba(52, 152, 219, 0.8);
-            background: linear-gradient(145deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1));
-            animation: none; /* Stop pulse on hover */
-            transform: scale(1.08);
-        }
-
-          </style>
+    <!-- Google Fonts - Enhanced Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    {% block extra_head %}{% endblock %}
 </head>
 
-<body>
-    <header>
-        <a href="{% url 'home' %}">
-            <img src="{% static 'images/logo.png' %}" alt="מוסך אופניים">
-        </a>
-    </header>  
+<body class="font-['Heebo'] bg-slate-950 min-h-screen text-white overflow-x-hidden">
+    
+    <!-- Enhanced Mercury Background -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <!-- Multi-layer gradient background -->
+        <div class="absolute inset-0 bg-gradient-to-br from-slate-950 via-blue-950/90 to-slate-900"></div>
+        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-cyan-950/20 to-blue-950/30"></div>
         
-       
-                        
-        <!-- Simple navbar without dropdowns -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: linear-gradient(90deg, #34495e 0%, #2c3e50 50%, #34495e 100%); box-shadow: 0 2px 10px rgba(0,0,0,0.3);">
-        <div class="container-fluid px-3">
-            <a class="navbar-brand" href="{% url 'home' %}" style="font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); transition: all 0.3s ease;">
-                🚲 מוסך האופניים
-            </a>
-            
-            <!-- Mobile hamburger button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-            </button>
-            
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                {% if user.is_authenticated %}
-                    
-                    <!-- Customer menu -->
-                    {% if user.userprofile.role == 'customer' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'customer_dashboard' %}"><i class="fas fa-tachometer-alt"></i> הדשבורד שלי</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'customer_report' %}"><i class="fas fa-exclamation-triangle"></i> דווח על תקלה</a>
-                        </li>
-                    {% endif %}
-                    
-                    <!-- Mechanic menu -->
-                    {% if user.userprofile.role == 'mechanic' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mechanic_dashboard' %}"><i class="fas fa-tools"></i> דשבורד מכונאי</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'repair_form' %}"><i class="fas fa-wrench"></i> תיקון חדש</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'customer_form' %}"><i class="fas fa-user-plus"></i> לקוח חדש</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'print_labels_menu' %}"><i class="fas fa-print"></i> מדבקות</a>
-                        </li>
-                    {% endif %}
-                    
-                    <!-- Manager menu -->
-                    {% if user.userprofile.role == 'manager' %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'manager_dashboard' %}"><i class="fas fa-chart-line"></i> דשבורד מנהל</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'mechanic_dashboard' %}"><i class="fas fa-tools"></i> דשבורד מכונאי</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'customer_list' %}"><i class="fas fa-users"></i> לקוחות</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'category_list' %}"><i class="fas fa-tags"></i> קטגוריות</a>
-                        </li>
-                        
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'backup_menu' %}"><i class="fas fa-download"></i> גיבוי</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/admin/"><i class="fas fa-cog"></i> ניהול</a>
-                        </li>
-                    {% endif %}
-                    
-                    <!-- Profile and logout -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> התנתק ({{ user.username }})</a>
-                    </li>
-                    
-                {% else %}
-                    <!-- Guest menu -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> התחבר</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> הרשם</a>
-                    </li>
-                {% endif %}
-            </ul>
+        <!-- Enhanced floating orbs with sophisticated animations -->
+        <div class="absolute -top-40 -left-40 w-96 h-96 bg-gradient-to-r from-blue-500/15 via-cyan-500/10 to-blue-600/15 rounded-full blur-3xl animate-float-slow opacity-70"></div>
+        <div class="absolute top-1/3 -right-20 w-80 h-80 bg-gradient-to-r from-purple-500/10 via-blue-500/15 to-cyan-500/10 rounded-full blur-3xl animate-float-medium opacity-60"></div>
+        <div class="absolute bottom-10 left-1/4 w-72 h-72 bg-gradient-to-r from-cyan-400/15 via-blue-500/10 to-indigo-500/15 rounded-full blur-3xl animate-float-fast opacity-50"></div>
+        
+        <!-- Sophisticated particle grid -->
+        <div class="absolute inset-0 opacity-5">
+            <div class="absolute inset-0" style="background-image: 
+                radial-gradient(circle at 20% 20%, #3b82f6 1px, transparent 1px),
+                radial-gradient(circle at 80% 80%, #06b6d4 1px, transparent 1px),
+                radial-gradient(circle at 40% 60%, #8b5cf6 1px, transparent 1px);
+                background-size: 60px 60px, 80px 80px, 100px 100px;"></div>
         </div>
+        
+        <!-- Subtle mesh pattern -->
+        <div class="absolute inset-0 opacity-5" style="background-image: 
+            linear-gradient(45deg, transparent 40%, rgba(59, 130, 246, 0.1) 50%, transparent 60%),
+            linear-gradient(-45deg, transparent 40%, rgba(6, 182, 212, 0.1) 50%, transparent 60%);
+            background-size: 20px 20px;"></div>
     </div>
-</nav>
+    
+    <!-- Premium Navigation Header -->
+    <nav class="fixed top-0 left-0 right-0 z-50 backdrop-blur-2xl bg-gradient-to-r from-slate-900/70 via-slate-800/60 to-slate-900/70 border-b border-white/10 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Mobile Navigation -->
+            <div class="md:hidden flex items-center justify-between h-16">
+                <!-- Enhanced Mobile Logo -->
+                <a href="{% url 'home' %}" class="flex items-center space-x-reverse space-x-3 group">
+                    <div class="relative">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 group-hover:shadow-cyan-500/40 transition-all duration-300">
+                            <i class="fas fa-bicycle text-white text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse"></div>
+                    </div>
+                    <div class="text-right">
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                            אופני יקיר
+                        </h1>
+                        <p class="text-xs text-blue-300/80 font-medium">מוסך אופניים מתקדם</p>
+                    </div>
+                </a>
+                
+                <!-- Enhanced Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" 
+                        class="relative p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-blue-200 hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300 group">
+                    <i class="fas fa-bars text-lg group-hover:rotate-180 transition-transform duration-300"></i>
+                    <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+            </div>
+            
+            <!-- Desktop Navigation -->
+            <div class="hidden md:flex items-center justify-between h-20">
+                
+                <!-- Premium Desktop Logo -->
+                <a href="{% url 'home' %}" class="flex items-center space-x-reverse space-x-4 group">
+                    <div class="relative">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/30 group-hover:shadow-cyan-500/50 transition-all duration-500 group-hover:scale-105">
+                            <i class="fas fa-bicycle text-white text-2xl group-hover:rotate-12 transition-transform duration-500"></i>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse group-hover:animate-bounce"></div>
+                    </div>
+                    <div class="text-right">
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent group-hover:from-cyan-300 group-hover:to-blue-400 transition-all duration-300">
+אופני יקיר               </h1>
+                        <p class="text-sm text-blue-300/80 font-medium group-hover:text-cyan-300/90 transition-colors duration-300">
+                            מוסך אופניים מתקדם
+                        </p>
+                    </div>
+                </a>
+                
+                <!-- Enhanced Main Navigation -->
+                <div class="flex items-center gap-6">
+                    {% if user.is_authenticated %}
+                        
+                        <!-- Customer Navigation -->
+                        {% if user.userprofile.role == 'customer' %}
+                        <a href="{% url 'customer_dashboard' %}" class="nav-link">
+                            <i class="fas fa-tachometer-alt text-blue-400"></i>
+                            <span>הדשבורד שלי</span>
+                        </a>
+                        <a href="{% url 'customer_report' %}" class="nav-link">
+                            <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                            <span>דווח על תקלה</span>
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Mechanic Navigation -->
+                        {% if user.userprofile.role == 'mechanic' %}
+                        <a href="{% url 'mechanic_dashboard' %}" class="nav-link">
+                            <i class="fas fa-tools text-green-400"></i>
+                            <span>דשבורד מכונאי</span>
+                        </a>
+                        <a href="{% url 'repair_form' %}" class="nav-link">
+                            <i class="fas fa-wrench text-blue-400"></i>
+                            <span>תיקון חדש</span>
+                        </a>
+                        <a href="{% url 'customer_form' %}" class="nav-link">
+                            <i class="fas fa-user-plus text-purple-400"></i>
+                            <span>לקוח חדש</span>
+                        </a>
+                        {% endif %}
+                        
+                        <!-- Manager Navigation -->
+                        {% if user.userprofile.role == 'manager' %}
+                        <a href="{% url 'manager_dashboard' %}" class="nav-link">
+                            <i class="fas fa-chart-line text-emerald-400"></i>
+                            <span>דשבורד מנהל</span>
+                        </a>
+                        
+                        <!-- Manager Dropdown Categories with spacing -->
+                        <div class="flex items-center gap-6">
+                            <!-- Customer Management Dropdown -->
+                            <div class="relative">
+                                <button class="nav-link hover:bg-white/10 transition-all duration-300 dropdown-trigger"
+                                        onmouseenter="showDropdown('customers-dropdown')"
+                                        onmouseleave="scheduleHideDropdown('customers-dropdown')">
+                                    <i class="fas fa-users text-blue-400"></i>
+                                    <span>לקוחות</span>
+                                    <i class="fas fa-chevron-down text-xs text-blue-300 dropdown-arrow transition-transform duration-300"></i>
+                                </button>
+                                <div id="customers-dropdown" 
+                                     class="absolute top-full right-0 mt-2 w-64 bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-300 z-50"
+                                     onmouseenter="cancelHideDropdown('customers-dropdown')"
+                                     onmouseleave="hideDropdown('customers-dropdown')">
+                                    <div class="p-4 space-y-2">
+                                        <a href="{% url 'customer_list' %}" class="dropdown-item">
+                                            <i class="fas fa-list text-blue-400"></i>
+                                            <span>רשימת לקוחות</span>
+                                        </a>
+                                        <a href="{% url 'customer_form' %}" class="dropdown-item">
+                                            <i class="fas fa-user-plus text-green-400"></i>
+                                            <span>הוסף לקוח</span>
+                                        </a>
+                                        <a href="{% url 'category_list' %}" class="dropdown-item">
+                                            <i class="fas fa-tags text-purple-400"></i>
+                                            <span>קטגוריות</span>
+                                        </a>
+                                        <a href="{% url 'link_customer_user' %}" class="dropdown-item">
+                                            <i class="fas fa-link text-cyan-400"></i>
+                                            <span>חיבור לקוחות</span>
+                                        </a>
+                                        <a href="{% url 'print_labels_menu' %}" class="dropdown-item">
+                                            <i class="fas fa-print text-orange-400"></i>
+                                            <span>הדפסת מדבקות</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Mechanics Management Dropdown -->
+                            <div class="relative">
+                                <button class="nav-link hover:bg-white/10 transition-all duration-300 dropdown-trigger"
+                                        onmouseenter="showDropdown('mechanics-dropdown')"
+                                        onmouseleave="scheduleHideDropdown('mechanics-dropdown')">
+                                    <i class="fas fa-tools text-green-400"></i>
+                                    <span>מכונאים</span>
+                                    <i class="fas fa-chevron-down text-xs text-green-300 dropdown-arrow transition-transform duration-300"></i>
+                                </button>
+                                <div id="mechanics-dropdown" 
+                                     class="absolute top-full right-0 mt-2 w-64 bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-300 z-50"
+                                     onmouseenter="cancelHideDropdown('mechanics-dropdown')"
+                                     onmouseleave="hideDropdown('mechanics-dropdown')">
+                                    <div class="p-4 space-y-2">
+                                        <a href="{% url 'mechanic_dashboard' %}" class="dropdown-item">
+                                            <i class="fas fa-tachometer-alt text-green-400"></i>
+                                            <span>דשבורד מכונאים</span>
+                                        </a>
+                                        <a href="/admin/create-mechanic/" class="dropdown-item">
+                                            <i class="fas fa-user-plus text-blue-400"></i>
+                                            <span>הוסף מכונאי</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Advanced Management Dropdown -->
+                            <div class="relative">
+                                <button class="nav-link hover:bg-white/10 transition-all duration-300 dropdown-trigger"
+                                        onmouseenter="showDropdown('advanced-dropdown')"
+                                        onmouseleave="scheduleHideDropdown('advanced-dropdown')">
+                                    <i class="fas fa-cog text-gray-400"></i>
+                                    <span>ניהול מתקדם</span>
+                                    <i class="fas fa-chevron-down text-xs text-gray-300 dropdown-arrow transition-transform duration-300"></i>
+                                </button>
+                                <div id="advanced-dropdown" 
+                                     class="absolute top-full right-0 mt-2 w-64 bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-300 z-50"
+                                     onmouseenter="cancelHideDropdown('advanced-dropdown')"
+                                     onmouseleave="hideDropdown('advanced-dropdown')">
+                                    <div class="p-4 space-y-2">
+                                        <a href="{% url 'backup_menu' %}" class="dropdown-item">
+                                            <i class="fas fa-download text-yellow-400"></i>
+                                            <span>גיבוי נתונים</span>
+                                        </a>
+                                        <a href="/admin/" class="dropdown-item">
+                                            <i class="fas fa-shield-alt text-red-400"></i>
+                                            <span>ניהול מערכת</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                    {% else %}
+                        <!-- Guest Navigation -->
+                        <a href="{% url 'home' %}" class="nav-link">
+                            <i class="fas fa-home text-blue-400"></i>
+                            <span>בית</span>
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Enhanced User Actions -->
+                <div class="flex items-center space-x-reverse space-x-4">
+                    {% if user.is_authenticated %}
+                        <!-- Quick Actions -->
+                        {% if user.userprofile.role == 'customer' %}
+                        <button class="action-btn premium-btn">
+                            <i class="fas fa-bicycle"></i>
+                            <span class="hidden xl:inline">האופניים שלי</span>
+                        </button>
+                        {% endif %}
+                        
+                        <!-- Premium Logout Button -->
+                        <a href="{% url 'logout' %}" class="action-btn logout-btn group">
+                            <i class="fas fa-sign-out-alt group-hover:rotate-12 transition-transform duration-200"></i>
+                            <span class="hidden xl:inline">התנתק</span>
+                        </a>
+                    {% else %}
+                        <!-- Enhanced Login & Register -->
+                        <a href="{% url 'login' %}" class="action-btn login-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>התחבר</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="action-btn register-btn">
+                            <i class="fas fa-user-plus"></i>
+                            <span>הרשם</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Enhanced Mobile Menu -->
+            <div id="mobile-menu" class="md:hidden hidden">
+                <div class="px-4 pt-4 pb-6 space-y-2 bg-slate-900/95 backdrop-blur-xl rounded-2xl mt-4 border border-white/10 shadow-2xl">
+                    {% if user.is_authenticated %}
+                        <!-- Mobile menu based on user role -->
+                        {% if user.userprofile.role == 'customer' %}
+                        <a href="{% url 'customer_dashboard' %}" class="mobile-nav-link">
+                            <i class="fas fa-tachometer-alt text-blue-400"></i>
+                            <span>הדשבורד שלי</span>
+                        </a>
+                        <a href="{% url 'customer_report' %}" class="mobile-nav-link">
+                            <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                            <span>דווח על תקלה</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.userprofile.role == 'mechanic' %}
+                        <a href="{% url 'mechanic_dashboard' %}" class="mobile-nav-link">
+                            <i class="fas fa-tools text-green-400"></i>
+                            <span>דשבורד מכונאי</span>
+                        </a>
+                        <a href="{% url 'repair_form' %}" class="mobile-nav-link">
+                            <i class="fas fa-wrench text-blue-400"></i>
+                            <span>תיקון חדש</span>
+                        </a>
+                        {% endif %}
+                        
+                        {% if user.userprofile.role == 'manager' %}
+                        <a href="{% url 'manager_dashboard' %}" class="mobile-nav-link">
+                            <i class="fas fa-chart-line text-emerald-400"></i>
+                            <span>דשבורד מנהל</span>
+                        </a>
+                        
+                        <!-- Customer Management Mobile -->
+                        <div class="mobile-dropdown">
+                            <button onclick="toggleMobileDropdown('customers')" class="mobile-nav-link w-full justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-users text-blue-400"></i>
+                                    <span>לקוחות</span>
+                                </div>
+                                <i class="fas fa-chevron-down transition-transform duration-300" id="customers-icon"></i>
+                            </button>
+                            <div id="customers-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
+                                <a href="{% url 'customer_list' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-list text-blue-300"></i>
+                                    <span>רשימת לקוחות</span>
+                                </a>
+                                <a href="{% url 'customer_form' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-user-plus text-green-300"></i>
+                                    <span>הוסף לקוח</span>
+                                </a>
+                                <a href="{% url 'category_list' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-tags text-purple-300"></i>
+                                    <span>קטגוריות</span>
+                                </a>
+                                <a href="{% url 'link_customer_user' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-link text-cyan-300"></i>
+                                    <span>חיבור לקוחות</span>
+                                </a>
+                                <a href="{% url 'print_labels_menu' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-print text-orange-300"></i>
+                                    <span>הדפסת מדבקות</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Mechanics Management Mobile -->
+                        <div class="mobile-dropdown">
+                            <button onclick="toggleMobileDropdown('mechanics')" class="mobile-nav-link w-full justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-tools text-green-400"></i>
+                                    <span>מכונאים</span>
+                                </div>
+                                <i class="fas fa-chevron-down transition-transform duration-300" id="mechanics-icon"></i>
+                            </button>
+                            <div id="mechanics-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
+                                <a href="{% url 'mechanic_dashboard' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-tachometer-alt text-green-300"></i>
+                                    <span>דשבורד מכונאים</span>
+                                </a>
+                                <a href="/admin/create-mechanic/" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-user-plus text-blue-300"></i>
+                                    <span>הוסף מכונאי</span>
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Advanced Management Mobile -->
+                        <div class="mobile-dropdown">
+                            <button onclick="toggleMobileDropdown('advanced')" class="mobile-nav-link w-full justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="fas fa-cog text-gray-400"></i>
+                                    <span>ניהול מתקדם</span>
+                                </div>
+                                <i class="fas fa-chevron-down transition-transform duration-300" id="advanced-icon"></i>
+                            </button>
+                            <div id="advanced-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
+                                <a href="{% url 'backup_menu' %}" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-download text-yellow-300"></i>
+                                    <span>גיבוי נתונים</span>
+                                </a>
+                                <a href="/admin/" class="mobile-nav-link text-sm py-3">
+                                    <i class="fas fa-shield-alt text-red-300"></i>
+                                    <span>ניהול מערכת</span>
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="border-t border-white/10 my-3"></div>
+                        <a href="{% url 'logout' %}" class="mobile-nav-link text-red-300 hover:text-red-200 hover:bg-red-500/10">
+                            <i class="fas fa-sign-out-alt text-red-400"></i>
+                            <span>התנתק</span>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="mobile-nav-link">
+                            <i class="fas fa-sign-in-alt text-blue-400"></i>
+                            <span>התחבר</span>
+                        </a>
+                        <a href="{% url 'register' %}" class="mobile-nav-link">
+                            <i class="fas fa-user-plus text-green-400"></i>
+                            <span>הרשם</span>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
 
-    <div class="container main-content">
+    <!-- Enhanced Main Content Area -->
+    <main class="relative pt-20 min-h-screen">
+        
+        <!-- Premium Messages Display -->
         {% if messages %}
-        <ul class="messages">
+        <div class="fixed top-24 left-4 right-4 z-50 space-y-2">
             {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
+            <div class="message-alert 
+                {% if message.tags == 'success' %}bg-green-500/20 border-green-400/30 text-green-200
+                {% elif message.tags == 'error' %}bg-red-500/20 border-red-400/30 text-red-200
+                {% elif message.tags == 'warning' %}bg-yellow-500/20 border-yellow-400/30 text-yellow-200
+                {% else %}bg-blue-500/20 border-blue-400/30 text-blue-200{% endif %}
+                backdrop-blur-xl border rounded-2xl px-6 py-4 shadow-2xl animate-slideIn">
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-reverse space-x-3">
+                        <i class="fas 
+                            {% if message.tags == 'success' %}fa-check-circle text-green-400
+                            {% elif message.tags == 'error' %}fa-exclamation-circle text-red-400
+                            {% elif message.tags == 'warning' %}fa-exclamation-triangle text-yellow-400
+                            {% else %}fa-info-circle text-blue-400{% endif %} text-lg"></i>
+                        <span class="font-medium">{{ message }}</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" 
+                            class="text-gray-400 hover:text-white transition-colors duration-200 p-1 rounded-lg hover:bg-white/10">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
         {% endif %}
 
-        <div class="content">
+        <!-- Page Content Container -->
+        <div class="relative z-10">
             {% block content %}{% endblock %}
         </div>
-    </div>
+    </main>
 
-    <footer>
-        &copy; {{ now|date:"Y" }} מוסך האופניים
+    <!-- Premium NEW Footer -->
+    <footer class="relative mt-20 bg-gradient-to-r from-slate-900/90 via-blue-900/80 to-slate-900/90 backdrop-blur-xl border-t border-white/10 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            
+            <!-- Main Footer Content -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                
+                <!-- Brand Section -->
+                <div class="flex flex-col items-center md:items-start">
+                    <div class="flex items-center space-x-reverse space-x-4 mb-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
+                            <i class="fas fa-bicycle text-white text-xl"></i>
+                        </div>
+                        <div class="text-center md:text-right">
+                            <h3 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                                מוסך אפני יקיר
+                            </h3>
+                            <p class="text-sm text-blue-300/80">מוסך אופניים מתקדם</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 text-sm text-center md:text-right leading-relaxed">
+                        מספקים שירותי תיקון ותחזוקה מקצועיים לאופניים בטכנולוגיה מתקדמת
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="text-center md:text-right">
+                    <h4 class="text-lg font-semibold text-blue-300 mb-4">קישורים מהירים</h4>
+                    <div class="space-y-2">
+                        {% if user.is_authenticated %}
+                            {% if user.userprofile.role == 'customer' %}
+                            <a href="{% url 'customer_dashboard' %}" class="footer-link">הדשבורד שלי</a>
+                            <a href="{% url 'customer_report' %}" class="footer-link">דווח על תקלה</a>
+                            {% elif user.userprofile.role == 'mechanic' %}
+                            <a href="{% url 'mechanic_dashboard' %}" class="footer-link">דשבורד מכונאי</a>
+                            <a href="{% url 'repair_form' %}" class="footer-link">תיקון חדש</a>
+                            {% elif user.userprofile.role == 'manager' %}
+                            <a href="{% url 'manager_dashboard' %}" class="footer-link">דשבורד מנהל</a>
+                            <a href="{% url 'customer_list' %}" class="footer-link">לקוחות</a>
+                            {% endif %}
+                        {% else %}
+                        <a href="{% url 'login' %}" class="footer-link">התחברות</a>
+                        <a href="{% url 'register' %}" class="footer-link">הרשמה</a>
+                        {% endif %}
+                        <a href="{% url 'home' %}" class="footer-link">דף הבית</a>
+                    </div>
+                </div>
+                
+                <!-- System Status -->
+                <div class="text-center md:text-right">
+                    <h4 class="text-lg font-semibold text-blue-300 mb-4">סטטוס מערכת</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-center md:justify-end space-x-reverse space-x-3">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-300">מערכת פעילה</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-end space-x-reverse space-x-3">
+                            <div class="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-300">שירותים זמינים</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-end space-x-reverse space-x-3">
+                            <div class="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm text-gray-300">תמיכה מלאה</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Bottom -->
+            <div class="border-t border-white/10 pt-8">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="text-center md:text-right mb-4 md:mb-0">
+                        <p class="text-blue-300 text-sm">
+                            &copy; {{ now|date:"Y" }} מוסך אופני יקיר. כל הזכויות שמורות
+                        </p>
+                    </div>
+                    <div class="flex items-center space-x-reverse space-x-6 text-sm text-blue-300">
+                        <span>גרסה 2.0.1</span>
+                        <div class="flex items-center space-x-reverse space-x-2">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span>מחובר</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </footer>
     
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Enhanced JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     
-    <!-- CSRF Token Functions -->
     <script>
-        // פונקציה לקבלת CSRF token
+        // Enhanced mobile menu toggle with animations
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const isHidden = mobileMenu.classList.contains('hidden');
+            
+            if (isHidden) {
+                mobileMenu.classList.remove('hidden');
+                setTimeout(() => {
+                    mobileMenu.style.opacity = '1';
+                    mobileMenu.style.transform = 'translateY(0)';
+                }, 10);
+            } else {
+                mobileMenu.style.opacity = '0';
+                mobileMenu.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 200);
+            }
+        }
+        
+        // Mobile dropdown toggle for manager menu
+        function toggleMobileDropdown(dropdownId) {
+            const menu = document.getElementById(dropdownId + '-menu');
+            const icon = document.getElementById(dropdownId + '-icon');
+            const isHidden = menu.classList.contains('hidden');
+            
+            if (isHidden) {
+                menu.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                menu.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Dropdown control functions for better hover behavior
+        let dropdownTimers = {};
+        
+        function showDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+            
+            // Clear any pending hide timer
+            if (dropdownTimers[dropdownId]) {
+                clearTimeout(dropdownTimers[dropdownId]);
+                delete dropdownTimers[dropdownId];
+            }
+            
+            if (dropdown) {
+                dropdown.classList.remove('opacity-0', 'invisible');
+                dropdown.classList.add('opacity-100', 'visible');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
+        
+        function scheduleHideDropdown(dropdownId) {
+            // Delay hiding to allow mouse movement to dropdown
+            dropdownTimers[dropdownId] = setTimeout(() => {
+                hideDropdown(dropdownId);
+            }, 150);
+        }
+        
+        function cancelHideDropdown(dropdownId) {
+            if (dropdownTimers[dropdownId]) {
+                clearTimeout(dropdownTimers[dropdownId]);
+                delete dropdownTimers[dropdownId];
+            }
+        }
+        
+        function hideDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const arrow = dropdown.previousElementSibling.querySelector('.dropdown-arrow');
+            
+            if (dropdown) {
+                dropdown.classList.remove('opacity-100', 'visible');
+                dropdown.classList.add('opacity-0', 'invisible');
+                if (arrow) {
+                    arrow.style.transform = 'rotate(0deg)';
+                }
+            }
+            
+            // Clean up timer
+            if (dropdownTimers[dropdownId]) {
+                delete dropdownTimers[dropdownId];
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuButton = event.target.closest('button[onclick="toggleMobileMenu()"]');
+            
+            if (!menuButton && !mobileMenu.contains(event.target)) {
+                mobileMenu.style.opacity = '0';
+                mobileMenu.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    mobileMenu.classList.add('hidden');
+                }, 200);
+            }
+        });
+        
+        // Enhanced auto-hide messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const messages = document.querySelectorAll('.message-alert');
+            messages.forEach((message, index) => {
+                setTimeout(() => {
+                    message.style.animation = 'slideOut 0.5s ease-out forwards';
+                    setTimeout(() => message.remove(), 500);
+                }, 5000 + (index * 500));
+            });
+        });
+        
+        // CSRF Token Management
         function getCSRFToken() {
-            // מנסה מהטופס הנוכחי או מה-meta tag
             return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
                    document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
         }
         
-        // הגדרת CSRF עבור AJAX requests
+        // Enhanced AJAX Setup
         $.ajaxSetup({
             beforeSend: function(xhr, settings) {
                 if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
@@ -266,45 +667,195 @@
             }
         });
         
-        // טיפול בטעינה מחדש אחרי שגיאת CSRF
-        $(document).on('ajaxError', function(event, xhr, settings) {
-            if (xhr.status === 403 && xhr.responseText.includes('CSRF')) {
-                console.log('CSRF Error detected, reloading page...');
-                // מחכה שנייה ואז טוען מחדש
-                setTimeout(function() {
-                    window.location.reload();
-                }, 1000);
-            }
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
         });
         
-        // פונקציה לרענון CSRF token
-        function refreshCSRFToken() {
-            fetch(window.location.href, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            }).then(response => response.text())
-              .then(html => {
-                  const parser = new DOMParser();
-                  const doc = parser.parseFromString(html, 'text/html');
-                  const newToken = doc.querySelector('[name=csrfmiddlewaretoken]')?.value;
-                  if (newToken) {
-                      // עדכון כל הטוקנים בדף
-                      document.querySelectorAll('[name=csrfmiddlewaretoken]').forEach(input => {
-                          input.value = newToken;
-                      });
-                      // עדכון meta tag
-                      const metaTag = document.querySelector('meta[name="csrf-token"]');
-                      if (metaTag) {
-                          metaTag.setAttribute('content', newToken);
-                      }
-                  }
-              });
-        }
+        // Initialize mobile menu styles
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.style.opacity = '0';
+            mobileMenu.style.transform = 'translateY(-10px)';
+            mobileMenu.style.transition = 'all 0.2s ease-out';
+        });
     </script>
     
-    <!-- Extra JavaScript Block for Pages -->
     {% block extra_js %}{% endblock %}
+
+    <!-- Enhanced Custom Styles -->
+    <style>
+        /* Enhanced Navigation Styles */
+        .nav-link {
+            @apply flex items-center space-x-reverse space-x-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 backdrop-blur-sm border border-transparent hover:border-white/10 transition-all duration-300 group;
+        }
+        
+        .nav-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+        
+        .mobile-nav-link {
+            @apply flex items-center space-x-reverse space-x-4 px-4 py-4 rounded-xl text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 backdrop-blur-sm border border-transparent hover:border-white/10 transition-all duration-300;
+        }
+        
+        /* Enhanced Action Buttons */
+        .action-btn {
+            @apply flex items-center space-x-reverse space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium border backdrop-blur-sm transition-all duration-300 hover:scale-105;
+        }
+        
+        .premium-btn {
+            @apply bg-blue-500/20 hover:bg-blue-500/30 border-blue-400/30 text-blue-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/25;
+        }
+        
+        .logout-btn {
+            @apply bg-red-500/20 hover:bg-red-500/30 border-red-400/30 text-red-200 hover:border-red-300 hover:shadow-lg hover:shadow-red-500/25;
+        }
+        
+        .login-btn {
+            @apply bg-blue-500/20 hover:bg-blue-500/30 border-blue-400/30 text-blue-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/25;
+        }
+        
+        .register-btn {
+            @apply bg-green-500/20 hover:bg-green-500/30 border-green-400/30 text-green-200 hover:border-green-300 hover:shadow-lg hover:shadow-green-500/25;
+        }
+        
+        /* Footer Links */
+        .footer-link {
+            @apply block text-gray-400 hover:text-blue-300 transition-colors duration-200 py-1;
+        }
+        
+        /* Enhanced Animations */
+        @keyframes float-slow {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        
+        @keyframes float-medium {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-25px, -25px) rotate(180deg); }
+        }
+        
+        @keyframes float-fast {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(90deg); }
+            50% { transform: translate(-20px, -20px) rotate(180deg); }
+            75% { transform: translate(-20px, 20px) rotate(270deg); }
+        }
+        
+        .animate-float-slow {
+            animation: float-slow 20s ease-in-out infinite;
+        }
+        
+        .animate-float-medium {
+            animation: float-medium 15s ease-in-out infinite;
+        }
+        
+        .animate-float-fast {
+            animation: float-fast 12s ease-in-out infinite;
+        }
+        
+        /* Dropdown Menu Styles */
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            font-size: 16px;
+            color: #cbd5e1;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+        
+        .dropdown-item:hover {
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+        }
+        
+        .dropdown-item:hover i {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+        }
+        
+        @keyframes slideIn {
+            from { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+        }
+        
+        @keyframes slideOut {
+            from { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+            to { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            }
+        }
+        
+        .animate-slideIn {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        /* Enhanced Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            @apply bg-slate-900;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            @apply bg-gradient-to-b from-blue-600 to-cyan-600 rounded-full;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            @apply from-blue-500 to-cyan-500;
+        }
+        
+        /* Smooth transitions */
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        /* Glass morphism enhancements */
+        .backdrop-blur-2xl {
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+        
+        /* Enhanced focus states */
+        button:focus, 
+        a:focus {
+            outline: 2px solid rgba(59, 130, 246, 0.5);
+            outline-offset: 2px;
+        }
+        
+        /* RTL specific adjustments */
+        [dir="rtl"] .space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+            margin-right: var(--tw-space-x-reverse);
+            margin-left: calc(var(--tw-space-x-reverse) * 0);
+        }
+    </style>
 </body>
 </html>

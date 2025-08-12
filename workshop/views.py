@@ -217,10 +217,60 @@ def home(request):
                     # תיקונים אחרונים
                     recent_repairs = all_repairs[:5]
                     
+                    # ADD THESE NEW LINES FOR CUSTOMER HOME PAGE:
+                    # תיקונים פעילים (לכרטיס "התיקונים שלי")
+                    customer_active_repairs = all_repairs.filter(
+                        status__in=['pending', 'in_progress', 'approved_partial', 'approved_full', 'diagnosed']
+                    )[:5]
+                    
+                    # סטטיסטיקות שנתיות
+                    from django.utils import timezone
+                    current_year = timezone.now().year
+                    customer_yearly_repairs_count = all_repairs.filter(
+                        created_at__year=current_year
+                    ).count()
+                    
+                    # סה"כ הוצאות (מתיקונים עם מחיר)
+                    customer_total_spent = 0
+                    for repair in all_repairs:
+                        if hasattr(repair, 'repair_items'):
+                            customer_total_spent += sum(
+                                item.price for item in repair.repair_items.all() 
+                                if item.is_approved_by_customer
+                            )
+                    
+                    # זמן ממוצע לתיקון
+                    completed_repairs = all_repairs.filter(status__in=['completed', 'delivered'])
+                    if completed_repairs.exists():
+                        total_days = 0
+                        count = 0
+                        for repair in completed_repairs:
+                            if hasattr(repair, 'completed_at') and repair.completed_at:
+                                days = (repair.completed_at - repair.created_at).days
+                                total_days += days
+                                count += 1
+                            elif hasattr(repair, 'diagnosed_at') and repair.diagnosed_at:
+                                # אם אין completed_at, נשתמש בזמן אבחון כהערכה
+                                days = (repair.diagnosed_at - repair.created_at).days + 3  # הערכה
+                                total_days += days
+                                count += 1
+                        customer_avg_days = total_days // count if count > 0 else 0
+                    else:
+                        customer_avg_days = 0
+                    
+                    # מספר אופניים של הלקוח
+                    customer_bikes_count = customer.bikes.count() if hasattr(customer, 'bikes') else 0
+                    
                     context.update({
                         'recent_repairs': recent_repairs,
                         'pending_approval': pending_approval,
                         'customer': customer,
+                        # NEW DATA FOR CUSTOMER HOME PAGE:
+                        'customer_active_repairs': customer_active_repairs,
+                        'customer_yearly_repairs_count': customer_yearly_repairs_count,
+                        'customer_total_spent': customer_total_spent,
+                        'customer_avg_days': customer_avg_days,
+                        'customer_bikes_count': customer_bikes_count,
                     })
                 except Customer.DoesNotExist:
                     context['no_customer_profile'] = True
