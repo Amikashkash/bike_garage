@@ -2,314 +2,212 @@
 
 {% block title %}בדיקת איכות - תיקון #{{ repair_job.id }}{% endblock %}
 
-{% block extra_css %}
-<style>
-.info-card {
-    background-color: #122527ff; /* Turquoise like bike selection */
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.completed-section {
-    background: linear-gradient(135deg, #47f1e0ff 0%, #1b464bff 100%); /* Orange gradient like categories */
-    color: white;
-    padding: 15px 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.quality-form-section {
-    background-color: #1d2f31ff; /* Matching turquoise theme */
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-
-.section-icon-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.section-icon {
-    font-size: 1.5rem;
-}
-
-.section-name {
-    margin: 0;
-    font-size: 1.3rem;
-    font-weight: 600;
-}
-
-.info-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 15px;
-    margin-top: 15px;
-}
-
-.info-item {
-    background-color: rgba(255,255,255,0.1);
-    padding: 12px;
-    border-radius: 6px;
-    border-left: 3px solid rgba(255,255,255,0.3);
-}
-
-.info-label {
-    font-weight: 600;
-    margin-bottom: 5px;
-    font-size: 0.9rem;
-}
-
-.info-value {
-    font-size: 1.1rem;
-}
-
-.table-container {
-    background-color: rgba(255,255,255,0.1);
-    border-radius: 8px;
-    margin-top: 15px;
-    overflow: hidden;
-}
-
-.table {
-    margin-bottom: 0;
-    color: white;
-}
-
-.table th {
-    background-color: rgba(0,0,0,0.2);
-    border: none;
-    padding: 12px;
-    text-align: center;
-}
-
-.table td {
-    border: none;
-    padding: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    text-align: center;
-}
-
-.price-badge {
-    background-color: rgba(255,255,255,0.2);
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-weight: 600;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-label {
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: block;
-}
-
-.form-control {
-    background-color: rgba(255,255,255,0.9);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 6px;
-    padding: 12px;
-    color: #333;
-}
-
-.form-control:focus {
-    background-color: white;
-    border-color: rgba(255,255,255,0.8);
-    box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
-}
-
-.btn-action {
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 600;
-    border: none;
-    margin: 5px;
-}
-
-.btn-approve {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.btn-approve:hover {
-    background-color: #45a049;
-}
-
-.btn-reject {
-    background-color: #f44336;
-    color: white;
-}
-
-.btn-reject:hover {
-    background-color: #da190b;
-}
-
-.back-btn {
-    background-color: #6c757d;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    text-decoration: none;
-    display: inline-block;
-    margin-top: 20px;
-}
-
-.back-btn:hover {
-    background-color: #5a6268;
-    color: white;
-    text-decoration: none;
-}
-
-.empty-message {
-    text-align: center;
-    padding: 30px;
-    color: rgba(255,255,255,0.7);
-    font-style: italic;
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <!-- Header -->
-        <div class="text-center mt-4 mb-4">
-            <h1 class="text-white">🔍 בדיקת איכות</h1>
-            <p class="text-white">תיקון #{{ repair_job.id }} - בדיקה סופית לפני מסירה ללקוח</p>
-        </div>
-
-        <!-- פרטי התיקון -->
-        <div class="info-card">
-            <div class="section-icon-title">
-                <i class="fas fa-info-circle section-icon"></i>
-                <h5 class="section-name">פרטי התיקון</h5>
-            </div>
-            
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-bicycle me-2"></i>אופניים</div>
-                    <div class="info-value">{{ repair_job.bike }}</div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-4xl font-bold gradient-text mb-2">🔍 בדיקת איכות #{{ repair_job.id }}</h1>
+                    <p class="text-slate-300">בדיקה סופית לפני מסירה ללקוח</p>
                 </div>
                 
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-user me-2"></i>לקוח</div>
-                    <div class="info-value">{{ repair_job.bike.customer.name }}</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-phone me-2"></i>טלפון</div>
-                    <div class="info-value">{{ repair_job.bike.customer.phone }}</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-user-cog me-2"></i>מכונאי</div>
-                    <div class="info-value">{{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-tools me-2"></i>תיאור הבעיה</div>
-                    <div class="info-value">{{ repair_job.problem_description|default:"לא צוין" }}</div>
-                </div>
-                
-                <div class="info-item">
-                    <div class="info-label"><i class="fas fa-shekel-sign me-2"></i>סה"כ מחיר</div>
-                    <div class="info-value"><span class="price-badge">₪{{ repair_job.get_total_approved_price }}</span></div>
+                <!-- Breadcrumb Badge -->
+                <div class="flex justify-center md:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-4 py-2">
+                        <nav class="flex items-center gap-2 text-sm">
+                            <a href="{% url 'manager_dashboard' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-tachometer-alt mr-1"></i>דשבורד מנהל
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-white font-medium">
+                                <i class="fas fa-clipboard-check mr-1"></i>בדיקת איכות
+                            </span>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- פעולות שבוצעו -->
-        <div class="completed-section">
-            <div class="section-icon-title">
-                <i class="fas fa-check-circle section-icon"></i>
-                <h5 class="section-name">פעולות שבוצעו ({{ completed_items.count }})</h5>
-            </div>
+        <!-- Two-Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
             
-            {% if completed_items %}
-                <div class="table-container">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>פעולה</th>
-                                <th>מחיר</th>
-                                <th>הושלם על ידי</th>
-                                <th>תאריך השלמה</th>
-                                <th>הערות</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <!-- Left Column: Repair Details -->
+            <div class="space-y-6">
+                <!-- Repair Job Details Card -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                    <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30 flex items-center justify-between">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-400"></i>פרטי התיקון #{{ repair_job.id }}
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                {{ repair_job.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 space-y-4">
+                        <!-- Bike & Customer Info -->
+                        <div class="flex items-center gap-3 p-4 bg-slate-700/50 border border-slate-600 rounded-lg">
+                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bicycle text-white text-lg"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-white text-base">{{ repair_job.bike }}</h4>
+                                <p class="text-slate-300 text-sm">{{ repair_job.bike.customer.name }}</p>
+                                <p class="text-slate-400 text-xs flex items-center gap-1">
+                                    <i class="fas fa-phone"></i>{{ repair_job.bike.customer.phone }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Repair Details Grid -->
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
+                                <span class="text-slate-300 font-medium">מכונאי:</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                    {{ repair_job.assigned_mechanic.get_full_name|default:repair_job.assigned_mechanic.username }}
+                                </span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
+                                <span class="text-slate-300 font-medium">תיאור הבעיה:</span>
+                                <span class="text-blue-200 text-xs">{{ repair_job.problem_description|default:"לא צוין"|truncatewords:5 }}</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between py-2">
+                                <span class="text-slate-300 font-medium">סה"כ מחיר:</span>
+                                <span class="text-green-300 font-bold text-lg">₪{{ repair_job.get_total_approved_price }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Completed Repairs Card -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                    <div class="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-check-circle text-green-400"></i>פעולות שבוצעו ({{ completed_items.count }})
+                        </h3>
+                    </div>
+                    
+                    <div class="p-6">
+                        {% if completed_items %}
+                        <div class="space-y-3">
                             {% for item in completed_items %}
-                            <tr>
-                                <td><strong>{{ item.description }}</strong></td>
-                                <td><span class="price-badge">₪{{ item.price }}</span></td>
-                                <td>{{ item.completed_by.get_full_name|default:item.completed_by.username }}</td>
-                                <td>{{ item.completed_at|date:"d/m/Y H:i" }}</td>
-                                <td>{{ item.notes|default:"אין הערות" }}</td>
-                            </tr>
+                            <div class="bg-green-500/10 border border-green-400/30 rounded-lg p-4">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex items-start gap-3 flex-1">
+                                        <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-wrench text-white text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h7 class="text-white font-semibold text-sm block">{{ item.description }}</h7>
+                                            <div class="flex items-center gap-4 mt-2 text-xs">
+                                                <span class="flex items-center gap-1 text-purple-300">
+                                                    <i class="fas fa-user"></i>
+                                                    {{ item.completed_by.get_full_name|default:item.completed_by.username }}
+                                                </span>
+                                                <span class="flex items-center gap-1 text-blue-300">
+                                                    <i class="fas fa-calendar"></i>
+                                                    {{ item.completed_at|date:"d/m/Y H:i" }}
+                                                </span>
+                                            </div>
+                                            {% if item.notes %}
+                                            <div class="mt-2 p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
+                                                <span class="text-blue-300 font-medium">הערות: </span>
+                                                <span class="text-blue-200">{{ item.notes }}</span>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="text-left flex-shrink-0">
+                                        <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-bold">₪{{ item.price }}</span>
+                                    </div>
+                                </div>
+                            </div>
                             {% endfor %}
-                        </tbody>
-                    </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-tools text-yellow-400 text-2xl"></i>
+                            </div>
+                            <p class="text-slate-300">לא נמצאו פעולות שהושלמו</p>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
-            {% else %}
-                <div class="empty-message">
-                    <i class="fas fa-tools fa-3x mb-3"></i>
-                    <p>לא נמצאו פעולות שהושלמו</p>
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- טופס בדיקת איכות -->
-        <div class="quality-form-section">
-            <div class="section-icon-title">
-                <i class="fas fa-clipboard-check section-icon"></i>
-                <h5 class="section-name">בדיקת איכות סופית</h5>
             </div>
             
-            <form method="post" action="{% url 'manager_quality_approve' repair_job.id %}">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="quality_notes" class="form-label">הערות בדיקת איכות:</label>
-                    <textarea 
-                        class="form-control" 
-                        id="quality_notes" 
-                        name="quality_notes" 
-                        rows="4" 
-                        placeholder="הכנס הערות על איכות העבודה, בעיות שנמצאו, או אישור שהכל תקין..."
-                    ></textarea>
-                </div>
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <button type="submit" name="action" value="approve" class="btn btn-action btn-approve w-100">
-                            <i class="fas fa-check-circle me-2"></i>אשר בדיקת איכות - מוכן לאיסוף
-                        </button>
+            <!-- Right Column: Quality Check Form -->
+            <div class="space-y-6">
+                <form method="post" action="{% url 'manager_quality_approve' repair_job.id %}">
+                    {% csrf_token %}
+                    
+                    <!-- Quality Check Card -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                        <div class="bg-purple-500/20 px-4 py-3 border-b border-purple-500/30">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-clipboard-check text-purple-400"></i>בדיקת איכות סופית
+                            </h3>
+                            <p class="text-purple-200 text-sm mt-1">בדוק את איכות העבודה שבוצעה</p>
+                        </div>
+                        
+                        <div class="p-6">
+                            <div class="form-group mb-6">
+                                <label for="quality_notes" class="block text-slate-300 text-sm font-medium mb-4">
+                                    <i class="fas fa-sticky-note mr-2 text-purple-400"></i>
+                                    הערות בדיקת איכות:
+                                </label>
+                                <textarea 
+                                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none" 
+                                    id="quality_notes" 
+                                    name="quality_notes" 
+                                    rows="6" 
+                                    placeholder="הכנס הערות על איכות העבודה, בעיות שנמצאו, או אישור שהכל תקין..."
+                                ></textarea>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <button type="submit" name="action" value="reject" class="btn btn-action btn-reject w-100">
-                            <i class="fas fa-times-circle me-2"></i>דחה - החזר למכונאי לתיקון
-                        </button>
+                    
+                    <!-- Action Buttons -->
+                    <div class="space-y-6">
+                        <!-- Approve/Decline Buttons Side by Side -->
+                        <div class="grid grid-cols-2 gap-6">
+                            <button type="submit" name="action" value="approve" class="px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold rounded-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out border-2 border-green-500">
+                                <i class="fas fa-check-circle  mr-2"></i>אשר בדיקת איכות - מוכן לאיסוף
+                            </button>
+                            
+                            <button type="submit" name="action" value="reject" class="px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-bold rounded-lg shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out border-2 border-red-500">
+                                <i class="fas fa-times-circle mr-2"></i>דחה - החזר למכונאי לתיקון
+                            </button>
+                        </div>
+                        
+                        <!-- Return Button Separated Below -->
+                        <div class="pt-4 border-t border-slate-600/50">
+                            <a href="{% url 'manager_dashboard' %}" class="w-full px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out text-center inline-block">
+                                <i class="fas fa-arrow-right mr-2"></i>חזרה לדשבורד מנהל
+                            </a>
+                        </div>
                     </div>
-                </div>
-            </form>
-        </div>
-
-        <!-- כפתור חזרה -->
-        <div class="text-center">
-            <a href="{% url 'manager_dashboard' %}" class="back-btn">
-                <i class="fas fa-arrow-right me-2"></i>חזרה לדשבורד מנהל
-            </a>
+                </form>
+            </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+</style>
 {% endblock %}

@@ -58,57 +58,19 @@
                             <div class="flex-1">
                                 <h4 class="font-bold text-white text-base">{{ repair_job.bike }}</h4>
                                 <p class="text-slate-300 text-sm">{{ repair_job.bike.customer.name }}</p>
-                                {% if repair_job.bike.model %}
-                                <p class="text-slate-400 text-xs">דגם: {{ repair_job.bike.model }}</p>
-                                {% endif %}
                             </div>
                         </div>
                         
-                        <!-- Repair Details Grid -->
+                        <!-- Quick Info Grid -->
                         <div class="space-y-3 text-sm">
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
+                            <div class="flex items-center justify-between py-2">
                                 <span class="text-slate-300 font-medium">סטטוס:</span>
                                 <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-medium">{{ repair_job.get_status_display }}</span>
                             </div>
-                            
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
-                                <span class="text-slate-300 font-medium">תאריך קבלה:</span>
-                                <span class="text-white font-medium">{{ repair_job.created_at|date:"d/m/Y H:i" }}</span>
-                            </div>
-                            
-                            {% if repair_job.customer_reported_issue %}
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
-                                <span class="text-slate-300 font-medium">תקלה מדווחת:</span>
-                                <span class="text-blue-200 text-xs">{{ repair_job.customer_reported_issue|truncatewords:5 }}</span>
-                            </div>
-                            {% endif %}
-                            
-                            {% if repair_job.priority %}
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
-                                <span class="text-slate-300 font-medium">דחיפות:</span>
-                                <span class="{% if repair_job.priority == 'high' %}bg-red-500/20 text-red-300{% elif repair_job.priority == 'medium' %}bg-yellow-500/20 text-yellow-300{% else %}bg-green-500/20 text-green-300{% endif %} px-2 py-1 rounded text-xs font-medium">
-                                    {{ repair_job.get_priority_display|default:"רגילה" }}
-                                </span>
-                            </div>
-                            {% endif %}
-                            
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
-                                <span class="text-slate-300 font-medium">לקוח :</span>
-                                <span class="text-white text-sm">{{ repair_job.bike.customer.name }}</span>
-                            </div>
-                            
-                            {% if repair_job.estimated_completion_date %}
-                            <div class="flex items-center justify-between py-2 border-b border-slate-600/50">
-                                <span class="text-slate-300 font-medium">תאריך יעד:</span>
-                                <span class="text-blue-200 font-medium">{{ repair_job.estimated_completion_date|date:"d/m/Y" }}</span>
-                            </div>
-                            {% endif %}
-                            
                             <div class="flex items-center justify-between py-2">
                                 <span class="text-slate-300 font-medium">מחיר מאושר:</span>
                                 <span class="text-green-300 font-bold text-lg">₪{{ repair_job.get_total_approved_price }}</span>
                             </div>
-                            
                             {% if repair_job.assigned_mechanic %}
                             <div class="flex items-center justify-between py-2">
                                 <span class="text-slate-300 font-medium">מכונאי נוכחי:</span>
@@ -119,122 +81,22 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Approved Repairs Section -->
+                        <!-- Approved Items -->
                         {% if repair_job.approved_items %}
-                        <div class="pt-4 border-t border-slate-600/50">
-                            <h6 class="text-white font-bold mb-4 flex items-center gap-2 text-base">
-                                <i class="fas fa-check-circle text-green-400"></i>תיקונים מאושרים לביצוע
+                        <div class="pt-2">
+                            <h6 class="text-white font-bold mb-3 flex items-center gap-2 text-base">
+                                <i class="fas fa-check-circle text-green-400"></i>פעולות מאושרות
                             </h6>
-                            
-                            <!-- Summary Stats -->
-                            <div class="grid grid-cols-3 gap-3 mb-4">
-                                <div class="bg-blue-500/10 border border-blue-400/30 rounded-lg p-3 text-center">
-                                    <div class="text-blue-300 text-lg font-bold">{{ repair_job.approved_items|length }}</div>
-                                    <div class="text-blue-200 text-xs">פעולות</div>
-                                </div>
-                                <div class="bg-green-500/10 border border-green-400/30 rounded-lg p-3 text-center">
-                                    <div class="text-green-300 text-lg font-bold">₪{{ repair_job.get_total_approved_price }}</div>
-                                    <div class="text-green-200 text-xs">סה"כ</div>
-                                </div>
-                                <div class="bg-purple-500/10 border border-purple-400/30 rounded-lg p-3 text-center">
-                                    <div class="text-purple-300 text-lg font-bold">
-                                        {% if repair_job.approved_items|length <= 2 %}קל
-                                        {% elif repair_job.approved_items|length <= 4 %}בינוני  
-                                        {% else %}מורכב{% endif %}
-                                    </div>
-                                    <div class="text-purple-200 text-xs">רמת קושי</div>
-                                </div>
-                            </div>
-                            
-                            <!-- Detailed Repairs List -->
-                            <div class="space-y-3">
+                            <div class="space-y-2">
                                 {% for item in repair_job.approved_items %}
-                                <div class="bg-slate-700/30 border border-slate-600/50 rounded-lg p-4">
-                                    <div class="flex items-start justify-between mb-2">
-                                        <div class="flex items-start gap-3 flex-1">
-                                            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                                                {% if 'בלם' in item.description or 'brake' in item.description|lower %}
-                                                    <i class="fas fa-stop-circle text-white text-sm"></i>
-                                                {% elif 'גלגל' in item.description or 'wheel' in item.description|lower %}
-                                                    <i class="fas fa-circle-notch text-white text-sm"></i>
-                                                {% elif 'שרשרת' in item.description or 'chain' in item.description|lower %}
-                                                    <i class="fas fa-link text-white text-sm"></i>
-                                                {% elif 'הילוך' in item.description or 'gear' in item.description|lower %}
-                                                    <i class="fas fa-cog text-white text-sm"></i>
-                                                {% else %}
-                                                    <i class="fas fa-wrench text-white text-sm"></i>
-                                                {% endif %}
-                                            </div>
-                                            <div class="flex-1">
-                                                <h7 class="text-white font-semibold text-sm block">{{ item.description }}</h7>
-                                                {% if item.category %}
-                                                <p class="text-slate-300 text-xs mt-1">קטגוריה: {{ item.category.name }}</p>
-                                                {% endif %}
-                                                {% if item.estimated_time %}
-                                                <div class="flex items-center gap-4 mt-2 text-xs">
-                                                    <span class="flex items-center gap-1 text-blue-300">
-                                                        <i class="fas fa-clock"></i>
-                                                        זמן משוער: {{ item.estimated_time }}
-                                                    </span>
-                                                    {% if item.difficulty_level %}
-                                                    <span class="flex items-center gap-1 text-yellow-300">
-                                                        <i class="fas fa-signal"></i>
-                                                        רמה: {{ item.get_difficulty_level_display }}
-                                                    </span>
-                                                    {% endif %}
-                                                </div>
-                                                {% endif %}
-                                                {% if item.required_skills %}
-                                                <div class="mt-2">
-                                                    <div class="text-slate-400 text-xs mb-1">כישורים נדרשים:</div>
-                                                    <div class="flex flex-wrap gap-1">
-                                                        {% for skill in item.required_skills.all %}
-                                                        <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs">{{ skill.name }}</span>
-                                                        {% endfor %}
-                                                    </div>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        <div class="text-left flex-shrink-0">
-                                            <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-bold">₪{{ item.price }}</span>
-                                            {% if item.is_urgent %}
-                                            <div class="bg-red-500/20 text-red-300 px-2 py-1 rounded text-xs mt-1 text-center">דחוף</div>
-                                            {% endif %}
-                                        </div>
+                                <div class="bg-green-500/10 border border-green-400/30 rounded-lg p-3 flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-wrench text-green-400"></i>
+                                        <span class="text-green-100 text-sm">{{ item.description }}</span>
                                     </div>
-                                    
-                                    {% if item.notes %}
-                                    <div class="mt-3 p-2 bg-blue-500/10 border border-blue-400/20 rounded text-xs">
-                                        <span class="text-blue-300 font-medium">הערות: </span>
-                                        <span class="text-blue-200">{{ item.notes }}</span>
-                                    </div>
-                                    {% endif %}
+                                    <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-bold">₪{{ item.price }}</span>
                                 </div>
                                 {% endfor %}
-                            </div>
-                            
-                            <!-- Skills Summary for Manager -->
-                            {% if repair_job.get_required_skills %}
-                            <div class="mt-4 p-3 bg-amber-500/10 border border-amber-400/30 rounded-lg">
-                                <h7 class="text-amber-300 font-semibold text-sm flex items-center gap-2 mb-2">
-                                    <i class="fas fa-lightbulb"></i>כישורים נדרשים לתיקון זה
-                                </h7>
-                                <div class="flex flex-wrap gap-2">
-                                    {% for skill in repair_job.get_required_skills %}
-                                    <span class="bg-amber-500/20 text-amber-200 px-2 py-1 rounded text-xs">{{ skill }}</span>
-                                    {% endfor %}
-                                </div>
-                                <p class="text-amber-200 text-xs mt-2">💡 בחר מכונאי עם הכישורים המתאימים לתיקונים אלו</p>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% else %}
-                        <div class="pt-4 border-t border-slate-600/50">
-                            <div class="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-4 text-center">
-                                <i class="fas fa-exclamation-triangle text-yellow-400 text-2xl mb-2"></i>
-                                <h6 class="text-yellow-300 font-semibold mb-1">אין תיקונים מאושרים</h6>
-                                <p class="text-yellow-200 text-xs">יש לאשר תיקונים תחילה לפני הקצאת מכונאי</p>
                             </div>
                         </div>
                         {% endif %}
@@ -372,7 +234,6 @@
         </div>
     </div>
 </div>
-{% endblock %}
 
 {% block extra_css %}
 <style>

@@ -22,6 +22,12 @@ module.exports = {
       pattern: /(bg|text|border)-(slate|blue|cyan|green|red|yellow|purple|indigo)-(50|100|200|300|400|500|600|700|800|900)/,
     },
     {
+      pattern: /(from|via|to)-(slate|blue|cyan|green|red|yellow|purple|indigo)-(50|100|200|300|400|500|600|700|800|900)/,
+    },
+    {
+      pattern: /hover:(from|via|to)-(slate|blue|cyan|green|red|yellow|purple|indigo)-(50|100|200|300|400|500|600|700|800|900)/,
+    },
+    {
       pattern: /animate-(pulse|bounce|ping|spin)/,
     }
   ],

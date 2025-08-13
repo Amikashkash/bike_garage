@@ -3,262 +3,254 @@
 {% block title %}אבחון תיקון #{{ repair_job.id }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <!-- Page Header -->
-        <div class="text-center mb-4">
-            <h1 class="text-white">
-                🔍 אבחון תיקון #{{ repair_job.id }}
-            </h1>
-            <p class="text-white">
-                {% if is_editing %}
-                    עריכת אבחון והצעת מחיר מפורטת
-                {% else %}
-                    אבחון מקצועי והצעת מחיר מדויקת
-                {% endif %}
-            </p>
-        </div>
-
-        <!-- Breadcrumb -->
-        <div class="diagnosis-breadcrumb-card mb-4">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item">
-                        <a href="{% url 'manager_dashboard' %}">
-                            <i class="fas fa-tachometer-alt me-2"></i>דשבורד מנהל
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item active" aria-current="page">
-                        <i class="fas fa-stethoscope me-2"></i>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-4xl font-bold gradient-text mb-2">🔍 אבחון תיקון #{{ repair_job.id }} - NEW LAYOUT TEST</h1>
+                    <p class="text-slate-300">
                         {% if is_editing %}
-                            עריכת אבחון #{{ repair_job.id }}
+                            עריכת אבחון והצעת מחיר מפורטת
                         {% else %}
-                            אבחון #{{ repair_job.id }}
+                            אבחון מקצועי והצעת מחיר מדויקת
                         {% endif %}
-                    </li>
-                </ol>
-            </nav>
+                    </p>
+                </div>
+                
+                <!-- Breadcrumb Badge -->
+                <div class="flex justify-center md:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-4 py-2">
+                        <nav class="flex items-center gap-2 text-sm">
+                            <a href="{% url 'manager_dashboard' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-tachometer-alt mr-1"></i>דשבורד מנהל
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-white font-medium">
+                                <i class="fas fa-stethoscope mr-1"></i>
+                                {% if is_editing %}עריכת אבחון{% else %}אבחון{% endif %}
+                            </span>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Instructions Alert -->
+        <!-- Instructions Alert - Compact -->
         {% if not repair_job.repair_items.exists %}
-        <div class="diagnosis-alert-card mb-4">
-            <div class="alert-icon">
-                <i class="fas fa-lightbulb"></i>
-            </div>
-            <div class="alert-content">
-                <h6 class="text-white mb-2">הוראות לאבחון מדויק</h6>
-                <p class="text-white mb-0">
-                    הוסף להלן את כל הפעולות הנדרשות עם מחירים מדויקים, 
-                    וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.
-                </p>
+        <div class="mb-6">
+            <div class="bg-blue-900/30 border border-blue-500/40 rounded-xl overflow-hidden backdrop-blur-sm">
+                <div class="px-4 py-3 bg-blue-500/20 border-b border-blue-500/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-blue-500/30 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white">💡 הוראות לאבחון מדויק</h3>
+                            <p class="text-blue-200 text-sm">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים, וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         {% endif %}
 
-        <div class="row">
-            <!-- Repair Details Card -->
-            <div class="col-md-6 mb-4">
-                <div class="diagnosis-info-card">
-                    <div class="card-header">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-info-circle me-2 text-primary"></i>
-                            פרטי התיקון
-                        </h5>
+        <!-- Desktop Horizontal Layout -->
+        <div class="flex gap-6 w-full">
+            
+            <!-- Left Column: Customer & Problem Details - Compact -->
+            <div class="w-96 shrink-0">
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                    <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-400"></i>פרטי התיקון
+                        </h3>
                     </div>
-                    <div class="card-body">
-                        <div class="repair-detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-bicycle"></i>
+                    
+                    <div class="p-4 space-y-3">
+                        <!-- Bike & Customer Info - Compact -->
+                        <div class="flex items-center gap-3 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bicycle text-white"></i>
                             </div>
-                            <div class="detail-content">
-                                <span class="detail-label">אופניים</span>
-                                <span class="detail-value">{{ repair_job.bike }}</span>
-                            </div>
-                        </div>
-
-                        <div class="repair-detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="detail-content">
-                                <span class="detail-label">לקוח</span>
-                                <span class="detail-value">{{ repair_job.bike.customer.name }}</span>
+                            <div class="flex-1">
+                                <h4 class="font-bold text-white text-sm">{{ repair_job.bike }}</h4>
+                                <p class="text-slate-300 text-xs">{{ repair_job.bike.customer.name }}</p>
                             </div>
                         </div>
-
-                        <div class="repair-detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-phone"></i>
+                        
+                        <!-- Compact Info Grid -->
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">טלפון:</span>
+                                <span class="text-white font-medium">{{ repair_job.bike.customer.phone|default:"לא צוין" }}</span>
                             </div>
-                            <div class="detail-content">
-                                <span class="detail-label">טלפון</span>
-                                <span class="detail-value">{{ repair_job.bike.customer.phone|default:"לא צוין" }}</span>
-                            </div>
-                        </div>
-
-                        <div class="repair-detail-item">
-                            <div class="detail-icon">
-                                <i class="fas fa-calendar"></i>
-                            </div>
-                            <div class="detail-content">
-                                <span class="detail-label">תאריך דיווח</span>
-                                <span class="detail-value">{{ repair_job.created_at|date:"d/m/Y H:i" }}</span>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">תאריך:</span>
+                                <span class="text-white font-medium">{{ repair_job.created_at|date:"d/m H:i" }}</span>
                             </div>
                         </div>
-
+                        
+                        <!-- Categories Section - Compact -->
                         {% if repair_job.subcategories.exists %}
-                        <div class="categories-section mt-4">
-                            <h6 class="text-white mb-3">
-                                <i class="fas fa-tags me-2 text-warning"></i>
-                                קטגוריות התקלה
+                        <div>
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                                <i class="fas fa-tags text-yellow-400"></i>קטגוריות התקלה
                             </h6>
-                            <div class="categories-list-vertical">
+                            <div class="space-y-1">
                                 {% for subcategory in repair_job.subcategories.all %}
-                                <div class="category-row">
-                                    <div class="category-tag-block clickable-category" data-category-text="{{ subcategory }}" title="לחץ להוספה לתיאור הפעולה">
-                                        <i class="fas fa-tag me-1"></i>
-                                        {{ subcategory }}
-                                        <i class="fas fa-plus-circle ms-2 category-add-icon"></i>
+                                <div class="bg-yellow-500/10 border border-yellow-400/30 rounded-lg p-2 cursor-pointer transition-all hover:bg-yellow-500/20 clickable-category" 
+                                     data-category-text="{{ subcategory }}" 
+                                     title="לחץ להוספה לתיאור הפעולה">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fas fa-tag text-yellow-400 text-xs"></i>
+                                            <span class="text-yellow-100 font-medium text-sm">{{ subcategory }}</span>
+                                        </div>
+                                        <i class="fas fa-plus-circle text-yellow-400 category-add-icon text-xs"></i>
                                     </div>
                                 </div>
                                 {% endfor %}
                             </div>
                         </div>
                         {% endif %}
-
+                        
+                        <!-- Problem Description - Compact -->
                         {% if repair_job.problem_description %}
-                        <div class="problem-section mt-4">
-                            <h6 class="text-white mb-3">
-                                <i class="fas fa-exclamation-triangle me-2 text-danger"></i>
-                                תיאור התקלה
+                        <div>
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                                <i class="fas fa-exclamation-triangle text-red-400"></i>תיאור התקלה
                             </h6>
-                            <div class="problem-description">
-                                {{ repair_job.problem_description }}
+                            <div class="bg-red-500/10 border border-red-400/30 rounded-lg p-3">
+                                <p class="text-red-100 text-sm">{{ repair_job.problem_description }}</p>
                             </div>
                         </div>
                         {% endif %}
                     </div>
                 </div>
             </div>
-
-            <!-- Diagnosis Form -->
-            <div class="col-md-6 mb-4">
+            
+            <!-- Middle Column: Diagnosis & Items Form -->
+                        <!-- Right Column: Diagnosis Form & Actions -->
+            <div class="flex-1 min-w-0">
                 <form method="post" id="diagnosisForm">
                     {% csrf_token %}
                     
-                    <!-- Diagnosis Card -->
-                    <div class="diagnosis-form-card mb-4">
-                        <div class="card-header">
-                            <h5 class="mb-0 text-white">
-                                <i class="fas fa-stethoscope me-2 text-success"></i>
-                                אבחון והצעת מחיר
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label class="form-label text-white">
-                                    <i class="fas fa-clipboard-list me-2 text-primary"></i>
-                                    {{ diagnosis_form.diagnosis.label }}
-                                </label>
-                                {{ diagnosis_form.diagnosis }}
-                                {% if diagnosis_form.diagnosis.help_text %}
-                                <div class="form-text">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    {{ diagnosis_form.diagnosis.help_text }}
+                    <!-- Two-Column Layout for Diagnosis and Repair Items -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <!-- Left Sub-Column: Diagnosis Card -->
+                        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                            <div class="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <i class="fas fa-stethoscope text-green-400"></i>אבחון והצעת מחיר
+                                </h3>
+                            </div>
+                            <div class="p-4">
+                                <div class="form-group">
+                                    <label class="block text-slate-300 text-sm font-medium mb-2">
+                                        <i class="fas fa-clipboard-list text-blue-400 mr-2"></i>
+                                        {{ diagnosis_form.diagnosis.label }}
+                                    </label>
+                                    {{ diagnosis_form.diagnosis }}
+                                    {% if diagnosis_form.diagnosis.help_text %}
+                                    <div class="text-slate-400 text-xs mt-1">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        {{ diagnosis_form.diagnosis.help_text }}
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Repair Items Card -->
-                    <div class="diagnosis-items-card">
-                        <div class="card-header">
-                            <h5 class="mb-0 text-white">
-                                <i class="fas fa-tools me-2 text-warning"></i>
-                                פעולות תיקון ומחירים
-                            </h5>
-                            <small class="text-white d-block mt-2 diagnosis-subtitle">
-                                הוסף את כל הפעולות הנדרשות עם מחירים מדויקים
-                            </small>
+                        
+                        <!-- Right Sub-Column: Repair Items Card -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+                        <div class="bg-orange-500/20 px-4 py-3 border-b border-orange-500/30">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                        <i class="fas fa-tools text-orange-400"></i>פעולות תיקון ומחירים
+                                    </h3>
+                                    <p class="text-orange-200 text-sm mt-1">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
+                        <div class="p-4">
                             
-                            <!-- Existing Items -->
+                            <!-- Existing Items - Horizontal -->
                             {% if repair_job.repair_items.exists %}
-                            <div class="existing-items-section mb-4">
-                                <h6 class="text-white mb-3">
-                                    <i class="fas fa-list me-2 text-info"></i>
-                                    פעולות תיקון קיימות
+                            <div class="mb-4">
+                                <h6 class="text-white font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-list text-blue-400"></i>פעולות תיקון קיימות
                                 </h6>
                                 
-                                <div class="existing-items-grid">
+                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
                                     {% for item in repair_job.repair_items.all %}
-                                    <div class="existing-item-card">
-                                        <div class="item-header">
-                                            <div class="item-description">
-                                                <i class="fas fa-wrench me-2 text-primary"></i>
-                                                {{ item.description }}
+                                    <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
+                                        <div class="flex items-center justify-between">
+                                            <div class="flex items-center gap-2 flex-1">
+                                                <div class="w-6 h-6 bg-blue-500/20 rounded flex items-center justify-center">
+                                                    <i class="fas fa-wrench text-blue-400 text-xs"></i>
+                                                </div>
+                                                <span class="text-white font-medium text-sm">{{ item.description }}</span>
                                             </div>
-                                            <div class="item-status">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-white font-bold text-sm">₪{{ item.price }}</span>
                                                 {% if item.is_approved_by_customer %}
-                                                    <span class="badge badge-success">
-                                                        <i class="fas fa-check me-1"></i>אושר
+                                                    <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                                                        <i class="fas fa-check mr-1"></i>אושר
                                                     </span>
                                                 {% else %}
-                                                    <span class="badge badge-warning">
-                                                        <i class="fas fa-clock me-1"></i>ממתין
+                                                    <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs font-medium">
+                                                        <i class="fas fa-clock mr-1"></i>ממתין
                                                     </span>
                                                 {% endif %}
                                             </div>
-                                        </div>
-                                        <div class="item-price">
-                                            <span class="price-value">₪{{ item.price }}</span>
                                         </div>
                                     </div>
                                     {% endfor %}
                                 </div>
                                 
-                                <div class="existing-total">
-                                    <div class="total-display">
-                                        <span class="total-label">סה"כ קיים:</span>
-                                        <span class="total-value">₪{{ repair_job.get_total_price|floatformat:2 }}</span>
+                                <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-3 mb-4">
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-slate-300 font-medium">סה"כ קיים:</span>
+                                        <span class="text-white font-bold text-lg">₪{{ repair_job.get_total_price|floatformat:2 }}</span>
                                     </div>
                                 </div>
                                 
-                                <div class="section-divider">
-                                    <h6 class="text-white">
-                                        <i class="fas fa-plus me-2 text-success"></i>
-                                        הוסף פעולות נוספות
+                                <div class="border-t border-slate-600 pt-4">
+                                    <h6 class="text-white font-medium flex items-center gap-2">
+                                        <i class="fas fa-plus text-green-400"></i>הוסף פעולות נוספות
                                     </h6>
                                 </div>
                             </div>
                             {% endif %}
                             
-                            <!-- New Items Container -->
-                            <div class="new-items-section">
+                            <!-- New Items Container - Compact Grid -->
+                            <div class="space-y-3">
                                 <div id="repair-items-container">
                                     <div class="repair-item-row">
-                                        <div class="item-input-group">
-                                            <div class="description-input">
+                                        <div class="flex gap-3 items-center">
+                                            <div class="flex-1 min-w-0">
                                                 <input type="text" 
                                                        name="item_0_description" 
-                                                       class="form-control" 
+                                                       class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                                                        placeholder="תיאור הפעולה (לדוגמה: החלפת בלמים קדמיים)" 
                                                        required>
                                             </div>
-                                            <div class="price-input">
+                                            <div class="w-32 flex-shrink-0">
                                                 <input type="number" 
                                                        name="item_0_price" 
-                                                       class="form-control" 
+                                                       class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
                                                        placeholder="מחיר (₪)" 
-                                                       step="0.01" 
+                                                       step="10" 
                                                        min="0" 
                                                        required>
                                             </div>
-                                            <div class="action-input">
-                                                <button type="button" class="btn btn-danger btn-sm remove-item" style="display: none;">
+                                            <div class="w-10 flex-shrink-0 flex justify-center">
+                                                <button type="button" class="btn-modern danger sm remove-item" style="display: none;">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </div>
@@ -266,33 +258,34 @@
                                     </div>
                                 </div>
                                 
-                                <div class="add-item-section">
-                                    <button type="button" id="add-item" class="btn btn-outline-success">
-                                        <i class="fas fa-plus me-2"></i>הוסף פעולה נוספת
+                                <div class="flex items-center justify-between">
+                                    <button type="button" id="add-item" class="btn-modern success sm">
+                                        <i class="fas fa-plus mr-2"></i>הוסף פעולה נוספת
                                     </button>
-                                </div>
-                                
-                                <div class="new-items-total">
-                                    <div class="total-calculator">
-                                        <span class="total-label">סה"כ פעולות חדשות:</span>
-                                        <span class="total-value">₪<span id="total-price">0.00</span></span>
+                                    
+                                    <div class="bg-green-500/10 border border-green-400/30 rounded-lg px-4 py-2">
+                                        <span class="text-green-300 font-medium">סה"כ פעולות חדשות: </span>
+                                        <span class="text-green-200 font-bold">₪<span id="total-price">0.00</span></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Close the two-column grid -->
+                    </div>
 
-                    <!-- Form Actions -->
-                    <div class="diagnosis-actions mt-4">
-                        <button type="submit" class="btn btn-success btn-lg diagnosis-submit-btn">
+                    <!-- Form Actions - Compact (Outside the grid) -->
+                    <div class="flex flex-col sm:flex-row gap-4 mt-6">
+                        <button type="submit" class="btn-modern success lg flex-1">
                             {% if is_editing %}
-                                <i class="fas fa-save me-2"></i>עדכן אבחון ושלח ללקוח
+                                <i class="fas fa-save mr-2"></i>עדכן אבחון ושלח ללקוח
                             {% else %}
-                                <i class="fas fa-check me-2"></i>שמור אבחון ושלח ללקוח
+                                <i class="fas fa-check mr-2"></i>שמור אבחון ושלח ללקוח
                             {% endif %}
                         </button>
-                        <a href="{% url 'manager_dashboard' %}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>ביטול
+                        <a href="{% url 'manager_dashboard' %}" class="btn-modern secondary lg">
+                            <i class="fas fa-times mr-2"></i>ביטול
                         </a>
                     </div>
                 </form>
@@ -321,7 +314,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         items.forEach(function(item) {
             const removeBtn = item.querySelector('.remove-item');
-            removeBtn.style.display = showRemoveButtons ? 'block' : 'none';
+            if (removeBtn) {
+                removeBtn.style.display = showRemoveButtons ? 'inline-flex' : 'none';
+            }
         });
     }
     
@@ -404,25 +399,25 @@ document.addEventListener('DOMContentLoaded', function() {
         
         newItem.className = 'repair-item-row';
         newItem.innerHTML = `
-            <div class="item-input-group">
-                <div class="description-input">
+            <div class="flex gap-3 items-center">
+                <div class="flex-1 min-w-0">
                     <input type="text" 
                            name="item_${itemIndex}_description" 
-                           class="form-control" 
+                           class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                            placeholder="תיאור הפעולה" 
                            required>
                 </div>
-                <div class="price-input">
+                <div class="w-32 flex-shrink-0">
                     <input type="number" 
                            name="item_${itemIndex}_price" 
-                           class="form-control" 
+                           class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
                            placeholder="מחיר (₪)" 
-                           step="0.01" 
+                           step="10" 
                            min="0" 
                            required>
                 </div>
-                <div class="action-input">
-                    <button type="button" class="btn btn-danger btn-sm remove-item">
+                <div class="w-10 flex-shrink-0 flex justify-center">
+                    <button type="button" class="btn-modern danger sm remove-item">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
@@ -456,5 +451,77 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+<style>
+.category-added {
+    animation: categoryPulse 0.6s ease;
+}
+
+@keyframes categoryPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); background-color: rgba(251, 191, 36, 0.3); }
+    100% { transform: scale(1); }
+}
+
+/* Fix textarea and input styling */
+textarea, 
+input[type="text"], 
+input[type="number"] {
+    background-color: rgb(51 65 85 / 0.5) !important; /* slate-700/50 */
+    border: 1px solid rgb(71 85 105) !important; /* slate-600 */
+    color: white !important;
+    border-radius: 8px !important;
+}
+
+textarea:focus, 
+input[type="text"]:focus, 
+input[type="number"]:focus {
+    background-color: rgb(51 65 85 / 0.7) !important;
+    border-color: rgb(59 130 246) !important; /* blue-500 */
+    outline: none !important;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+}
+
+/* Make save button more prominent */
+.btn-modern.success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border: 1px solid #047857 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-modern.success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+}
+
+/* Style cancel/secondary button */
+.btn-modern.secondary {
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    border: 1px solid #334155 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-modern.secondary:hover {
+    background: linear-gradient(135deg, #475569, #334155) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+</style>
 
 {% endblock %}

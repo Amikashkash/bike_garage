@@ -1,176 +1,243 @@
-{% extends 'workshop/base.html' %}
+in repair{% extends 'workshop/base.html' %}
 
-{% block title %}אישור תיקון{% endblock %}
+{% block title %}אישור תיקון #{{ repair_job.id }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">📋 אישור פעולות תיקון #{{ repair_job.id }}</h1>
-            <p class="text-white">בחר את הפעולות שברצונך לאשר לביצוע</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-4xl font-bold gradient-text mb-2">📋 אישור פעולות תיקון #{{ repair_job.id }}</h1>
+                    <p class="text-slate-300">
+                        בחר את הפעולות שברצונך לאשר לביצוע במוסך
+                    </p>
+                </div>
+                
+                <!-- Breadcrumb Badge -->
+                <div class="flex justify-center md:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-4 py-2">
+                        <nav class="flex items-center gap-2 text-sm">
+                            <a href="{% url 'home' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-home mr-1"></i>דף הבית
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-white font-medium">
+                                <i class="fas fa-clipboard-check mr-1"></i>אישור תיקון
+                            </span>
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-<div class="row">
-    <!-- פרטי התיקון -->
-    <div class="col-md-6">
-        <div class="card customer-approval-info-card">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-info-circle me-2 text-turquoise"></i>
-                    פרטי התיקון
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="approval-detail-item mb-3">
-                    <strong class="text-white">מזהה תיקון:</strong> 
-                    <span class="badge badge-primary">#{{ repair_job.id }}</span>
-                </div>
-                <div class="approval-detail-item mb-3">
-                    <strong class="text-white">אופניים:</strong> 
-                    <span class="badge badge-secondary">{{ repair_job.bike }}</span>
-                </div>
-                <div class="approval-detail-item mb-3">
-                    <strong class="text-white">תאריך דיווח:</strong> 
-                    <span class="text-white">{{ repair_job.created_at|date:"d/m/Y H:i" }}</span>
-                </div>
-                <div class="approval-detail-item mb-3">
-                    <strong class="text-white">סטטוס:</strong> 
-                    <span class="badge badge-info">{{ repair_job.get_status_display }}</span>
-                </div>
-                
-                {% if repair_job.problem_description %}
-                <div class="approval-detail-section mb-3">
-                    <strong class="text-white">תיאור התקלה שדיווחת:</strong>
-                    <div class="customer-problem-description mt-2">
-                        {{ repair_job.problem_description }}
-                    </div>
-                </div>
-                {% endif %}
-                
-                {% if repair_job.diagnosis %}
-                <div class="approval-detail-section mb-0">
-                    <strong class="text-white">אבחון המוסך:</strong>
-                    <div class="workshop-diagnosis mt-2">
-                        <i class="fas fa-stethoscope me-2"></i>
-                        {{ repair_job.diagnosis }}
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <!-- טופס האישור -->
-    <div class="col-md-6">
-        <form method="post" id="approval-form">
-            {% csrf_token %}
+        <!-- Two-Column Layout -->
+        <div class="flex gap-6 w-full">
             
-            <div class="card customer-approval-form-card">
-                <div class="card-header">
-                    <h5 class="mb-0 text-white">
-                        <i class="fas fa-calculator me-2"></i>
-                        הצעת מחיר - בחר פעולות לאישור
-                    </h5>
-                </div>
-                <div class="card-body">
-                {% if repair_job.repair_items.exists %}
-                    {% if approval_form.approved_items.errors %}
-                        <div class="alert alert-danger">
-                            {{ approval_form.approved_items.errors }}
-                        </div>
-                    {% endif %}
+            <!-- Left Column: Customer & Repair Details -->
+            <div class="w-96 shrink-0">
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+                    <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30">
+                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <i class="fas fa-info-circle text-blue-400"></i>פרטי התיקון
+                        </h3>
+                    </div>
                     
-                    <div class="form-group">
-                        <label class="text-white mb-3">
-                            <i class="fas fa-tasks me-2"></i>
-                            {{ approval_form.approved_items.label }}
-                        </label>
-                        <div class="repair-items-approval-list">
-                            {% for item in repair_job.repair_items.all %}
-                            <div class="approval-item-row" data-price="{{ item.price }}" data-item-id="{{ item.id }}">
-                                <div class="form-check">
-                                    <input type="checkbox" 
-                                           class="form-check-input item-checkbox" 
-                                           name="approved_items" 
-                                           value="{{ item.id }}" 
-                                           id="item_{{ item.id }}"
-                                           {% if item.is_approved_by_customer %}checked{% endif %}>
-                                    <label class="form-check-label text-white" for="item_{{ item.id }}">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div class="approval-item-description">
-                                                <strong>{{ item.description }}</strong>
-                                                {% if item.notes %}
-                                                <div class="approval-item-notes mt-1">
-                                                    <small>
-                                                        <i class="fas fa-sticky-note me-1 text-primary"></i>
-                                                        {{ item.notes }}
-                                                    </small>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                            <div class="approval-item-price">
-                                                <span class="badge badge-success">₪{{ item.price }}</span>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
+                    <div class="p-4 space-y-4">
+                        <!-- Repair Info -->
+                        <div class="flex items-center gap-3 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bicycle text-white"></i>
                             </div>
-                            {% endfor %}
+                            <div class="flex-1">
+                                <h4 class="font-bold text-white text-sm">{{ repair_job.bike }}</h4>
+                                <p class="text-slate-300 text-xs">{{ repair_job.bike.customer.name }}</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Info Grid -->
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">מזהה תיקון:</span>
+                                <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs font-bold">#{{ repair_job.id }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">תאריך דיווח:</span>
+                                <span class="text-white font-medium">{{ repair_job.created_at|date:"d/m H:i" }}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-slate-300">סטטוס:</span>
+                                <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium">{{ repair_job.get_status_display }}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Problem Description -->
+                        {% if repair_job.problem_description %}
+                        <div>
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                                <i class="fas fa-exclamation-circle text-red-400"></i>תיאור התקלה שדיווחת
+                            </h6>
+                            <div class="bg-red-500/10 border border-red-400/30 rounded-lg p-3">
+                                <p class="text-red-100 text-sm">{{ repair_job.problem_description }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Workshop Diagnosis -->
+                        {% if repair_job.diagnosis %}
+                        <div>
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                                <i class="fas fa-stethoscope text-green-400"></i>אבחון המוסך
+                            </h6>
+                            <div class="bg-green-500/10 border border-green-400/30 rounded-lg p-3">
+                                <p class="text-green-100 text-sm">{{ repair_job.diagnosis }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Price Offer & Approval Form -->
+            <div class="flex-1 min-w-0">
+                <form method="post" id="approval-form">
+                    {% csrf_token %}
+                    
+                    {% if repair_job.repair_items.exists %}
+                    <!-- Price Offer Card -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden mb-6">
+                        <div class="bg-orange-500/20 px-4 py-3 border-b border-orange-500/30">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-calculator text-orange-400"></i>הצעת מחיר - בדק פעולות לאישור
+                            </h3>
+                            <p class="text-orange-200 text-sm mt-1">בדק את הפעולות המוצעות וסמן את אלו שברצונך לבצע</p>
+                        </div>
+                        
+                        <div class="p-4">
+                            {% if approval_form.approved_items.errors %}
+                                <div class="bg-red-500/20 border border-red-400/40 rounded-lg p-3 mb-4">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+                                        <span class="text-red-200">{{ approval_form.approved_items.errors }}</span>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Repair Items List -->
+                            <div class="space-y-2 mb-4">
+                                <h6 class="text-white font-medium mb-3 flex items-center gap-2">
+                                    <i class="fas fa-list text-blue-400"></i>פעולות תיקון מוצעות
+                                </h6>
+                                
+                                {% for item in repair_job.repair_items.all %}
+                                <div class="approval-item-row bg-slate-700/50 border border-slate-600 rounded-lg p-3 transition-all hover:bg-slate-700/70" 
+                                     data-price="{{ item.price }}" data-item-id="{{ item.id }}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-shrink-0">
+                                            <input type="checkbox" 
+                                                   class="item-checkbox w-4 h-4 text-green-500 bg-slate-600 border-slate-500 rounded focus:ring-green-500 focus:ring-2" 
+                                                   name="approved_items" 
+                                                   value="{{ item.id }}" 
+                                                   id="item_{{ item.id }}"
+                                                   {% if item.is_approved_by_customer %}checked{% endif %}>
+                                        </div>
+                                        <label class="flex-1 cursor-pointer text-sm" for="item_{{ item.id }}">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="fas fa-wrench text-blue-400 text-xs"></i>
+                                                    <span class="text-white font-medium">{{ item.description }}</span>
+                                                </div>
+                                                <div class="flex-shrink-0">
+                                                    <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-bold">
+                                                        ₪{{ item.price }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {% if item.notes %}
+                                            <div class="text-slate-400 text-xs mt-1 mr-5">
+                                                <i class="fas fa-sticky-note text-yellow-400 mr-1"></i>
+                                                {{ item.notes }}
+                                            </div>
+                                            {% endif %}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="approval-summary-box">
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <div class="summary-stat">
-                                    <i class="fas fa-check-circle text-success me-2"></i>
-                                    <span class="text-white">פעולות שנבחרו:</span>
-                                    <span id="selected-count" class="badge badge-success">0</span>
+                    <!-- Summary Card -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden mb-6">
+                        <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-calculator text-blue-400"></i>סיכום הזמנה
+                            </h3>
+                        </div>
+                        <div class="p-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="bg-green-500/20 border border-green-400/40 rounded-lg p-3">
+                                        <div class="text-2xl font-bold text-green-300" id="selected-count">0</div>
+                                        <div class="text-green-200 text-sm">פעולות נבחרו</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="summary-stat">
-                                    <i class="fas fa-shekel-sign text-primary me-2"></i>
-                                    <span class="text-white">סה"כ מחיר:</span>
-                                    <span id="selected-total" class="badge badge-primary">₪0.00</span>
+                                <div class="text-center">
+                                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-lg p-3">
+                                        <div class="text-2xl font-bold text-blue-300" id="selected-total">₪0.00</div>
+                                        <div class="text-blue-200 text-sm">סה"כ מחיר</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button type="submit" class="btn-modern success lg flex-1">
+                            <i class="fas fa-check-double mr-2"></i>אשר פעולות נבחרות
+                        </button>
+                        <a href="{% url 'home' %}" class="btn-modern secondary lg">
+                            <i class="fas fa-home mr-2"></i>חזרה לדף הבית
+                        </a>
                     </div>
                     
                     <div class="mt-4 text-center">
-                        <button type="submit" class="btn btn-success btn-lg px-5">
-                            <i class="fas fa-check-double me-2"></i>
-                            אשר פעולות נבחרות
-                        </button>
-                        <div class="mt-3">
-                            <small class="text-white approval-info-text">
-                                <i class="fas fa-info-circle me-1"></i>
-                                לחיצה על "אשר" תשלח את הפעולות הנבחרות לביצוע במוסך.
-                                ניתן לשנות את הבחירה בעתיד אם נדרש.
+                        <div class="bg-blue-500/20 border border-blue-400/40 rounded-lg p-3">
+                            <small class="text-blue-200">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                לחיצה על "אשר" תשלח את הפעולות הנבחרות לביצוع במוסך. ניתן לשנות את הבחירה בעתיד אם נדרש.
                             </small>
                         </div>
                     </div>
-                {% else %}
-                    <div class="no-items-alert text-center">
-                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
-                        <h6 class="text-white mb-2">אין פעולות להצגה</h6>
-                        <p class="text-white mb-2">המוסך עדיין לא הוסיף פעולות לתיקון זה.</p>
-                        <small class="text-white">אנא המתן לאבחון המוסך.</small>
+                    
+                    {% else %}
+                    <!-- No Items Card -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+                        <div class="bg-yellow-500/20 px-4 py-3 border-b border-yellow-500/30">
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fas fa-exclamation-triangle text-yellow-400"></i>אין פעולות להצגה
+                            </h3>
+                        </div>
+                        <div class="p-6 text-center">
+                            <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-clock text-yellow-400 text-2xl"></i>
+                            </div>
+                            <h4 class="text-white font-bold mb-2">המתן לאבחון המוסך</h4>
+                            <p class="text-slate-300 mb-4">המוסך עדיין לא הוסיף פעולות לתיקון זה.</p>
+                            <a href="{% url 'home' %}" class="btn-modern primary">
+                                <i class="fas fa-home mr-2"></i>חזרה לדף הבית
+                            </a>
+                        </div>
                     </div>
-                {% endif %}
+                    {% endif %}
+                </form>
             </div>
+            
         </div>
-    </form>
-</div>
-</div>
-
-<div class="mt-4 text-center">
-    <a href="{% url 'home' %}" class="btn btn-secondary">
-        <i class="fas fa-home me-2"></i> חזרה לדף הבית
-    </a>
+    </div>
 </div>
 
 <script>
@@ -190,13 +257,100 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('selected-total').textContent = '₪' + total.toFixed(2);
     }
     
-    // הוספת מאזינים לכל תיבות הסימון
+    // Add listeners to all checkboxes
     document.querySelectorAll('input[name="approved_items"]').forEach(function(checkbox) {
         checkbox.addEventListener('change', updateSummary);
     });
     
-    // חישוב ראשוני
+    // Initial calculation
     updateSummary();
 });
 </script>
+
+<style>
+/* Button styling to match repair_diagnosis.html */
+.btn-modern.success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border: 1px solid #047857 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-modern.success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-modern.secondary {
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    border: 1px solid #334155 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-modern.secondary:hover {
+    background: linear-gradient(135deg, #475569, #334155) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.btn-modern.primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-modern.primary:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+/* Gradient text effect */
+.gradient-text {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #fb7185);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Hover effect for approval items */
+.approval-item-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+</style>
 {% endblock %}
