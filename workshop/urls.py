@@ -28,6 +28,7 @@ urlpatterns = [
     
     # Repairs
     path('repair/new/', views.repair_form, name='repair_form'),
+    path('repair/new/<int:customer_id>/', views.repair_form, name='repair_form_with_customer'),
     path('customer/report/', views.customer_report, name='customer_report'),
     path('repair/<int:repair_id>/status/', views.repair_status, name='repair_status'),
     
@@ -64,4 +65,8 @@ urlpatterns = [
     path('categories/', views.category_list, name='category_list'),
     path('categories/new/', views.category_create, name='category_create'),
     path('subcategories/new/', views.subcategory_create, name='subcategory_create'),
+    
+    # API endpoints
+    path('api/search-customers/', views.search_customers_api, name='search_customers_api'),
+    path('api/customer-bikes/<int:customer_id>/', views.customer_bikes_api, name='customer_bikes_api'),
 ]

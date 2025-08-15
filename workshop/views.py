@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
@@ -121,7 +122,15 @@ def customer_report(request):
 
 @login_required
 @user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
-def repair_form(request):
+def repair_form(request, customer_id=None):
+    selected_customer = None
+    if customer_id:
+        try:
+            selected_customer = Customer.objects.get(id=customer_id)
+        except Customer.DoesNotExist:
+            messages.error(request, "לקוח לא נמצא")
+            return redirect('customer_list')
+    
     if request.method == 'POST':
         form = RepairJobForm(request.POST)
         if form.is_valid():
@@ -151,6 +160,7 @@ def repair_form(request):
     return render(request, 'workshop/repair_form.html', {
         'form': form,
         'categories': categories,
+        'selected_customer': selected_customer,
     })
 
 
@@ -1717,4 +1727,75 @@ def backup_customers_csv(request):
         ])
     
     return response
+
+
+# API endpoints for repair form customer search
+@login_required
+@user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
+def search_customers_api(request):
+    """API endpoint for searching customers"""
+    try:
+        query = request.GET.get('q', '').strip()
+        print(f"Search query received: '{query}'")
+        
+        if len(query) < 2:
+            print("Query too short, returning empty results")
+            return JsonResponse({'customers': []})
+        
+        # Search customers by name, phone, email, or associated username
+        customers = Customer.objects.filter(
+            Q(name__icontains=query) |
+            Q(phone__icontains=query) |
+            Q(email__icontains=query) |
+            Q(user__username__icontains=query)  # Added username search
+        ).select_related('user').prefetch_related('bikes')[:10]  # Limit to 10 results
+        
+        print(f"Found {customers.count()} customers")
+        
+        customers_data = []
+        for customer in customers:
+            customer_data = {
+                'id': customer.id,
+                'name': customer.name,
+                'phone': customer.phone or '',
+                'email': customer.email or '',
+                'bikes_count': customer.bikes.count(),
+                'username': customer.user.username if customer.user else ''
+            }
+            customers_data.append(customer_data)
+            print(f"Customer: {customer_data}")
+        
+        print(f"Returning {len(customers_data)} customers")
+        return JsonResponse({'customers': customers_data})
+    
+    except Exception as e:
+        # Add error logging for debugging
+        print(f"Error in search_customers_api: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return JsonResponse({'error': f'Search error: {str(e)}'}, status=500)
+
+
+@login_required
+@user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
+def customer_bikes_api(request, customer_id):
+    """API endpoint for getting customer's bikes"""
+    try:
+        customer = Customer.objects.get(id=customer_id)
+        bikes = customer.bikes.prefetch_related('repairjob_set').all()
+        
+        bikes_data = []
+        for bike in bikes:
+            bikes_data.append({
+                'id': bike.id,
+                'brand': bike.brand,
+                'model': bike.model,
+                'color': bike.color,
+                'repairs_count': bike.repairjob_set.count()
+            })
+        
+        return JsonResponse({'bikes': bikes_data})
+    
+    except Customer.DoesNotExist:
+        return JsonResponse({'error': 'Customer not found'}, status=404)
 

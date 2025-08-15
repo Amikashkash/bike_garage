@@ -3,125 +3,519 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🚲 {{ title }}</h1>
-            <p class="text-white">ניהול ומעקב אחר האופניים שלך</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="mb-6">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                    🚲 {{ title }}
+                    <span class="text-2xl sm:text-3xl lg:text-4xl text-blue-300">⚙️</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    ניהול ומעקב אחר האופניים שלך - כל המידע במקום אחד
+                </p>
+            </div>
         </div>
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-white">האופניים שלי</h2>
-            <a href="{% url 'customer_add_bike' %}" class="btn btn-success">
-                <i class="fas fa-plus me-2"></i> הוסף אופניים נוספות
-            </a>
+        <!-- Action Bar -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 sm:mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bicycle text-blue-400"></i>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold text-white">האופניים שלי</h2>
+                {% if bikes %}
+                <span class="bg-blue-500/20 border border-blue-400/30 rounded-lg px-3 py-1 text-blue-300 text-sm font-medium">
+                    {{ bikes|length }} אופניים
+                </span>
+                {% endif %}
+            </div>
+            
+            <div class="flex gap-3">
+                <a href="{% url 'customer_add_bike' %}" 
+                   class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                    <i class="fas fa-plus mr-2"></i>
+                    <span class="hidden sm:inline">הוסף אופניים</span>
+                    <span class="sm:hidden">הוסף</span>
+                </a>
+                <a href="{% url 'customer_report' %}" 
+                   class="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                    <span class="hidden sm:inline">דווח תקלה</span>
+                    <span class="sm:hidden">דווח</span>
+                </a>
+            </div>
         </div>
         
         {% if bikes %}
-            <div class="row">
+            <!-- Bikes Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {% for bike in bikes %}
-                <div class="col-md-6 mb-4">
-                    <div class="card bike-card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0 text-white">
-                                <i class="fas fa-bicycle me-2 text-primary"></i>
-                                {{ bike.brand }} {{ bike.model|default:"" }}
-                            </h5>
+                <div class="bike-card glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden hover:border-blue-400/50 transition-all duration-300">
+                    
+                    <!-- Bike Header -->
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-bicycle text-white text-lg"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-bold text-white">
+                                        {{ bike.brand }} {{ bike.model|default:"" }}
+                                    </h3>
+                                    <p class="text-slate-400 text-sm">נרשם ב-{{ bike.created_at|date:"d/m/Y" }}</p>
+                                </div>
+                            </div>
                             {% if bike.color %}
-                                <span class="badge badge-info">{{ bike.color }}</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 rounded-full border-2 border-white/20" style="background-color: {{ bike.color|lower }}"></div>
+                                <span class="bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-1 text-slate-200 text-sm font-medium">
+                                    {{ bike.color }}
+                                </span>
+                            </div>
                             {% endif %}
                         </div>
-                        <div class="card-body">
-                            <div class="bike-details mb-3">
-                                <p class="text-white mb-2">
-                                    <i class="fas fa-industry me-2 text-orange"></i>
-                                    <strong>יצרן:</strong> {{ bike.brand }}
-                                </p>
-                                {% if bike.model %}
-                                <p class="text-white mb-2">
-                                    <i class="fas fa-tag me-2 text-turquoise"></i>
-                                    <strong>מודל:</strong> {{ bike.model }}
-                                </p>
-                                {% endif %}
-                                {% if bike.color %}
-                                <p class="text-white mb-2">
-                                    <i class="fas fa-palette me-2 text-success"></i>
-                                    <strong>צבע:</strong> {{ bike.color }}
-                                </p>
-                                {% endif %}
-                                <p class="text-white mb-2">
-                                    <i class="fas fa-calendar me-2 text-primary"></i>
-                                    <strong>נרשם:</strong> {{ bike.created_at|date:"d/m/Y" }}
-                                </p>
+                    </div>
+                    
+                    <!-- Bike Details -->
+                    <div class="p-4 sm:p-6">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                            <div class="bike-detail-item bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-industry text-orange-400"></i>
+                                    <span class="text-slate-400">יצרן:</span>
+                                    <span class="text-white font-medium">{{ bike.brand }}</span>
+                                </div>
                             </div>
                             
-                            <!-- תיקונים עבור האופניים הזה -->
-                            {% with bike.repairs.all as repairs %}
-                                {% if repairs %}
-                                    <div class="bike-repairs-section">
-                                        <h6 class="text-white mb-3">
-                                            <i class="fas fa-tools me-2 text-orange"></i>
-                                            תיקונים ({{ repairs.count }})
-                                        </h6>
-                                        <div class="repairs-list">
-                                            {% for repair in repairs %}
-                                            <div class="repair-item mb-2">
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <div class="repair-status">
-                                                        <span class="badge badge-{% if repair.status == 'completed' %}success{% elif repair.status == 'in_progress' %}primary{% elif repair.status == 'diagnosed' %}warning{% else %}secondary{% endif %}">
-                                                            {{ repair.get_status_display }}
-                                                        </span>
-                                                        <small class="text-white ms-2">{{ repair.created_at|date:"d/m/Y" }}</small>
-                                                    </div>
-                                                    <div class="repair-actions">
-                                                        <a href="{% url 'repair_status' repair.id %}" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-eye me-1"></i> צפה
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                                {% if repair.problem_description %}
-                                                <div class="repair-description mt-2">
-                                                    <small class="text-white">{{ repair.problem_description|truncatewords:10 }}</small>
-                                                </div>
-                                                {% endif %}
-                                            </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% else %}
-                                    <div class="no-repairs-section text-center py-3">
-                                        <i class="fas fa-tools fa-2x text-secondary mb-2"></i>
-                                        <p class="text-white mb-2">אין תיקונים עדיין</p>
-                                        <a href="{% url 'customer_report' %}" class="btn btn-sm btn-orange">
-                                            <i class="fas fa-plus me-1"></i> דווח תקלה
-                                        </a>
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
+                            {% if bike.model %}
+                            <div class="bike-detail-item bg-slate-700/30 border border-slate-600/30 rounded-lg p-3">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-tag text-cyan-400"></i>
+                                    <span class="text-slate-400">מודל:</span>
+                                    <span class="text-white font-medium">{{ bike.model }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
                         
+                        <!-- תיקונים עבור האופניים הזה -->
+                        {% with bike.repairs.all as repairs %}
+                            {% if repairs %}
+                                <div class="bike-repairs-section">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-white font-semibold flex items-center gap-2">
+                                            <i class="fas fa-tools text-orange-400"></i>
+                                            תיקונים
+                                        </h4>
+                                        <span class="bg-orange-500/20 border border-orange-400/30 rounded-lg px-2 py-1 text-orange-300 text-xs font-medium">
+                                            {{ repairs.count }} תיקונים
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="space-y-3 max-h-60 overflow-y-auto">
+                                        {% for repair in repairs %}
+                                        <div class="repair-item bg-slate-800/50 border border-slate-600/40 rounded-lg p-3 hover:border-slate-500/60 transition-all duration-300">
+                                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="repair-status-badge status-{{ repair.status }}">
+                                                        {% if repair.status == 'completed' %}
+                                                            <i class="fas fa-check-circle mr-1"></i>הושלם
+                                                        {% elif repair.status == 'in_progress' %}
+                                                            <i class="fas fa-cog fa-spin mr-1"></i>בתיקון
+                                                        {% elif repair.status == 'diagnosed' %}
+                                                            <i class="fas fa-stethoscope mr-1"></i>אובחן
+                                                        {% elif repair.status == 'pending_approval' %}
+                                                            <i class="fas fa-clock mr-1"></i>ממתין לאישור
+                                                        {% else %}
+                                                            <i class="fas fa-hourglass-half mr-1"></i>{{ repair.get_status_display }}
+                                                        {% endif %}
+                                                    </span>
+                                                    <span class="text-slate-400 text-xs">{{ repair.created_at|date:"d/m/Y" }}</span>
+                                                </div>
+                                                <a href="{% url 'repair_status' repair.id %}" 
+                                                   class="bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/40 hover:border-blue-400/60 text-blue-300 px-3 py-1 rounded-lg text-xs font-medium transition-all duration-300 flex items-center gap-1">
+                                                    <i class="fas fa-eye"></i>
+                                                    <span>צפה</span>
+                                                </a>
+                                            </div>
+                                            
+                                            {% if repair.problem_description %}
+                                            <div class="repair-description">
+                                                <p class="text-slate-300 text-sm leading-relaxed">
+                                                    "{{ repair.problem_description|truncatewords:12 }}"
+                                                </p>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="no-repairs-section text-center py-6">
+                                    <div class="w-16 h-16 bg-slate-700/30 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                        <i class="fas fa-tools text-slate-500 text-2xl"></i>
+                                    </div>
+                                    <h5 class="text-white font-medium mb-2">אין תיקונים עדיין</h5>
+                                    <p class="text-slate-400 text-sm mb-4">האופניים שלך עדיין לא נדרשו לתיקון</p>
+                                    <a href="{% url 'customer_report' %}" 
+                                       class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-medium py-2 px-4 rounded-lg transition-all duration-300 text-sm inline-flex items-center gap-2">
+                                        <i class="fas fa-plus"></i>
+                                        דווח תקלה
+                                    </a>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="card no-bikes-card text-center">
-                <div class="card-body py-5">
-                    <i class="fas fa-bicycle fa-3x text-secondary mb-3"></i>
-                    <h4 class="text-white mb-3">אין לך אופניים רשומות במערכת</h4>
-                    <p class="text-white mb-4">תוכל להוסיף אופניים חדשות על ידי לחיצה על הכפתור למטה</p>
-                    <a href="{% url 'customer_add_bike' %}" class="btn btn-success btn-lg">
-                        <i class="fas fa-plus me-2"></i> הוסף אופניים ראשונות
-                    </a>
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <div class="glass-card border border-slate-600/40 rounded-2xl p-8 sm:p-12 max-w-lg mx-auto">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-bicycle text-blue-400 text-4xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">אין לך אופניים רשומות במערכת</h3>
+                    <p class="text-slate-400 mb-8 leading-relaxed">
+                        תוכל להוסיף אופניים חדשות על ידי לחיצה על הכפתור למטה.<br>
+                        לאחר ההוספה תוכל לדווח על תקלות ולעקוב אחר תיקונים.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="{% url 'customer_add_bike' %}" 
+                           class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                            <i class="fas fa-plus mr-2"></i>
+                            הוסף אופניים ראשונות
+                        </a>
+                        <a href="{% url 'home' %}" 
+                           class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50">
+                            <i class="fas fa-home mr-2"></i>
+                            חזרה לדף הבית
+                        </a>
+                    </div>
                 </div>
             </div>
         {% endif %}
         
-        <div class="mt-4 text-center">
-            <a href="{% url 'home' %}" class="btn btn-secondary">
-                <i class="fas fa-home me-2"></i> חזרה לדף הבית
+        <!-- Statistics Section -->
+        {% if bikes %}
+        <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl p-4 sm:p-6 mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-chart-bar text-purple-400"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white">סטטיסטיקות</h3>
+            </div>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="stat-item text-center">
+                    <div class="text-2xl font-bold text-blue-300">{{ bikes|length }}</div>
+                    <div class="text-slate-400 text-sm">אופניים</div>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="text-2xl font-bold text-green-300">
+                        {% for bike in bikes %}{{ bike.repairs.all|length }}{% if not forloop.last %}+{% endif %}{% endfor %}
+                    </div>
+                    <div class="text-slate-400 text-sm">תיקונים</div>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="text-2xl font-bold text-orange-300">
+                        {% for bike in bikes %}{% for repair in bike.repairs.all %}{% if repair.status == 'in_progress' %}1{% endif %}{% endfor %}{% endfor %}
+                    </div>
+                    <div class="text-slate-400 text-sm">בתיקון</div>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="text-2xl font-bold text-purple-300">
+                        {% for bike in bikes %}{% for repair in bike.repairs.all %}{% if repair.status == 'completed' %}1{% endif %}{% endfor %}{% endfor %}
+                    </div>
+                    <div class="text-slate-400 text-sm">הושלמו</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Back to Home -->
+        <div class="text-center">
+            <a href="{% url 'home' %}" 
+               class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50">
+                <i class="fas fa-home mr-2"></i>
+                חזרה לדף הבית
             </a>
         </div>
     </div>
 </div>
+
+<style>
+/* Mercury Design System - Customer Bikes List Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Bike Cards */
+.bike-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.bike-card:nth-child(1) { animation-delay: 0.1s; }
+.bike-card:nth-child(2) { animation-delay: 0.2s; }
+.bike-card:nth-child(3) { animation-delay: 0.3s; }
+.bike-card:nth-child(4) { animation-delay: 0.4s; }
+
+/* Repair Status Badges */
+.repair-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid;
+}
+
+.repair-status-badge.status-completed {
+    background: rgba(34, 197, 94, 0.1);
+    border-color: rgba(34, 197, 94, 0.3);
+    color: rgb(74, 222, 128);
+}
+
+.repair-status-badge.status-in_progress {
+    background: rgba(59, 130, 246, 0.1);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: rgb(96, 165, 250);
+}
+
+.repair-status-badge.status-diagnosed {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: rgba(245, 158, 11, 0.3);
+    color: rgb(251, 191, 36);
+}
+
+.repair-status-badge.status-pending_approval {
+    background: rgba(168, 85, 247, 0.1);
+    border-color: rgba(168, 85, 247, 0.3);
+    color: rgb(196, 181, 253);
+}
+
+/* Repair Items */
+.repair-item {
+    transition: all 0.3s ease;
+}
+
+.repair-item:hover {
+    transform: translateX(-2px);
+    background: rgba(15, 23, 42, 0.7) !important;
+}
+
+/* Statistics */
+.stat-item {
+    padding: 1rem;
+    background: rgba(51, 65, 85, 0.3);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: rgba(51, 65, 85, 0.5);
+    border-color: rgba(71, 85, 105, 0.7);
+    transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .glass-card {
+        backdrop-filter: blur(12px);
+    }
+    
+    .bike-card {
+        margin-bottom: 1rem;
+    }
+    
+    .repair-item {
+        padding: 0.75rem;
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .bike-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Scrollbar styling for repair lists */
+.space-y-3::-webkit-scrollbar {
+    width: 4px;
+}
+
+.space-y-3::-webkit-scrollbar-track {
+    background: rgba(51, 65, 85, 0.3);
+    border-radius: 2px;
+}
+
+.space-y-3::-webkit-scrollbar-thumb {
+    background: rgba(71, 85, 105, 0.5);
+    border-radius: 2px;
+}
+
+.space-y-3::-webkit-scrollbar-thumb:hover {
+    background: rgba(71, 85, 105, 0.7);
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚲 Customer bikes list with Mercury design loaded');
+    
+    // Initialize bike cards animations
+    const bikeCards = document.querySelectorAll('.bike-card');
+    bikeCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+        }, index * 100);
+    });
+    
+    // Add hover effects to repair items
+    const repairItems = document.querySelectorAll('.repair-item');
+    repairItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateX(-4px)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateX(0)';
+        });
+    });
+    
+    // Statistics counter animation
+    const statItems = document.querySelectorAll('.stat-item');
+    const animateNumbers = () => {
+        statItems.forEach(item => {
+            const numberElement = item.querySelector('div:first-child');
+            const finalNumber = parseInt(numberElement.textContent);
+            let currentNumber = 0;
+            const increment = Math.ceil(finalNumber / 20);
+            
+            const timer = setInterval(() => {
+                currentNumber += increment;
+                if (currentNumber >= finalNumber) {
+                    currentNumber = finalNumber;
+                    clearInterval(timer);
+                }
+                numberElement.textContent = currentNumber;
+            }, 50);
+        });
+    };
+    
+    // Trigger animation when statistics section is visible
+    const statsSection = document.querySelector('.glass-card');
+    if (statsSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    setTimeout(animateNumbers, 500);
+                    observer.unobserve(entry.target);
+                }
+            });
+        });
+        
+        observer.observe(statsSection);
+    }
+    
+    // Enhanced action buttons
+    const actionButtons = document.querySelectorAll('[class*="gradient"]');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.className = 'ripple';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // Auto-refresh repair status (every 30 seconds)
+    setInterval(() => {
+        const repairBadges = document.querySelectorAll('.repair-status-badge');
+        repairBadges.forEach(badge => {
+            if (badge.textContent.includes('בתיקון')) {
+                badge.style.animation = 'pulse 2s infinite';
+            }
+        });
+    }, 30000);
+    
+    console.log('✅ Customer bikes list ready with Mercury design');
+});
+
+// Add ripple effect CSS
+const style = document.createElement('style');
+style.textContent = `
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+`;
+document.head.appendChild(style);
+</script>
 {% endblock %}

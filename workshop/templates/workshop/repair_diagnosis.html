@@ -6,12 +6,12 @@
 <div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Header Section -->
-        <div class="text-center mb-8">
-            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                <div class="mb-4 md:mb-0">
-                    <h1 class="text-4xl font-bold gradient-text mb-2">🔍 אבחון תיקון #{{ repair_job.id }} - NEW LAYOUT TEST</h1>
-                    <p class="text-slate-300">
+        <!-- Header Section - Mobile Optimized -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">🔍 אבחון תיקון #{{ repair_job.id }} </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">
                         {% if is_editing %}
                             עריכת אבחון והצעת מחיר מפורטת
                         {% else %}
@@ -20,10 +20,10 @@
                     </p>
                 </div>
                 
-                <!-- Breadcrumb Badge -->
-                <div class="flex justify-center md:justify-end">
-                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-4 py-2">
-                        <nav class="flex items-center gap-2 text-sm">
+                <!-- Breadcrumb Badge - Hidden on mobile -->
+                <div class="hidden sm:flex justify-center lg:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-3 sm:px-4 py-2">
+                        <nav class="flex items-center gap-2 text-xs sm:text-sm">
                             <a href="{% url 'manager_dashboard' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
                                 <i class="fas fa-tachometer-alt mr-1"></i>דשבורד מנהל
                             </a>
@@ -38,18 +38,18 @@
             </div>
         </div>
 
-        <!-- Instructions Alert - Compact -->
+        <!-- Instructions Alert - Mobile Optimized -->
         {% if not repair_job.repair_items.exists %}
-        <div class="mb-6">
+        <div class="mb-4 sm:mb-6">
             <div class="bg-blue-900/30 border border-blue-500/40 rounded-xl overflow-hidden backdrop-blur-sm">
-                <div class="px-4 py-3 bg-blue-500/20 border-b border-blue-500/30">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 bg-blue-500/30 rounded-lg flex items-center justify-center">
-                            <i class="fas fa-lightbulb text-blue-400"></i>
+                <div class="px-3 sm:px-4 py-3 bg-blue-500/20 border-b border-blue-500/30">
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <div class="w-6 h-6 sm:w-8 sm:h-8 bg-blue-500/30 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-lightbulb text-blue-400 text-sm sm:text-base"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-white">💡 הוראות לאבחון מדויק</h3>
-                            <p class="text-blue-200 text-sm">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים, וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.</p>
+                            <h3 class="text-base sm:text-lg font-bold text-white">💡 הוראות לאבחון מדויק</h3>
+                            <p class="text-blue-200 text-xs sm:text-sm">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים, וכך הלקוח יוכל לאשר בדיוק איזה פעולות הוא רוצה לבצע.</p>
                         </div>
                     </div>
                 </div>
@@ -57,32 +57,32 @@
         </div>
         {% endif %}
 
-        <!-- Desktop Horizontal Layout -->
-        <div class="flex gap-6 w-full">
+        <!-- Mobile-First Responsive Layout -->
+        <div class="flex flex-col xl:flex-row gap-4 sm:gap-6 w-full">
             
-            <!-- Left Column: Customer & Problem Details - Compact -->
-            <div class="w-96 shrink-0">
+            <!-- Customer & Problem Details - Mobile Responsive -->
+            <div class="w-full xl:w-96 xl:shrink-0 order-2 xl:order-1">
                 <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
-                    <div class="bg-blue-500/20 px-4 py-3 border-b border-blue-500/30">
-                        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <div class="bg-blue-500/20 px-3 sm:px-4 py-3 border-b border-blue-500/30">
+                        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                             <i class="fas fa-info-circle text-blue-400"></i>פרטי התיקון
                         </h3>
                     </div>
                     
-                    <div class="p-4 space-y-3">
-                        <!-- Bike & Customer Info - Compact -->
+                    <div class="p-3 sm:p-4 space-y-3">
+                        <!-- Bike & Customer Info - Mobile Optimized -->
                         <div class="flex items-center gap-3 p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
-                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <i class="fas fa-bicycle text-white"></i>
+                            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bicycle text-white text-sm sm:text-base"></i>
                             </div>
-                            <div class="flex-1">
-                                <h4 class="font-bold text-white text-sm">{{ repair_job.bike }}</h4>
-                                <p class="text-slate-300 text-xs">{{ repair_job.bike.customer.name }}</p>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-bold text-white text-sm sm:text-base truncate">{{ repair_job.bike }}</h4>
+                                <p class="text-slate-300 text-xs sm:text-sm truncate">{{ repair_job.bike.customer.name }}</p>
                             </div>
                         </div>
                         
-                        <!-- Compact Info Grid -->
-                        <div class="space-y-2 text-sm">
+                        <!-- Mobile-Responsive Info Grid -->
+                        <div class="space-y-2 text-xs sm:text-sm">
                             <div class="flex items-center justify-between">
                                 <span class="text-slate-300">טלפון:</span>
                                 <span class="text-white font-medium">{{ repair_job.bike.customer.phone|default:"לא צוין" }}</span>
@@ -93,10 +93,10 @@
                             </div>
                         </div>
                         
-                        <!-- Categories Section - Compact -->
+                        <!-- Categories Section - Mobile Optimized -->
                         {% if repair_job.subcategories.exists %}
                         <div>
-                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-xs sm:text-sm">
                                 <i class="fas fa-tags text-yellow-400"></i>קטגוריות התקלה
                             </h6>
                             <div class="space-y-1">
@@ -105,11 +105,11 @@
                                      data-category-text="{{ subcategory }}" 
                                      title="לחץ להוספה לתיאור הפעולה">
                                     <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-2">
-                                            <i class="fas fa-tag text-yellow-400 text-xs"></i>
-                                            <span class="text-yellow-100 font-medium text-sm">{{ subcategory }}</span>
+                                        <div class="flex items-center gap-2 min-w-0 flex-1">
+                                            <i class="fas fa-tag text-yellow-400 text-xs flex-shrink-0"></i>
+                                            <span class="text-yellow-100 font-medium text-xs sm:text-sm truncate">{{ subcategory }}</span>
                                         </div>
-                                        <i class="fas fa-plus-circle text-yellow-400 category-add-icon text-xs"></i>
+                                        <i class="fas fa-plus-circle text-yellow-400 category-add-icon text-xs flex-shrink-0"></i>
                                     </div>
                                 </div>
                                 {% endfor %}
@@ -117,14 +117,14 @@
                         </div>
                         {% endif %}
                         
-                        <!-- Problem Description - Compact -->
+                        <!-- Problem Description - Mobile Optimized -->
                         {% if repair_job.problem_description %}
                         <div>
-                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-sm">
+                            <h6 class="text-white font-medium mb-2 flex items-center gap-2 text-xs sm:text-sm">
                                 <i class="fas fa-exclamation-triangle text-red-400"></i>תיאור התקלה
                             </h6>
                             <div class="bg-red-500/10 border border-red-400/30 rounded-lg p-3">
-                                <p class="text-red-100 text-sm">{{ repair_job.problem_description }}</p>
+                                <p class="text-red-100 text-xs sm:text-sm">{{ repair_job.problem_description }}</p>
                             </div>
                         </div>
                         {% endif %}
@@ -132,25 +132,24 @@
                 </div>
             </div>
             
-            <!-- Middle Column: Diagnosis & Items Form -->
-                        <!-- Right Column: Diagnosis Form & Actions -->
-            <div class="flex-1 min-w-0">
+            <!-- Diagnosis & Items Form - Mobile Responsive -->
+            <div class="flex-1 min-w-0 order-1 xl:order-2">
                 <form method="post" id="diagnosisForm">
                     {% csrf_token %}
                     
-                    <!-- Two-Column Layout for Diagnosis and Repair Items -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Mobile-First Layout for Diagnosis and Repair Items -->
+                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">
                         
-                        <!-- Left Sub-Column: Diagnosis Card -->
+                        <!-- Diagnosis Card - Mobile Optimized -->
                         <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
-                            <div class="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
-                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                            <div class="bg-green-500/20 px-3 sm:px-4 py-3 border-b border-green-500/30">
+                                <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                                     <i class="fas fa-stethoscope text-green-400"></i>אבחון והצעת מחיר
                                 </h3>
                             </div>
-                            <div class="p-4">
+                            <div class="p-3 sm:p-4">
                                 <div class="form-group">
-                                    <label class="block text-slate-300 text-sm font-medium mb-2">
+                                    <label class="block text-slate-300 text-xs sm:text-sm font-medium mb-2">
                                         <i class="fas fa-clipboard-list text-blue-400 mr-2"></i>
                                         {{ diagnosis_form.diagnosis.label }}
                                     </label>
@@ -165,45 +164,45 @@
                             </div>
                         </div>
                         
-                        <!-- Right Sub-Column: Repair Items Card -->
+                        <!-- Repair Items Card - Mobile Optimized -->
                     <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
-                        <div class="bg-orange-500/20 px-4 py-3 border-b border-orange-500/30">
+                        <div class="bg-orange-500/20 px-3 sm:px-4 py-3 border-b border-orange-500/30">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                                         <i class="fas fa-tools text-orange-400"></i>פעולות תיקון ומחירים
                                     </h3>
-                                    <p class="text-orange-200 text-sm mt-1">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים</p>
+                                    <p class="text-orange-200 text-xs sm:text-sm mt-1">הוסף את כל הפעולות הנדרשות עם מחירים מדויקים</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="p-4">
+                        <div class="p-3 sm:p-4">
                             
-                            <!-- Existing Items - Horizontal -->
+                            <!-- Existing Items - Mobile Responsive -->
                             {% if repair_job.repair_items.exists %}
                             <div class="mb-4">
-                                <h6 class="text-white font-medium mb-3 flex items-center gap-2">
+                                <h6 class="text-white font-medium mb-3 flex items-center gap-2 text-xs sm:text-sm">
                                     <i class="fas fa-list text-blue-400"></i>פעולות תיקון קיימות
                                 </h6>
                                 
-                                <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-4">
+                                <div class="grid grid-cols-1 gap-3 mb-4">
                                     {% for item in repair_job.repair_items.all %}
                                     <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-3">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2 flex-1">
-                                                <div class="w-6 h-6 bg-blue-500/20 rounded flex items-center justify-center">
+                                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                                                <div class="w-5 h-5 sm:w-6 sm:h-6 bg-blue-500/20 rounded flex items-center justify-center flex-shrink-0">
                                                     <i class="fas fa-wrench text-blue-400 text-xs"></i>
                                                 </div>
-                                                <span class="text-white font-medium text-sm">{{ item.description }}</span>
+                                                <span class="text-white font-medium text-xs sm:text-sm break-words">{{ item.description }}</span>
                                             </div>
-                                            <div class="flex items-center gap-2">
+                                            <div class="flex items-center justify-between sm:justify-end gap-2">
                                                 <span class="text-white font-bold text-sm">₪{{ item.price }}</span>
                                                 {% if item.is_approved_by_customer %}
-                                                    <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                                                    <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">
                                                         <i class="fas fa-check mr-1"></i>אושר
                                                     </span>
                                                 {% else %}
-                                                    <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs font-medium">
+                                                    <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs font-medium whitespace-nowrap">
                                                         <i class="fas fa-clock mr-1"></i>ממתין
                                                     </span>
                                                 {% endif %}
@@ -215,24 +214,24 @@
                                 
                                 <div class="bg-slate-700/30 border border-slate-600 rounded-lg p-3 mb-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-slate-300 font-medium">סה"כ קיים:</span>
-                                        <span class="text-white font-bold text-lg">₪{{ repair_job.get_total_price|floatformat:2 }}</span>
+                                        <span class="text-slate-300 font-medium text-sm">סה"כ קיים:</span>
+                                        <span class="text-white font-bold text-base sm:text-lg">₪{{ repair_job.get_total_price|floatformat:2 }}</span>
                                     </div>
                                 </div>
                                 
                                 <div class="border-t border-slate-600 pt-4">
-                                    <h6 class="text-white font-medium flex items-center gap-2">
+                                    <h6 class="text-white font-medium flex items-center gap-2 text-xs sm:text-sm">
                                         <i class="fas fa-plus text-green-400"></i>הוסף פעולות נוספות
                                     </h6>
                                 </div>
                             </div>
                             {% endif %}
                             
-                            <!-- New Items Container - Compact Grid -->
+                            <!-- New Items Container - Mobile Responsive -->
                             <div class="space-y-3">
                                 <div id="repair-items-container">
                                     <div class="repair-item-row">
-                                        <div class="flex gap-3 items-center">
+                                        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
                                             <div class="flex-1 min-w-0">
                                                 <input type="text" 
                                                        name="item_0_description" 
@@ -240,51 +239,53 @@
                                                        placeholder="תיאור הפעולה (לדוגמה: החלפת בלמים קדמיים)" 
                                                        required>
                                             </div>
-                                            <div class="w-32 flex-shrink-0">
-                                                <input type="number" 
-                                                       name="item_0_price" 
-                                                       class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
-                                                       placeholder="מחיר (₪)" 
-                                                       step="10" 
-                                                       min="0" 
-                                                       required>
-                                            </div>
-                                            <div class="w-10 flex-shrink-0 flex justify-center">
-                                                <button type="button" class="btn-modern danger sm remove-item" style="display: none;">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
+                                            <div class="flex gap-3 items-center">
+                                                <div class="w-32 flex-shrink-0">
+                                                    <input type="number" 
+                                                           name="item_0_price" 
+                                                           class="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+                                                           placeholder="מחיר (₪)" 
+                                                           step="10" 
+                                                           min="0" 
+                                                           required>
+                                                </div>
+                                                <div class="w-10 flex-shrink-0 flex justify-center">
+                                                    <button type="button" class="btn-modern danger sm remove-item" style="display: none;">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <div class="flex items-center justify-between">
-                                    <button type="button" id="add-item" class="btn-modern success sm">
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                                    <button type="button" id="add-item" class="btn-modern success sm w-full sm:w-auto">
                                         <i class="fas fa-plus mr-2"></i>הוסף פעולה נוספת
                                     </button>
                                     
-                                    <div class="bg-green-500/10 border border-green-400/30 rounded-lg px-4 py-2">
-                                        <span class="text-green-300 font-medium">סה"כ פעולות חדשות: </span>
-                                        <span class="text-green-200 font-bold">₪<span id="total-price">0.00</span></span>
+                                    <div class="bg-green-500/10 border border-green-400/30 rounded-lg px-3 sm:px-4 py-2 text-center sm:text-right">
+                                        <span class="text-green-300 font-medium text-xs sm:text-sm">סה"כ פעולות חדשות: </span>
+                                        <span class="text-green-200 font-bold text-sm sm:text-base">₪<span id="total-price">0.00</span></span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Close the two-column grid -->
+                    <!-- Close the grid -->
                     </div>
 
-                    <!-- Form Actions - Compact (Outside the grid) -->
-                    <div class="flex flex-col sm:flex-row gap-4 mt-6">
-                        <button type="submit" class="btn-modern success lg flex-1">
+                    <!-- Form Actions - Mobile Responsive -->
+                    <div class="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6">
+                        <button type="submit" class="btn-modern success lg w-full text-base sm:text-lg py-4 sm:py-3">
                             {% if is_editing %}
                                 <i class="fas fa-save mr-2"></i>עדכן אבחון ושלח ללקוח
                             {% else %}
                                 <i class="fas fa-check mr-2"></i>שמור אבחון ושלח ללקוח
                             {% endif %}
                         </button>
-                        <a href="{% url 'manager_dashboard' %}" class="btn-modern secondary lg">
+                        <a href="{% url 'manager_dashboard' %}" class="btn-modern secondary lg w-full text-center text-base sm:text-lg py-4 sm:py-3">
                             <i class="fas fa-times mr-2"></i>ביטול
                         </a>
                     </div>
@@ -521,6 +522,47 @@ input[type="number"]:focus {
     box-shadow: 0 6px 16px rgba(100, 116, 139, 0.4) !important;
     color: white !important;
     text-decoration: none !important;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+    .btn-modern {
+        padding: 14px 20px !important;
+        font-size: 16px !important;
+        min-height: 48px !important;
+    }
+    
+    .btn-modern.sm {
+        padding: 10px 16px !important;
+        font-size: 14px !important;
+        min-height: 40px !important;
+    }
+    
+    /* Ensure touch-friendly input fields */
+    input[type="text"], 
+    input[type="number"], 
+    textarea {
+        min-height: 44px !important;
+        font-size: 16px !important;
+    }
+    
+    /* Prevent zoom on iOS when focusing inputs */
+    input, textarea, select {
+        font-size: 16px !important;
+    }
+}
+
+/* Responsive text truncation */
+.truncate-mobile {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+    .truncate-mobile {
+        max-width: 200px;
+    }
 }
 </style>
 

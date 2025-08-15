@@ -3,159 +3,329 @@
 {% block title %}הרשמה{% endblock %}
 {% block content %}
 
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-2xl w-full space-y-8">
-        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-8 shadow-2xl">
-            <!-- Logo and header -->
-            <div class="text-center mb-8">
-                <img class="mx-auto h-20 w-auto mb-4 rounded-lg" src="{% static 'images/logo.png' %}" alt="מוסך האופניים">
-                <h2 class="text-3xl font-bold text-white mb-2">הרשמה</h2>
-                <p class="text-slate-300">צור חשבון חדש במערכת</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-ce                                <input type="password" 
+                                       name="{{ form.password2.name }}" 
+                                       id="{{ form.password2.id_for_label }}"
+                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="אישור סיסמה"
+                                       {% if form.password2.field.required %}required{% endif %}>ustify-center py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full space-y-8">
+        
+        <!-- Header Section with Mercury Design -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="mb-6">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 bg-clip-text text-transparent mb-4">
+                    🚴‍♂️ הרשמה למערכת
+                    <span class="text-2xl sm:text-3xl lg:text-4xl text-blue-300">✨</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    צור חשבון חדש במערכת ניהול המוסך המתקדמת שלנו
+                </p>
             </div>
+            
+            <!-- Progress Indicator -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-slate-800/40 border border-green-400/30 rounded-2xl px-6 py-3 backdrop-blur-xl">
+                    <div class="flex items-center gap-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-green-300 font-medium">הרשמה חדשה</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-slate-400"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-slate-600 rounded-full"></div>
+                            <span class="text-slate-400">אימות</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-slate-400"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-slate-600 rounded-full"></div>
+                            <span class="text-slate-400">כניסה</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="relative bg-slate-800/40 border border-green-400/30 rounded-2xl backdrop-blur-xl shadow-2xl overflow-hidden">
+            <!-- Card Header -->
+            <div class="border-b border-slate-600/30 p-6 sm:p-8">
+                <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-12 h-12 sm:w-16 sm:h-16 bg-green-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-plus text-green-400 text-xl sm:text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">יצירת חשבון חדש</h2>
+                        <p class="text-slate-300 text-sm sm:text-base">מלא את הפרטים הנדרשים להשלמת ההרשמה</p>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Registration form -->
-            <form method="post" class="space-y-6">
+            <form method="post" class="p-6 sm:p-8 space-y-8" id="registrationForm">
                 {% csrf_token %}
                 
                 <!-- Non-field errors -->
                 {% if form.non_field_errors %}
-                <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-4 backdrop-blur-sm">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        <span class="text-red-300 font-medium">שגיאות בטופס</span>
+                    </div>
                     {% for error in form.non_field_errors %}
                     <p class="text-red-300 text-sm">{{ error }}</p>
                     {% endfor %}
                 </div>
                 {% endif %}
 
-                <!-- Form fields grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- Username -->
-                    <div>
-                        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.username.label }}
-                        </label>
-                        {{ form.username }}
-                        {% if form.username.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.username.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Name -->
-                    <div>
-                        <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.name.label }}
-                        </label>
-                        {{ form.name }}
-                        {% if form.name.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.name.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Phone -->
-                    <div>
-                        <label for="{{ form.phone.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.phone.label }}
-                        </label>
-                        {{ form.phone }}
-                        {% if form.phone.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.phone.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.email.label }}
-                        </label>
-                        {{ form.email }}
-                        {% if form.email.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.email.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Password1 -->
-                    <div>
-                        <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.password1.label }}
-                        </label>
-                        {{ form.password1 }}
-                        {% if form.password1.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.password1.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Password2 -->
-                    <div>
-                        <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                            {{ form.password2.label }}
-                        </label>
-                        {{ form.password2 }}
-                        {% if form.password2.errors %}
-                        <p class="mt-1 text-sm text-red-300">{{ form.password2.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Checkboxes -->
-                <div class="space-y-4 pt-4 border-t border-slate-600">
-                    <!-- Link existing -->
-                    <div class="flex items-start">
-                        {{ form.link_existing }}
-                        <div class="mr-3">
-                            <label for="{{ form.link_existing.id_for_label }}" class="text-sm font-medium text-slate-300">
-                                {{ form.link_existing.label }}
-                            </label>
-                            <p class="text-xs text-slate-400 mt-1">{{ form.link_existing.help_text }}</p>
+                <!-- Personal Information Section -->
+                <div class="form-section">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-user text-blue-400"></i>
                         </div>
+                        <h3 class="text-lg font-bold text-white">פרטים אישיים</h3>
                     </div>
-
-                    <!-- Has bike -->
-                    <div class="flex items-start">
-                        {{ form.has_bike }}
-                        <div class="mr-3">
-                            <label for="{{ form.has_bike.id_for_label }}" class="text-sm font-medium text-slate-300">
-                                {{ form.has_bike.label }}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="{{ form.username.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-at text-blue-400 ml-2"></i>
+                                {{ form.username.label }}
                             </label>
-                            <p class="text-xs text-slate-400 mt-1">{{ form.has_bike.help_text }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bike fields (hidden by default) -->
-                <div id="bike_fields" class="hidden space-y-4 pt-4 border-t border-slate-600">
-                    <h3 class="text-lg font-medium text-white mb-4">פרטי האופניים</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Bike brand -->
-                        <div>
-                            <label for="{{ form.bike_brand.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                                {{ form.bike_brand.label }}
-                            </label>
-                            {{ form.bike_brand }}
+                            <input type="text" 
+                                   name="{{ form.username.name }}" 
+                                   id="{{ form.username.id_for_label }}"
+                                   value="{{ form.username.value|default:'' }}"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   placeholder="שם משתמש"
+                                   {% if form.username.field.required %}required{% endif %}>
+                            {% if form.username.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.username.errors.0 }}
+                            </p>
+                            {% endif %}
                         </div>
 
-                        <!-- Bike model -->
-                        <div>
-                            <label for="{{ form.bike_model.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                                {{ form.bike_model.label }}
+                        <!-- Name -->
+                        <div class="form-group">
+                            <label for="{{ form.name.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-signature text-blue-400 ml-2"></i>
+                                {{ form.name.label }}
                             </label>
-                            {{ form.bike_model }}
+                            <input type="text" 
+                                   name="{{ form.name.name }}" 
+                                   id="{{ form.name.id_for_label }}"
+                                   value="{{ form.name.value|default:'' }}"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   placeholder="שם מלא"
+                                   {% if form.name.field.required %}required{% endif %}>
+                            {% if form.name.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.name.errors.0 }}
+                            </p>
+                            {% endif %}
                         </div>
 
-                        <!-- Bike color -->
-                        <div>
-                            <label for="{{ form.bike_color.id_for_label }}" class="block text-sm font-medium text-slate-300 mb-2">
-                                {{ form.bike_color.label }}
+                        <!-- Phone -->
+                        <div class="form-group">
+                            <label for="{{ form.phone.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-phone text-blue-400 ml-2"></i>
+                                {{ form.phone.label }}
                             </label>
-                            {{ form.bike_color }}
+                            <input type="tel" 
+                                   name="{{ form.phone.name }}" 
+                                   id="{{ form.phone.id_for_label }}"
+                                   value="{{ form.phone.value|default:'' }}"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   placeholder="מספר טלפון"
+                                   {% if form.phone.field.required %}required{% endif %}>
+                            {% if form.phone.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.phone.errors.0 }}
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="{{ form.email.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-envelope text-blue-400 ml-2"></i>
+                                {{ form.email.label }}
+                            </label>
+                            <input type="email" 
+                                   name="{{ form.email.name }}" 
+                                   id="{{ form.email.id_for_label }}"
+                                   value="{{ form.email.value|default:'' }}"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   placeholder="כתובת אימייל"
+                                   {% if form.email.field.required %}required{% endif %}>
+                            {% if form.email.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.email.errors.0 }}
+                            </p>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
+
+                <!-- Security Section -->
+                <div class="form-section pt-6 border-t border-slate-600/30">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-shield-alt text-purple-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">אבטחה וסיסמה</h3>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Password1 -->
+                        <div class="form-group">
+                            <label for="{{ form.password1.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-lock text-purple-400 ml-2"></i>
+                                {{ form.password1.label }}
+                            </label>
+                            <div class="relative">
+                                <input type="password" 
+                                       name="{{ form.password1.name }}" 
+                                       id="{{ form.password1.id_for_label }}"
+                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="סיסמה"
+                                       {% if form.password1.field.required %}required{% endif %}>
+                                <button type="button" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors z-10 password-toggle" 
+                                        data-target="{{ form.password1.id_for_label }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password1.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.password1.errors.0 }}
+                            </p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Password2 -->
+                        <div class="form-group">
+                            <label for="{{ form.password2.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                <i class="fas fa-lock text-purple-400 ml-2"></i>
+                                {{ form.password2.label }}
+                            </label>
+                            <div class="relative">
+                                <input type="password" 
+                                       name="{{ form.password2.name }}" 
+                                       id="{{ form.password2.id_for_label }}"
+                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="אימות סיסמה"
+                                       {% if form.password2.field.required %}required{% endif %}>
+                                <button type="button" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors z-10 password-toggle" 
+                                        data-target="{{ form.password2.id_for_label }}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            {% if form.password2.errors %}
+                            <p class="flex items-center mt-2 text-sm text-red-300">
+                                <i class="fas fa-exclamation-circle ml-1"></i>
+                                {{ form.password2.errors.0 }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bike Information Section (Optional) -->
+                {% if form.has_bike %}
+                <div class="form-section pt-6 border-t border-slate-600/30">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-bicycle text-orange-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">אפשרויות נוספות</h3>
+                    </div>
+                    
+                    <!-- Has bike checkbox -->
+                    <div class="bg-slate-700/30 border border-slate-600/40 rounded-xl p-4 hover:border-slate-500/60 hover:bg-slate-700/40 transition-all duration-300 mb-6 checkbox-wrapper">
+                        <label class="flex items-start gap-4 cursor-pointer checkbox-label">
+                            <input type="checkbox" 
+                                   name="{{ form.has_bike.name }}" 
+                                   id="{{ form.has_bike.id_for_label }}"
+                                   {% if form.has_bike.value %}checked{% endif %}
+                                   class="w-5 h-5 text-orange-500 bg-slate-700/50 border-slate-600 rounded-lg focus:ring-orange-500/50 focus:ring-2 transition-all duration-300 hover:border-orange-400 cursor-pointer mt-1">
+                            <div class="flex-1 checkbox-content">
+                                <div class="flex items-center text-white font-medium mb-1 checkbox-title">
+                                    <i class="fas fa-bicycle text-orange-400 ml-2"></i>
+                                    {{ form.has_bike.label }}
+                                </div>
+                                <p class="text-slate-400 text-sm leading-relaxed checkbox-description">
+                                    יש לי כבר אופניים שאני רוצה לרשום במערכת (ניתן להוסיף אותם גם מאוחר יותר)
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Bike fields (hidden by default) -->
+                    <div id="bike_fields" class="hidden opacity-0 translate-y-4 transition-all duration-500 space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <!-- Bike brand -->
+                            <div class="form-group">
+                                <label for="{{ form.bike_brand.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                    <i class="fas fa-tag text-orange-400 ml-2"></i>
+                                    {{ form.bike_brand.label }}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.bike_brand.name }}" 
+                                       id="{{ form.bike_brand.id_for_label }}"
+                                       value="{{ form.bike_brand.value|default:'' }}"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="מותג אופניים">
+                            </div>
+
+                            <!-- Bike model -->
+                            <div class="form-group">
+                                <label for="{{ form.bike_model.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                    <i class="fas fa-bicycle text-orange-400 ml-2"></i>
+                                    {{ form.bike_model.label }}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.bike_model.name }}" 
+                                       id="{{ form.bike_model.id_for_label }}"
+                                       value="{{ form.bike_model.value|default:'' }}"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="דגם אופניים">
+                            </div>
+
+                            <!-- Bike color -->
+                            <div class="form-group">
+                                <label for="{{ form.bike_color.id_for_label }}" class="flex items-center text-sm font-semibold text-white mb-3 transition-colors duration-200">
+                                    <i class="fas fa-palette text-orange-400 ml-2"></i>
+                                    {{ form.bike_color.label }}
+                                </label>
+                                <input type="text" 
+                                       name="{{ form.bike_color.name }}" 
+                                       id="{{ form.bike_color.id_for_label }}"
+                                       value="{{ form.bike_color.value|default:'' }}"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       placeholder="צבע אופניים">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
 
                 <!-- Submit button -->
                 <div class="pt-6">
                     <button type="submit" 
-                            class="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 transform hover:scale-105">
-                        <i class="fas fa-user-plus ml-2"></i>
-                        צור חשבון
+                            id="submitBtn"
+                            class="w-full relative inline-flex items-center justify-center px-8 py-4 font-bold text-white rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500/50 focus:ring-offset-slate-900 shadow-lg overflow-hidden bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 border border-green-500/50 shadow-green-500/25 hover:shadow-green-500/40 hover:shadow-xl group">
+                        <span class="relative z-10 flex items-center justify-center gap-3">
+                            <i class="fas fa-user-plus text-lg group-hover:rotate-12 transition-transform duration-300"></i>
+                            <span class="text-lg font-bold">צור חשבון חדש</span>
+                        </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                     </button>
                 </div>
 
@@ -163,8 +333,8 @@
                 <div class="text-center pt-4">
                     <p class="text-slate-400 text-sm">
                         כבר יש לך חשבון? 
-                        <a href="{% url 'login' %}" class="text-blue-400 hover:text-blue-300 transition-colors duration-200">
-                            התחבר
+                        <a href="{% url 'login' %}" class="text-blue-400 hover:text-blue-300 transition-colors duration-200 font-medium hover:underline">
+                            התחבר עכשיו
                         </a>
                     </p>
                 </div>
@@ -173,34 +343,193 @@
     </div>
 </div>
 
-<style>
-/* Style form fields to match Tailwind design */
-#id_username, #id_name, #id_phone, #id_email, #id_password1, #id_password2,
-#id_bike_brand, #id_bike_model, #id_bike_color {
-    @apply block w-full px-3 py-3 bg-slate-700/50 border border-slate-600 placeholder-slate-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200;
-}
-
-#id_link_existing, #id_has_bike {
-    @apply w-4 h-4 text-blue-600 bg-slate-700 border-slate-600 rounded focus:ring-blue-500 focus:ring-2;
-}
-</style>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const hasBikeCheckbox = document.getElementById('{{ form.has_bike.id_for_label }}');
-        const bikeFields = document.getElementById('bike_fields');
-
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('registrationForm');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Initialize form animations
+    initializeAnimations();
+    
+    // Bike fields toggle with smooth animation
+    const hasBikeCheckbox = document.getElementById('{{ form.has_bike.id_for_label }}');
+    const bikeFields = document.getElementById('bike_fields');
+    
+    if (hasBikeCheckbox && bikeFields) {
         function toggleBikeFields() {
             if (hasBikeCheckbox.checked) {
+                // Show bike fields with animation
                 bikeFields.classList.remove('hidden');
+                setTimeout(() => {
+                    bikeFields.classList.remove('opacity-0', 'translate-y-4');
+                    bikeFields.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
             } else {
-                bikeFields.classList.add('hidden');
+                // Hide bike fields with animation
+                bikeFields.classList.add('opacity-0', 'translate-y-4');
+                setTimeout(() => {
+                    bikeFields.classList.add('hidden');
+                }, 500);
             }
         }
-
-        toggleBikeFields();
+        
         hasBikeCheckbox.addEventListener('change', toggleBikeFields);
+        toggleBikeFields(); // Initialize on page load
+    }
+    
+    // Password visibility toggle
+    function initializePasswordToggles() {
+        const passwordToggles = document.querySelectorAll('.password-toggle');
+        
+        passwordToggles.forEach(toggle => {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const targetId = this.dataset.target;
+                const targetInput = document.getElementById(targetId);
+                const icon = this.querySelector('i');
+                
+                if (targetInput.type === 'password') {
+                    targetInput.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                    this.setAttribute('title', 'הסתר סיסמה');
+                } else {
+                    targetInput.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                    this.setAttribute('title', 'הצג סיסמה');
+                }
+                
+                // Add a small animation
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+    }
+    
+    // Form validation enhancement
+    function enhanceFormValidation() {
+        const inputs = form.querySelectorAll('input');
+        
+        inputs.forEach(input => {
+            // Real-time validation feedback
+            input.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            // Clear error on focus
+            input.addEventListener('focus', function() {
+                clearFieldError(this);
+            });
+            
+            // Add typing animation
+            input.addEventListener('input', function() {
+                this.style.borderColor = '#60a5fa';
+                setTimeout(() => {
+                    this.style.borderColor = '';
+                }, 300);
+            });
+        });
+    }
+    
+    function validateField(field) {
+        const formGroup = field.closest('.form-group');
+        const existingError = formGroup ? formGroup.querySelector('.text-red-300') : null;
+        
+        // Add success indicator
+        if (field.value.trim() && field.checkValidity()) {
+            field.style.borderColor = '#10b981';
+            setTimeout(() => {
+                field.style.borderColor = '';
+            }, 1000);
+        }
+    }
+    
+    function clearFieldError(field) {
+        const formGroup = field.closest('.form-group');
+        const errorElement = formGroup ? formGroup.querySelector('.text-red-300') : null;
+        
+        if (errorElement) {
+            errorElement.style.opacity = '0.5';
+        }
+    }
+    
+    // Form submission with loading state
+    function handleFormSubmission() {
+        if (form && submitBtn) {
+            form.addEventListener('submit', function(e) {
+                // Add loading state
+                submitBtn.innerHTML = `
+                    <span class="relative z-10 flex items-center justify-center gap-3">
+                        <i class="fas fa-spinner fa-spin text-lg"></i>
+                        <span class="text-lg font-bold">יוצר חשבון...</span>
+                    </span>
+                `;
+                
+                // Disable form elements
+                const formElements = form.querySelectorAll('input, button');
+                formElements.forEach(element => {
+                    element.disabled = true;
+                });
+            });
+        }
+    }
+    
+    // Initialize animations on page load
+    function initializeAnimations() {
+        const formSections = document.querySelectorAll('.form-section');
+        
+        formSections.forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                section.style.transition = 'all 0.5s ease-out';
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }
+    
+    // Smooth scroll to error
+    function scrollToFirstError() {
+        const firstError = document.querySelector('.text-red-300');
+        if (firstError) {
+            firstError.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    // Initialize all functionality
+    initializePasswordToggles();
+    enhanceFormValidation();
+    handleFormSubmission();
+    
+    // Scroll to first error on page load if errors exist
+    if (document.querySelector('.text-red-300')) {
+        setTimeout(scrollToFirstError, 500);
+    }
+    
+    // Add hover effects to checkboxes
+    const checkboxWrappers = document.querySelectorAll('.checkbox-wrapper');
+    checkboxWrappers.forEach(wrapper => {
+        wrapper.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.2)';
+        });
+        
+        wrapper.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
     });
+});
 </script>
 
 {% endblock %}

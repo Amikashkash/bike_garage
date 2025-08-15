@@ -3,84 +3,611 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-6 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🚲 {{ title }}</h1>
-            <p class="text-white">הוסף אופניים חדשות למערכת</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="mb-6">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                    🚲 {{ title }}
+                    <span class="text-2xl sm:text-3xl lg:text-4xl text-emerald-300">✨</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    הוסף אופניים חדשות למערכת ותתחיל לעקוב אחר התיקונים שלהן
+                </p>
+            </div>
         </div>
         
-        <div class="card add-bike-card">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-plus-circle me-2 text-success"></i>
-                    פרטי האופניים החדשים
-                </h5>
+        <!-- Main Form Card -->
+        <div class="glass-card border border-emerald-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+            
+            <!-- Card Header -->
+            <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-plus-circle text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">פרטי האופניים החדשים</h2>
+                        <p class="text-slate-400 text-sm">מלא את הפרטים הבסיסיים של האופניים</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
+            
+            <!-- Form Content -->
+            <div class="p-4 sm:p-6">
+                <form method="post" id="addBikeForm" class="space-y-6">
                     {% csrf_token %}
                     
-                    <div class="form-group mb-4">
-                        <label class="form-label text-white" for="{{ form.brand.id_for_label }}">
-                            <i class="fas fa-industry me-2 text-orange"></i>
+                    <!-- Brand Field -->
+                    <div class="form-group">
+                        <label class="form-label text-white font-semibold mb-3 flex items-center gap-2" for="{{ form.brand.id_for_label }}">
+                            <i class="fas fa-industry text-orange-400"></i>
                             {{ form.brand.label }}
+                            <span class="text-red-400">*</span>
                         </label>
-                        {{ form.brand }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-industry text-slate-400"></i>
+                            </div>
+                            <input type="text" 
+                                   name="{{ form.brand.name }}" 
+                                   id="{{ form.brand.id_for_label }}"
+                                   value="{{ form.brand.value|default:'' }}"
+                                   class="mercury-input w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/30 transition-all duration-300"
+                                   placeholder="דוגמה: Trek, Giant, Specialized"
+                                   required>
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <div class="w-2 h-2 bg-emerald-400 rounded-full opacity-0 transition-opacity duration-300" id="brand-indicator"></div>
+                            </div>
+                        </div>
                         {% if form.brand.errors %}
-                            <div class="form-error mt-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
+                            <div class="form-error mt-2 text-red-400 text-sm flex items-center gap-1">
+                                <i class="fas fa-exclamation-triangle"></i>
                                 {{ form.brand.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="mt-2">
+                            <small class="text-slate-400">שם החברה היצרנית של האופניים</small>
+                        </div>
                     </div>
                     
-                    <div class="form-group mb-4">
-                        <label class="form-label text-white" for="{{ form.model.id_for_label }}">
-                            <i class="fas fa-tag me-2 text-turquoise"></i>
+                    <!-- Model Field -->
+                    <div class="form-group">
+                        <label class="form-label text-white font-semibold mb-3 flex items-center gap-2" for="{{ form.model.id_for_label }}">
+                            <i class="fas fa-tag text-cyan-400"></i>
                             {{ form.model.label }}
                         </label>
-                        {{ form.model }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-tag text-slate-400"></i>
+                            </div>
+                            <input type="text" 
+                                   name="{{ form.model.name }}" 
+                                   id="{{ form.model.id_for_label }}"
+                                   value="{{ form.model.value|default:'' }}"
+                                   class="mercury-input w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/30 transition-all duration-300"
+                                   placeholder="דוגמה: Domane, Defy, Tarmac">
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <div class="w-2 h-2 bg-cyan-400 rounded-full opacity-0 transition-opacity duration-300" id="model-indicator"></div>
+                            </div>
+                        </div>
                         {% if form.model.errors %}
-                            <div class="form-error mt-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
+                            <div class="form-error mt-2 text-red-400 text-sm flex items-center gap-1">
+                                <i class="fas fa-exclamation-triangle"></i>
                                 {{ form.model.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="mt-2">
+                            <small class="text-slate-400">מודל או סדרה של האופניים (אופציונלי)</small>
+                        </div>
                     </div>
                     
-                    <div class="form-group mb-4">
-                        <label class="form-label text-white" for="{{ form.color.id_for_label }}">
-                            <i class="fas fa-palette me-2 text-success"></i>
+                    <!-- Color Field -->
+                    <div class="form-group">
+                        <label class="form-label text-white font-semibold mb-3 flex items-center gap-2" for="{{ form.color.id_for_label }}">
+                            <i class="fas fa-palette text-purple-400"></i>
                             {{ form.color.label }}
                         </label>
-                        {{ form.color }}
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-palette text-slate-400"></i>
+                            </div>
+                            <input type="text" 
+                                   name="{{ form.color.name }}" 
+                                   id="{{ form.color.id_for_label }}"
+                                   value="{{ form.color.value|default:'' }}"
+                                   class="mercury-input w-full pl-10 pr-4 py-3 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder-slate-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/30 transition-all duration-300"
+                                   placeholder="דוגמה: שחור, לבן, אדום, כחול">
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                                <div class="w-2 h-2 bg-purple-400 rounded-full opacity-0 transition-opacity duration-300" id="color-indicator"></div>
+                            </div>
+                        </div>
                         {% if form.color.errors %}
-                            <div class="form-error mt-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
+                            <div class="form-error mt-2 text-red-400 text-sm flex items-center gap-1">
+                                <i class="fas fa-exclamation-triangle"></i>
                                 {{ form.color.errors.0 }}
                             </div>
                         {% endif %}
+                        <div class="mt-2">
+                            <small class="text-slate-400">הצבע העיקרי של האופניים (אופציונלי)</small>
+                        </div>
                     </div>
                     
-                    <div class="form-actions mt-4">
-                        <button type="submit" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-plus me-2"></i>הוסף אופניים
-                        </button>
-                        <a href="{% url 'customer_bikes_list' %}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>ביטול
-                        </a>
+                    <!-- Popular Colors Quick Select -->
+                    <div class="color-suggestions">
+                        <label class="text-white font-medium mb-3 block">צבעים פופולריים:</label>
+                        <div class="grid grid-cols-4 sm:grid-cols-6 gap-3">
+                            <button type="button" class="color-option" data-color="שחור" style="background-color: black;">
+                                <span class="sr-only">שחור</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="לבן" style="background-color: white;">
+                                <span class="sr-only">לבן</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="אדום" style="background-color: red;">
+                                <span class="sr-only">אדום</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="כחול" style="background-color: blue;">
+                                <span class="sr-only">כחול</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="ירוק" style="background-color: green;">
+                                <span class="sr-only">ירוק</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="כתום" style="background-color: orange;">
+                                <span class="sr-only">כתום</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="צהוב" style="background-color: yellow;">
+                                <span class="sr-only">צהוב</span>
+                            </button>
+                            <button type="button" class="color-option" data-color="סגול" style="background-color: purple;">
+                                <span class="sr-only">סגול</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="form-actions pt-6 border-t border-slate-600/30">
+                        <div class="flex flex-col sm:flex-row gap-4 sm:justify-center">
+                            <button type="submit" 
+                                    class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                                    id="submitBtn">
+                                <i class="fas fa-plus"></i>
+                                <span>הוסף אופניים</span>
+                                <div class="hidden ml-2" id="submitSpinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                </div>
+                            </button>
+                            <a href="{% url 'customer_bikes_list' %}" 
+                               class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50 flex items-center justify-center gap-2">
+                                <i class="fas fa-times"></i>
+                                <span>ביטול</span>
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
         
-        <div class="text-center mt-4">
-            <small class="text-white">
-                <i class="fas fa-info-circle me-1"></i>
-                לאחר הוספת האופניים תוכל לדווח על תקלות ולעקוב אחר התיקונים
-            </small>
+        <!-- Info Section -->
+        <div class="mt-6 text-center">
+            <div class="glass-card border border-blue-400/20 rounded-xl p-4 inline-block">
+                <div class="flex items-center gap-2 text-slate-300">
+                    <i class="fas fa-info-circle text-blue-400"></i>
+                    <small>לאחר הוספת האופניים תוכל לדווח על תקלות ולעקוב אחר התיקונים</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a href="{% url 'customer_report' %}" 
+               class="glass-card border border-orange-400/30 rounded-xl p-4 hover:border-orange-400/50 transition-all duration-300 group">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center group-hover:bg-orange-500/30 transition-colors duration-300">
+                        <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-medium">דווח תקלה</h3>
+                        <p class="text-slate-400 text-sm">דווח על בעיה עם אופניים קיימות</p>
+                    </div>
+                </div>
+            </a>
+            
+            <a href="{% url 'customer_bikes_list' %}" 
+               class="glass-card border border-blue-400/30 rounded-xl p-4 hover:border-blue-400/50 transition-all duration-300 group">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:bg-blue-500/30 transition-colors duration-300">
+                        <i class="fas fa-list text-blue-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-white font-medium">האופניים שלי</h3>
+                        <p class="text-slate-400 text-sm">צפה ונהל את כל האופניים שלך</p>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </div>
+
+<style>
+/* Mercury Design System - Customer Add Bike Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #10b981, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Form Input Enhancements */
+.mercury-input {
+    transition: all 0.3s ease;
+}
+
+.mercury-input:focus {
+    background: rgba(51, 65, 85, 0.6);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+}
+
+.mercury-input:valid {
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Color Options */
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(71, 85, 105, 0.5);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-option:hover {
+    border-color: rgba(16, 185, 129, 0.7);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.color-option.selected {
+    border-color: rgba(16, 185, 129, 1);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.color-option::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+}
+
+.color-option.selected::after {
+    opacity: 1;
+}
+
+/* Form Animation */
+.form-group {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+/* Input Indicators */
+.mercury-input:focus + div .w-2 {
+    opacity: 1;
+    animation: pulse 2s infinite;
+}
+
+.mercury-input:valid + div .w-2 {
+    opacity: 1;
+    background-color: #10b981;
+}
+
+/* Button States */
+button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .glass-card {
+        backdrop-filter: blur(12px);
+    }
+    
+    .mercury-input {
+        font-size: 16px; /* Prevent zoom on iOS */
+    }
+    
+    .color-option {
+        width: 35px;
+        height: 35px;
+    }
+}
+
+/* Enhanced focus styles */
+@media (min-width: 1024px) {
+    .mercury-input:focus {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 3px rgba(16, 185, 129, 0.1);
+    }
+}
+
+/* Character counter */
+.character-counter {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+
+.character-counter.warning {
+    color: #f59e0b;
+}
+
+.character-counter.danger {
+    color: #ef4444;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚲 Customer add bike form with Mercury design loaded');
+    
+    // Form elements
+    const form = document.getElementById('addBikeForm');
+    const brandInput = document.getElementById('{{ form.brand.id_for_label }}');
+    const modelInput = document.getElementById('{{ form.model.id_for_label }}');
+    const colorInput = document.getElementById('{{ form.color.id_for_label }}');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitSpinner = document.getElementById('submitSpinner');
+    
+    // Auto-focus first field
+    if (brandInput) {
+        setTimeout(() => brandInput.focus(), 500);
+    }
+    
+    // Input validation and indicators
+    function setupInputValidation(input, indicatorId) {
+        const indicator = document.getElementById(indicatorId);
+        if (!input || !indicator) return;
+        
+        input.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                indicator.style.opacity = '1';
+                indicator.style.backgroundColor = this.checkValidity() ? '#10b981' : '#ef4444';
+            } else {
+                indicator.style.opacity = '0';
+            }
+        });
+        
+        input.addEventListener('blur', function() {
+            if (this.value.length > 0 && this.checkValidity()) {
+                this.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+            }
+        });
+    }
+    
+    setupInputValidation(brandInput, 'brand-indicator');
+    setupInputValidation(modelInput, 'model-indicator');
+    setupInputValidation(colorInput, 'color-indicator');
+    
+    // Color quick select functionality
+    const colorOptions = document.querySelectorAll('.color-option');
+    colorOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove previous selection
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Add selection to clicked option
+            this.classList.add('selected');
+            
+            // Update color input
+            const colorName = this.getAttribute('data-color');
+            if (colorInput) {
+                colorInput.value = colorName;
+                colorInput.dispatchEvent(new Event('input'));
+                
+                // Add visual feedback
+                colorInput.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+                
+                // Animate the input
+                colorInput.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    colorInput.style.transform = 'scale(1)';
+                }, 200);
+            }
+        });
+        
+        // Add hover effect
+        option.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('selected')) {
+                this.style.transform = 'scale(1.05)';
+            }
+        });
+        
+        option.addEventListener('mouseleave', function() {
+            if (!this.classList.contains('selected')) {
+                this.style.transform = 'scale(1)';
+            }
+        });
+    });
+    
+    // Form submission handling
+    form.addEventListener('submit', function(e) {
+        // Show loading state
+        submitBtn.disabled = true;
+        submitSpinner.classList.remove('hidden');
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>מוסיף אופניים...';
+        
+        // Validate required fields
+        if (!brandInput.value.trim()) {
+            e.preventDefault();
+            submitBtn.disabled = false;
+            submitSpinner.classList.add('hidden');
+            submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>הוסף אופניים';
+            
+            brandInput.focus();
+            brandInput.style.borderColor = '#ef4444';
+            brandInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+            
+            setTimeout(() => {
+                brandInput.style.borderColor = '';
+                brandInput.style.boxShadow = '';
+            }, 2000);
+            
+            return;
+        }
+        
+        // Create success animation
+        const successMessage = document.createElement('div');
+        successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        successMessage.innerHTML = '<i class="fas fa-check mr-2"></i>מוסיף אופניים...';
+        document.body.appendChild(successMessage);
+        
+        setTimeout(() => {
+            if (document.body.contains(successMessage)) {
+                document.body.removeChild(successMessage);
+            }
+        }, 3000);
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + Enter to submit
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+            e.preventDefault();
+            form.dispatchEvent(new Event('submit'));
+        }
+        
+        // Escape to cancel
+        if (e.key === 'Escape') {
+            const cancelBtn = document.querySelector('a[href*="customer_bikes_list"]');
+            if (cancelBtn) cancelBtn.click();
+        }
+    });
+    
+    // Auto-save draft (to localStorage)
+    const inputs = [brandInput, modelInput, colorInput];
+    inputs.forEach(input => {
+        if (!input) return;
+        
+        // Load saved value
+        const savedValue = localStorage.getItem(`bike_draft_${input.name}`);
+        if (savedValue && !input.value) {
+            input.value = savedValue;
+            input.dispatchEvent(new Event('input'));
+        }
+        
+        // Save on input
+        input.addEventListener('input', function() {
+            localStorage.setItem(`bike_draft_${this.name}`, this.value);
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input) {
+                localStorage.removeItem(`bike_draft_${input.name}`);
+            }
+        });
+    });
+    
+    // Animate form fields on load
+    const formGroups = document.querySelectorAll('.form-group');
+    formGroups.forEach((group, index) => {
+        group.style.animationDelay = `${index * 0.1}s`;
+    });
+    
+    console.log('✅ Customer add bike form ready with Mercury design');
+});
+
+// Add ripple effect for buttons
+document.querySelectorAll('button, a[class*="gradient"]').forEach(button => {
+    button.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.className = 'ripple';
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    });
+});
+
+// Add ripple effect CSS
+const style = document.createElement('style');
+style.textContent = `
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
+</script>
 {% endblock %}

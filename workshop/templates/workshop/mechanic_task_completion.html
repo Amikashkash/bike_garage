@@ -3,201 +3,466 @@
 {% block title %}עדכון ביצוע תיקון{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🔧 עדכון ביצוע תיקון #{{ repair_job.id }}</h1>
-            <p class="text-white">עדכן את סטטוס הפעולות והוסף הערות לכל פריט</p>
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb mechanic-breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{% url 'mechanic_dashboard' %}">
-                        <i class="fas fa-tachometer-alt me-1"></i>דשבורד מכונאי
-                    </a>
-                </li>
-                <li class="breadcrumb-item active text-white">
-                    <i class="fas fa-wrench me-1"></i>עדכון תיקון #{{ repair_job.id }}
-                </li>
-            </ol>
-        </nav>
-    </div>
-</div>
-
-<div class="row">
-    <!-- פרטי תיקון - עמודה קבועה -->
-    <div class="col-lg-4 col-md-5">
-        <div class="card mechanic-info-card sticky-top">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-info-circle me-2"></i>פרטי התיקון
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="repair-info-item mb-3">
-                    <i class="fas fa-bicycle me-2 text-primary"></i>
-                    <strong class="text-white">אופניים:</strong> 
-                    <span class="text-white">{{ repair_job.bike }}</span>
+        <!-- Header Section -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">
+                        🔧 עדכון ביצוע תיקון #{{ repair_job.id }}
+                        <span class="text-lg sm:text-xl lg:text-2xl text-orange-300">⚙️</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">עדכן את סטטוס הפעולות והוסף הערות מפורטות לכל פריט</p>
                 </div>
                 
-                <div class="repair-info-item mb-3">
-                    <i class="fas fa-user me-2 text-turquoise"></i>
-                    <strong class="text-white">לקוח:</strong> 
-                    <span class="text-white">{{ repair_job.bike.customer.name }}</span>
-                </div>
-                
-                <div class="repair-info-item mb-3">
-                    <i class="fas fa-phone me-2 text-orange"></i>
-                    <strong class="text-white">טלפון:</strong> 
-                    <span class="text-white">{{ repair_job.bike.customer.phone }}</span>
-                </div>
-                
-                {% if repair_job.problem_description %}
-                <div class="repair-problem-section mb-3">
-                    <strong class="text-white mb-2 d-block">
-                        <i class="fas fa-exclamation-triangle me-2 text-warning"></i>תקלה:
-                    </strong>
-                    <div class="mechanic-problem-description">
-                        {{ repair_job.problem_description|truncatechars:100 }}
+                <!-- Breadcrumb Badge -->
+                <div class="hidden sm:flex justify-center lg:justify-end">
+                    <div class="bg-orange-500/20 border border-orange-400/40 rounded-xl px-3 sm:px-4 py-2">
+                        <nav class="flex items-center gap-2 text-xs sm:text-sm">
+                            <a href="{% url 'mechanic_dashboard' %}" class="text-orange-300 hover:text-orange-200 transition-colors">
+                                <i class="fas fa-tachometer-alt mr-1"></i>דשבורד מכונאי
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-slate-300">עדכון תיקון</span>
+                        </nav>
                     </div>
-                </div>
-                {% endif %}
-                
-                <div class="progress-section">
-                    <strong class="text-white mb-2 d-block">
-                        <i class="fas fa-chart-line me-2 text-success"></i>התקדמות:
-                    </strong>
-                    <div class="progress mechanic-progress">
-                        <div class="progress-bar" role="progressbar" 
-                             style="width: {{ repair_job.progress_percentage }}%;">
-                            {{ repair_job.progress_percentage|floatformat:0 }}%
-                        </div>
-                    </div>
-                    <small class="text-white mt-2 d-block">
-                        {{ repair_job.completed_count }}/{{ repair_job.approved_count }} הושלמו
-                    </small>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- עדכון סטטוס - עמודה ראשית -->
-    <div class="col-lg-8 col-md-7">
-        <form method="post">
-            {% csrf_token %}
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
             
-            <div class="card mechanic-tasks-card">
-                <div class="card-header">
-                    <h5 class="mb-0 text-white">
-                        <i class="fas fa-tasks me-2"></i>עדכון סטטוס פעולות
-                    </h5>
+            <!-- Repair Info Sidebar -->
+            <div class="xl:col-span-1">
+                <div class="glass-card border border-orange-400/30 rounded-2xl p-4 sm:p-6 backdrop-blur-xl bg-slate-800/40 shadow-2xl sticky top-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-orange-500/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-info-circle text-orange-400 text-lg sm:text-xl"></i>
+                        </div>
+                        <h2 class="text-lg sm:text-xl font-bold text-white">פרטי התיקון</h2>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Bike Info -->
+                        <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-bicycle text-blue-400 text-lg"></i>
+                                <h3 class="text-white font-semibold">פרטי אופניים</h3>
+                            </div>
+                            <p class="text-slate-300 text-sm">{{ repair_job.bike }}</p>
+                        </div>
+                        
+                        <!-- Customer Info -->
+                        <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-user text-emerald-400 text-lg"></i>
+                                <h3 class="text-white font-semibold">פרטי לקוח</h3>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-user text-slate-400"></i>
+                                    <span class="text-slate-300">{{ repair_job.bike.customer.name }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-phone text-slate-400"></i>
+                                    <span class="text-slate-300">{{ repair_job.bike.customer.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Problem Description -->
+                        {% if repair_job.problem_description %}
+                        <div class="bg-amber-500/10 border border-amber-400/30 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-exclamation-triangle text-amber-400 text-lg"></i>
+                                <h3 class="text-white font-semibold">תיאור התקלה</h3>
+                            </div>
+                            <p class="text-slate-300 text-sm leading-relaxed">{{ repair_job.problem_description }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <!-- Progress Section -->
+                        <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <i class="fas fa-chart-pie text-purple-400 text-lg"></i>
+                                <h3 class="text-white font-semibold">התקדמות כללית</h3>
+                            </div>
+                            
+                            <!-- Progress Stats -->
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="text-center">
+                                    <div class="text-xl font-bold text-green-300">{{ repair_job.completed_count }}</div>
+                                    <div class="text-xs text-slate-400">הושלמו</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-bold text-amber-300">{{ repair_job.approved_count }}</div>
+                                    <div class="text-xs text-slate-400">סה"כ</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div class="relative">
+                                <div class="w-full bg-slate-600 rounded-full h-4 mb-2">
+                                    <div class="bg-gradient-to-r from-orange-500 to-red-500 h-4 rounded-full flex items-center justify-center transition-all duration-1000" 
+                                         style="width: {{ repair_job.progress_percentage }}%">
+                                        <span class="text-white text-xs font-semibold">{{ repair_job.progress_percentage|floatformat:0 }}%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+            </div>
+            
+            <!-- Task Completion Form -->
+            <div class="xl:col-span-2">
+                <form method="post" id="task-completion-form">
+                    {% csrf_token %}
+                    
                     {% if task_form.completed_items.field.queryset %}
-                        {% for item in task_form.completed_items.field.queryset %}
-                        <div class="mechanic-item-card mb-3">
-                            <!-- כותרת הפעולה -->
-                            <div class="item-header d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0 text-white">
-                                    <i class="fas fa-wrench me-2 text-orange"></i>
-                                    {{ item.description }}
-                                </h6>
-                                <span class="badge badge-success">₪{{ item.price }}</span>
-                            </div>
-                            
-                            <!-- בחירת סטטוס -->
-                            <div class="status-selection mb-3">
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <label class="status-option status-completed {% if item.status == 'completed' %}active{% endif %}">
-                                            <input type="radio" name="item_status_{{ item.id }}" value="completed" 
-                                                   {% if item.status == 'completed' %}checked{% endif %}>
-                                            <div class="status-content">
-                                                <i class="fas fa-check-circle"></i>
-                                                <span>הושלם</span>
+                        <div class="space-y-6">
+                            {% for item in task_form.completed_items.field.queryset %}
+                            <div class="task-item glass-card border border-slate-600/40 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl"
+                                 data-item-id="{{ item.id }}">
+                                
+                                <!-- Task Header -->
+                                <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                                                <i class="fas fa-wrench text-white"></i>
                                             </div>
-                                        </label>
+                                            <h3 class="text-lg font-bold text-white">{{ item.description }}</h3>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <span class="px-3 py-1 bg-green-500/20 border border-green-400/30 rounded-lg text-green-300 text-sm font-semibold">
+                                                ₪{{ item.price }}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="status-option status-blocked {% if item.status == 'blocked' %}active{% endif %}">
-                                            <input type="radio" name="item_status_{{ item.id }}" value="blocked" 
-                                                   {% if item.status == 'blocked' %}checked{% endif %}>
-                                            <div class="status-content">
-                                                <i class="fas fa-exclamation-triangle"></i>
-                                                <span>תקוע</span>
-                                            </div>
-                                        </label>
+                                </div>
+                                
+                                <!-- Task Content -->
+                                <div class="p-4 sm:p-6">
+                                    <!-- Status Selection -->
+                                    <div class="mb-6">
+                                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                                            <i class="fas fa-clipboard-check text-blue-400"></i>
+                                            סטטוס ביצוע
+                                        </h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                            <!-- Completed Status -->
+                                            <label class="status-option status-completed cursor-pointer {% if item.status == 'completed' %}active{% endif %}"
+                                                   data-status="completed">
+                                                <input type="radio" name="item_status_{{ item.id }}" value="completed" 
+                                                       {% if item.status == 'completed' %}checked{% endif %} class="hidden">
+                                                <div class="status-content bg-slate-700/30 border border-slate-600/50 rounded-xl p-4 text-center transition-all duration-300 hover:border-green-400/50">
+                                                    <i class="fas fa-check-circle text-2xl mb-2 text-slate-400"></i>
+                                                    <div class="text-white font-medium">הושלם</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <!-- Blocked Status -->
+                                            <label class="status-option status-blocked cursor-pointer {% if item.status == 'blocked' %}active{% endif %}"
+                                                   data-status="blocked">
+                                                <input type="radio" name="item_status_{{ item.id }}" value="blocked" 
+                                                       {% if item.status == 'blocked' %}checked{% endif %} class="hidden">
+                                                <div class="status-content bg-slate-700/30 border border-slate-600/50 rounded-xl p-4 text-center transition-all duration-300 hover:border-red-400/50">
+                                                    <i class="fas fa-exclamation-triangle text-2xl mb-2 text-slate-400"></i>
+                                                    <div class="text-white font-medium">תקוע</div>
+                                                </div>
+                                            </label>
+                                            
+                                            <!-- Pending Status -->
+                                            <label class="status-option status-pending cursor-pointer {% if item.status == 'pending' or not item.status %}active{% endif %}"
+                                                   data-status="pending">
+                                                <input type="radio" name="item_status_{{ item.id }}" value="pending" 
+                                                       {% if item.status == 'pending' or not item.status %}checked{% endif %} class="hidden">
+                                                <div class="status-content bg-slate-700/30 border border-slate-600/50 rounded-xl p-4 text-center transition-all duration-300 hover:border-amber-400/50">
+                                                    <i class="fas fa-clock text-2xl mb-2 text-slate-400"></i>
+                                                    <div class="text-white font-medium">ממתין</div>
+                                                </div>
+                                            </label>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label class="status-option status-pending {% if item.status == 'pending' or not item.status %}active{% endif %}">
-                                            <input type="radio" name="item_status_{{ item.id }}" value="pending" 
-                                                   {% if item.status == 'pending' or not item.status %}checked{% endif %}>
-                                            <div class="status-content">
-                                                <i class="fas fa-clock"></i>
-                                                <span>ממתין</span>
+                                    
+                                    <!-- Notes Section -->
+                                    <div class="notes-section">
+                                        <button type="button" 
+                                                class="notes-toggle-btn w-full bg-slate-700/30 border border-slate-600/30 rounded-xl p-3 text-left transition-all duration-300 hover:bg-slate-700/50"
+                                                onclick="toggleNotes({{ item.id }})">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-2 text-white">
+                                                    <i class="fas fa-comment-alt text-blue-400"></i>
+                                                    <span class="font-medium">הערות והשלמות</span>
+                                                </div>
+                                                <i id="notes-icon-{{ item.id }}" class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
                                             </div>
-                                        </label>
+                                        </button>
+                                        
+                                        <div id="notes-{{ item.id }}" class="notes-content mt-3 {% if item.notes %}show{% endif %}">
+                                            <textarea name="notes_{{ item.id }}" 
+                                                      class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-3 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all resize-none"
+                                                      rows="4" 
+                                                      placeholder="הערות, בעיות, חלקים חסרים, הוראות מיוחדות, המלצות...">{{ item.notes|default:'' }}</textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            {% endfor %}
                             
-                            <!-- תיבת הערות -->
-                            <div class="notes-section">
-                                <button type="button" class="notes-toggle-btn" onclick="toggleNotes({{ item.id }})">
-                                    <i class="fas fa-comment-alt me-2"></i>
-                                    הערות 
-                                    <i id="notes-icon-{{ item.id }}" class="fas fa-chevron-down ms-2"></i>
-                                </button>
-                                <div id="notes-{{ item.id }}" class="notes-content {% if item.notes %}show{% endif %}">
-                                    <textarea name="notes_{{ item.id }}" 
-                                              class="form-control notes-textarea" 
-                                              rows="3" 
-                                              placeholder="הערות, בעיות, חלקים חסרים, הוראות מיוחדות...">{{ item.notes|default:'' }}</textarea>
+                            <!-- General Notes -->
+                            <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl p-4 sm:p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="flex-shrink-0 w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                        <i class="fas fa-sticky-note text-purple-400 text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-white">הערות כלליות על התיקון</h3>
                                 </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                        
-                        <!-- הערות כלליות -->
-                        <div class="card general-notes-card">
-                            <div class="card-body">
-                                <label class="text-white mb-2 d-block">
-                                    <i class="fas fa-sticky-note me-2 text-primary"></i>
-                                    <strong>הערות כלליות על התיקון:</strong>
-                                </label>
                                 <textarea name="general_notes" 
-                                          class="form-control general-notes-textarea" 
-                                          rows="3" 
-                                          placeholder="הערות כלליות, המלצות ללקוח, תחזוקה נדרשת..."></textarea>
+                                          class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-3 text-white placeholder-slate-400 focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 transition-all resize-none"
+                                          rows="4" 
+                                          placeholder="הערות כלליות, המלצות ללקוח, תחזוקה נדרשת, המלצות לעתיד..."></textarea>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                                <button type="submit" 
+                                        class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                                    <i class="fas fa-save mr-2"></i>
+                                    עדכן ביצוע
+                                </button>
+                                <a href="{% url 'mechanic_dashboard' %}" 
+                                   class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 text-center border border-slate-500/30 hover:border-slate-400/50">
+                                    <i class="fas fa-arrow-left mr-2"></i>
+                                    חזור לדשבורד
+                                </a>
                             </div>
                         </div>
                         
-                        <div class="action-buttons text-center">
-                            <button type="submit" class="btn btn-success btn-lg me-3">
-                                <i class="fas fa-save me-2"></i>עדכן ביצוע
-                            </button>
-                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-secondary btn-lg">
-                                <i class="fas fa-arrow-left me-2"></i>חזור לדשבורד
-                            </a>
-                        </div>
                     {% else %}
-                        <div class="completion-success-card text-center">
-                            <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
-                            <h5 class="text-white mb-3">כל הפעולות הושלמו בהצלחה!</h5>
-                            <p class="text-white mb-4">כל הפעולות שאושרו על ידי הלקוח כבר סומנו כמושלמות.</p>
-                            <a href="{% url 'mechanic_dashboard' %}" class="btn btn-primary btn-lg">
-                                <i class="fas fa-tachometer-alt me-2"></i>חזור לדשבורד
-                            </a>
+                        <!-- Completion Success State -->
+                        <div class="text-center py-16">
+                            <div class="glass-card border border-green-400/30 rounded-2xl p-8 max-w-md mx-auto">
+                                <div class="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                    <i class="fas fa-check-circle text-white text-3xl"></i>
+                                </div>
+                                <h3 class="text-xl font-bold text-white mb-3">כל הפעולות הושלמו בהצלחה!</h3>
+                                <p class="text-slate-400 mb-6">כל הפעולות שאושרו על ידי הלקוח כבר סומנו כמושלמות</p>
+                                <a href="{% url 'mechanic_dashboard' %}" 
+                                   class="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>
+                                    חזור לדשבורד
+                                </a>
+                            </div>
                         </div>
                     {% endif %}
-                </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 
+<style>
+/* Mercury Design System - Mechanic Task Completion Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #f97316, #dc2626, #7c3aed);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Status Option Styling */
+.status-option.active .status-content {
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.status-option.active.status-completed .status-content {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.6) !important;
+}
+
+.status-option.active.status-completed .status-content i {
+    color: rgb(74, 222, 128) !important;
+}
+
+.status-option.active.status-blocked .status-content {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+}
+
+.status-option.active.status-blocked .status-content i {
+    color: rgb(248, 113, 113) !important;
+}
+
+.status-option.active.status-pending .status-content {
+    background: rgba(245, 158, 11, 0.1) !important;
+    border-color: rgba(245, 158, 11, 0.6) !important;
+}
+
+.status-option.active.status-pending .status-content i {
+    color: rgb(251, 191, 36) !important;
+}
+
+/* Notes Content Styling */
+.notes-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.notes-content.show {
+    max-height: 200px;
+    opacity: 1;
+}
+
+/* Notes Toggle Button Hover */
+.notes-toggle-btn:hover i:last-child {
+    color: rgb(148, 163, 184) !important;
+}
+
+/* Task Item Animations */
+.task-item {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.task-item:nth-child(1) { animation-delay: 0.1s; }
+.task-item:nth-child(2) { animation-delay: 0.2s; }
+.task-item:nth-child(3) { animation-delay: 0.3s; }
+.task-item:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status Option Hover Effects */
+.status-option:hover .status-content {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .task-item {
+        margin-bottom: 1rem;
+    }
+    
+    .glass-card {
+        backdrop-filter: blur(12px);
+    }
+    
+    .status-option .status-content {
+        padding: 1rem;
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .task-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Form submission loading state */
+.form-loading button[type="submit"] {
+    background: rgba(71, 85, 105, 0.5) !important;
+    cursor: not-allowed;
+}
+
+.form-loading button[type="submit"] i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+</style>
+
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Status option handling
+    const statusOptions = document.querySelectorAll('.status-option');
+    
+    statusOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            const groupName = radio.name;
+            
+            // Remove active from all options in the same group
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
+                r.closest('.status-option').classList.remove('active');
+            });
+            
+            // Add active to clicked option
+            this.classList.add('active');
+            radio.checked = true;
+            
+            // Update task item status indicator
+            updateTaskStatus(this);
+        });
+    });
+    
+    // Initialize task items animations
+    const taskItems = document.querySelectorAll('.task-item');
+    taskItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+        }, index * 100);
+    });
+    
+    // Form submission handling
+    const form = document.getElementById('task-completion-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            // Add loading state
+            document.body.classList.add('form-loading');
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>שומר...';
+            submitBtn.disabled = true;
+            
+            // Show progress indicator
+            showProgressIndicator();
+        });
+    }
+    
+    // Initialize notes display
+    initializeNotesDisplay();
+    
+    // Auto-save functionality (optional)
+    setupAutoSave();
+    
+    console.log('✅ Mechanic task completion page ready');
+});
+
 function toggleNotes(itemId) {
     const notesDiv = document.getElementById('notes-' + itemId);
     const icon = document.getElementById('notes-icon-' + itemId);
@@ -206,33 +471,44 @@ function toggleNotes(itemId) {
         notesDiv.classList.remove('show');
         icon.classList.remove('fa-chevron-up');
         icon.classList.add('fa-chevron-down');
+        icon.style.transform = 'rotate(0deg)';
     } else {
         notesDiv.classList.add('show');
         icon.classList.remove('fa-chevron-down');
         icon.classList.add('fa-chevron-up');
+        icon.style.transform = 'rotate(180deg)';
+        
+        // Focus on textarea when opened
+        setTimeout(() => {
+            const textarea = notesDiv.querySelector('textarea');
+            if (textarea) {
+                textarea.focus();
+            }
+        }, 300);
     }
 }
 
-// הפעלת הסטיילינג של הכפתורים
-document.addEventListener('DOMContentLoaded', function() {
-    // Handle radio button changes
-    const radioButtons = document.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', function() {
-            // הסרת active מכל הכפתורים באותה קבוצה
-            const groupName = this.name;
-            document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => {
-                r.closest('.status-option').classList.remove('active');
-            });
-            
-            // הוספת active לכפתור הנבחר
-            this.closest('.status-option').classList.add('active');
-        });
-    });
+function updateTaskStatus(statusOption) {
+    const status = statusOption.dataset.status;
+    const taskItem = statusOption.closest('.task-item');
+    const itemId = taskItem.dataset.itemId;
     
-    // Fix notes display - only show if there are actual notes
+    // Update visual indicator
+    taskItem.setAttribute('data-status', status);
+    
+    // Add visual feedback
+    statusOption.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+        statusOption.style.transform = '';
+    }, 150);
+    
+    // Update progress if needed
+    updateOverallProgress();
+}
+
+function initializeNotesDisplay() {
     document.querySelectorAll('[id^="notes-"]').forEach(notesDiv => {
-        if (notesDiv.id.startsWith('notes-') && notesDiv.id !== 'notes-icon') {
+        if (notesDiv.id.startsWith('notes-') && !notesDiv.id.includes('icon')) {
             const textarea = notesDiv.querySelector('textarea');
             const iconId = notesDiv.id.replace('notes-', 'notes-icon-');
             const icon = document.getElementById(iconId);
@@ -244,16 +520,111 @@ document.addEventListener('DOMContentLoaded', function() {
                     notesDiv.classList.remove('show');
                     icon.classList.remove('fa-chevron-up');
                     icon.classList.add('fa-chevron-down');
+                    icon.style.transform = 'rotate(0deg)';
                 } else {
                     notesDiv.classList.add('show');
                     icon.classList.remove('fa-chevron-down');
                     icon.classList.add('fa-chevron-up');
+                    icon.style.transform = 'rotate(180deg)';
                 }
             }
         }
     });
+}
+
+function updateOverallProgress() {
+    const totalItems = document.querySelectorAll('.task-item').length;
+    const completedItems = document.querySelectorAll('.status-option.active.status-completed').length;
     
-    console.log('✅ Mechanic task completion page ready');
+    if (totalItems > 0) {
+        const percentage = Math.round((completedItems / totalItems) * 100);
+        
+        // Update progress bar if exists
+        const progressBar = document.querySelector('.bg-gradient-to-r');
+        if (progressBar) {
+            progressBar.style.width = percentage + '%';
+            const progressText = progressBar.querySelector('span');
+            if (progressText) {
+                progressText.textContent = percentage + '%';
+            }
+        }
+        
+        // Update completed count if exists
+        const completedCount = document.querySelector('.text-green-300');
+        if (completedCount) {
+            completedCount.textContent = completedItems;
+        }
+    }
+}
+
+function setupAutoSave() {
+    // Auto-save notes every 30 seconds
+    const textareas = document.querySelectorAll('textarea');
+    let autoSaveTimeout;
+    
+    textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                // Save to localStorage as backup
+                const formData = new FormData(document.getElementById('task-completion-form'));
+                const data = {};
+                for (let [key, value] of formData.entries()) {
+                    data[key] = value;
+                }
+                localStorage.setItem('mechanic_task_backup', JSON.stringify(data));
+            }, 2000);
+        });
+    });
+}
+
+function showProgressIndicator() {
+    // Create progress indicator
+    const indicator = document.createElement('div');
+    indicator.className = 'fixed top-4 right-4 bg-orange-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    indicator.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i>שומר נתונים...';
+    document.body.appendChild(indicator);
+    
+    setTimeout(() => {
+        if (indicator.parentNode) {
+            indicator.remove();
+        }
+    }, 5000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+S to save
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        const form = document.getElementById('task-completion-form');
+        if (form) {
+            form.submit();
+        }
+    }
+    
+    // Escape to go back
+    if (e.key === 'Escape') {
+        const backBtn = document.querySelector('a[href*="mechanic_dashboard"]');
+        if (backBtn && confirm('האם אתה בטוח שברצונך לעזוב? שינויים שלא נשמרו יאבדו.')) {
+            window.location.href = backBtn.href;
+        }
+    }
+});
+
+// Warn before leaving if there are unsaved changes
+window.addEventListener('beforeunload', function(e) {
+    const form = document.getElementById('task-completion-form');
+    if (form) {
+        // Check if any status has been changed or notes added
+        const hasChanges = document.querySelector('.status-option.active') || 
+                          Array.from(document.querySelectorAll('textarea')).some(t => t.value.trim() !== '');
+        
+        if (hasChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    }
 });
 </script>
 {% endblock %}

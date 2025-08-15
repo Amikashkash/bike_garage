@@ -2,315 +2,396 @@
 
 {% block title %}רשימת לקוחות{% endblock %}
 
-{% block extra_css %}
-<style>
-.stat-card {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    color: white;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    font-size: 2rem;
-    color: #3498db;
-    margin-bottom: 10px;
-}
-
-.stat-number {
-    display: block;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ecf0f1;
-}
-
-.stat-label {
-    display: block;
-    font-size: 0.9rem;
-    color: #bdc3c7;
-    margin-top: 5px;
-}
-
-.customers-table-container {
-    background: rgba(52, 73, 94, 0.8);
-    border-radius: 10px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-
-.pagination .page-link {
-    background-color: #34495e;
-    border-color: #2c3e50;
-    color: #ecf0f1;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #3498db;
-    border-color: #3498db;
-}
-
-.pagination .page-link:hover {
-    background-color: #2c3e50;
-    border-color: #2c3e50;
-    color: #ecf0f1;
-}
-
-.search-filter-section {
-    background: rgba(52, 73, 94, 0.6);
-    border-radius: 10px;
-    padding: 20px;
-}
-
-.quick-actions {
-    text-align: center;
-}
-
-.contact-info div {
-    margin-bottom: 5px;
-}
-
-.action-buttons .btn {
-    margin-right: 5px;
-}
-</style>
-{% endblock %}
-
 {% block content %}
-<div class="row">
-    <div class="col-md-11 mx-auto">
-        <div class="text-center mt-4 mb-4">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="flex-grow-1 text-center">
-                    <h1 class="text-white">👥 רשימת לקוחות</h1>
-                    <p class="text-white">ניהול ומעקב אחר לקוחות המוסך</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Header Section - Mobile Optimized -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">
+                        🔍 רשימת לקוחות
+                        <span class="text-lg sm:text-xl lg:text-2xl text-blue-300">❄️</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">ניהול ומעקב אחר לקוחות המוסך במערכת הזמינה הזו</p>
                 </div>
-                <div>
-                    <a href="{% url 'backup_customer_data' %}" class="btn btn-success btn-lg" title="גיבוי נתוני לקוחות">
-                        <i class="fas fa-download me-2"></i>
-                        גיבוי
+                
+                <!-- Actions - Mobile Responsive -->
+                <div class="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <a href="{% url 'customer_form' %}" class="btn-modern primary text-sm sm:text-base py-3 px-4">
+                        <i class="fas fa-plus mr-2"></i>לקוח חדש
+                    </a>
+                    <a href="{% url 'backup_customer_data' %}" class="btn-modern success text-sm sm:text-base py-3 px-4">
+                        <i class="fas fa-download mr-2"></i>גיבוי נתונים
                     </a>
                 </div>
             </div>
         </div>
-        
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ total_customers }}</span>
-                        <span class="stat-label">סה"כ לקוחות</span>
-                    </div>
+
+        <!-- Statistics Cards - Mobile First -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-3 sm:p-4 text-center">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <i class="fas fa-users text-blue-400 text-sm sm:text-base"></i>
                 </div>
+                <div class="text-xl sm:text-2xl font-bold text-white">{{ total_customers }}</div>
+                <div class="text-xs sm:text-sm text-slate-400">סה"כ לקוחות</div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-user-check"></i></div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ customers_with_user_count }}</span>
-                        <span class="stat-label">עם חשבון</span>
-                    </div>
+            
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-3 sm:p-4 text-center">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <i class="fas fa-user-check text-green-400 text-sm sm:text-base"></i>
                 </div>
+                <div class="text-xl sm:text-2xl font-bold text-white">{{ customers_with_user_count }}</div>
+                <div class="text-xs sm:text-sm text-slate-400">עם חשבון</div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ customers_without_user_count }}</span>
-                        <span class="stat-label">ללא חשבון</span>
-                    </div>
+            
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-3 sm:p-4 text-center">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-orange-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <i class="fas fa-user-plus text-orange-400 text-sm sm:text-base"></i>
                 </div>
+                <div class="text-xl sm:text-2xl font-bold text-white">{{ customers_without_user_count }}</div>
+                <div class="text-xs sm:text-sm text-slate-400">ללא חשבון</div>
             </div>
-            <div class="col-md-3">
-                <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-filter"></i></div>
-                    <div class="stat-content">
-                        <span class="stat-number">{{ filtered_count }}</span>
-                        <span class="stat-label">בתצוגה</span>
-                    </div>
+            
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-3 sm:p-4 text-center">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <i class="fas fa-filter text-purple-400 text-sm sm:text-base"></i>
                 </div>
+                <div class="text-xl sm:text-2xl font-bold text-white">{{ filtered_count }}</div>
+                <div class="text-xs sm:text-sm text-slate-400">בתצוגה</div>
             </div>
         </div>
-        
-        <!-- Search and Filter Section -->
-        <div class="search-filter-section mb-4">
-            <form method="GET" class="row align-items-end">
-                <div class="col-md-5">
-                    <label class="form-label text-white">חיפוש לקוחות</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-dark border-secondary">
-                            <i class="fas fa-search text-primary"></i>
-                        </span>
+
+        <!-- Search and Filter Section - Mobile Optimized -->
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-4 sm:p-6 mb-6">
+            <form method="GET" id="searchForm" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <!-- Search Input -->
+                    <div class="md:col-span-5">
+                        <label class="block text-slate-300 text-sm font-medium mb-2">
+                            <i class="fas fa-search text-blue-400 mr-2"></i>חיפוש לקוחות
+                        </label>
                         <input type="text" 
                                name="search"
                                value="{{ search_query }}"
-                               class="form-control bg-dark border-secondary text-white" 
+                               class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
                                placeholder="שם, טלפון, אימייל או שם משתמש..."
                                autocomplete="off">
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label text-white">סינון</label>
-                    <select name="filter" class="form-select bg-dark border-secondary text-white">
-                        <option value="all" {% if filter_type == 'all' %}selected{% endif %}>כל הלקוחות</option>
-                        <option value="with_user" {% if filter_type == 'with_user' %}selected{% endif %}>עם חשבון משתמש</option>
-                        <option value="without_user" {% if filter_type == 'without_user' %}selected{% endif %}>ללא חשבון משתמש</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-search me-2"></i>חפש
-                    </button>
-                </div>
-                <div class="col-md-2">
-                    <a href="{% url 'customer_list' %}" class="btn btn-outline-secondary w-100">
-                        <i class="fas fa-times me-2"></i>נקה
-                    </a>
+                    
+                    <!-- Filter Dropdown -->
+                    <div class="md:col-span-3">
+                        <label class="block text-slate-300 text-sm font-medium mb-2">
+                            <i class="fas fa-filter text-green-400 mr-2"></i>סינון
+                        </label>
+                        <select name="filter" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent">
+                            <option value="all" {% if filter_type == 'all' %}selected{% endif %}>כל הלקוחות</option>
+                            <option value="with_user" {% if filter_type == 'with_user' %}selected{% endif %}>עם חשבון משתמש</option>
+                            <option value="without_user" {% if filter_type == 'without_user' %}selected{% endif %}>ללא חשבון משתמש</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Page Size Selection -->
+                    <div class="md:col-span-2">
+                        <label class="block text-slate-300 text-sm font-medium mb-2">
+                            <i class="fas fa-list text-purple-400 mr-2"></i>תוצאות בעמוד
+                        </label>
+                        <select name="page_size" class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="10" {% if request.GET.page_size == '10' %}selected{% endif %}>10</option>
+                            <option value="20" {% if request.GET.page_size == '20' or not request.GET.page_size %}selected{% endif %}>20</option>
+                            <option value="50" {% if request.GET.page_size == '50' %}selected{% endif %}>50</option>
+                            <option value="100" {% if request.GET.page_size == '100' %}selected{% endif %}>100</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="md:col-span-2 flex flex-col justify-end">
+                        <div class="flex gap-2">
+                            <button type="submit" class="btn-modern primary flex-1 text-sm py-3">
+                                <i class="fas fa-search mr-1"></i>חפש
+                            </button>
+                            <a href="{% url 'customer_list' %}" class="btn-modern secondary text-sm py-3 px-3">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
         
-        <!-- Results Info -->
+        <!-- Results Info Alert -->
         {% if search_query or filter_type != 'all' %}
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle me-2"></i>
-            מציג {{ filtered_count }} לקוחות
-            {% if search_query %}מתוך חיפוש עבור "{{ search_query }}"{% endif %}
-            {% if filter_type != 'all' %}
-                {% if filter_type == 'with_user' %}
-                    (עם חשבון משתמש)
-                {% elif filter_type == 'without_user' %}
-                    (ללא חשבון משתמש)
-                {% endif %}
-            {% endif %}
+        <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl p-4 mb-6">
+            <div class="flex items-center gap-3">
+                <div class="w-6 h-6 bg-blue-500/30 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-info-circle text-blue-400 text-sm"></i>
+                </div>
+                <div class="text-blue-100">
+                    <strong>מציג {{ filtered_count }} לקוחות</strong>
+                    {% if search_query %} מתוך חיפוש עבור "{{ search_query }}"{% endif %}
+                    {% if filter_type != 'all' %}
+                        {% if filter_type == 'with_user' %}
+                            (עם חשבון משתמש)
+                        {% elif filter_type == 'without_user' %}
+                            (ללא חשבון משתמש)
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
         </div>
         {% endif %}
-        
+
         <!-- Quick Actions -->
-        <div class="quick-actions mb-4">
-            <a href="{% url 'customer_form' %}" class="btn btn-primary me-2">
-                <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+        <div class="flex flex-col sm:flex-row gap-3 mb-6 justify-center">
+            <a href="{% url 'customer_with_bike_new' %}" class="btn-modern success text-sm sm:text-base py-3 px-4">
+                <i class="fas fa-user-plus mr-2"></i>לקוח + אופניים
             </a>
-            <a href="{% url 'customer_with_bike_new' %}" class="btn btn-success me-2">
-                <i class="fas fa-user-plus me-2"></i>לקוח + אופניים
-            </a>
-            <a href="{% url 'link_customer_user' %}" class="btn btn-warning">
-                <i class="fas fa-link me-2"></i>חבר לקוח למשתמש
+            <a href="{% url 'link_customer_user' %}" class="btn-modern warning text-sm sm:text-base py-3 px-4">
+                <i class="fas fa-link mr-2"></i>חבר לקוח למשתמש
             </a>
         </div>
-        
-        <!-- Customers Table -->
+
+        <!-- Customers Table - Mobile Responsive -->
         {% if page_obj %}
-        <div class="customers-table-container">
-            <div class="table-responsive">
-                <table class="table table-dark table-hover">
-                    <thead>
-                        <tr>
-                            <th>שם הלקוח</th>
-                            <th>פרטי קשר</th>
-                            <th>סטטוס חשבון</th>
-                            <th>אופניים</th>
-                            <th>תיקונים</th>
-                            <th>פעולות</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for customer in page_obj %}
-                        <tr>
-                            <td>
-                                <div class="customer-name-cell">
-                                    <strong>{{ customer.name }}</strong>
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 px-4 sm:px-6 py-4 border-b border-slate-600">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fas fa-users text-blue-400"></i>
+                        רשימת לקוחות
+                    </h3>
+                    <div class="text-sm text-slate-300">
+                        <i class="fas fa-list mr-1"></i>
+                        {{ page_obj.start_index }}-{{ page_obj.end_index }} מתוך {{ page_obj.paginator.count }}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Card View (Hidden on Desktop) -->
+            <div class="block lg:hidden">
+                {% for customer in page_obj %}
+                <div class="border-b border-slate-600 last:border-b-0 p-4 hover:bg-slate-700/30 transition-colors">
+                    <div class="space-y-3">
+                        <!-- Customer Name & Status -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-white text-sm">{{ customer.name }}</h4>
                                     {% if customer.user %}
-                                        <br><small class="text-muted">{{ customer.user.username }}</small>
+                                        <p class="text-slate-400 text-xs">{{ customer.user.username }}</p>
                                     {% endif %}
                                 </div>
-                            </td>
-                            <td>
-                                <div class="contact-info">
-                                    {% if customer.phone %}
-                                        <div><i class="fas fa-phone me-2"></i>{{ customer.phone }}</div>
-                                    {% endif %}
-                                    {% if customer.email %}
-                                        <div><i class="fas fa-envelope me-2"></i>{{ customer.email }}</div>
-                                    {% elif customer.user.email %}
-                                        <div><i class="fas fa-envelope me-2"></i>{{ customer.user.email }}</div>
-                                    {% endif %}
-                                </div>
-                            </td>
-                            <td>
-                                {% if customer.user %}
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-user-check me-1"></i>עם חשבון
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-warning">
-                                        <i class="fas fa-user-plus me-1"></i>ללא חשבון
-                                    </span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <span class="badge bg-info">
-                                    <i class="fas fa-bicycle me-1"></i>{{ customer.bikes.count }}
+                            </div>
+                            {% if customer.user %}
+                                <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded text-xs font-medium">
+                                    <i class="fas fa-user-check mr-1"></i>עם חשבון
                                 </span>
-                            </td>
-                            <td>
+                            {% else %}
+                                <span class="bg-orange-500/20 text-orange-300 px-2 py-1 rounded text-xs font-medium">
+                                    <i class="fas fa-user-plus mr-1"></i>ללא חשבון
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Contact Info -->
+                        <div class="space-y-1">
+                            {% if customer.phone %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <i class="fas fa-phone text-blue-400 w-4"></i>
+                                    <span class="text-slate-300">{{ customer.phone }}</span>
+                                </div>
+                            {% endif %}
+                            {% if customer.email %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <i class="fas fa-envelope text-green-400 w-4"></i>
+                                    <span class="text-slate-300">{{ customer.email }}</span>
+                                </div>
+                            {% elif customer.user.email %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <i class="fas fa-envelope text-green-400 w-4"></i>
+                                    <span class="text-slate-300">{{ customer.user.email }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Stats & Actions -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex gap-3">
+                                <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-xs">
+                                    <i class="fas fa-bicycle mr-1"></i>{{ customer.bikes.count }}
+                                </span>
                                 {% with repair_count=customer.bikes.all|length %}
                                     {% if repair_count > 0 %}
-                                        <span class="badge bg-primary">
-                                            <i class="fas fa-wrench me-1"></i>
+                                        <span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-wrench mr-1"></i>
                                             {% for bike in customer.bikes.all %}{{ bike.repairs.count }}{% if not forloop.last %} + {% endif %}{% endfor %}
                                         </span>
                                     {% else %}
-                                        <span class="badge bg-secondary">
-                                            <i class="fas fa-minus me-1"></i>0
+                                        <span class="bg-slate-500/20 text-slate-300 px-2 py-1 rounded text-xs">
+                                            <i class="fas fa-minus mr-1"></i>0
+                                        </span>
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                            <div class="flex gap-2">
+                                {% if customer.bikes.exists %}
+                                    <a href="{% url 'customer_bike_add' customer.id %}" 
+                                       class="btn-modern success text-xs py-2 px-3"
+                                       title="הוסף אופניים">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'customer_bike_add' customer.id %}" 
+                                       class="btn-modern success text-xs py-2 px-3"
+                                       title="הוסף אופניים">
+                                        <i class="fas fa-bicycle"></i>
+                                    </a>
+                                {% endif %}
+                                {% if customer.bikes.exists %}
+                                    <a href="{% url 'repair_form_with_customer' customer.id %}" 
+                                       class="btn-modern warning text-xs py-2 px-3"
+                                       title="הוסף תיקון">
+                                        <i class="fas fa-wrench"></i>
+                                    </a>
+                                {% else %}
+                                    <a href="{% url 'customer_form' %}" 
+                                       class="btn-modern primary text-xs py-2 px-3"
+                                       title="עריכת לקוח">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Desktop Table View (Hidden on Mobile) -->
+            <div class="hidden lg:block overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-700/50">
+                        <tr>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">פעולות</th>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">תיקונים</th>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">אופניים</th>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">סטטוס</th>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">פרטי קשר</th>
+                            <th class="text-right py-4 px-6 text-slate-300 font-semibold text-sm">שם לקוח</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-600">
+                        {% for customer in page_obj %}
+                        <tr class="hover:bg-slate-700/30 transition-colors">
+                            <!-- Actions -->
+                            <td class="py-4 px-6">
+                                <div class="flex gap-2 justify-start">
+                                    {% if customer.bikes.exists %}
+                                        <a href="{% url 'customer_bike_add' customer.id %}" 
+                                           class="w-8 h-8 bg-green-500/20 hover:bg-green-500/40 rounded-lg flex items-center justify-center transition-colors"
+                                           title="הוסף אופניים">
+                                            <i class="fas fa-plus text-green-400 text-sm"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'customer_bike_add' customer.id %}" 
+                                           class="w-8 h-8 bg-green-500/20 hover:bg-green-500/40 rounded-lg flex items-center justify-center transition-colors"
+                                           title="הוסף אופניים ללקוח">
+                                            <i class="fas fa-bicycle text-green-400 text-sm"></i>
+                                        </a>
+                                    {% endif %}
+                                    {% if customer.bikes.exists %}
+                                        <a href="{% url 'repair_form_with_customer' customer.id %}" 
+                                           class="w-8 h-8 bg-orange-500/20 hover:bg-orange-500/40 rounded-lg flex items-center justify-center transition-colors"
+                                           title="הוסף תיקון">
+                                            <i class="fas fa-wrench text-orange-400 text-sm"></i>
+                                        </a>
+                                    {% else %}
+                                        <a href="{% url 'customer_form' %}" 
+                                           class="w-8 h-8 bg-blue-500/20 hover:bg-blue-500/40 rounded-lg flex items-center justify-center transition-colors"
+                                           title="עריכת לקוח">
+                                            <i class="fas fa-edit text-blue-400 text-sm"></i>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            
+                            <!-- Repairs Count -->
+                            <td class="py-4 px-6">
+                                {% with repair_count=customer.bikes.all|length %}
+                                    {% if repair_count > 0 %}
+                                        <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                            <i class="fas fa-wrench mr-1"></i>
+                                            {% for bike in customer.bikes.all %}{{ bike.repairs.count }}{% if not forloop.last %} + {% endif %}{% endfor %}
+                                        </span>
+                                    {% else %}
+                                        <span class="bg-slate-500/20 text-slate-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                            <i class="fas fa-minus mr-1"></i>0
                                         </span>
                                     {% endif %}
                                 {% endwith %}
                             </td>
-                            <td>
-                                <div class="action-buttons">
-                                    {% if customer.bikes.exists %}
-                                        <a href="{% url 'customer_with_bike_edit' customer.id customer.bikes.first.id %}" 
-                                           class="btn btn-sm btn-outline-primary"
-                                           title="עריכת לקוח">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                    {% else %}
-                                        <a href="{% url 'customer_bike_add' customer.id %}" 
-                                           class="btn btn-sm btn-outline-success"
-                                           title="הוסף אופניים ללקוח">
-                                            <i class="fas fa-bicycle"></i>
-                                        </a>
+                            
+                            <!-- Bikes Count -->
+                            <td class="py-4 px-6">
+                                <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                    <i class="fas fa-bicycle mr-1"></i>{{ customer.bikes.count }}
+                                </span>
+                            </td>
+                            
+                            <!-- Account Status -->
+                            <td class="py-4 px-6">
+                                {% if customer.user %}
+                                    <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-user-check mr-1"></i>עם חשבון
+                                    </span>
+                                {% else %}
+                                    <span class="bg-orange-500/20 text-orange-300 px-3 py-1 rounded-lg text-sm font-medium">
+                                        <i class="fas fa-user-plus mr-1"></i>ללא חשבון
+                                    </span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Contact Info -->
+                            <td class="py-4 px-6">
+                                <div class="space-y-1">
+                                    {% if customer.phone %}
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-phone text-blue-400 w-4"></i>
+                                            <span class="text-slate-300">{{ customer.phone }}</span>
+                                        </div>
                                     {% endif %}
-                                    {% if customer.bikes.exists %}
-                                        <a href="{% url 'customer_bike_add' customer.id %}" 
-                                           class="btn btn-sm btn-outline-success"
-                                           title="הוסף אופניים">
-                                            <i class="fas fa-bicycle"></i>
-                                        </a>
+                                    {% if customer.email %}
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-envelope text-green-400 w-4"></i>
+                                            <span class="text-slate-300">{{ customer.email }}</span>
+                                        </div>
+                                    {% elif customer.user.email %}
+                                        <div class="flex items-center gap-2 text-sm">
+                                            <i class="fas fa-envelope text-green-400 w-4"></i>
+                                            <span class="text-slate-300">{{ customer.user.email }}</span>
+                                        </div>
                                     {% endif %}
-                                    <a href="/admin/workshop/customer/{{ customer.id }}/change/" 
-                                       class="btn btn-sm btn-outline-warning"
-                                       title="ניהול מתקדם">
-                                        <i class="fas fa-cog"></i>
-                                    </a>
                                 </div>
                             </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="fas fa-search fa-2x mb-3"></i>
-                                <p>לא נמצאו לקוחות התואמים לחיפוש</p>
+                            
+                            <!-- Customer Name -->
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-user text-white"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-white">{{ customer.name }}</div>
+                                        {% if customer.user %}
+                                            <div class="text-slate-400 text-sm">{{ customer.user.username }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -319,390 +400,241 @@
             </div>
         </div>
         
-        <!-- Pagination -->
+        <!-- Modern Pagination -->
         {% if page_obj.has_other_pages %}
-        <nav aria-label="רשימת לקוחות - דפדוף">
-            <ul class="pagination justify-content-center">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+            <!-- Pagination Info -->
+            <div class="text-slate-300 text-sm">
+                מציג {{ page_obj.start_index }}-{{ page_obj.end_index }} מתוך {{ page_obj.paginator.count }} לקוחות
+            </div>
+            
+            <!-- Pagination Controls -->
+            <div class="flex items-center gap-2">
                 {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page=1">
-                            <i class="fas fa-angle-double-right"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
-                    </li>
+                    <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}{% if request.GET.page_size %}page_size={{ request.GET.page_size }}&{% endif %}page=1" 
+                       class="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg flex items-center justify-center transition-colors">
+                        <i class="fas fa-angle-double-right text-slate-300 text-sm"></i>
+                    </a>
+                    <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}{% if request.GET.page_size %}page_size={{ request.GET.page_size }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+                       class="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg flex items-center justify-center transition-colors">
+                        <i class="fas fa-chevron-right text-slate-300 text-sm"></i>
+                    </a>
                 {% endif %}
                 
                 {% for num in page_obj.paginator.page_range %}
                     {% if page_obj.number == num %}
-                        <li class="page-item active">
-                            <span class="page-link">{{ num }}</span>
-                        </li>
+                        <span class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white text-sm font-medium">
+                            {{ num }}
+                        </span>
                     {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-                        <li class="page-item">
-                            <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ num }}">{{ num }}</a>
-                        </li>
+                        <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}{% if request.GET.page_size %}page_size={{ request.GET.page_size }}&{% endif %}page={{ num }}" 
+                           class="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg flex items-center justify-center transition-colors text-slate-300 text-sm">
+                            {{ num }}
+                        </a>
                     {% endif %}
                 {% endfor %}
                 
                 {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.next_page_number }}">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
-                    </li>
-                    <li class="page-item">
-                        <a class="page-link" href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}page={{ page_obj.paginator.num_pages }}">
-                            <i class="fas fa-angle-double-left"></i>
-                        </a>
-                    </li>
+                    <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}{% if request.GET.page_size %}page_size={{ request.GET.page_size }}&{% endif %}page={{ page_obj.next_page_number }}" 
+                       class="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg flex items-center justify-center transition-colors">
+                        <i class="fas fa-chevron-left text-slate-300 text-sm"></i>
+                    </a>
+                    <a href="?{% if search_query %}search={{ search_query }}&{% endif %}{% if filter_type != 'all' %}filter={{ filter_type }}&{% endif %}{% if request.GET.page_size %}page_size={{ request.GET.page_size }}&{% endif %}page={{ page_obj.paginator.num_pages }}" 
+                       class="w-8 h-8 bg-slate-700/50 hover:bg-slate-600/50 rounded-lg flex items-center justify-center transition-colors">
+                        <i class="fas fa-angle-double-left text-slate-300 text-sm"></i>
+                    </a>
                 {% endif %}
-            </ul>
-        </nav>
-        
-        <!-- Pagination Info -->
-        <div class="pagination-info text-center text-white mt-3">
-            <small>
-                מציג לקוחות {{ page_obj.start_index }}-{{ page_obj.end_index }} 
-                מתוך {{ page_obj.paginator.count }} לקוחות
-                (עמוד {{ page_obj.number }} מתוך {{ page_obj.paginator.num_pages }})
-            </small>
+            </div>
         </div>
         {% endif %}
         
         {% else %}
-        <div class="text-center text-white py-5">
-            <i class="fas fa-users fa-3x mb-3"></i>
-            <h3>אין לקוחות במערכת</h3>
-            <p>התחל בהוספת הלקוח הראשון</p>
-            <a href="{% url 'customer_form' %}" class="btn btn-primary">
-                <i class="fas fa-plus me-2"></i>הוסף לקוח חדש
+        <!-- Empty State -->
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-users text-blue-400 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">אין לקוחות במערכת</h3>
+            <p class="text-slate-300 mb-6">התחל בהוספת הלקוח הראשון שלך</p>
+            <a href="{% url 'customer_form' %}" class="btn-modern primary">
+                <i class="fas fa-plus mr-2"></i>הוסף לקוח חדש
             </a>
         </div>
         {% endif %}
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-submit form on page size change
+    const pageSizeSelect = document.querySelector('select[name="page_size"]');
+    if (pageSizeSelect) {
+        pageSizeSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+    
+    // Live search functionality
+    const searchInput = document.querySelector('input[name="search"]');
+    let searchTimeout;
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                // Auto-submit after 500ms of no typing
+                if (this.value.length >= 3 || this.value.length === 0) {
+                    this.form.submit();
+                }
+            }, 500);
+        });
+    }
+    
+    // Smooth hover animations
+    const hoverElements = document.querySelectorAll('.hover\\:bg-slate-700\\/30, .hover\\:bg-blue-500\\/40, .hover\\:bg-green-500\\/40, .hover\\:bg-slate-600\\/50');
+    
+    hoverElements.forEach(element => {
+        element.style.transition = 'all 0.2s ease-in-out';
+    });
+    
+    // Filter change auto-submit
+    const filterSelect = document.querySelector('select[name="filter"]');
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function() {
+            this.form.submit();
+        });
+    }
+    
+    // Enhanced loading states
+    const submitButtons = document.querySelectorAll('button[type="submit"]');
+    submitButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>טוען...';
+            this.disabled = true;
+            
+            // Re-enable after 3 seconds as fallback
+            setTimeout(() => {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }, 3000);
+        });
+    });
+});
+</script>
 
-                        (<span id="totalCustomers">{{ customers_with_user_count|add:customers_without_user_count }}</span> לקוחות במערכת)
-                    </span>
-                </small>
-            </div>
-        </div>
+<style>
+/* Modern Button Styles */
+.btn-modern {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 8px 16px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
 
-        <!-- All Customers Unified List -->
-        <div class="customer-section">
-            <div class="card customer-unified-card">
-                <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 text-white">
-                            <i class="fas fa-users me-2 text-primary"></i>
-                            רשימת לקוחות
-                        </h5>
-                        <div class="customer-type-filters">
-                            <button class="btn btn-sm btn-outline-success filter-btn active" data-filter="all">
-                                <i class="fas fa-users me-1"></i>הכל
-                            </button>
-                            <button class="btn btn-sm btn-outline-success filter-btn" data-filter="registered">
-                                <i class="fas fa-user-check me-1"></i>רשומים
-                            </button>
-                            <button class="btn btn-sm btn-outline-warning filter-btn" data-filter="contact-only">
-                                <i class="fas fa-address-book me-1"></i>פרטי קשר
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="customers-table-container">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover customers-table mb-0">
-                                <thead class="table-header">
-                                    <tr>
-                                        <th width="5%">
-                                            <i class="fas fa-user"></i>
-                                        </th>
-                                        <th width="25%">שם לקוח</th>
-                                        <th width="20%">פרטי קשר</th>
-                                        <th width="10%">סוג</th>
-                                        <th width="25%">אופניים</th>
-                                        <th width="15%">פעולות</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="customersTableBody">
-                                    <!-- Registered Customers -->
-                                    {% for customer in customers_with_user %}
-                                    <tr class="customer-row registered-customer-row" 
-                                        data-search-content="{{ customer.name|lower }} {{ customer.phone|lower }} {{ customer.email|lower|default:'' }} {{ customer.user.username|lower }}">
-                                        <td class="customer-avatar">
-                                            <div class="avatar-circle registered-avatar">
-                                                <i class="fas fa-user-check"></i>
-                                            </div>
-                                        </td>
-                                        <td class="customer-name-cell">
-                                            <div class="customer-name-primary">{{ customer.name }}</div>
-                                            <div class="customer-username">
-                                                <i class="fas fa-user-tag me-1"></i>{{ customer.user.username }}
-                                            </div>
-                                        </td>
-                                        <td class="customer-contact-cell">
-                                            <div class="contact-item">
-                                                <i class="fas fa-phone me-1 text-turquoise"></i>
-                                                <span>{{ customer.phone }}</span>
-                                            </div>
-                                            {% if customer.email %}
-                                            <div class="contact-item">
-                                                <i class="fas fa-envelope me-1 text-orange"></i>
-                                                <span>{{ customer.email }}</span>
-                                            </div>
-                                            {% endif %}
-                                        </td>
-                                        <td class="customer-type-cell">
-                                            <span class="badge badge-success customer-type-compact">
-                                                <i class="fas fa-check-circle me-1"></i>רשום
-                                            </span>
-                                        </td>
-                                        <td class="customer-bikes-cell">
-                                            {% with customer.bikes.all as bikes %}
-                                                {% if bikes %}
-                                                    <div class="bikes-compact">
-                                                        <span class="bikes-count">
-                                                            <i class="fas fa-bicycle me-1 text-primary"></i>
-                                                            {{ bikes.count }}
-                                                        </span>
-                                                        <div class="bikes-preview">
-                                                            {% for bike in bikes|slice:":2" %}
-                                                                <small class="bike-preview-item">{{ bike.brand }} {{ bike.model|default:""|truncatechars:15 }}</small>
-                                                                {% if not forloop.last %}<br>{% endif %}
-                                                            {% endfor %}
-                                                            {% if bikes.count > 2 %}
-                                                                <small class="text-muted">+{{ bikes.count|add:"-2" }} נוספים</small>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                {% else %}
-                                                    <span class="no-bikes-compact">
-                                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
-                                                        אין אופניים
-                                                    </span>
-                                                {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                        <td class="customer-actions-cell">
-                                            {% with customer.bikes.first as first_bike %}
-                                                {% if first_bike %}
-                                                    <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                                                       class="btn btn-xs btn-outline-primary me-1" title="ערוך לקוח">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                {% else %}
-                                                    <a href="{% url 'customer_bike_add' customer.id %}" 
-                                                       class="btn btn-xs btn-orange me-1" title="הוסף אופניים">
-                                                        <i class="fas fa-plus"></i>
-                                                    </a>
-                                                {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                    
-                                    <!-- Contact-Only Customers -->
-                                    {% for customer in customers_without_user %}
-                                    <tr class="customer-row contact-customer-row" 
-                                        data-search-content="{{ customer.name|lower }} {{ customer.phone|lower }} {{ customer.email|lower|default:'' }}">
-                                        <td class="customer-avatar">
-                                            <div class="avatar-circle contact-avatar">
-                                                <i class="fas fa-address-book"></i>
-                                            </div>
-                                        </td>
-                                        <td class="customer-name-cell">
-                                            <div class="customer-name-primary">{{ customer.name }}</div>
-                                            <div class="customer-note">
-                                                <i class="fas fa-info-circle me-1"></i>נוצר ע"י המנהל
-                                            </div>
-                                        </td>
-                                        <td class="customer-contact-cell">
-                                            <div class="contact-item">
-                                                <i class="fas fa-phone me-1 text-turquoise"></i>
-                                                <span>{{ customer.phone }}</span>
-                                            </div>
-                                            {% if customer.email %}
-                                            <div class="contact-item">
-                                                <i class="fas fa-envelope me-1 text-orange"></i>
-                                                <span>{{ customer.email }}</span>
-                                            </div>
-                                            {% endif %}
-                                        </td>
-                                        <td class="customer-type-cell">
-                                            <span class="badge badge-warning customer-type-compact">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>קשר
-                                            </span>
-                                        </td>
-                                        <td class="customer-bikes-cell">
-                                            {% with customer.bikes.all as bikes %}
-                                                {% if bikes %}
-                                                    <div class="bikes-compact">
-                                                        <span class="bikes-count">
-                                                            <i class="fas fa-bicycle me-1 text-primary"></i>
-                                                            {{ bikes.count }}
-                                                        </span>
-                                                        <div class="bikes-preview">
-                                                            {% for bike in bikes|slice:":2" %}
-                                                                <small class="bike-preview-item">{{ bike.brand }} {{ bike.model|default:""|truncatechars:15 }}</small>
-                                                                {% if not forloop.last %}<br>{% endif %}
-                                                            {% endfor %}
-                                                            {% if bikes.count > 2 %}
-                                                                <small class="text-muted">+{{ bikes.count|add:"-2" }} נוספים</small>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                {% else %}
-                                                    <span class="no-bikes-compact">
-                                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>
-                                                        אין אופניים
-                                                    </span>
-                                                {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                        <td class="customer-actions-cell">
-                                            {% with customer.bikes.first as first_bike %}
-                                                {% if first_bike %}
-                                                    <a href="{% url 'customer_with_bike_edit' customer.id first_bike.id %}" 
-                                                       class="btn btn-xs btn-outline-primary me-1" title="ערוך לקוח">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                {% else %}
-                                                    <a href="{% url 'customer_bike_add' customer.id %}" 
-                                                       class="btn btn-xs btn-orange me-1" title="הוסף אופניים">
-                                                        <i class="fas fa-plus"></i>
-                                                    </a>
-                                                {% endif %}
-                                            {% endwith %}
-                                        </td>
-                                    </tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-                        
-                        <!-- No Results Message -->
-                        <div id="noResultsMessage" class="no-results-message text-center py-4" style="display: none;">
-                            <i class="fas fa-search fa-2x text-secondary mb-2"></i>
-                            <p class="text-white">לא נמצאו לקוחות התואמים לחיפוש</p>
-                            <button class="btn btn-outline-primary btn-sm" id="clearSearchFromNoResults">
-                                <i class="fas fa-times me-1"></i>נקה חיפוש
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+.btn-modern:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
 
-        <!-- הסבר -->
-        <div class="card customer-info-card">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-lightbulb me-2 text-primary"></i>
-                    הסבר על סוגי הלקוחות
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="customer-info-grid">
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-user-check text-success"></i>
-                        </div>
-                        <div class="info-content">
-                            <h6 class="text-white mb-1">לקוחות רשומים (ירוק)</h6>
-                            <p class="text-white mb-0">נרשמו בעצמם דרך דף ההרשמה, יכולים להתחבר ולדווח תקלות</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-address-book text-warning"></i>
-                        </div>
-                        <div class="info-content">
-                            <h6 class="text-white mb-1">פרטי קשר (צהוב)</h6>
-                            <p class="text-white mb-0">נוצרו ע"י המנהל/מכונאי, משמשים רק לתיעוד ויצירת תיקונים</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="recommendation-box mt-4">
-                    <i class="fas fa-info-circle me-2 text-primary"></i>
-                    <strong class="text-white">המלצה:</strong>
-                    <span class="text-white">עודד לקוחות להירשם בעצמם כדי שיוכלו לעקוב אחר התיקונים ולדווח תקלות.</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="mt-4 text-center">
-            <a href="{% url 'home' %}" class="btn btn-secondary">
-                <i class="fas fa-home me-2"></i>חזרה לדף הבית
-            </a>
-        </div>
-    </div>
-</div>
+.btn-modern.primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
+}
+
+.btn-modern.success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border: 1px solid #047857 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-modern.success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-modern.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+    border: 1px solid #b45309 !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3) !important;
+}
+
+.btn-modern.warning:hover {
+    background: linear-gradient(135deg, #d97706, #b45309) !important;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+}
+
+.btn-modern.secondary {
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3) !important;
+}
+
+.btn-modern.secondary:hover {
+    background: linear-gradient(135deg, #475569, #334155) !important;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4) !important;
+}
+
+/* Gradient text effect */
+.gradient-text {
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #fb7185);
+    background-size: 200% 200%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradientShift 3s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .btn-modern {
+        padding: 12px 16px !important;
+        font-size: 14px !important;
+        min-height: 44px !important;
+    }
+    
+    input, select, textarea {
+        font-size: 16px !important;
+        min-height: 44px !important;
+    }
+}
+
+/* Responsive table hover effects */
+@media (min-width: 1024px) {
+    .hover\\:bg-slate-700\\/30:hover {
+        background-color: rgba(51, 65, 85, 0.3) !important;
+    }
+}
+</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.getElementById('customerSearch');
-    const clearSearchBtn = document.getElementById('clearSearch');
-    const clearSearchFromNoResultsBtn = document.getElementById('clearSearchFromNoResults');
-    const filterButtons = document.querySelectorAll('.filter-btn');
+    // Get DOM elements
+    const searchInput = document.getElementById('search_input');
+    const clearSearchBtn = document.getElementById('clear_search');
+    const clearSearchFromNoResultsBtn = document.getElementById('clear_search_from_no_results');
+    const noResultsDiv = document.getElementById('no_results');
     const customerRows = document.querySelectorAll('.customer-row');
-    const noResultsMessage = document.getElementById('noResultsMessage');
-    const searchResultsText = document.getElementById('searchResultsText');
-    const totalCustomers = document.getElementById('totalCustomers');
+    const customerCards = document.querySelectorAll('.customer-card');
+    const filterButtons = document.querySelectorAll('.filter-btn');
     
     let currentFilter = 'all';
-    
-    // Search functionality
-    function performSearch() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-        let visibleCount = 0;
-        
-        customerRows.forEach(row => {
-            const searchContent = row.getAttribute('data-search-content');
-            const matchesSearch = searchTerm === '' || searchContent.includes(searchTerm);
-            const matchesFilter = currentFilter === 'all' || 
-                                (currentFilter === 'registered' && row.classList.contains('registered-customer-row')) ||
-                                (currentFilter === 'contact-only' && row.classList.contains('contact-customer-row'));
-            
-            const shouldShow = matchesSearch && matchesFilter;
-            row.style.display = shouldShow ? '' : 'none';
-            
-            if (shouldShow) {
-                visibleCount++;
-            }
-        });
-        
-        // Update search results text
-        if (searchTerm) {
-            if (visibleCount === 0) {
-                searchResultsText.textContent = `לא נמצאו תוצאות עבור "${searchTerm}"`;
-            } else if (visibleCount === 1) {
-                searchResultsText.textContent = `נמצא לקוח אחד עבור "${searchTerm}"`;
-            } else {
-                searchResultsText.textContent = `נמצאו ${visibleCount} לקוחות עבור "${searchTerm}"`;
-            }
-        } else {
-            if (currentFilter === 'all') {
-                searchResultsText.textContent = 'מציג את כל הלקוחות';
-            } else if (currentFilter === 'registered') {
-                searchResultsText.textContent = 'מציג לקוחות רשומים';
-            } else if (currentFilter === 'contact-only') {
-                searchResultsText.textContent = 'מציג פרטי קשר בלבד';
-            }
-        }
-        
-        // Show/hide no results message
-        noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
-        document.querySelector('.customers-table-container .table-responsive').style.display = 
-            visibleCount === 0 ? 'none' : 'block';
-    }
+    let searchTimeout = null;
     
     // Filter functionality
     function applyFilter(filterType) {
@@ -717,6 +649,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         performSearch();
+    }
+    
+    // Search functionality with debouncing
+    function performSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            const customers = document.querySelectorAll('.customer-row, .customer-card');
+            let visibleCount = 0;
+            
+            customers.forEach(customer => {
+                const customerData = customer.textContent.toLowerCase();
+                const matchesSearch = !searchTerm || customerData.includes(searchTerm);
+                const matchesFilter = 
+                    currentFilter === 'all' || 
+                    (currentFilter === 'with_account' && customer.dataset.hasAccount === 'true') ||
+                    (currentFilter === 'without_account' && customer.dataset.hasAccount === 'false');
+                
+                const shouldShow = matchesSearch && matchesFilter;
+                customer.style.display = shouldShow ? '' : 'none';
+                
+                if (shouldShow) visibleCount++;
+            });
+            
+            // Update count and show/hide no results message
+            const noResultsDiv = document.getElementById('no_results');
+            if (visibleCount === 0) {
+                noResultsDiv.style.display = 'block';
+            } else {
+                noResultsDiv.style.display = 'none';
+            }
+            
+            // Update filtered count
+            const filteredCountElement = document.getElementById('filtered_count');
+            if (filteredCountElement) {
+                filteredCountElement.textContent = visibleCount;
+            }
+        }, 300);
     }
     
     // Clear search

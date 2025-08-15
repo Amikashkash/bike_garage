@@ -3,179 +3,507 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">👤🚲 {{ title }}</h1>
-            <p class="text-white">צור לקוח חדש עם אופניים במקביל</p>
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
-        <div class="card customer-with-bike-info-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-info-circle me-2 text-primary"></i>
-                    מידע חשוב לגבי יצירת לקוח ואופניים
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="info-item mb-3">
-                    <i class="fas fa-user-plus me-2 text-turquoise"></i>
-                    <strong class="text-white">הלקוח ייווצר כפרטי קשר בלבד - ללא אפשרות התחברות</strong>
+        <!-- Header Section - Mobile Optimized -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">
+                        👤🚲 {{ title }}
+                        <span class="text-lg sm:text-xl lg:text-2xl text-emerald-300">⚡</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">צור לקוח חדש עם אופניים במקביל לחיסכון בזמן</p>
                 </div>
-                <div class="info-item mb-3">
-                    <i class="fas fa-bicycle me-2 text-orange"></i>
-                    <strong class="text-white">האופניים יוקצו אוטומטית ללקוח החדש</strong>
-                </div>
-                <div class="info-item mb-0">
-                    <i class="fas fa-tools me-2 text-success"></i>
-                    <strong class="text-white">אחרי היצירה ניתן לפתוח תיקונים חדשים מיד</strong>
+                
+                <!-- Navigation Badge - Hidden on mobile -->
+                <div class="hidden sm:flex justify-center lg:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-3 sm:px-4 py-2">
+                        <nav class="flex items-center gap-2 text-xs sm:text-sm">
+                            <a href="{% url 'customer_list' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-users mr-1"></i>רשימת לקוחות
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-slate-300">לקוח ואופניים</span>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="card customer-with-bike-form-card">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-user-edit me-2"></i>
-                    פרטי הלקוח והאופניים
-                </h5>
+
+        <!-- Important Information Card -->
+        <div class="mb-6 sm:mb-8">
+            <div class="glass-card border border-blue-400/30 rounded-2xl p-4 sm:p-6 backdrop-blur-xl bg-slate-800/40 shadow-2xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-info-circle text-blue-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-white">מידע חשוב לגבי יצירת לקוח ואופניים</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-emerald-500/10 border border-emerald-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-emerald-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-user-plus text-emerald-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-emerald-300">הלקוח ייווצר כפרטי קשר בלבד</strong>
+                            <p class="text-xs text-slate-400 mt-1">ללא אפשרות התחברות למערכת</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-blue-500/10 border border-blue-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-bicycle text-blue-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-blue-300">האופניים יוקצו אוטומטית</strong>
+                            <p class="text-xs text-slate-400 mt-1">קישור ללקוח החדש מיד</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-amber-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-tools text-amber-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-amber-300">תיקונים חדשים מיד</strong>
+                            <p class="text-xs text-slate-400 mt-1">אחרי היצירה ניתן לפתוח תיקונים</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
+        </div>
+
+        <!-- Customer and Bike Form Card -->
+        <div class="glass-card border border-slate-600/40 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl">
+            <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-user-edit text-white text-lg sm:text-xl"></i>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-white">פרטי הלקוח והאופניים</h2>
+                </div>
+            </div>
+            
+            <div class="p-4 sm:p-6">
+                <form method="post" id="customer-bike-form" class="space-y-8">
                     {% csrf_token %}
                     
-                    <!-- פרטי לקוח -->
-                    <div class="customer-section mb-4">
-                        <h6 class="section-title text-white mb-3">
-                            <i class="fas fa-user me-2 text-primary"></i>
-                            פרטי לקוח
-                        </h6>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label text-white" for="{{ form.customer_name.id_for_label }}">
-                                        <i class="fas fa-user me-2 text-primary"></i>
-                                        {{ form.customer_name.label }}
-                                    </label>
-                                    {{ form.customer_name }}
-                                    {% if form.customer_name.errors %}
-                                        <div class="form-error mt-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            {{ form.customer_name.errors.0 }}
-                                        </div>
-                                    {% endif %}
-                                </div>
+                    <!-- Customer Section -->
+                    <div class="customer-section">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="flex-shrink-0 w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-user text-emerald-400"></i>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group mb-3">
-                                    <label class="form-label text-white" for="{{ form.customer_phone.id_for_label }}">
-                                        <i class="fas fa-phone me-2 text-turquoise"></i>
-                                        {{ form.customer_phone.label }}
-                                    </label>
-                                    {{ form.customer_phone }}
-                                    {% if form.customer_phone.errors %}
-                                        <div class="form-error mt-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            {{ form.customer_phone.errors.0 }}
-                                        </div>
-                                    {% endif %}
+                            <h3 class="text-lg font-semibold text-white">פרטי לקוח</h3>
+                            <div class="flex-1 h-px bg-gradient-to-r from-emerald-500/30 to-transparent"></div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Customer Name -->
+                            <div class="form-group">
+                                <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.customer_name.id_for_label }}">
+                                    <i class="fas fa-user mr-2 text-emerald-400"></i>
+                                    {{ form.customer_name.label }}
+                                </label>
+                                <div class="relative">
+                                    {{ form.customer_name }}
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-user text-slate-400"></i>
+                                    </div>
                                 </div>
+                                {% if form.customer_name.errors %}
+                                    <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                        <div class="flex items-center gap-2 text-red-300 text-sm">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>{{ form.customer_name.errors.0 }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Customer Phone -->
+                            <div class="form-group">
+                                <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.customer_phone.id_for_label }}">
+                                    <i class="fas fa-phone mr-2 text-blue-400"></i>
+                                    {{ form.customer_phone.label }}
+                                </label>
+                                <div class="relative">
+                                    {{ form.customer_phone }}
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-phone text-slate-400"></i>
+                                    </div>
+                                </div>
+                                {% if form.customer_phone.errors %}
+                                    <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                        <div class="flex items-center gap-2 text-red-300 text-sm">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>{{ form.customer_phone.errors.0 }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                         
-                        <div class="form-group mb-3">
-                            <label class="form-label text-white" for="{{ form.customer_email.id_for_label }}">
-                                <i class="fas fa-envelope me-2 text-orange"></i>
+                        <!-- Customer Email - Full Width -->
+                        <div class="form-group mt-6">
+                            <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.customer_email.id_for_label }}">
+                                <i class="fas fa-envelope mr-2 text-amber-400"></i>
                                 {{ form.customer_email.label }}
                             </label>
-                            {{ form.customer_email }}
+                            <div class="relative">
+                                {{ form.customer_email }}
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-slate-400"></i>
+                                </div>
+                            </div>
                             {% if form.customer_email.errors %}
-                                <div class="form-error mt-2">
-                                    <i class="fas fa-exclamation-triangle me-1"></i>
-                                    {{ form.customer_email.errors.0 }}
+                                <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                    <div class="flex items-center gap-2 text-red-300 text-sm">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <span>{{ form.customer_email.errors.0 }}</span>
+                                    </div>
                                 </div>
                             {% endif %}
                         </div>
                     </div>
                     
-                    <div class="section-divider"></div>
+                    <!-- Section Divider -->
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-slate-600/30"></div>
+                        </div>
+                        <div class="relative flex justify-center">
+                            <span class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-600/30">
+                                <i class="fas fa-arrow-down text-slate-400"></i>
+                            </span>
+                        </div>
+                    </div>
                     
-                    <!-- פרטי אופניים -->
-                    <div class="bike-section mb-4">
-                        <h6 class="section-title text-white mb-3">
-                            <i class="fas fa-bicycle me-2 text-success"></i>
-                            פרטי אופניים
-                        </h6>
+                    <!-- Bike Section -->
+                    <div class="bike-section">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-bicycle text-blue-400"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-white">פרטי אופניים</h3>
+                            <div class="flex-1 h-px bg-gradient-to-r from-blue-500/30 to-transparent"></div>
+                        </div>
                         
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label text-white" for="{{ form.bike_brand.id_for_label }}">
-                                        <i class="fas fa-industry me-2 text-orange"></i>
-                                        {{ form.bike_brand.label }}
-                                    </label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Bike Brand -->
+                            <div class="form-group">
+                                <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.bike_brand.id_for_label }}">
+                                    <i class="fas fa-industry mr-2 text-orange-400"></i>
+                                    {{ form.bike_brand.label }}
+                                </label>
+                                <div class="relative">
                                     {{ form.bike_brand }}
-                                    {% if form.bike_brand.errors %}
-                                        <div class="form-error mt-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            {{ form.bike_brand.errors.0 }}
-                                        </div>
-                                    {% endif %}
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-industry text-slate-400"></i>
+                                    </div>
                                 </div>
+                                {% if form.bike_brand.errors %}
+                                    <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                        <div class="flex items-center gap-2 text-red-300 text-sm">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>{{ form.bike_brand.errors.0 }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label text-white" for="{{ form.bike_model.id_for_label }}">
-                                        <i class="fas fa-tag me-2 text-turquoise"></i>
-                                        {{ form.bike_model.label }}
-                                    </label>
+                            
+                            <!-- Bike Model -->
+                            <div class="form-group">
+                                <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.bike_model.id_for_label }}">
+                                    <i class="fas fa-tag mr-2 text-cyan-400"></i>
+                                    {{ form.bike_model.label }}
+                                </label>
+                                <div class="relative">
                                     {{ form.bike_model }}
-                                    {% if form.bike_model.errors %}
-                                        <div class="form-error mt-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            {{ form.bike_model.errors.0 }}
-                                        </div>
-                                    {% endif %}
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-tag text-slate-400"></i>
+                                    </div>
                                 </div>
+                                {% if form.bike_model.errors %}
+                                    <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                        <div class="flex items-center gap-2 text-red-300 text-sm">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>{{ form.bike_model.errors.0 }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group mb-3">
-                                    <label class="form-label text-white" for="{{ form.bike_color.id_for_label }}">
-                                        <i class="fas fa-palette me-2 text-success"></i>
-                                        {{ form.bike_color.label }}
-                                    </label>
+                            
+                            <!-- Bike Color -->
+                            <div class="form-group">
+                                <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.bike_color.id_for_label }}">
+                                    <i class="fas fa-palette mr-2 text-green-400"></i>
+                                    {{ form.bike_color.label }}
+                                </label>
+                                <div class="relative">
                                     {{ form.bike_color }}
-                                    {% if form.bike_color.errors %}
-                                        <div class="form-error mt-2">
-                                            <i class="fas fa-exclamation-triangle me-1"></i>
-                                            {{ form.bike_color.errors.0 }}
-                                        </div>
-                                    {% endif %}
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i class="fas fa-palette text-slate-400"></i>
+                                    </div>
                                 </div>
+                                {% if form.bike_color.errors %}
+                                    <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                        <div class="flex items-center gap-2 text-red-300 text-sm">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <span>{{ form.bike_color.errors.0 }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
                     
-                    <div class="form-actions mt-4">
-                        <button type="submit" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-save me-2"></i>
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
+                        <button type="submit" 
+                                class="flex-1 bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base">
+                            <i class="fas fa-save mr-2"></i>
                             {% if customer_instance %}עדכן פרטים{% else %}צור לקוח ואופניים{% endif %}
                         </button>
-                        <a href="{% url 'customer_list' %}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>ביטול
+                        <a href="{% url 'customer_list' %}" 
+                           class="flex-1 bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-center text-sm sm:text-base border border-slate-500/30 hover:border-slate-400/50">
+                            <i class="fas fa-times mr-2"></i>
+                            ביטול
                         </a>
                     </div>
                 </form>
             </div>
         </div>
         
-        <div class="text-center mt-4">
-            <small class="text-white customer-with-bike-help-text">
-                <i class="fas fa-lightbulb me-1"></i>
-                לאחר השמירה, תועבר לדף הלקוח החדש עם האופניים שנוצרו
-            </small>
+        <!-- Help Text -->
+        <div class="text-center mt-6 sm:mt-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-400/30 rounded-xl">
+                <i class="fas fa-lightbulb text-blue-400"></i>
+                <small class="text-slate-300 text-sm">
+                    לאחר השמירה, תועבר לדף הלקוח החדש עם האופניים שנוצרו
+                </small>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Mercury Design System - Customer with Bike Form Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #10b981, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Form Input Styling */
+#customer-bike-form input,
+#customer-bike-form textarea,
+#customer-bike-form select {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+#customer-bike-form input:focus,
+#customer-bike-form textarea:focus,
+#customer-bike-form select:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.6);
+    background: rgba(30, 41, 59, 0.7);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+#customer-bike-form input::placeholder,
+#customer-bike-form textarea::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+/* Select field styling */
+#customer-bike-form select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(148, 163, 184, 0.7)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Section dividers */
+.customer-section,
+.bike-section {
+    position: relative;
+}
+
+/* Animation for section headers */
+.customer-section h3,
+.bike-section h3 {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+    #customer-bike-form input,
+    #customer-bike-form textarea,
+    #customer-bike-form select {
+        font-size: 16px !important;
+        min-height: 44px !important;
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .glass-card:hover {
+        background: rgba(15, 23, 42, 0.5);
+        transform: translateY(-2px);
+    }
+    
+    .form-group:hover input,
+    .form-group:hover textarea,
+    .form-group:hover select {
+        border-color: rgba(71, 85, 105, 0.6);
+    }
+}
+
+/* Focus states for better accessibility */
+.form-group.focused {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation and enhancement
+    const form = document.getElementById('customer-bike-form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Add focus enhancement
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.closest('.form-group').classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.closest('.form-group').classList.remove('focused');
+        });
+    });
+    
+    // Form submission enhancement
+    form.addEventListener('submit', function(e) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        // Add loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>שומר...';
+        submitBtn.disabled = true;
+        
+        // Re-enable if form validation fails
+        setTimeout(() => {
+            if (!form.checkValidity()) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }, 100);
+    });
+    
+    // Progressive form validation
+    const validateField = (field) => {
+        const errorContainer = field.parentElement.nextElementSibling;
+        if (field.value.trim() === '' && field.hasAttribute('required')) {
+            field.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+            return false;
+        } else {
+            field.style.borderColor = 'rgba(34, 197, 94, 0.6)';
+            return true;
+        }
+    };
+    
+    // Real-time validation on blur
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.value.trim() !== '') {
+                validateField(this);
+            }
+        });
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+S to save
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            form.submit();
+        }
+        
+        // Escape to cancel
+        if (e.key === 'Escape') {
+            const cancelBtn = document.querySelector('a[href*="customer_list"]');
+            if (cancelBtn) {
+                window.location.href = cancelBtn.href;
+            }
+        }
+    });
+    
+    // Auto-focus first input
+    const firstInput = form.querySelector('input');
+    if (firstInput) {
+        firstInput.focus();
+    }
+    
+    // Section animation on scroll
+    const sections = document.querySelectorAll('.customer-section, .bike-section');
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = 'fadeInUp 0.6s ease-out';
+            }
+        });
+    }, observerOptions);
+    
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+});
+</script>
+
 {% endblock %}

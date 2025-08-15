@@ -3,71 +3,193 @@
 {% block title %}ניהול קטגוריות תיקון{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🔧 ניהול קטגוריות תיקון</h1>
-            <p class="text-white">ניהול וארגון קטגוריות ותתי-קטגוריות לתיקונים</p>
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="text-white">קטגוריות תיקון</h2>
-            <div class="category-list-actions">
-                <a href="{% url 'category_create' %}" class="btn btn-primary me-2">
-                    <i class="fas fa-plus me-2"></i>קטגוריה חדשה
-                </a>
-                <a href="{% url 'subcategory_create' %}" class="btn btn-success">
-                    <i class="fas fa-plus-circle me-2"></i>תת־קטגוריה חדשה
-                </a>
+        <!-- Header Section - Mobile Optimized -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">
+                        🔧 ניהול קטגוריות תיקון
+                        <span class="text-lg sm:text-xl lg:text-2xl text-purple-300">⚙️</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">ניהול וארגון קטגוריות ותתי-קטגוריות במערכת הרכיבים</p>
+                </div>
+                
+                <!-- Action Buttons - Mobile Responsive -->
+                <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                    <a href="{% url 'category_create' %}" 
+                       class="bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base">
+                        <i class="fas fa-plus mr-2"></i>קטגוריה חדשה
+                    </a>
+                    <a href="{% url 'subcategory_create' %}" 
+                       class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base">
+                        <i class="fas fa-plus-circle mr-2"></i>תת־קטגוריה חדשה
+                    </a>
+                </div>
             </div>
         </div>
 
-        {% if categories %}
-            <div class="categories-accordion">
-                {% for category in categories %}
-                <div class="category-accordion-item">
-                    <div class="category-accordion-header" data-bs-toggle="collapse" data-bs-target="#category-{{ category.id }}" aria-expanded="false">
-                        <div class="category-main-info">
-                            <div class="category-icon-title">
-                                <i class="fas fa-folder category-folder-icon"></i>
-                                <h5 class="category-name">{{ category.name }}</h5>
+        <!-- Search and Filter Section -->
+        <div class="mb-6 sm:mb-8">
+            <div class="glass-card border border-blue-400/30 rounded-2xl p-4 sm:p-6 backdrop-blur-xl bg-slate-800/40 shadow-2xl">
+                <div class="flex flex-col lg:flex-row gap-4 lg:items-center">
+                    <!-- Search Input -->
+                    <div class="flex-1">
+                        <div class="relative">
+                            <input type="text" 
+                                   id="search_input" 
+                                   placeholder="חיפוש קטגוריות ותתי-קטגוריות..."
+                                   class="w-full pl-12 pr-4 py-3 bg-slate-700/50 border border-slate-600/40 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-400/60 focus:bg-slate-700/70 transition-all duration-300">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-search text-slate-400"></i>
                             </div>
-                            <div class="category-stats">
-                                <span class="subcategory-count">
-                                    <i class="fas fa-list-ul me-1"></i>
-                                    {{ category.subcategories.count }} תתי-קטגוריות
-                                </span>
-                            </div>
-                        </div>
-                        <div class="category-controls">
-                            <a href="#" class="btn btn-sm btn-outline-primary category-edit-btn" onclick="event.stopPropagation();">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <i class="fas fa-chevron-down accordion-arrow"></i>
+                            <button id="clear_search" 
+                                    class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white transition-colors opacity-0">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </div>
                     
-                    <div id="category-{{ category.id }}" class="collapse category-accordion-body">
-                        <div class="category-content">
+                    <!-- Filter Buttons -->
+                    <div class="flex flex-wrap gap-2">
+                        <button class="filter-btn active px-4 py-2 bg-blue-500/20 border border-blue-400/40 rounded-lg text-blue-300 hover:bg-blue-500/30 transition-colors text-sm" data-filter="all">
+                            <i class="fas fa-list mr-1"></i>הכל
+                        </button>
+                        <button class="filter-btn px-4 py-2 bg-slate-600/20 border border-slate-500/40 rounded-lg text-slate-300 hover:bg-slate-600/30 transition-colors text-sm" data-filter="with_subcategories">
+                            <i class="fas fa-folder mr-1"></i>עם תתי-קטגוריות
+                        </button>
+                        <button class="filter-btn px-4 py-2 bg-slate-600/20 border border-slate-500/40 rounded-lg text-slate-300 hover:bg-slate-600/30 transition-colors text-sm" data-filter="empty">
+                            <i class="fas fa-folder-open mr-1"></i>ריקות
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Dashboard -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 sm:mb-8">
+            <div class="glass-card border border-emerald-400/30 rounded-xl p-4 backdrop-blur-xl bg-slate-800/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-folder text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-emerald-300" id="total_categories">{{ categories.count }}</div>
+                        <div class="text-xs text-slate-400">קטגוריות כולל</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card border border-blue-400/30 rounded-xl p-4 backdrop-blur-xl bg-slate-800/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-cog text-blue-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-300" id="total_subcategories">
+                            {% for category in categories %}{{ category.subcategories.count }}{% if not forloop.last %}+{% endif %}{% endfor %}
+                        </div>
+                        <div class="text-xs text-slate-400">תתי-קטגוריות</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card border border-purple-400/30 rounded-xl p-4 backdrop-blur-xl bg-slate-800/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-eye text-purple-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-300" id="visible_count">{{ categories.count }}</div>
+                        <div class="text-xs text-slate-400">מוצגות</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="glass-card border border-amber-400/30 rounded-xl p-4 backdrop-blur-xl bg-slate-800/40">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-tools text-amber-400"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-amber-300">{{ total_repairs|default:0 }}</div>
+                        <div class="text-xs text-slate-400">תיקונים פעילים</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Categories List -->
+        {% if categories %}
+            <div class="space-y-4" id="categories_container">
+                {% for category in categories %}
+                <div class="category-item glass-card border border-slate-600/40 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl overflow-hidden" 
+                     data-has-subcategories="{{ category.subcategories.exists|yesno:'true,false' }}">
+                    
+                    <!-- Category Header -->
+                    <div class="category-header cursor-pointer p-4 sm:p-6 hover:bg-slate-700/30 transition-all duration-300" 
+                         onclick="toggleCategory('{{ category.id }}')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4 flex-1 min-w-0">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-folder text-white text-lg"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-lg sm:text-xl font-bold text-white truncate">{{ category.name }}</h3>
+                                    <div class="flex flex-wrap gap-4 mt-1">
+                                        <span class="text-sm text-slate-400">
+                                            <i class="fas fa-cog mr-1"></i>
+                                            {{ category.subcategories.count }} תתי-קטגוריות
+                                        </span>
+                                        {% if category.total_repairs %}
+                                        <span class="text-sm text-slate-400">
+                                            <i class="fas fa-wrench mr-1"></i>
+                                            {{ category.total_repairs }} תיקונים
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-3">
+                                <a href="#" onclick="event.stopPropagation();" 
+                                   class="w-10 h-10 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-400/40 rounded-lg flex items-center justify-center transition-colors">
+                                    <i class="fas fa-edit text-blue-400"></i>
+                                </a>
+                                <div class="w-10 h-10 flex items-center justify-center">
+                                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300" id="arrow_{{ category.id }}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Category Content (Collapsible) -->
+                    <div class="category-content hidden" id="content_{{ category.id }}">
+                        <div class="border-t border-slate-600/30 p-4 sm:p-6">
                             {% with category.subcategories.all as subcategories %}
                                 {% if subcategories %}
-                                    <div class="subcategories-container">
-                                        <div class="subcategories-header">
-                                            <h6 class="text-white mb-3">
-                                                <i class="fas fa-wrench me-2 text-success"></i>
-                                                תתי-קטגוריות ({{ subcategories.count }})
-                                            </h6>
-                                        </div>
-                                        <div class="subcategories-grid">
+                                    <div class="mb-4">
+                                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                                            <i class="fas fa-wrench text-emerald-400"></i>
+                                            תתי-קטגוריות ({{ subcategories.count }})
+                                        </h4>
+                                        
+                                        <!-- Subcategories Grid -->
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                             {% for subcategory in subcategories %}
-                                            <div class="subcategory-card">
-                                                <div class="subcategory-info">
-                                                    <i class="fas fa-cog subcategory-icon"></i>
-                                                    <span class="subcategory-name">{{ subcategory.name }}</span>
-                                                </div>
-                                                <div class="subcategory-actions">
-                                                    <a href="#" class="btn btn-xs btn-outline-secondary">
-                                                        <i class="fas fa-edit"></i>
+                                            <div class="subcategory-card bg-slate-700/30 border border-slate-600/30 rounded-xl p-3 sm:p-4 hover:bg-slate-700/50 transition-all duration-300 group">
+                                                <div class="flex items-center justify-between">
+                                                    <div class="flex items-center gap-3 flex-1 min-w-0">
+                                                        <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+                                                            <i class="fas fa-cog text-emerald-400 text-sm"></i>
+                                                        </div>
+                                                        <span class="text-white font-medium truncate">{{ subcategory.name }}</span>
+                                                    </div>
+                                                    <a href="#" 
+                                                       class="w-8 h-8 bg-slate-600/50 hover:bg-blue-500/30 border border-slate-500/40 hover:border-blue-400/40 rounded-lg flex items-center justify-center transition-all duration-300 opacity-0 group-hover:opacity-100">
+                                                        <i class="fas fa-edit text-slate-400 hover:text-blue-400 text-xs"></i>
                                                     </a>
                                                 </div>
                                             </div>
@@ -75,16 +197,16 @@
                                         </div>
                                     </div>
                                 {% else %}
-                                    <div class="no-subcategories-message">
-                                        <div class="empty-state-icon">
-                                            <i class="fas fa-exclamation-circle"></i>
+                                    <div class="text-center py-8">
+                                        <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                                            <i class="fas fa-exclamation-circle text-amber-400 text-2xl"></i>
                                         </div>
-                                        <div class="empty-state-content">
-                                            <p class="text-white mb-2">אין תתי-קטגוריות עדיין בקטגוריה זו</p>
-                                            <a href="{% url 'subcategory_create' %}" class="btn btn-sm btn-success">
-                                                <i class="fas fa-plus me-1"></i>הוסף תת-קטגוריה ראשונה
-                                            </a>
-                                        </div>
+                                        <h4 class="text-white font-semibold mb-2">אין תתי-קטגוריות עדיין</h4>
+                                        <p class="text-slate-400 mb-4">הוסף תתי-קטגוריה ראשונה לקטגוריה זו</p>
+                                        <a href="{% url 'subcategory_create' %}" 
+                                           class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                                            <i class="fas fa-plus"></i>הוסף תת-קטגוריה ראשונה
+                                        </a>
                                     </div>
                                 {% endif %}
                             {% endwith %}
@@ -94,83 +216,307 @@
                 {% endfor %}
             </div>
         {% else %}
-            <div class="empty-categories-state">
-                <div class="empty-state-card">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-folder-open"></i>
+            <div class="text-center py-12" id="empty_state">
+                <div class="glass-card border border-slate-600/40 rounded-2xl p-8 sm:p-12 backdrop-blur-xl bg-slate-800/50 shadow-2xl max-w-md mx-auto">
+                    <div class="w-20 h-20 bg-blue-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-folder-open text-blue-400 text-3xl"></i>
                     </div>
-                    <div class="empty-state-content">
-                        <h4 class="text-white mb-3">אין קטגוריות תיקון במערכת</h4>
-                        <p class="text-white mb-4">צור קטגוריה ראשונה כדי להתחיל לארגן את התיקונים</p>
-                        <a href="{% url 'category_create' %}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>צור קטגוריה ראשונה
-                        </a>
-                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold text-white mb-4">אין קטגוריות תיקון במערכת</h3>
+                    <p class="text-slate-400 mb-6">צור קטגוריה ראשונה כדי להתחיל לארגן את התיקונים במערכת</p>
+                    <a href="{% url 'category_create' %}" 
+                       class="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-blue-500 hover:from-emerald-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <i class="fas fa-plus"></i>צור קטגוריה ראשונה
+                    </a>
                 </div>
             </div>
         {% endif %}
 
-        <!-- הסבר על המערכת -->
-        <div class="category-info-section mt-5">
-            <div class="info-header">
-                <h5 class="text-white mb-4">
-                    <i class="fas fa-lightbulb me-2 text-primary"></i>
-                    איך עובד ארגון הקטגוריות?
-                </h5>
+        <!-- No Results Message (Hidden by default) -->
+        <div class="text-center py-12 hidden" id="no_results">
+            <div class="glass-card border border-amber-400/30 rounded-2xl p-8 backdrop-blur-xl bg-slate-800/50 shadow-2xl max-w-md mx-auto">
+                <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-amber-400 text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-white mb-2">לא נמצאו תוצאות</h3>
+                <p class="text-slate-400 mb-4">נסה מילות חיפוש שונות או נקה את החיפוש</p>
+                <button id="clear_search_from_no_results" 
+                        class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 font-semibold py-2 px-4 rounded-xl transition-colors">
+                    <i class="fas fa-times mr-2"></i>נקה חיפוש
+                </button>
             </div>
-            <div class="info-cards-row">
-                <div class="info-card">
-                    <div class="info-card-icon">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                    <div class="info-card-content">
-                        <h6 class="text-white">קטגוריות ראשיות</h6>
-                        <p class="text-white">כמו "בלמים", "גלגלים", "הילוכים"</p>
-                    </div>
+        </div>
+
+        <!-- Information Section -->
+        <div class="mt-8 sm:mt-12">
+            <div class="glass-card border border-purple-400/30 rounded-2xl p-6 sm:p-8 backdrop-blur-xl bg-slate-800/40 shadow-2xl">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+                        <i class="fas fa-lightbulb text-purple-400"></i>
+                        איך עובד ארגון הקטגוריות?
+                    </h3>
+                    <p class="text-slate-300">מערכת הקטגוריות מאפשרת ארגון מסודר של כל התיקונים במוסך</p>
                 </div>
-                <div class="info-card">
-                    <div class="info-card-icon">
-                        <i class="fas fa-cog"></i>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-folder text-blue-400 text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-semibold mb-2">קטגוריות ראשיות</h4>
+                        <p class="text-slate-400 text-sm">כמו "בלמים", "גלגלים", "הילוכים" - חלוקה לפי רכיבי האופניים</p>
                     </div>
-                    <div class="info-card-content">
-                        <h6 class="text-white">תתי-קטגוריות</h6>
-                        <p class="text-white">תיקונים ספציפיים בכל קטגוריה</p>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-cog text-emerald-400 text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-semibold mb-2">תתי-קטגוריות</h4>
+                        <p class="text-slate-400 text-sm">תיקונים ספציפיים בכל קטגוריה - פירוט מדויק של סוג התיקון</p>
                     </div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-icon">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <div class="info-card-content">
-                        <h6 class="text-white">תיקונים</h6>
-                        <p class="text-white">מבוססים על התתי-קטגוריות</p>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-tools text-amber-400 text-2xl"></i>
+                        </div>
+                        <h4 class="text-white font-semibold mb-2">תיקונים</h4>
+                        <p class="text-slate-400 text-sm">כל תיקון מבוסס על התתי-קטגוריות לארגון וניהול מיטבי</p>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="mt-4 text-center">
-            <a href="{% url 'home' %}" class="btn btn-secondary">
-                <i class="fas fa-home me-2"></i>חזרה לדף הבית
+        <!-- Back to Home -->
+        <div class="text-center mt-8">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center gap-2 bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50">
+                <i class="fas fa-home"></i>חזרה לדף הבית
             </a>
         </div>
     </div>
 </div>
 
+<style>
+/* Mercury Design System - Category List Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* Filter buttons */
+.filter-btn.active {
+    background: rgba(59, 130, 246, 0.3) !important;
+    border-color: rgba(59, 130, 246, 0.6) !important;
+    color: rgb(147, 197, 253) !important;
+}
+
+/* Category animations */
+.category-item {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.category-item:nth-child(1) { animation-delay: 0.1s; }
+.category-item:nth-child(2) { animation-delay: 0.2s; }
+.category-item:nth-child(3) { animation-delay: 0.3s; }
+.category-item:nth-child(4) { animation-delay: 0.4s; }
+.category-item:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Search input enhancements */
+#search_input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    transform: translateY(-1px);
+}
+
+#clear_search.show {
+    opacity: 1 !important;
+}
+
+/* Subcategory cards hover effect */
+.subcategory-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+    .category-header {
+        padding: 16px !important;
+    }
+    
+    .category-content {
+        padding: 16px !important;
+    }
+    
+    .subcategory-card {
+        padding: 12px !important;
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .glass-card:hover {
+        transform: translateY(-2px);
+    }
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Add smooth accordion behavior
-    const accordionHeaders = document.querySelectorAll('.category-accordion-header');
+    // DOM elements
+    const searchInput = document.getElementById('search_input');
+    const clearSearchBtn = document.getElementById('clear_search');
+    const clearSearchFromNoResultsBtn = document.getElementById('clear_search_from_no_results');
+    const noResultsDiv = document.getElementById('no_results');
+    const categoriesContainer = document.getElementById('categories_container');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const categoryItems = document.querySelectorAll('.category-item');
     
-    accordionHeaders.forEach(header => {
-        header.addEventListener('click', function() {
-            const arrow = this.querySelector('.accordion-arrow');
-            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+    let currentFilter = 'all';
+    let searchTimeout = null;
+    
+    // Search functionality with debouncing
+    function performSearch() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
             
-            // Toggle arrow rotation
-            arrow.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(180deg)';
+            categoryItems.forEach(item => {
+                const categoryText = item.textContent.toLowerCase();
+                const matchesSearch = !searchTerm || categoryText.includes(searchTerm);
+                const hasSubcategories = item.dataset.hasSubcategories === 'true';
+                
+                const matchesFilter = 
+                    currentFilter === 'all' || 
+                    (currentFilter === 'with_subcategories' && hasSubcategories) ||
+                    (currentFilter === 'empty' && !hasSubcategories);
+                
+                const shouldShow = matchesSearch && matchesFilter;
+                item.style.display = shouldShow ? '' : 'none';
+                
+                if (shouldShow) visibleCount++;
+            });
+            
+            // Update UI based on results
+            if (searchInput.value.trim()) {
+                clearSearchBtn.classList.add('show');
+            } else {
+                clearSearchBtn.classList.remove('show');
+            }
+            
+            // Show/hide no results message
+            const hasCategories = categoryItems.length > 0;
+            if (hasCategories && visibleCount === 0) {
+                noResultsDiv.style.display = 'block';
+                if (categoriesContainer) categoriesContainer.style.display = 'none';
+            } else {
+                noResultsDiv.style.display = 'none';
+                if (categoriesContainer) categoriesContainer.style.display = 'block';
+            }
+            
+            // Update visible count
+            const visibleCountElement = document.getElementById('visible_count');
+            if (visibleCountElement) {
+                visibleCountElement.textContent = visibleCount;
+            }
+        }, 300);
+    }
+    
+    // Filter functionality
+    function applyFilter(filterType) {
+        currentFilter = filterType;
+        
+        // Update active filter button
+        filterButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.getAttribute('data-filter') === filterType) {
+                btn.classList.add('active');
+            }
+        });
+        
+        performSearch();
+    }
+    
+    // Clear search
+    function clearSearch() {
+        searchInput.value = '';
+        performSearch();
+        searchInput.focus();
+    }
+    
+    // Event listeners
+    searchInput.addEventListener('input', performSearch);
+    searchInput.addEventListener('keyup', function(e) {
+        if (e.key === 'Escape') {
+            clearSearch();
+        }
+    });
+    
+    clearSearchBtn.addEventListener('click', clearSearch);
+    clearSearchFromNoResultsBtn.addEventListener('click', clearSearch);
+    
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            applyFilter(this.getAttribute('data-filter'));
         });
     });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+F to focus search
+        if (e.ctrlKey && e.key === 'f') {
+            e.preventDefault();
+            searchInput.focus();
+        }
+    });
+    
+    // Animate categories on load
+    categoryItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+        }, (index + 1) * 100);
+    });
+    
+    // Initial search to set up display
+    performSearch();
 });
+
+// Category toggle functionality
+function toggleCategory(categoryId) {
+    const content = document.getElementById(`content_${categoryId}`);
+    const arrow = document.getElementById(`arrow_${categoryId}`);
+    
+    if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        arrow.style.transform = 'rotate(180deg)';
+    } else {
+        content.classList.add('hidden');
+        arrow.style.transform = 'rotate(0deg)';
+    }
+}
 </script>
+
 {% endblock %}

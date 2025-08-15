@@ -3,150 +3,242 @@
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🏷️ {{ title }}</h1>
-            <p class="text-white">{% if category %}עריכת קטגוריה קיימת{% else %}הוספת קטגוריה חדשה למערכת{% endif %}</p>
-        </div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         
-        <div class="card category-form-info-card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-info-circle me-2 text-primary"></i>
-                    מידע על קטגוריות תיקון
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="category-form-info-item mb-3">
-                    <i class="fas fa-folder me-2 text-turquoise"></i>
-                    <strong class="text-white">קטגוריות מארגנות את התיקונים לפי חלקי האופניים</strong>
+        <!-- Header Section - Mobile Optimized -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+                <div class="mb-4 lg:mb-0">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text mb-2">
+                        🏷️ {{ title }}
+                        <span class="text-lg sm:text-xl lg:text-2xl text-purple-300">✨</span>
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base">
+                        {% if category %}עריכת קטגוריה קיימת במערכת הניהול{% else %}הוספת קטגוריה חדשה לארגון התיקונים{% endif %}
+                    </p>
                 </div>
-                <div class="category-form-info-item mb-3">
-                    <i class="fas fa-list-ul me-2 text-orange"></i>
-                    <strong class="text-white">לכל קטגוריה ניתן להוסיף תתי-קטגוריות ספציפיות</strong>
-                </div>
-                <div class="category-form-info-item mb-0">
-                    <i class="fas fa-wrench me-2 text-success"></i>
-                    <strong class="text-white">דוגמאות: "בלמים", "גלגלים", "הילוכים", "שרשרת"</strong>
+                
+                <!-- Navigation Badge - Hidden on mobile -->
+                <div class="hidden sm:flex justify-center lg:justify-end">
+                    <div class="bg-blue-500/20 border border-blue-400/40 rounded-xl px-3 sm:px-4 py-2">
+                        <nav class="flex items-center gap-2 text-xs sm:text-sm">
+                            <a href="{% url 'category_list' %}" class="text-blue-300 hover:text-blue-200 transition-colors">
+                                <i class="fas fa-list mr-1"></i>רשימת קטגוריות
+                            </a>
+                            <i class="fas fa-chevron-left text-slate-400"></i>
+                            <span class="text-slate-300">{% if category %}עריכה{% else %}קטגוריה חדשה{% endif %}</span>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
-        
-        <div class="card category-form-card">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-edit me-2"></i>
-                    {% if category %}עריכת קטגוריה: {{ category.name }}{% else %}פרטי הקטגוריה החדשה{% endif %}
-                </h5>
+
+        <!-- Information Card -->
+        <div class="mb-6 sm:mb-8">
+            <div class="glass-card border border-purple-400/30 rounded-2xl p-4 sm:p-6 backdrop-blur-xl bg-slate-800/40 shadow-2xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-info-circle text-purple-400 text-lg sm:text-xl"></i>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-white">מידע על קטגוריות תיקון</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-blue-500/10 border border-blue-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-blue-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-folder text-blue-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-blue-300">ארגון תיקונים</strong>
+                            <p class="text-xs text-slate-400 mt-1">לפי חלקי האופניים השונים</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-emerald-500/10 border border-emerald-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-emerald-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-list-ul text-emerald-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-emerald-300">תתי-קטגוריות</strong>
+                            <p class="text-xs text-slate-400 mt-1">פירוט ספציפי לכל קטגוריה</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start gap-3 p-3 sm:p-4 bg-amber-500/10 border border-amber-400/30 rounded-xl">
+                        <div class="flex-shrink-0 w-6 h-6 bg-amber-500/20 rounded-lg flex items-center justify-center mt-0.5">
+                            <i class="fas fa-wrench text-amber-400 text-sm"></i>
+                        </div>
+                        <div class="text-sm sm:text-base text-slate-200">
+                            <strong class="text-amber-300">דוגמאות</strong>
+                            <p class="text-xs text-slate-400 mt-1">בלמים, גלגלים, הילוכים, שרשרת</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form method="post">
+        </div>
+
+        <!-- Category Form Card -->
+        <div class="glass-card border border-slate-600/40 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl">
+            <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                <div class="flex items-center gap-3">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-edit text-white text-lg sm:text-xl"></i>
+                    </div>
+                    <h2 class="text-lg sm:text-xl font-bold text-white">
+                        {% if category %}עריכת קטגוריה: {{ category.name }}{% else %}פרטי הקטגוריה החדשה{% endif %}
+                    </h2>
+                </div>
+            </div>
+            
+            <div class="p-4 sm:p-6">
+                <form method="post" id="category-form" class="space-y-6">
                     {% csrf_token %}
                     
-                    <div class="form-group mb-4">
-                        <label class="form-label text-white" for="{{ form.name.id_for_label }}">
-                            <i class="fas fa-tag me-2 text-primary"></i>
+                    <!-- Category Name Field -->
+                    <div class="form-group">
+                        <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.name.id_for_label }}">
+                            <i class="fas fa-tag mr-2 text-purple-400"></i>
                             {{ form.name.label }}
                         </label>
-                        {{ form.name }}
+                        <div class="relative">
+                            {{ form.name }}
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="fas fa-tag text-slate-400"></i>
+                            </div>
+                        </div>
                         {% if form.name.help_text %}
-                            <div class="form-text text-white mt-2">
-                                <i class="fas fa-lightbulb me-1 text-warning"></i>
-                                {{ form.name.help_text }}
+                            <div class="mt-2 p-3 bg-yellow-500/10 border border-yellow-400/30 rounded-lg">
+                                <div class="flex items-center gap-2 text-yellow-300 text-sm">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>{{ form.name.help_text }}</span>
+                                </div>
                             </div>
                         {% endif %}
                         {% if form.name.errors %}
-                            <div class="form-error mt-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                {{ form.name.errors.0 }}
+                            <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                <div class="flex items-center gap-2 text-red-300 text-sm">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>{{ form.name.errors.0 }}</span>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
                     
+                    <!-- Description Field (if exists) -->
                     {% if form.description %}
-                    <div class="form-group mb-4">
-                        <label class="form-label text-white" for="{{ form.description.id_for_label }}">
-                            <i class="fas fa-align-left me-2 text-turquoise"></i>
+                    <div class="form-group">
+                        <label class="block text-slate-300 text-sm font-medium mb-2" for="{{ form.description.id_for_label }}">
+                            <i class="fas fa-align-left mr-2 text-blue-400"></i>
                             {{ form.description.label }}
                         </label>
-                        {{ form.description }}
+                        <div class="relative">
+                            {{ form.description }}
+                            <div class="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                                <i class="fas fa-align-left text-slate-400"></i>
+                            </div>
+                        </div>
                         {% if form.description.help_text %}
-                            <div class="form-text text-white mt-2">
-                                <i class="fas fa-info-circle me-1 text-info"></i>
-                                {{ form.description.help_text }}
+                            <div class="mt-2 p-3 bg-blue-500/10 border border-blue-400/30 rounded-lg">
+                                <div class="flex items-center gap-2 text-blue-300 text-sm">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>{{ form.description.help_text }}</span>
+                                </div>
                             </div>
                         {% endif %}
                         {% if form.description.errors %}
-                            <div class="form-error mt-2">
-                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                {{ form.description.errors.0 }}
+                            <div class="mt-2 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                <div class="flex items-center gap-2 text-red-300 text-sm">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span>{{ form.description.errors.0 }}</span>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
                     {% endif %}
                     
-                    <div class="form-actions mt-4">
-                        <button type="submit" class="btn btn-success btn-lg me-3">
-                            <i class="fas fa-save me-2"></i>
+                    <!-- Form Actions -->
+                    <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6">
+                        <button type="submit" 
+                                class="flex-1 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm sm:text-base">
+                            <i class="fas fa-save mr-2"></i>
                             {% if category %}עדכן קטגוריה{% else %}שמור קטגוריה{% endif %}
                         </button>
-                        <a href="{% url 'category_list' %}" class="btn btn-secondary btn-lg">
-                            <i class="fas fa-times me-2"></i>ביטול
+                        <a href="{% url 'category_list' %}" 
+                           class="flex-1 bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-6 rounded-xl transition-all duration-300 text-center text-sm sm:text-base border border-slate-500/30 hover:border-slate-400/50">
+                            <i class="fas fa-times mr-2"></i>
+                            ביטול
                         </a>
                     </div>
                 </form>
             </div>
         </div>
         
+        <!-- Existing Category Information (Edit Mode) -->
         {% if category %}
-        <div class="card category-existing-info-card mt-4">
-            <div class="card-header">
-                <h5 class="mb-0 text-white">
-                    <i class="fas fa-info-circle me-2 text-warning"></i>
-                    מידע על הקטגוריה הנוכחית
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="existing-category-stats">
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-list-ul text-primary"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-number">{{ category.subcategories.count }}</span>
-                            <span class="stat-label text-white">תתי-קטגוריות</span>
-                        </div>
+        <div class="mt-6 sm:mt-8">
+            <div class="glass-card border border-amber-400/30 rounded-2xl p-4 sm:p-6 backdrop-blur-xl bg-slate-800/40 shadow-2xl">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-chart-bar text-amber-400 text-lg sm:text-xl"></i>
                     </div>
-                    {% if category.subcategories.exists %}
-                    <div class="stat-item">
-                        <div class="stat-icon">
-                            <i class="fas fa-tools text-success"></i>
-                        </div>
-                        <div class="stat-content">
-                            <span class="stat-number">{{ category.total_repairs|default:0 }}</span>
-                            <span class="stat-label text-white">תיקונים</span>
-                        </div>
-                    </div>
-                    {% endif %}
+                    <h2 class="text-lg sm:text-xl font-bold text-white">מידע על הקטגוריה הנוכחית</h2>
                 </div>
                 
+                <!-- Statistics -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4 text-center">
+                        <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-list-ul text-blue-400"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-blue-300">{{ category.subcategories.count }}</div>
+                        <div class="text-xs text-slate-400">תתי-קטגוריות</div>
+                    </div>
+                    
+                    {% if category.subcategories.exists %}
+                    <div class="bg-emerald-500/10 border border-emerald-400/30 rounded-xl p-4 text-center">
+                        <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-tools text-emerald-400"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-emerald-300">{{ category.total_repairs|default:0 }}</div>
+                        <div class="text-xs text-slate-400">תיקונים</div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="bg-purple-500/10 border border-purple-400/30 rounded-xl p-4 text-center">
+                        <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-calendar text-purple-400"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-purple-300">{{ category.created_date|date:"d/m" }}</div>
+                        <div class="text-xs text-slate-400">תאריך יצירה</div>
+                    </div>
+                    
+                    <div class="bg-amber-500/10 border border-amber-400/30 rounded-xl p-4 text-center">
+                        <div class="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <i class="fas fa-star text-amber-400"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-amber-300">{{ category.priority|default:"רגיל" }}</div>
+                        <div class="text-xs text-slate-400">עדיפות</div>
+                    </div>
+                </div>
+                
+                <!-- Subcategories Preview -->
                 {% if category.subcategories.exists %}
-                <div class="existing-subcategories mt-4">
-                    <h6 class="text-white mb-3">
-                        <i class="fas fa-wrench me-2 text-success"></i>
+                <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                    <h3 class="text-white font-semibold mb-3 flex items-center gap-2">
+                        <i class="fas fa-wrench text-emerald-400"></i>
                         תתי-קטגוריות קיימות
-                    </h6>
-                    <div class="subcategories-preview">
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
                         {% for subcategory in category.subcategories.all|slice:":5" %}
-                        <span class="subcategory-preview-tag">
-                            <i class="fas fa-cog me-1"></i>
+                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-blue-500/20 border border-blue-400/30 rounded-lg text-blue-300 text-sm">
+                            <i class="fas fa-cog"></i>
                             {{ subcategory.name }}
                         </span>
                         {% endfor %}
                         {% if category.subcategories.count > 5 %}
-                        <span class="subcategory-preview-tag more-indicator">
-                            <i class="fas fa-plus me-1"></i>
+                        <span class="inline-flex items-center gap-1 px-3 py-1 bg-amber-500/20 border border-amber-400/30 rounded-lg text-amber-300 text-sm">
+                            <i class="fas fa-plus"></i>
                             +{{ category.subcategories.count|add:"-5" }} נוספות
                         </span>
                         {% endif %}
@@ -157,12 +249,286 @@
         </div>
         {% endif %}
         
-        <div class="text-center mt-4">
-            <small class="text-white category-form-help-text">
-                <i class="fas fa-lightbulb me-1"></i>
-                לאחר שמירת הקטגוריה, תוכל להוסיף תתי-קטגוריות מהרשימה הראשית
-            </small>
+        <!-- Help Text -->
+        <div class="text-center mt-6 sm:mt-8">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-400/30 rounded-xl">
+                <i class="fas fa-lightbulb text-blue-400"></i>
+                <small class="text-slate-300 text-sm">
+                    לאחר שמירת הקטגוריה, תוכל להוסיף תתי-קטגוריות מהרשימה הראשית
+                </small>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+/* Mercury Design System - Category Form Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #a855f7, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Form Input Styling */
+#category-form input,
+#category-form textarea,
+#category-form select {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+#category-form textarea {
+    padding-top: 16px;
+    min-height: 100px;
+    resize: vertical;
+}
+
+#category-form input:focus,
+#category-form textarea:focus,
+#category-form select:focus {
+    outline: none;
+    border-color: rgba(168, 85, 247, 0.6);
+    background: rgba(30, 41, 59, 0.7);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    transform: translateY(-1px);
+}
+
+#category-form input::placeholder,
+#category-form textarea::placeholder {
+    color: rgba(148, 163, 184, 0.7);
+}
+
+/* Statistics Cards Animation */
+.glass-card .grid > div {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.glass-card .grid > div:nth-child(1) { animation-delay: 0.1s; }
+.glass-card .grid > div:nth-child(2) { animation-delay: 0.2s; }
+.glass-card .grid > div:nth-child(3) { animation-delay: 0.3s; }
+.glass-card .grid > div:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Subcategory Tags Hover Effect */
+.glass-card span[class*="inline-flex"]:hover {
+    transform: scale(1.05);
+    transition: transform 0.2s ease;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+    #category-form input,
+    #category-form textarea,
+    #category-form select {
+        font-size: 16px !important;
+        min-height: 44px !important;
+    }
+    
+    .glass-card .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .glass-card:hover {
+        background: rgba(15, 23, 42, 0.5);
+        transform: translateY(-2px);
+    }
+    
+    .form-group:hover input,
+    .form-group:hover textarea {
+        border-color: rgba(71, 85, 105, 0.6);
+    }
+}
+
+/* Focus states for better accessibility */
+.form-group.focused {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation and enhancement
+    const form = document.getElementById('category-form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Add focus enhancement
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.closest('.form-group').classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.closest('.form-group').classList.remove('focused');
+        });
+    });
+    
+    // Form submission enhancement
+    form.addEventListener('submit', function(e) {
+        const submitBtn = form.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        // Add loading state
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>שומר...';
+        submitBtn.disabled = true;
+        
+        // Re-enable if form validation fails
+        setTimeout(() => {
+            if (!form.checkValidity()) {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }, 100);
+    });
+    
+    // Character counter for category name
+    const nameField = form.querySelector('input[name*="name"]');
+    if (nameField) {
+        const maxLength = nameField.getAttribute('maxlength') || 100;
+        
+        // Create character counter
+        const counter = document.createElement('div');
+        counter.className = 'text-xs text-slate-400 mt-1 text-right';
+        counter.textContent = `0/${maxLength} תווים`;
+        
+        nameField.parentElement.appendChild(counter);
+        
+        nameField.addEventListener('input', function() {
+            const currentLength = this.value.length;
+            counter.textContent = `${currentLength}/${maxLength} תווים`;
+            
+            if (currentLength > maxLength * 0.8) {
+                counter.className = 'text-xs text-amber-400 mt-1 text-right';
+            } else {
+                counter.className = 'text-xs text-slate-400 mt-1 text-right';
+            }
+        });
+    }
+    
+    // Real-time validation
+    const validateField = (field) => {
+        if (field.value.trim() === '' && field.hasAttribute('required')) {
+            field.style.borderColor = 'rgba(239, 68, 68, 0.6)';
+            return false;
+        } else if (field.value.trim() !== '') {
+            field.style.borderColor = 'rgba(168, 85, 247, 0.6)';
+            return true;
+        }
+        return true;
+    };
+    
+    // Real-time validation on input
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                validateField(this);
+            }
+        });
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl+S to save
+        if (e.ctrlKey && e.key === 's') {
+            e.preventDefault();
+            form.submit();
+        }
+        
+        // Escape to cancel
+        if (e.key === 'Escape') {
+            const cancelBtn = document.querySelector('a[href*="category_list"]');
+            if (cancelBtn) {
+                window.location.href = cancelBtn.href;
+            }
+        }
+    });
+    
+    // Auto-focus first input
+    const firstInput = form.querySelector('input');
+    if (firstInput) {
+        firstInput.focus();
+    }
+    
+    // Animate statistics cards on page load
+    const statsCards = document.querySelectorAll('.glass-card .grid > div');
+    statsCards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+        }, (index + 1) * 100);
+    });
+    
+    // Category name suggestions (if creating new category)
+    const isNewCategory = !document.querySelector('h2').textContent.includes('עריכת');
+    if (isNewCategory && nameField) {
+        const suggestions = [
+            'בלמים', 'גלגלים', 'הילוכים', 'שרשרת', 'כידון', 'אוכף', 
+            'חישוקים', 'צמיגים', 'בולמים', 'פדלים', 'כבלים', 'מנורות'
+        ];
+        
+        // Create suggestions container
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.className = 'mt-2 flex flex-wrap gap-2';
+        suggestionsContainer.innerHTML = '<div class="text-xs text-slate-400 w-full mb-1">הצעות לקטגוריות:</div>';
+        
+        suggestions.forEach(suggestion => {
+            const suggestionBtn = document.createElement('button');
+            suggestionBtn.type = 'button';
+            suggestionBtn.className = 'px-2 py-1 bg-purple-500/20 border border-purple-400/30 rounded-lg text-purple-300 text-xs hover:bg-purple-500/30 transition-colors';
+            suggestionBtn.textContent = suggestion;
+            suggestionBtn.addEventListener('click', () => {
+                nameField.value = suggestion;
+                nameField.focus();
+                validateField(nameField);
+            });
+            suggestionsContainer.appendChild(suggestionBtn);
+        });
+        
+        nameField.parentElement.appendChild(suggestionsContainer);
+        
+        // Hide suggestions when user starts typing
+        nameField.addEventListener('input', function() {
+            if (this.value.length > 0) {
+                suggestionsContainer.style.display = 'none';
+            } else {
+                suggestionsContainer.style.display = 'block';
+            }
+        });
+    }
+});
+</script>
+
 {% endblock %}

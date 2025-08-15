@@ -3,221 +3,680 @@
 {% block title %}גיבוי נתונים{% endblock %}
 
 {% block content %}
-<div class="text-center mt-4 mb-5">
-    <h1 class="text-white">💾 גיבוי נתוני המוסך</h1>
-    <p class="text-white">יצוא וגיבוי של כל נתוני הלקוחות, האופניים והתיקונים</p>
-</div>
-
-<div class="row">
-    <div class="col-md-8 mx-auto">
-        <!-- סטטיסטיקות כלליות -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card bg-primary text-white text-center">
-                    <div class="card-body">
-                        <i class="fas fa-users fa-2x mb-2"></i>
-                        <h4>{{ customers_count }}</h4>
-                        <small>לקוחות</small>
-                    </div>
-                </div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="mb-6">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                    💾 גיבוי נתוני המוסך
+                    <span class="text-2xl sm:text-3xl lg:text-4xl text-purple-300">🔒</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-3xl mx-auto leading-relaxed">
+                    יצוא וגיבוי של כל נתוני הלקוחות, האופניים והתיקונים במערכת
+                </p>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-success text-white text-center">
-                    <div class="card-body">
-                        <i class="fas fa-bicycle fa-2x mb-2"></i>
-                        <h4>{{ bikes_count }}</h4>
-                        <small>אופניים</small>
-                    </div>
+        </div>
+        
+        <!-- Statistics Overview -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
+            <!-- Customers -->
+            <div class="stat-card glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 p-4 sm:p-6 text-center hover:border-blue-400/50 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-users text-white text-2xl"></i>
                 </div>
+                <div class="text-2xl sm:text-3xl font-bold text-blue-300 mb-2" data-count="{{ customers_count }}">{{ customers_count|default:"0" }}</div>
+                <div class="text-slate-400 text-sm font-medium">לקוחות</div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-info text-white text-center">
-                    <div class="card-body">
-                        <i class="fas fa-wrench fa-2x mb-2"></i>
-                        <h4>{{ repairs_count }}</h4>
-                        <small>תיקונים</small>
-                    </div>
+            
+            <!-- Bikes -->
+            <div class="stat-card glass-card border border-green-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 p-4 sm:p-6 text-center hover:border-green-400/50 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-bicycle text-white text-2xl"></i>
                 </div>
+                <div class="text-2xl sm:text-3xl font-bold text-green-300 mb-2" data-count="{{ bikes_count }}">{{ bikes_count|default:"0" }}</div>
+                <div class="text-slate-400 text-sm font-medium">אופניים</div>
             </div>
-            <div class="col-md-3">
-                <div class="card bg-warning text-white text-center">
-                    <div class="card-body">
-                        <i class="fas fa-cogs fa-2x mb-2"></i>
-                        <h4>{{ active_repairs }}</h4>
-                        <small>פעילים</small>
-                    </div>
+            
+            <!-- Repairs -->
+            <div class="stat-card glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 p-4 sm:p-6 text-center hover:border-purple-400/50 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-wrench text-white text-2xl"></i>
                 </div>
+                <div class="text-2xl sm:text-3xl font-bold text-purple-300 mb-2" data-count="{{ repairs_count }}">{{ repairs_count|default:"0" }}</div>
+                <div class="text-slate-400 text-sm font-medium">תיקונים</div>
+            </div>
+            
+            <!-- Active Repairs -->
+            <div class="stat-card glass-card border border-orange-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 p-4 sm:p-6 text-center hover:border-orange-400/50 transition-all duration-300">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas fa-cogs text-white text-2xl"></i>
+                </div>
+                <div class="text-2xl sm:text-3xl font-bold text-orange-300 mb-2" data-count="{{ active_repairs }}">{{ active_repairs|default:"0" }}</div>
+                <div class="text-slate-400 text-sm font-medium">פעילים</div>
             </div>
         </div>
 
-        <!-- אפשרויות גיבוי -->
-        <div class="card bg-dark border-info mb-4">
-            <div class="card-header bg-info text-dark">
-                <h5 class="mb-0">
-                    <i class="fas fa-download me-2"></i>
-                    אפשרויות גיבוי
-                </h5>
-            </div>
-            <div class="card-body">
-                <!-- גיבוי מלא לקוחות -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <h6 class="text-white">
-                            <i class="fas fa-file-excel text-success me-2"></i>
-                            גיבוי מלא - נתוני לקוחות, אופניים ותיקונים
-                        </h6>
-                        <p class="text-muted mb-0">
-                            קובץ Excel עם 4 גיליונות: לקוחות, אופניים, תיקונים וסטטיסטיקות.
-                            כולל את כל הנתונים במערכת.
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <a href="{% url 'backup_customer_data' %}" class="btn btn-success btn-lg">
-                            <i class="fas fa-download me-2"></i>
-                            הורד גיבוי מלא
-                        </a>
+        <!-- Main Content -->
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Backup Options -->
+            <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl mb-8">
+                <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center shadow-lg">
+                            <i class="fas fa-download text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl sm:text-2xl font-bold text-white">אפשרויות גיבוי</h2>
+                            <p class="text-slate-400 text-sm">בחר את סוג הגיבוי המתאים לך</p>
+                        </div>
                     </div>
                 </div>
-
-                <!-- גיבוי CSV פשוט -->
-                <div class="row mb-4">
-                    <div class="col-md-8">
-                        <h6 class="text-white">
-                            <i class="fas fa-file-csv text-info me-2"></i>
-                            גיבוי מהיר - לקוחות בלבד (CSV)
-                        </h6>
-                        <p class="text-muted mb-0">
-                            קובץ CSV פשוט עם נתוני לקוחות בסיסיים. מתאים לייבוא לתוכנות אחרות
-                            או לעיון מהיר.
-                        </p>
+                
+                <div class="p-4 sm:p-6 space-y-6">
+                    
+                    <!-- Full Backup -->
+                    <div class="backup-option glass-card border border-green-400/30 rounded-xl p-4 sm:p-6 hover:border-green-400/50 transition-all duration-300">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-excel text-green-400 text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-white">גיבוי מלא - נתוני לקוחות, אופניים ותיקונים</h3>
+                                </div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    קובץ Excel עם 4 גיליונות: לקוחות, אופניים, תיקונים וסטטיסטיקות.<br>
+                                    כולל את כל הנתונים במערכת במבנה מסודר ונוח לעיון.
+                                </p>
+                                <div class="flex items-center gap-4 mt-3">
+                                    <span class="bg-green-500/20 border border-green-400/30 rounded-lg px-3 py-1 text-green-300 text-xs font-medium">
+                                        מומלץ
+                                    </span>
+                                    <span class="text-slate-400 text-xs">פורמט: Excel (.xlsx)</span>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <a href="{% url 'backup_customer_data' %}" 
+                                   class="backup-btn bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2">
+                                    <i class="fas fa-download"></i>
+                                    <span>הורד גיבוי מלא</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <a href="{% url 'backup_customers_csv' %}" class="btn btn-info btn-lg">
-                            <i class="fas fa-download me-2"></i>
-                            הורד CSV מהיר
-                        </a>
+                    
+                    <!-- CSV Backup -->
+                    <div class="backup-option glass-card border border-cyan-400/30 rounded-xl p-4 sm:p-6 hover:border-cyan-400/50 transition-all duration-300">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-file-csv text-cyan-400 text-lg"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-white">גיבוי מהיר - לקוחות בלבד (CSV)</h3>
+                                </div>
+                                <p class="text-slate-300 text-sm leading-relaxed">
+                                    קובץ CSV פשוט עם נתוני לקוחות בסיסיים. מתאים לייבוא לתוכנות אחרות<br>
+                                    או לעיון מהיר ללא צורך בתוכנת אקסל.
+                                </p>
+                                <div class="flex items-center gap-4 mt-3">
+                                    <span class="bg-cyan-500/20 border border-cyan-400/30 rounded-lg px-3 py-1 text-cyan-300 text-xs font-medium">
+                                        מהיר
+                                    </span>
+                                    <span class="text-slate-400 text-xs">פורמט: CSV (.csv)</span>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <a href="{% url 'backup_customers_csv' %}" 
+                                   class="backup-btn bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2">
+                                    <i class="fas fa-download"></i>
+                                    <span>הורד CSV מהיר</span>
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <!-- הפרדה -->
-                <hr class="border-secondary">
-
-                <!-- אפשרויות נוספות (לעתיד) -->
-                <div class="row mb-3">
-                    <div class="col-md-8">
-                        <h6 class="text-white">
-                            <i class="fas fa-database text-warning me-2"></i>
-                            גיבוי מסד נתונים מלא
-                        </h6>
-                        <p class="text-muted mb-0">
-                            גיבוי טכני מלא של מסד הנתונים (דורש הרשאות מנהל מערכת).
-                            <small class="text-info">בפיתוח</small>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button class="btn btn-secondary btn-lg" disabled>
-                            <i class="fas fa-clock me-2"></i>
-                            בקרוב
-                        </button>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-8">
-                        <h6 class="text-white">
-                            <i class="fas fa-calendar text-info me-2"></i>
-                            גיבוי אוטומטי יומי
-                        </h6>
-                        <p class="text-muted mb-0">
-                            הגדרת גיבויים אוטומטיים שיופעלו באופן קבוע.
-                            <small class="text-info">בפיתוח</small>
-                        </p>
-                    </div>
-                    <div class="col-md-4 text-end">
-                        <button class="btn btn-secondary btn-lg" disabled>
-                            <i class="fas fa-clock me-2"></i>
-                            בקרוב
-                        </button>
+                    
+                    <!-- Future Options -->
+                    <div class="border-t border-slate-600/30 pt-6">
+                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                            <i class="fas fa-clock text-orange-400"></i>
+                            אפשרויות עתידיות
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- Database Backup -->
+                            <div class="future-option glass-card border border-slate-600/30 rounded-xl p-4 opacity-60">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-database text-yellow-400"></i>
+                                    </div>
+                                    <h5 class="text-white font-medium">גיבוי מסד נתונים מלא</h5>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">
+                                    גיבוי טכני מלא של מסד הנתונים (דורש הרשאות מנהל מערכת).
+                                </p>
+                                <button class="bg-slate-600/50 text-slate-400 font-medium py-2 px-4 rounded-lg text-sm cursor-not-allowed" disabled>
+                                    <i class="fas fa-clock mr-2"></i>בפיתוח
+                                </button>
+                            </div>
+                            
+                            <!-- Auto Backup -->
+                            <div class="future-option glass-card border border-slate-600/30 rounded-xl p-4 opacity-60">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-calendar text-blue-400"></i>
+                                    </div>
+                                    <h5 class="text-white font-medium">גיבוי אוטומטי יומי</h5>
+                                </div>
+                                <p class="text-slate-400 text-sm mb-3">
+                                    הגדרת גיבויים אוטומטיים שיופעלו באופן קבוע.
+                                </p>
+                                <button class="bg-slate-600/50 text-slate-400 font-medium py-2 px-4 rounded-lg text-sm cursor-not-allowed" disabled>
+                                    <i class="fas fa-clock mr-2"></i>בקרוב
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <!-- מידע חשוב -->
-        <div class="card bg-dark border-warning">
-            <div class="card-header bg-warning text-dark">
-                <h6 class="mb-0">
-                    <i class="fas fa-exclamation-triangle me-2"></i>
-                    מידע חשוב על גיבויים
-                </h6>
-            </div>
-            <div class="card-body">
-                <ul class="text-white mb-0" style="font-size: 14px;">
-                    <li><strong>תדירות מומלצת:</strong> בצע גיבוי לפחות פעם בשבוע</li>
-                    <li><strong>אחסון בטוח:</strong> שמור את קבצי הגיבוי במקום נפרד מהמחשב הראשי</li>
-                    <li><strong>בדיקה:</strong> בדוק מדי פעם שקבצי הגיבוי נפתחים כראוי</li>
-                    <li><strong>פרטיות:</strong> קבצי הגיבוי מכילים מידע רגיש - שמור אותם בבטחה</li>
-                    <li><strong>פורמט:</strong> הגיבוי ייצא כקובץ Excel שניתן לפתוח בכל מחשב</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- הוראות שימוש -->
-        <div class="card bg-dark border-info mt-4">
-            <div class="card-header bg-info text-dark">
-                <h6 class="mb-0">
-                    <i class="fas fa-question-circle me-2"></i>
-                    איך להשתמש בגיבוי
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-info">ליצירת גיבוי:</h6>
-                        <ol class="text-white" style="font-size: 14px;">
-                            <li>לחץ על "הורד גיבוי מלא"</li>
-                            <li>הקובץ יורד אוטומטיות למחשב</li>
-                            <li>שמור את הקובץ במקום בטוח</li>
-                        </ol>
+            
+            <!-- Important Information -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Security Tips -->
+                <div class="glass-card border border-amber-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-xl">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-amber-400"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">מידע חשוב על גיבויים</h3>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <h6 class="text-info">לשחזור נתונים:</h6>
-                        <ol class="text-white" style="font-size: 14px;">
-                            <li>פתח את קובץ הגיבוי</li>
-                            <li>בחר את הגיליון הרלוונטי</li>
-                            <li>העתק את הנתונים הדרושים</li>
-                        </ol>
+                    <div class="p-4 sm:p-6">
+                        <ul class="space-y-3 text-slate-300 text-sm">
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-calendar-check text-amber-400 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-white">תדירות מומלצת:</strong><br>
+                                    בצע גיבוי לפחות פעם בשבוע
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-shield-alt text-amber-400 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-white">אחסון בטוח:</strong><br>
+                                    שמור את קבצי הגיבוי במקום נפרד מהמחשב הראשי
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-check-double text-amber-400 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-white">בדיקה:</strong><br>
+                                    בדוק מדי פעם שקבצי הגיבוי נפתחים כראוי
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fas fa-lock text-amber-400 mt-1 flex-shrink-0"></i>
+                                <div>
+                                    <strong class="text-white">פרטיות:</strong><br>
+                                    קבצי הגיבוי מכילים מידע רגיש - שמור אותם בבטחה
+                                </div>
+                            </li>
+                        </ul>
                     </div>
                 </div>
+                
+                <!-- Usage Instructions -->
+                <div class="glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-xl">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-question-circle text-blue-400"></i>
+                            </div>
+                            <h3 class="text-lg font-bold text-white">איך להשתמש בגיבוי</h3>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="grid grid-cols-1 gap-6">
+                            <div>
+                                <h4 class="text-blue-300 font-semibold mb-3 flex items-center gap-2">
+                                    <i class="fas fa-download"></i>
+                                    ליצירת גיבוי:
+                                </h4>
+                                <ol class="space-y-2 text-slate-300 text-sm">
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 text-xs font-bold">1</span>
+                                        לחץ על "הורד גיבוי מלא"
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 text-xs font-bold">2</span>
+                                        הקובץ יורד אוטומטית למחשב
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-blue-500/20 rounded-full flex items-center justify-center text-blue-300 text-xs font-bold">3</span>
+                                        שמור את הקובץ במקום בטוח
+                                    </li>
+                                </ol>
+                            </div>
+                            
+                            <div>
+                                <h4 class="text-blue-300 font-semibold mb-3 flex items-center gap-2">
+                                    <i class="fas fa-undo"></i>
+                                    לשחזור נתונים:
+                                </h4>
+                                <ol class="space-y-2 text-slate-300 text-sm">
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center text-green-300 text-xs font-bold">1</span>
+                                        פתח את קובץ הגיבוי
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center text-green-300 text-xs font-bold">2</span>
+                                        בחר את הגיליון הרלוונטי
+                                    </li>
+                                    <li class="flex items-center gap-2">
+                                        <span class="w-5 h-5 bg-green-500/20 rounded-full flex items-center justify-center text-green-300 text-xs font-bold">3</span>
+                                        העתק את הנתונים הדרושים
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="text-center">
+                <a href="{% url 'manager_dashboard' %}" 
+                   class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50 inline-flex items-center gap-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>חזרה לדשבורד מנהל</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-.card {
-    transition: transform 0.2s;
+/* Mercury Design System - Backup Menu Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
-.card:hover {
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* Statistics Cards */
+.stat-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Backup Options */
+.backup-option {
+    transition: all 0.3s ease;
+}
+
+.backup-option:hover {
     transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
 }
 
-.btn-lg {
-    padding: 12px 24px;
-    font-size: 16px;
+.backup-btn {
+    position: relative;
+    overflow: hidden;
 }
 
-.card-body i.fa-2x {
-    margin-bottom: 10px;
+.backup-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
 }
 
-.border-info {
-    border-color: #17a2b8 !important;
+.backup-btn:hover::before {
+    left: 100%;
 }
 
-.border-warning {
-    border-color: #ffc107 !important;
+/* Future Options */
+.future-option {
+    filter: grayscale(0.3);
+    transition: all 0.3s ease;
+}
+
+.future-option:hover {
+    filter: grayscale(0);
+    transform: translateY(-1px);
+}
+
+/* Progress Indicators */
+.download-progress {
+    height: 4px;
+    background: rgba(71, 85, 105, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+.download-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #06b6d4);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .glass-card {
+        backdrop-filter: blur(12px);
+    }
+    
+    .backup-option {
+        padding: 1rem;
+    }
+    
+    .stat-card {
+        padding: 1rem;
+    }
+}
+
+/* Enhanced hover effects for larger screens */
+@media (min-width: 1024px) {
+    .backup-option:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Loading state */
+.backup-btn.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.backup-btn.loading i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('💾 Backup menu with Mercury design loaded');
+    
+    // Animate statistics counters
+    const statCards = document.querySelectorAll('.stat-card');
+    const animateCounters = () => {
+        console.log('Starting counter animation...');
+        statCards.forEach((card, index) => {
+            const counter = card.querySelector('[data-count]');
+            if (!counter) {
+                console.log(`No counter found for card ${index}`);
+                return;
+            }
+            
+            const finalCount = parseInt(counter.getAttribute('data-count')) || 0;
+            console.log(`Card ${index}: Final count = ${finalCount}, current text = "${counter.textContent}"`);
+            
+            // If finalCount is 0, just set it directly
+            if (finalCount === 0) {
+                counter.textContent = '0';
+                return;
+            }
+            
+            let currentCount = 0;
+            const increment = Math.max(1, Math.ceil(finalCount / 30));
+            const duration = 1500; // Total animation duration
+            const steps = Math.ceil(finalCount / increment);
+            const stepTime = Math.max(50, duration / steps); // Minimum 50ms per step
+            
+            console.log(`Animating card ${index}: increment=${increment}, steps=${steps}, stepTime=${stepTime}`);
+            
+            const timer = setInterval(() => {
+                currentCount += increment;
+                if (currentCount >= finalCount) {
+                    currentCount = finalCount;
+                    clearInterval(timer);
+                }
+                counter.textContent = currentCount.toLocaleString();
+                
+                // Add animation class
+                counter.style.animation = 'countUp 0.3s ease-out';
+            }, stepTime);
+        });
+    };
+    
+    // Trigger counter animation when statistics are visible
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                setTimeout(animateCounters, 300);
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+    
+    const statsContainer = document.querySelector('.grid.grid-cols-2.lg\\:grid-cols-4');
+    if (statsContainer) {
+        observer.observe(statsContainer);
+    }
+    
+    // Enhanced backup buttons
+    const backupButtons = document.querySelectorAll('.backup-btn');
+    backupButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Add loading state
+            this.classList.add('loading');
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>מכין גיבוי...';
+            
+            // Create progress bar
+            const progressContainer = document.createElement('div');
+            progressContainer.className = 'download-progress';
+            const progressBar = document.createElement('div');
+            progressBar.className = 'download-progress-bar';
+            progressContainer.appendChild(progressBar);
+            
+            // Add progress bar after button
+            this.parentNode.appendChild(progressContainer);
+            
+            // Simulate download progress
+            let progress = 0;
+            const progressTimer = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressTimer);
+                    
+                    // Show success message
+                    setTimeout(() => {
+                        this.classList.remove('loading');
+                        this.innerHTML = '<i class="fas fa-check mr-2"></i>הורד בהצלחה!';
+                        progressContainer.remove();
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                        }, 2000);
+                    }, 500);
+                }
+                progressBar.style.width = progress + '%';
+            }, 200);
+            
+            // Remove progress bar if download fails
+            setTimeout(() => {
+                if (document.body.contains(progressContainer)) {
+                    progressContainer.remove();
+                    this.classList.remove('loading');
+                    this.innerHTML = originalText;
+                }
+            }, 10000);
+            
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.className = 'ripple';
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+    
+    // Hover effects for backup options
+    const backupOptions = document.querySelectorAll('.backup-option');
+    backupOptions.forEach(option => {
+        option.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 12px 20px rgba(0, 0, 0, 0.15)';
+        });
+        
+        option.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + B for full backup
+        if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+            e.preventDefault();
+            const fullBackupBtn = document.querySelector('a[href*="backup_customer_data"]');
+            if (fullBackupBtn) fullBackupBtn.click();
+        }
+        
+        // Ctrl/Cmd + Shift + B for CSV backup
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'B') {
+            e.preventDefault();
+            const csvBackupBtn = document.querySelector('a[href*="backup_customers_csv"]');
+            if (csvBackupBtn) csvBackupBtn.click();
+        }
+        
+        // Escape to go back
+        if (e.key === 'Escape') {
+            const backBtn = document.querySelector('a[href*="manager_dashboard"]');
+            if (backBtn) backBtn.click();
+        }
+    });
+    
+    // Add tooltips for keyboard shortcuts
+    const addTooltip = (element, text) => {
+        element.setAttribute('title', text);
+        element.setAttribute('data-tooltip', text);
+    };
+    
+    const fullBackupBtn = document.querySelector('a[href*="backup_customer_data"]');
+    const csvBackupBtn = document.querySelector('a[href*="backup_customers_csv"]');
+    
+    if (fullBackupBtn) addTooltip(fullBackupBtn, 'קיצור דרך: Ctrl+B');
+    if (csvBackupBtn) addTooltip(csvBackupBtn, 'קיצור דרך: Ctrl+Shift+B');
+    
+    // Show backup tips on first visit
+    const hasSeenTips = localStorage.getItem('backup_tips_seen');
+    if (!hasSeenTips) {
+        setTimeout(() => {
+            const tipsCard = document.querySelector('.border-amber-400\\/30');
+            if (tipsCard) {
+                tipsCard.style.animation = 'pulse 2s 3';
+                tipsCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                localStorage.setItem('backup_tips_seen', 'true');
+            }
+        }, 2000);
+    }
+    
+    console.log('✅ Backup menu ready with Mercury design');
+});
+
+// Add ripple effect CSS
+const style = document.createElement('style');
+style.textContent = \`
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+\`;
+document.head.appendChild(style);
+</script>
 {% endblock %}
+        50% { transform: scale(1.05); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+

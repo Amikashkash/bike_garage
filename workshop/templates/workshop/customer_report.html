@@ -3,58 +3,140 @@
 {% block title %}דיווח תקלה חדשה{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="text-center mt-4 mb-5">
-            <h1 class="text-white">🚲 דיווח תקלה באופניים</h1>
-            <p class="text-white">בחר את האופניים והקטגוריות הרלוונטיות לתקלה</p>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-900 to-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        
+        <!-- Header Section -->
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="mb-6">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                    🚲 דיווח תקלה באופניים
+                    <span class="text-2xl sm:text-3xl lg:text-4xl text-emerald-300">🔧</span>
+                </h1>
+                <p class="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    בחר את האופניים והקטגוריות הרלוונטיות לתקלה שלך
+                </p>
+            </div>
+            
+            <!-- Progress Indicator -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-slate-800/40 border border-emerald-400/30 rounded-2xl px-4 py-2 backdrop-blur-xl">
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-emerald-400 rounded-full"></div>
+                            <span class="text-emerald-300 font-medium">דיווח חדש</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-slate-400"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-slate-600 rounded-full"></div>
+                            <span class="text-slate-400">בדיקה</span>
+                        </div>
+                        <i class="fas fa-chevron-left text-slate-400"></i>
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 bg-slate-600 rounded-full"></div>
+                            <span class="text-slate-400">תיקון</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div style="max-width: 800px; margin: 0 auto;">
-            <form method="post" id="repairForm">
+        <div class="customer-report-container">
+            <form method="post" id="repairForm" class="space-y-6">
                 {% csrf_token %}
                 
                 <!-- בחירת אופניים -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
-                            <i class="fas fa-bicycle me-2"></i>
-                            בחר אופניים:
-                        </h5>
-                        {{ form.bike }}
+                <div class="glass-card border border-emerald-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-bicycle text-emerald-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <h2 class="text-lg sm:text-xl font-bold text-white">בחירת אופניים</h2>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="form-group">
+                            <label class="block text-white font-semibold mb-3 flex items-center gap-2">
+                                <i class="fas fa-bicycle text-emerald-400"></i>
+                                בחר את האופניים שלך
+                            </label>
+                            <div class="relative">
+                                {{ form.bike }}
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-slate-400"></i>
+                                </div>
+                            </div>
+                            <div class="mt-3 p-3 bg-emerald-500/10 border border-emerald-400/30 rounded-lg">
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-info-circle text-emerald-400 mt-0.5"></i>
+                                    <span class="text-emerald-200 text-sm">אם האופניים שלך לא מופיעים ברשימה, פנה למוסך להוספתם</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- קטגוריות תקלה -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
-                            <i class="fas fa-tools me-2"></i>
-                            בחר סוג התקלה:
-                        </h5>
-                        <p class="text-white mb-4">
-                            <i class="fas fa-info-circle me-1"></i>
-                            לחץ על קטגוריה כדי לפתוח ולראות את תתי הקטגוריות.
-                        </p>
+                <div class="glass-card border border-amber-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-tools text-amber-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <h2 class="text-lg sm:text-xl font-bold text-white">סוג התקלה</h2>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="mb-4 p-4 bg-blue-500/10 border border-blue-400/30 rounded-lg">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-lightbulb text-blue-400 mt-0.5"></i>
+                                <div class="text-blue-200 text-sm leading-relaxed">
+                                    <strong>טיפ:</strong> לחץ על קטגוריה כדי לפתוח ולראות את תתי הקטגוריות. בחר את כל הקטגוריות הרלוונטיות לתקלה שלך.
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="row">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {% for cat in categories %}
-                            <div class="col-md-6 mb-3">
-                                <div class="card card-light-bg">
-                                    <div class="card-body p-3">
-                                        <label class="text-white mb-2 d-flex align-items-center category-label" style="cursor: pointer; font-weight: bold;">
-                                            <input type="checkbox" class="category-checkbox form-check-input me-2" data-cat-id="{{ cat.id }}">
-                                            <i class="fas fa-folder me-2 text-warning"></i>
-                                            {{ cat.name }}
-                                        </label>
-                                        
-                                        <div id="subcat-list-{{ cat.id }}" style="display: none;" class="mt-3">
+                            <div class="category-item">
+                                <div class="category-card bg-slate-700/30 border border-slate-600/40 rounded-xl overflow-hidden transition-all duration-300 hover:border-amber-400/50">
+                                    <!-- Category Header -->
+                                    <div class="category-header p-4 border-b border-slate-600/30 cursor-pointer">
+                                        <div class="flex items-center gap-3">
+                                            <div class="relative" onclick="event.stopPropagation();">
+                                                <input type="checkbox" class="category-checkbox sr-only" data-cat-id="{{ cat.id }}">
+                                                <div class="checkbox-visual w-5 h-5 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300">
+                                                    <i class="fas fa-check text-white text-xs opacity-0 transition-opacity duration-300"></i>
+                                                </div>
+                                            </div>
+                                            <div class="category-content flex items-center gap-2 flex-1">
+                                                <i class="fas fa-folder text-amber-400"></i>
+                                                <span class="text-white font-medium">{{ cat.name }}</span>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">לחץ לפתיחה</span>
+                                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Subcategories List -->
+                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list max-h-0 overflow-hidden transition-all duration-300">
+                                        <div class="p-4 space-y-3">
                                             {% for sub in cat.subcategories.all %}
-                                            <div class="form-check mb-2">
-                                                <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="form-check-input subcategory-checkbox" id="sub-{{ sub.id }}">
-                                                <label class="form-check-label text-white subcategory-label" for="sub-{{ sub.id }}">
-                                                    <i class="fas fa-wrench me-1 text-success"></i>
-                                                    {{ sub.name }}
+                                            <div class="subcategory-item">
+                                                <label class="subcategory-label flex items-center gap-3 p-3 bg-slate-800/50 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-300 hover:border-green-400/50 hover:bg-slate-700/50">
+                                                    <div class="relative">
+                                                        <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="subcategory-checkbox sr-only" id="sub-{{ sub.id }}">
+                                                        <div class="checkbox-visual w-4 h-4 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300">
+                                                            <i class="fas fa-check text-white text-xs opacity-0 transition-opacity duration-300"></i>
+                                                        </div>
+                                                    </div>
+                                                    <div class="subcategory-content flex items-center gap-2 flex-1">
+                                                        <i class="fas fa-wrench text-green-400 text-sm"></i>
+                                                        <span class="text-slate-200 text-sm">{{ sub.name }}</span>
+                                                    </div>
                                                 </label>
                                             </div>
                                             {% endfor %}
@@ -68,50 +150,554 @@
                 </div>
                 
                 <!-- תיאור חופשי -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="text-white mb-3">
-                            <i class="fas fa-edit me-2"></i>
-                            תיאור נוסף (אופציונלי):
-                        </h5>
-                        {{ form.problem_description }}
+                <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-edit text-purple-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <h2 class="text-lg sm:text-xl font-bold text-white">תיאור נוסף</h2>
+                            <span class="text-sm text-slate-400 bg-slate-700/30 px-2 py-1 rounded-lg">אופציונלי</span>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="form-group">
+                            <label class="block text-white font-semibold mb-3 flex items-center gap-2">
+                                <i class="fas fa-comment-alt text-purple-400"></i>
+                                תאר את התקלה במילים שלך
+                            </label>
+                            <div class="relative">
+                                {{ form.problem_description }}
+                                <div class="absolute bottom-3 left-3 text-xs text-slate-400" id="char-counter">
+                                    0 / 500 תווים
+                                </div>
+                            </div>
+                            <div class="mt-3 p-3 bg-purple-500/10 border border-purple-400/30 rounded-lg">
+                                <div class="flex items-start gap-2">
+                                    <i class="fas fa-info-circle text-purple-400 mt-0.5"></i>
+                                    <span class="text-purple-200 text-sm">תאר מתי התקלה מתרחשת, איך היא משפיעה על הרכיבה, וכל פרט נוסף שעלול לעזור</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- כפתור שליחה -->
-                <div class="text-center">
-                    <button type="submit" class="btn btn-orange btn-lg px-5 py-3">
-                        <i class="fas fa-paper-plane me-2"></i>
+                <!-- Summary Section -->
+                <div id="report-summary" class="glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden" style="display: none;">
+                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
+                        <div class="flex items-center gap-3">
+                            <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
+                                <i class="fas fa-clipboard-list text-blue-400 text-lg sm:text-xl"></i>
+                            </div>
+                            <h2 class="text-lg sm:text-xl font-bold text-white">סיכום הדיווח</h2>
+                        </div>
+                    </div>
+                    <div class="p-4 sm:p-6">
+                        <div class="space-y-4">
+                            <div id="selected-bike" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3" style="display: none;">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <i class="fas fa-bicycle text-emerald-400"></i>
+                                    <span class="text-white font-medium">אופניים:</span>
+                                    <span id="bike-name" class="text-slate-300"></span>
+                                </div>
+                            </div>
+                            <div id="selected-categories" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3" style="display: none;">
+                                <div class="flex items-start gap-2 text-sm">
+                                    <i class="fas fa-tags text-amber-400 mt-0.5"></i>
+                                    <div>
+                                        <span class="text-white font-medium">קטגוריות נבחרות:</span>
+                                        <div id="categories-list" class="mt-1 space-y-1"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <div class="text-center pt-6">
+                    <button type="submit" 
+                            class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            id="submit-btn"
+                            disabled>
+                        <i class="fas fa-paper-plane mr-2"></i>
                         שלח דיווח תקלה
                     </button>
+                    <p class="text-slate-400 text-sm mt-3">הדיווח יישלח למוסך לבדיקה ויצירת הצעת מחיר</p>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<style>
+/* Mercury Design System - Customer Report Specific Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #10b981, #059669, #047857);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    transform: translateY(-2px);
+    transition: all 0.3s ease;
+}
+
+/* Form Controls Styling */
+#repairForm select,
+#repairForm textarea {
+    width: 100%;
+    background: rgba(51, 65, 85, 0.5) !important;
+    border: 2px solid rgba(71, 85, 105, 0.5) !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem 1rem !important;
+    color: white !important;
+    font-size: 0.875rem !important;
+    transition: all 0.3s ease !important;
+}
+
+#repairForm select:focus,
+#repairForm textarea:focus {
+    outline: none !important;
+    border-color: rgba(16, 185, 129, 0.6) !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+    background: rgba(51, 65, 85, 0.7) !important;
+}
+
+#repairForm textarea {
+    resize: vertical !important;
+    min-height: 100px !important;
+    padding-bottom: 2rem !important;
+}
+
+/* Category Card Styling */
+.category-card {
+    transition: all 0.3s ease;
+}
+
+.category-card:hover {
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+.category-card.expanded {
+    border-color: rgba(245, 158, 11, 0.6) !important;
+    background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.category-card.expanded .category-header i:last-child {
+    transform: rotate(180deg);
+}
+
+.category-header {
+    transition: all 0.3s ease;
+}
+
+.category-header:hover {
+    background: rgba(245, 158, 11, 0.05) !important;
+}
+
+.category-header:hover .text-slate-400 {
+    color: rgb(245, 158, 11) !important;
+}
+
+.subcategories-list {
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.subcategories-list.show {
+    max-height: 500px !important;
+    opacity: 1;
+}
+
+/* Checkbox Styling */
+.category-checkbox:checked + .checkbox-visual,
+.subcategory-checkbox:checked + .checkbox-visual {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border-color: #10b981 !important;
+}
+
+.category-checkbox:checked + .checkbox-visual i,
+.subcategory-checkbox:checked + .checkbox-visual i {
+    opacity: 1 !important;
+}
+
+/* Subcategory Selection */
+.subcategory-item.selected .subcategory-label {
+    background: rgba(34, 197, 94, 0.1) !important;
+    border-color: rgba(34, 197, 94, 0.6) !important;
+}
+
+/* Form Animations */
+.glass-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.glass-card:nth-child(1) { animation-delay: 0.1s; }
+.glass-card:nth-child(2) { animation-delay: 0.2s; }
+.glass-card:nth-child(3) { animation-delay: 0.3s; }
+.glass-card:nth-child(4) { animation-delay: 0.4s; }
+.glass-card:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+    .glass-card {
+        backdrop-filter: blur(12px);
+    }
+    
+    .category-card,
+    .subcategory-label {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Responsive hover effects */
+@media (min-width: 1024px) {
+    .glass-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Form submission loading state */
+.form-loading button[type="submit"] {
+    background: rgba(71, 85, 105, 0.5) !important;
+    cursor: not-allowed;
+}
+
+.form-loading button[type="submit"] i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Summary tags */
+.category-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: rgb(74, 222, 128);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Customer report form loaded - simple version');
+    console.log('🚲 Customer report form with Mercury design loaded');
     
-    // JavaScript פשוט כמו בדף המנהל
-    document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function() {
-            var list = document.getElementById('subcat-list-' + this.dataset.catId);
-            if (this.checked) {
-                list.style.display = 'block';
+    // Checkbox click handling (separate from header click)
+    document.querySelectorAll('.checkbox-visual').forEach(function(checkboxVisual) {
+        checkboxVisual.addEventListener('click', function(e) {
+            e.stopPropagation(); // Prevent header click
+            
+            const checkbox = this.previousElementSibling;
+            checkbox.checked = !checkbox.checked;
+            
+            // Trigger change event
+            const changeEvent = new Event('change', { bubbles: true });
+            checkbox.dispatchEvent(changeEvent);
+        });
+    });
+    
+    // Category header click handling (separate from checkbox)
+    document.querySelectorAll('.category-header').forEach(function(header) {
+        header.addEventListener('click', function(e) {
+            // Only handle clicks on the header area, not on the checkbox
+            if (e.target.closest('.checkbox-visual') || e.target.type === 'checkbox') return;
+            
+            const checkbox = this.querySelector('.category-checkbox');
+            const catId = checkbox.dataset.catId;
+            const list = document.getElementById('subcat-list-' + catId);
+            const categoryCard = this.closest('.category-card');
+            const chevron = this.querySelector('i:last-child');
+            
+            // Toggle the subcategories visibility
+            if (list.classList.contains('show')) {
+                list.classList.remove('show');
+                categoryCard.classList.remove('expanded');
+                chevron.style.transform = 'rotate(0deg)';
             } else {
-                list.style.display = 'none';
-                // כשסוגרים קטגוריה, מבטלים את כל תתי הקטגוריות שבה
-                var subCheckboxes = list.querySelectorAll('input[type="checkbox"]');
-                subCheckboxes.forEach(function(subCheckbox) {
-                    subCheckbox.checked = false;
-                });
+                list.classList.add('show');
+                categoryCard.classList.add('expanded');
+                chevron.style.transform = 'rotate(180deg)';
             }
         });
     });
     
-    console.log('✅ Simple category system ready');
+    // Category checkbox handling (for actual selection)
+    document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function(e) {
+            // Stop propagation to prevent header click
+            e.stopPropagation();
+            
+            const catId = this.dataset.catId;
+            const list = document.getElementById('subcat-list-' + catId);
+            
+            if (!this.checked) {
+                // If unchecking category, uncheck all subcategories
+                var subCheckboxes = list.querySelectorAll('input[type="checkbox"]');
+                subCheckboxes.forEach(function(subCheckbox) {
+                    subCheckbox.checked = false;
+                    subCheckbox.closest('.subcategory-item').classList.remove('selected');
+                });
+            }
+            
+            updateSummary();
+        });
+    });
+    
+    // Enhanced subcategory interaction
+    document.querySelectorAll('.subcategory-checkbox').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            var subcategoryItem = this.closest('.subcategory-item');
+            if (this.checked) {
+                subcategoryItem.classList.add('selected');
+            } else {
+                subcategoryItem.classList.remove('selected');
+            }
+            
+            updateSummary();
+        });
+    });
+    
+    // Bike selection handling
+    const bikeSelect = document.querySelector('select[name*="bike"]');
+    if (bikeSelect) {
+        bikeSelect.addEventListener('change', function() {
+            updateSummary();
+            validateForm();
+        });
+    }
+    
+    // Character counter for problem description
+    const problemTextarea = document.querySelector('textarea[name*="problem_description"]');
+    const charCounter = document.getElementById('char-counter');
+    
+    if (problemTextarea && charCounter) {
+        const updateCounter = () => {
+            const length = problemTextarea.value.length;
+            const maxLength = problemTextarea.getAttribute('maxlength') || 500;
+            charCounter.textContent = `${length} / ${maxLength} תווים`;
+            
+            if (length > maxLength * 0.9) {
+                charCounter.classList.add('text-amber-400');
+            } else {
+                charCounter.classList.remove('text-amber-400');
+            }
+        };
+        
+        problemTextarea.addEventListener('input', updateCounter);
+        updateCounter(); // Initial count
+    }
+    
+    // Form submission handling
+    const form = document.getElementById('repairForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Validate form
+            if (!validateForm()) {
+                alert('נא למלא את כל השדות הנדרשים');
+                return;
+            }
+            
+            // Add loading state
+            document.body.classList.add('form-loading');
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>שולח דיווח...';
+            submitBtn.disabled = true;
+            
+            // Show progress indicator
+            showProgressIndicator();
+            
+            // Submit form
+            setTimeout(() => {
+                this.submit();
+            }, 1000);
+        });
+    }
+    
+    // Initialize animations
+    const cards = document.querySelectorAll('.glass-card');
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.style.opacity = '1';
+        }, index * 100);
+    });
+    
+    // Auto-focus on first field
+    const firstInput = form.querySelector('select, textarea, input');
+    if (firstInput && !firstInput.value) {
+        setTimeout(() => {
+            firstInput.focus();
+        }, 500);
+    }
+    
+    // Initial validation
+    validateForm();
+    
+    console.log('✅ Customer report form ready with Mercury design');
+});
+
+function updateSummary() {
+    const bikeSelect = document.querySelector('select[name*="bike"]');
+    const selectedSubcategories = document.querySelectorAll('.subcategory-checkbox:checked');
+    const summarySection = document.getElementById('report-summary');
+    const selectedBikeDiv = document.getElementById('selected-bike');
+    const selectedCategoriesDiv = document.getElementById('selected-categories');
+    const bikeNameSpan = document.getElementById('bike-name');
+    const categoriesList = document.getElementById('categories-list');
+    
+    let showSummary = false;
+    
+    // Update bike selection
+    if (bikeSelect && bikeSelect.value) {
+        const selectedOption = bikeSelect.options[bikeSelect.selectedIndex];
+        bikeNameSpan.textContent = selectedOption.text;
+        selectedBikeDiv.style.display = 'block';
+        showSummary = true;
+    } else {
+        selectedBikeDiv.style.display = 'none';
+    }
+    
+    // Update categories
+    if (selectedSubcategories.length > 0) {
+        categoriesList.innerHTML = '';
+        selectedSubcategories.forEach(checkbox => {
+            const label = document.querySelector(`label[for="${checkbox.id}"]`);
+            if (label) {
+                const categoryText = label.textContent.trim();
+                const tag = document.createElement('span');
+                tag.className = 'category-tag';
+                tag.innerHTML = `<i class="fas fa-tag"></i>${categoryText}`;
+                categoriesList.appendChild(tag);
+            }
+        });
+        selectedCategoriesDiv.style.display = 'block';
+        showSummary = true;
+    } else {
+        selectedCategoriesDiv.style.display = 'none';
+    }
+    
+    // Show/hide summary
+    if (showSummary) {
+        summarySection.style.display = 'block';
+        summarySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+        summarySection.style.display = 'none';
+    }
+}
+
+function validateForm() {
+    const bikeSelect = document.querySelector('select[name*="bike"]');
+    const selectedSubcategories = document.querySelectorAll('.subcategory-checkbox:checked');
+    const submitBtn = document.getElementById('submit-btn');
+    
+    const isValid = bikeSelect && bikeSelect.value && selectedSubcategories.length > 0;
+    
+    if (submitBtn) {
+        submitBtn.disabled = !isValid;
+        if (isValid) {
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+    }
+    
+    return isValid;
+}
+
+function showProgressIndicator() {
+    // Create progress indicator
+    const indicator = document.createElement('div');
+    indicator.className = 'fixed top-4 right-4 bg-emerald-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    indicator.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i>שולח דיווח...';
+    document.body.appendChild(indicator);
+    
+    setTimeout(() => {
+        if (indicator.parentNode) {
+            indicator.remove();
+        }
+    }, 5000);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+    // Ctrl+Enter to submit
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.getElementById('repairForm');
+        if (form && validateForm()) {
+            form.submit();
+        }
+    }
+});
+
+// Auto-save functionality
+let autoSaveTimeout;
+document.querySelectorAll('textarea, select, input').forEach(field => {
+    field.addEventListener('input', function() {
+        clearTimeout(autoSaveTimeout);
+        autoSaveTimeout = setTimeout(() => {
+            // Save to localStorage as backup
+            const formData = new FormData(document.getElementById('repairForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            localStorage.setItem('customer_report_backup', JSON.stringify(data));
+        }, 2000);
+    });
+});
+
+// Warn before leaving if there are unsaved changes
+window.addEventListener('beforeunload', function(e) {
+    const form = document.getElementById('repairForm');
+    if (form) {
+        // Check if any field has been filled
+        const hasChanges = Array.from(form.querySelectorAll('input, select, textarea')).some(field => {
+            return field.value && field.value.trim() !== '';
+        });
+        
+        if (hasChanges) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    }
 });
 </script>
 {% endblock %}

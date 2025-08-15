@@ -16,6 +16,9 @@
                 
                 <!-- Action Buttons -->
                 <div class="flex gap-3 justify-center md:justify-end">
+                    <a href="{% url 'repair_form' %}" class="btn-modern primary sm" title="צור תיקון חדש">
+                        <i class="fas fa-plus ml-2"></i>תיקון חדש
+                    </a>
                     <a href="{% url 'backup_menu' %}" class="btn-modern warning sm" title="גיבוי נתונים">
                         <i class="fas fa-download ml-2"></i>גיבוי
                     </a>
@@ -659,6 +662,16 @@
                 <i class="fas fa-home ml-2"></i>חזרה לדף הבית
             </a>
         </div>
+    </div>
+    
+    <!-- Floating Action Button for New Repair -->
+    <div class="fixed bottom-6 left-6 z-40">
+        <a href="{% url 'repair_form' %}" 
+           class="group flex items-center gap-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-blue-400/20"
+           title="צור תיקון חדש">
+            <i class="fas fa-plus text-lg"></i>
+            <span class="hidden group-hover:inline-block transition-all duration-300 text-sm font-medium">תיקון חדש</span>
+        </a>
     </div>
 </div>
 
