@@ -3,12 +3,7 @@
 {% block title %}הרשמה{% endblock %}
 {% block content %}
 
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-ce                                <input type="password" 
-                                       name="{{ form.password2.name }}" 
-                                       id="{{ form.password2.id_for_label }}"
-                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
-                                       placeholder="אישור סיסמה"
-                                       {% if form.password2.field.required %}required{% endif %}>ustify-center py-6 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
     <div class="max-w-4xl w-full space-y-8">
         
         <!-- Header Section with Mercury Design -->
@@ -118,7 +113,7 @@
                                    name="{{ form.name.name }}" 
                                    id="{{ form.name.id_for_label }}"
                                    value="{{ form.name.value|default:'' }}"
-                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                    placeholder="שם מלא"
                                    {% if form.name.field.required %}required{% endif %}>
                             {% if form.name.errors %}
@@ -139,7 +134,7 @@
                                    name="{{ form.phone.name }}" 
                                    id="{{ form.phone.id_for_label }}"
                                    value="{{ form.phone.value|default:'' }}"
-                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                    placeholder="מספר טלפון"
                                    {% if form.phone.field.required %}required{% endif %}>
                             {% if form.phone.errors %}
@@ -160,7 +155,7 @@
                                    name="{{ form.email.name }}" 
                                    id="{{ form.email.id_for_label }}"
                                    value="{{ form.email.value|default:'' }}"
-                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                   class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                    placeholder="כתובת אימייל"
                                    {% if form.email.field.required %}required{% endif %}>
                             {% if form.email.errors %}
@@ -193,7 +188,7 @@
                                 <input type="password" 
                                        name="{{ form.password1.name }}" 
                                        id="{{ form.password1.id_for_label }}"
-                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                        placeholder="סיסמה"
                                        {% if form.password1.field.required %}required{% endif %}>
                                 <button type="button" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors z-10 password-toggle" 
@@ -219,7 +214,7 @@
                                 <input type="password" 
                                        name="{{ form.password2.name }}" 
                                        id="{{ form.password2.id_for_label }}"
-                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       class="block w-full px-4 py-4 pr-12 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                        placeholder="אימות סיסמה"
                                        {% if form.password2.field.required %}required{% endif %}>
                                 <button type="button" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 hover:text-slate-700 transition-colors z-10 password-toggle" 
@@ -280,7 +275,7 @@
                                        name="{{ form.bike_brand.name }}" 
                                        id="{{ form.bike_brand.id_for_label }}"
                                        value="{{ form.bike_brand.value|default:'' }}"
-                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                        placeholder="מותג אופניים">
                             </div>
 
@@ -294,7 +289,7 @@
                                        name="{{ form.bike_model.name }}" 
                                        id="{{ form.bike_model.id_for_label }}"
                                        value="{{ form.bike_model.value|default:'' }}"
-                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                        placeholder="דגם אופניים">
                             </div>
 
@@ -308,7 +303,7 @@
                                        name="{{ form.bike_color.name }}" 
                                        id="{{ form.bike_color.id_for_label }}"
                                        value="{{ form.bike_color.value|default:'' }}"
-                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-700 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
+                                       class="block w-full px-4 py-4 bg-slate-300 border border-slate-400 placeholder-slate-500 text-slate-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/50 focus:border-orange-400 transition-all duration-300 hover:border-slate-300 backdrop-blur-sm h-12"
                                        placeholder="צבע אופניים">
                             </div>
                         </div>
@@ -347,6 +342,31 @@
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
+    
+    // Ensure CSRF token is properly set
+    function ensureCSRFToken() {
+        let csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
+        if (!csrfToken) {
+            // Create CSRF token input if it doesn't exist
+            csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = 'csrfmiddlewaretoken';
+            form.appendChild(csrfToken);
+        }
+        
+        // Get token from meta tag as fallback
+        if (!csrfToken.value) {
+            const metaCSRF = document.querySelector('meta[name="csrf-token"]');
+            if (metaCSRF) {
+                csrfToken.value = metaCSRF.getAttribute('content');
+            }
+        }
+        
+        return csrfToken;
+    }
+    
+    // Initialize CSRF token
+    ensureCSRFToken();
     
     // Initialize form animations
     initializeAnimations();
@@ -458,10 +478,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Form submission with loading state
+    // Form submission with loading state and CSRF handling
     function handleFormSubmission() {
         if (form && submitBtn) {
             form.addEventListener('submit', function(e) {
+                // Ensure CSRF token is present
+                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
+                if (!csrfToken || !csrfToken.value) {
+                    e.preventDefault();
+                    alert('שגיאת אבטחה: אנא רענן את הדף ונסה שוב');
+                    return false;
+                }
+                
+                // Validate required fields
+                const requiredFields = form.querySelectorAll('input[required]');
+                let hasErrors = false;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        hasErrors = true;
+                        field.style.borderColor = '#ef4444';
+                    }
+                });
+                
+                if (hasErrors) {
+                    e.preventDefault();
+                    alert('אנא מלא את כל השדות הנדרשים');
+                    return false;
+                }
+                
                 // Add loading state
                 submitBtn.innerHTML = `
                     <span class="relative z-10 flex items-center justify-center gap-3">
@@ -470,11 +515,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     </span>
                 `;
                 
-                // Disable form elements
+                // Disable form elements to prevent double submission
                 const formElements = form.querySelectorAll('input, button');
                 formElements.forEach(element => {
                     element.disabled = true;
                 });
+                
+                // Re-enable after a timeout as fallback
+                setTimeout(() => {
+                    formElements.forEach(element => {
+                        element.disabled = false;
+                    });
+                    submitBtn.innerHTML = `
+                        <span class="relative z-10 flex items-center justify-center gap-3">
+                            <i class="fas fa-user-plus text-lg group-hover:rotate-12 transition-transform duration-300"></i>
+                            <span class="text-lg font-bold">צור חשבון חדש</span>
+                        </span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    `;
+                }, 30000); // 30 seconds timeout
             });
         }
     }
