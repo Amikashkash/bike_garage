@@ -343,31 +343,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registrationForm');
     const submitBtn = document.getElementById('submitBtn');
     
-    // Ensure CSRF token is properly set
-    function ensureCSRFToken() {
-        let csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
-        if (!csrfToken) {
-            // Create CSRF token input if it doesn't exist
-            csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = 'csrfmiddlewaretoken';
-            form.appendChild(csrfToken);
-        }
-        
-        // Get token from meta tag as fallback
-        if (!csrfToken.value) {
-            const metaCSRF = document.querySelector('meta[name="csrf-token"]');
-            if (metaCSRF) {
-                csrfToken.value = metaCSRF.getAttribute('content');
-            }
-        }
-        
-        return csrfToken;
-    }
-    
-    // Initialize CSRF token
-    ensureCSRFToken();
-    
     // Initialize form animations
     initializeAnimations();
     
@@ -478,36 +453,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Form submission with loading state and CSRF handling
+    // Simple form submission with loading state
     function handleFormSubmission() {
         if (form && submitBtn) {
             form.addEventListener('submit', function(e) {
-                // Ensure CSRF token is present
-                const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]');
-                if (!csrfToken || !csrfToken.value) {
-                    e.preventDefault();
-                    alert('שגיאת אבטחה: אנא רענן את הדף ונסה שוב');
-                    return false;
-                }
-                
-                // Validate required fields
-                const requiredFields = form.querySelectorAll('input[required]');
-                let hasErrors = false;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        hasErrors = true;
-                        field.style.borderColor = '#ef4444';
-                    }
-                });
-                
-                if (hasErrors) {
-                    e.preventDefault();
-                    alert('אנא מלא את כל השדות הנדרשים');
-                    return false;
-                }
-                
-                // Add loading state
+                // Only add loading state, don't interfere with submission
                 submitBtn.innerHTML = `
                     <span class="relative z-10 flex items-center justify-center gap-3">
                         <i class="fas fa-spinner fa-spin text-lg"></i>
@@ -515,25 +465,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     </span>
                 `;
                 
-                // Disable form elements to prevent double submission
-                const formElements = form.querySelectorAll('input, button');
-                formElements.forEach(element => {
-                    element.disabled = true;
-                });
-                
-                // Re-enable after a timeout as fallback
-                setTimeout(() => {
-                    formElements.forEach(element => {
-                        element.disabled = false;
-                    });
-                    submitBtn.innerHTML = `
-                        <span class="relative z-10 flex items-center justify-center gap-3">
-                            <i class="fas fa-user-plus text-lg group-hover:rotate-12 transition-transform duration-300"></i>
-                            <span class="text-lg font-bold">צור חשבון חדש</span>
-                        </span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
-                    `;
-                }, 30000); // 30 seconds timeout
+                // Disable submit button to prevent double submission
+                submitBtn.disabled = true;
             });
         }
     }

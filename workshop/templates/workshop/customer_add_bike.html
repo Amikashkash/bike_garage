@@ -170,18 +170,18 @@
                     <div class="form-actions pt-6 border-t border-slate-600/30">
                         <div class="flex flex-col sm:flex-row gap-4 sm:justify-center">
                             <button type="submit" 
-                                    class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2"
+                                    class="btn-modern success w-full sm:w-auto"
                                     id="submitBtn">
-                                <i class="fas fa-plus"></i>
-                                <span>הוסף אופניים</span>
+                                <i class="fas fa-plus mr-2"></i>
+                                <span class="font-bold">הוסף אופניים</span>
                                 <div class="hidden ml-2" id="submitSpinner">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </div>
                             </button>
                             <a href="{% url 'customer_bikes_list' %}" 
-                               class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 border border-slate-500/30 hover:border-slate-400/50 flex items-center justify-center gap-2">
-                                <i class="fas fa-times"></i>
-                                <span>ביטול</span>
+                               class="btn-modern secondary w-full sm:w-auto">
+                                <i class="fas fa-times mr-2"></i>
+                                <span class="font-bold">ביטול</span>
                             </a>
                         </div>
                     </div>
@@ -232,6 +232,58 @@
 
 <style>
 /* Mercury Design System - Customer Add Bike Specific Styles */
+
+/* Modern Button Styles - Matching Customer List */
+.btn-modern {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
+    color: white !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-modern:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
+}
+
+.btn-modern.primary {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
+}
+
+.btn-modern.success {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border: 1px solid #047857 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+.btn-modern.success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-modern.secondary {
+    background: linear-gradient(135deg, #64748b, #475569) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 2px 8px rgba(100, 116, 139, 0.3) !important;
+}
+
+.btn-modern.secondary:hover {
+    background: linear-gradient(135deg, #475569, #334155) !important;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4) !important;
+}
+
 .gradient-text {
     background: linear-gradient(135deg, #10b981, #06b6d4, #8b5cf6);
     -webkit-background-clip: text;
@@ -332,6 +384,40 @@ button[type="submit"]:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
+    box-shadow: none !important;
+}
+
+button[type="submit"]:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Mercury Button Enhancements */
+.form-actions button,
+.form-actions a {
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.form-actions button:hover,
+.form-actions a:hover {
+    transform: translateY(-2px) scale(1.02);
+}
+
+.form-actions button:active,
+.form-actions a:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Hover glow effects */
+.form-actions button[type="submit"]:hover {
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4), 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.form-actions a:hover {
+    box-shadow: 0 0 20px rgba(71, 85, 105, 0.3), 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations */
@@ -481,15 +567,25 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         // Show loading state
         submitBtn.disabled = true;
-        submitSpinner.classList.remove('hidden');
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>מוסיף אופניים...';
+        submitBtn.innerHTML = `
+            <span class="relative z-10 flex items-center justify-center gap-3">
+                <i class="fas fa-spinner fa-spin text-lg"></i>
+                <span class="text-lg font-bold">מוסיף אופניים...</span>
+            </span>
+            <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 opacity-20 transition-opacity duration-300"></div>
+        `;
         
         // Validate required fields
         if (!brandInput.value.trim()) {
             e.preventDefault();
             submitBtn.disabled = false;
-            submitSpinner.classList.add('hidden');
-            submitBtn.innerHTML = '<i class="fas fa-plus mr-2"></i>הוסף אופניים';
+            submitBtn.innerHTML = `
+                <span class="relative z-10 flex items-center justify-center gap-3">
+                    <i class="fas fa-plus text-lg group-hover:rotate-90 transition-transform duration-300"></i>
+                    <span class="text-lg font-bold">הוסף אופניים</span>
+                </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+            `;
             
             brandInput.focus();
             brandInput.style.borderColor = '#ef4444';

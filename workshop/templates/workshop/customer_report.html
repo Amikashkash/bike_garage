@@ -9,7 +9,7 @@
         <!-- Header Section -->
         <div class="text-center mb-6 sm:mb-8">
             <div class="mb-6">
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-emerald-500 via-green-600 to-emerald-700 bg-clip-text text-transparent mb-4">
                     🚲 דיווח תקלה באופניים
                     <span class="text-2xl sm:text-3xl lg:text-4xl text-emerald-300">🔧</span>
                 </h1>
@@ -46,7 +46,7 @@
                 {% csrf_token %}
                 
                 <!-- בחירת אופניים -->
-                <div class="glass-card border border-emerald-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                <div class="bg-slate-800/40 backdrop-blur-xl border border-emerald-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up">
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center">
@@ -78,7 +78,7 @@
                 </div>
                 
                 <!-- קטגוריות תקלה -->
-                <div class="glass-card border border-amber-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                <div class="bg-slate-800/40 backdrop-blur-xl border border-amber-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up [animation-delay:0.1s]">
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
@@ -104,12 +104,6 @@
                                     <!-- Category Header -->
                                     <div class="category-header p-4 border-b border-slate-600/30 cursor-pointer">
                                         <div class="flex items-center gap-3">
-                                            <div class="relative" onclick="event.stopPropagation();">
-                                                <input type="checkbox" class="category-checkbox sr-only" data-cat-id="{{ cat.id }}">
-                                                <div class="checkbox-visual w-5 h-5 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300">
-                                                    <i class="fas fa-check text-white text-xs opacity-0 transition-opacity duration-300"></i>
-                                                </div>
-                                            </div>
                                             <div class="category-content flex items-center gap-2 flex-1">
                                                 <i class="fas fa-folder text-amber-400"></i>
                                                 <span class="text-white font-medium">{{ cat.name }}</span>
@@ -122,20 +116,20 @@
                                     </div>
                                     
                                     <!-- Subcategories List -->
-                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list max-h-0 overflow-hidden transition-all duration-300">
+                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out">
                                         <div class="p-4 space-y-3">
                                             {% for sub in cat.subcategories.all %}
                                             <div class="subcategory-item">
-                                                <label class="subcategory-label flex items-center gap-3 p-3 bg-slate-800/50 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-300 hover:border-green-400/50 hover:bg-slate-700/50">
-                                                    <div class="relative">
+                                                <label for="sub-{{ sub.id }}" class="subcategory-label flex items-center gap-3 p-3 bg-slate-800/50 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-300 hover:border-green-400/50 hover:bg-slate-700/50 w-full touch-manipulation">
+                                                    <div class="relative flex-shrink-0">
                                                         <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="subcategory-checkbox sr-only" id="sub-{{ sub.id }}">
-                                                        <div class="checkbox-visual w-4 h-4 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300">
+                                                        <div class="checkbox-visual w-5 h-5 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300 flex items-center justify-center">
                                                             <i class="fas fa-check text-white text-xs opacity-0 transition-opacity duration-300"></i>
                                                         </div>
                                                     </div>
-                                                    <div class="subcategory-content flex items-center gap-2 flex-1">
-                                                        <i class="fas fa-wrench text-green-400 text-sm"></i>
-                                                        <span class="text-slate-200 text-sm">{{ sub.name }}</span>
+                                                    <div class="subcategory-content flex items-center gap-2 flex-1 min-w-0">
+                                                        <i class="fas fa-wrench text-green-400 text-sm flex-shrink-0"></i>
+                                                        <span class="text-slate-200 text-sm truncate">{{ sub.name }}</span>
                                                     </div>
                                                 </label>
                                             </div>
@@ -150,7 +144,7 @@
                 </div>
                 
                 <!-- תיאור חופשי -->
-                <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden">
+                <div class="bg-slate-800/40 backdrop-blur-xl border border-purple-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up [animation-delay:0.2s]">
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-purple-500/20 rounded-xl flex items-center justify-center">
@@ -183,7 +177,7 @@
                 </div>
                 
                 <!-- Summary Section -->
-                <div id="report-summary" class="glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden" style="display: none;">
+                <div id="report-summary" class="bg-slate-800/40 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up [animation-delay:0.3s]" style="display: none;">
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
@@ -217,7 +211,7 @@
                 <!-- Submit Button -->
                 <div class="text-center pt-6">
                     <button type="submit" 
-                            class="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                            class="btn-modern success w-full sm:w-auto"
                             id="submit-btn"
                             disabled>
                         <i class="fas fa-paper-plane mr-2"></i>
@@ -231,183 +225,77 @@
 </div>
 
 <style>
-/* Mercury Design System - Customer Report Specific Styles */
-.gradient-text {
-    background: linear-gradient(135deg, #10b981, #059669, #047857);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.glass-card {
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-}
-
-.glass-card:hover {
-    background: rgba(15, 23, 42, 0.5);
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
-}
-
-/* Form Controls Styling */
-#repairForm select,
-#repairForm textarea {
-    width: 100%;
-    background: rgba(51, 65, 85, 0.5) !important;
-    border: 2px solid rgba(71, 85, 105, 0.5) !important;
-    border-radius: 0.75rem !important;
-    padding: 0.75rem 1rem !important;
+/* Modern Button Styles - Matching Customer Add Bike */
+.btn-modern {
+    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+    border: 1px solid #1d4ed8 !important;
     color: white !important;
-    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
     transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
-#repairForm select:focus,
-#repairForm textarea:focus {
-    outline: none !important;
-    border-color: rgba(16, 185, 129, 0.6) !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
-    background: rgba(51, 65, 85, 0.7) !important;
+.btn-modern:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+    color: white !important;
+    text-decoration: none !important;
 }
 
-#repairForm textarea {
-    resize: vertical !important;
-    min-height: 100px !important;
-    padding-bottom: 2rem !important;
-}
-
-/* Category Card Styling */
-.category-card {
-    transition: all 0.3s ease;
-}
-
-.category-card:hover {
-    border-color: rgba(245, 158, 11, 0.4) !important;
-}
-
-.category-card.expanded {
-    border-color: rgba(245, 158, 11, 0.6) !important;
-    background: rgba(245, 158, 11, 0.05) !important;
-}
-
-.category-card.expanded .category-header i:last-child {
-    transform: rotate(180deg);
-}
-
-.category-header {
-    transition: all 0.3s ease;
-}
-
-.category-header:hover {
-    background: rgba(245, 158, 11, 0.05) !important;
-}
-
-.category-header:hover .text-slate-400 {
-    color: rgb(245, 158, 11) !important;
-}
-
-.subcategories-list {
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    opacity: 0;
-}
-
-.subcategories-list.show {
-    max-height: 500px !important;
-    opacity: 1;
-}
-
-/* Checkbox Styling */
-.category-checkbox:checked + .checkbox-visual,
-.subcategory-checkbox:checked + .checkbox-visual {
+.btn-modern.success {
     background: linear-gradient(135deg, #10b981, #059669) !important;
-    border-color: #10b981 !important;
+    border: 1px solid #047857 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
 }
 
-.category-checkbox:checked + .checkbox-visual i,
-.subcategory-checkbox:checked + .checkbox-visual i {
-    opacity: 1 !important;
+.btn-modern.success:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
 }
 
-/* Subcategory Selection */
-.subcategory-item.selected .subcategory-label {
-    background: rgba(34, 197, 94, 0.1) !important;
-    border-color: rgba(34, 197, 94, 0.6) !important;
+.btn-modern:disabled {
+    background: rgba(71, 85, 105, 0.5) !important;
+    border-color: rgba(71, 85, 105, 0.3) !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.6 !important;
 }
 
-/* Form Animations */
-.glass-card {
-    animation: fadeInUp 0.6s ease-out forwards;
-    opacity: 0;
+.btn-modern:disabled:hover {
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-.glass-card:nth-child(1) { animation-delay: 0.1s; }
-.glass-card:nth-child(2) { animation-delay: 0.2s; }
-.glass-card:nth-child(3) { animation-delay: 0.3s; }
-.glass-card:nth-child(4) { animation-delay: 0.4s; }
-.glass-card:nth-child(5) { animation-delay: 0.5s; }
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Mobile optimizations */
-@media (max-width: 640px) {
-    .glass-card {
-        backdrop-filter: blur(12px);
+/* Mobile touch targets */
+@media (max-width: 768px) {
+    .subcategory-label {
+        min-height: 48px !important;
+        padding: 12px !important;
     }
     
-    .category-card,
-    .subcategory-label {
-        margin-bottom: 0.5rem;
+    .checkbox-visual {
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
     }
-}
-
-/* Responsive hover effects */
-@media (min-width: 1024px) {
-    .glass-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    .category-header {
+        min-height: 56px !important;
+        padding: 16px !important;
     }
-}
-
-/* Form submission loading state */
-.form-loading button[type="submit"] {
-    background: rgba(71, 85, 105, 0.5) !important;
-    cursor: not-allowed;
-}
-
-.form-loading button[type="submit"] i {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Summary tags */
-.category-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    color: rgb(74, 222, 128);
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 500;
+    
+    .btn-modern {
+        padding: 16px 24px !important;
+        width: 100% !important;
+    }
 }
 </style>
 
@@ -415,75 +303,77 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚲 Customer report form with Mercury design loaded');
     
-    // Checkbox click handling (separate from header click)
-    document.querySelectorAll('.checkbox-visual').forEach(function(checkboxVisual) {
-        checkboxVisual.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent header click
-            
-            const checkbox = this.previousElementSibling;
-            checkbox.checked = !checkbox.checked;
-            
-            // Trigger change event
-            const changeEvent = new Event('change', { bubbles: true });
-            checkbox.dispatchEvent(changeEvent);
-        });
-    });
+    // Style form controls with Tailwind classes
+    const styleFormControls = () => {
+        const select = document.querySelector('select[name*="bike"]');
+        const textarea = document.querySelector('textarea[name*="problem_description"]');
+        
+        if (select) {
+            select.className = 'w-full bg-slate-700/50 border-2 border-slate-500/50 rounded-xl px-4 py-3 text-white text-sm transition-all duration-300 focus:outline-none focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20 focus:bg-slate-700/70';
+        }
+        
+        if (textarea) {
+            textarea.className = 'w-full bg-slate-700/50 border-2 border-slate-500/50 rounded-xl px-4 py-3 pb-8 text-white text-sm transition-all duration-300 focus:outline-none focus:border-purple-500/60 focus:ring-2 focus:ring-purple-500/20 focus:bg-slate-700/70 resize-vertical min-h-[100px]';
+        }
+    };
     
-    // Category header click handling (separate from checkbox)
+    // Apply styles immediately
+    styleFormControls();
+    
+    // Re-apply styles after a short delay to ensure Django forms are ready
+    setTimeout(styleFormControls, 100);
+    
+    // Category header click handling for accordion functionality
     document.querySelectorAll('.category-header').forEach(function(header) {
         header.addEventListener('click', function(e) {
-            // Only handle clicks on the header area, not on the checkbox
-            if (e.target.closest('.checkbox-visual') || e.target.type === 'checkbox') return;
-            
-            const checkbox = this.querySelector('.category-checkbox');
-            const catId = checkbox.dataset.catId;
+            const categoryItem = this.closest('.category-item');
+            const catId = categoryItem.querySelector('.subcategories-list').id.split('-').pop();
             const list = document.getElementById('subcat-list-' + catId);
             const categoryCard = this.closest('.category-card');
             const chevron = this.querySelector('i:last-child');
             
-            // Toggle the subcategories visibility
-            if (list.classList.contains('show')) {
-                list.classList.remove('show');
-                categoryCard.classList.remove('expanded');
+            // Toggle the subcategories visibility using Tailwind classes
+            if (list.classList.contains('max-h-96')) {
+                // Close accordion
+                list.classList.remove('max-h-96', 'opacity-100');
+                list.classList.add('max-h-0', 'opacity-0');
+                categoryCard.classList.remove('border-amber-400/60', 'bg-amber-500/5');
+                categoryCard.classList.add('border-slate-600/40');
                 chevron.style.transform = 'rotate(0deg)';
             } else {
-                list.classList.add('show');
-                categoryCard.classList.add('expanded');
+                // Open accordion
+                list.classList.remove('max-h-0', 'opacity-0');
+                list.classList.add('max-h-96', 'opacity-100');
+                categoryCard.classList.remove('border-slate-600/40');
+                categoryCard.classList.add('border-amber-400/60', 'bg-amber-500/5');
                 chevron.style.transform = 'rotate(180deg)';
             }
         });
     });
-    
-    // Category checkbox handling (for actual selection)
-    document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
-        checkbox.addEventListener('change', function(e) {
-            // Stop propagation to prevent header click
-            e.stopPropagation();
-            
-            const catId = this.dataset.catId;
-            const list = document.getElementById('subcat-list-' + catId);
-            
-            if (!this.checked) {
-                // If unchecking category, uncheck all subcategories
-                var subCheckboxes = list.querySelectorAll('input[type="checkbox"]');
-                subCheckboxes.forEach(function(subCheckbox) {
-                    subCheckbox.checked = false;
-                    subCheckbox.closest('.subcategory-item').classList.remove('selected');
-                });
-            }
-            
-            updateSummary();
-        });
-    });
-    
-    // Enhanced subcategory interaction
+
+    // Subcategory checkbox handling - native label functionality
     document.querySelectorAll('.subcategory-checkbox').forEach(function(checkbox) {
         checkbox.addEventListener('change', function() {
             var subcategoryItem = this.closest('.subcategory-item');
+            var label = this.closest('.subcategory-label');
+            var checkboxVisual = this.nextElementSibling;
+            
             if (this.checked) {
                 subcategoryItem.classList.add('selected');
+                label.classList.add('bg-green-500/10', 'border-green-400/60');
+                label.classList.remove('bg-slate-800/50', 'border-slate-600/30');
+                checkboxVisual.classList.add('bg-gradient-to-br', 'from-emerald-500', 'to-green-600', 'border-emerald-500');
+                checkboxVisual.classList.remove('bg-slate-600', 'border-slate-500');
+                checkboxVisual.querySelector('i').classList.add('opacity-100');
+                checkboxVisual.querySelector('i').classList.remove('opacity-0');
             } else {
                 subcategoryItem.classList.remove('selected');
+                label.classList.remove('bg-green-500/10', 'border-green-400/60');
+                label.classList.add('bg-slate-800/50', 'border-slate-600/30');
+                checkboxVisual.classList.remove('bg-gradient-to-br', 'from-emerald-500', 'to-green-600', 'border-emerald-500');
+                checkboxVisual.classList.add('bg-slate-600', 'border-slate-500');
+                checkboxVisual.querySelector('i').classList.remove('opacity-100');
+                checkboxVisual.querySelector('i').classList.add('opacity-0');
             }
             
             updateSummary();
@@ -602,7 +492,7 @@ function updateSummary() {
             if (label) {
                 const categoryText = label.textContent.trim();
                 const tag = document.createElement('span');
-                tag.className = 'category-tag';
+                tag.className = 'inline-flex items-center gap-1.5 bg-green-500/10 border border-green-400/30 text-green-400 px-2 py-1 rounded-lg text-xs font-medium';
                 tag.innerHTML = `<i class="fas fa-tag"></i>${categoryText}`;
                 categoriesList.appendChild(tag);
             }
