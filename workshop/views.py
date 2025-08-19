@@ -11,6 +11,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.middleware.csrf import get_token
 import json
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
@@ -197,12 +199,21 @@ def user_login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
+        
+        # Ensure we have the required fields
+        if not username or not password:
+            messages.error(request, 'נא למלא שם משתמש וסיסמה')
+            return render(request, 'workshop/login.html')
+            
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('/')
+            # Get the next URL if available
+            next_url = request.GET.get('next', '/')
+            return redirect(next_url)
         else:
-            return render(request, 'workshop/login.html', {'error': 'שם משתמש או סיסמה שגויים'})
+            messages.error(request, 'שם משתמש או סיסמה שגויים')
+            return render(request, 'workshop/login.html')
     return render(request, 'workshop/login.html')
 
 
@@ -1798,4 +1809,10 @@ def customer_bikes_api(request, customer_id):
     
     except Customer.DoesNotExist:
         return JsonResponse({'error': 'Customer not found'}, status=404)
+
+
+def csrf_failure(request, reason=""):
+    """Custom CSRF failure view to handle CSRF errors gracefully"""
+    messages.error(request, 'שגיאת אבטחה. אנא נסה שוב.')
+    return redirect('login')
 

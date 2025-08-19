@@ -10,13 +10,13 @@
     "scope": "/",
     "icons": [
         {
-            "src": "/app-icon.svg",
+            "src": "/static/pwa-icon.svg",
             "sizes": "192x192 512x512",
             "type": "image/svg+xml",
             "purpose": "any"
         },
         {
-            "src": "/app-icon.svg",
+            "src": "/static/pwa-icon.svg",
             "sizes": "192x192 512x512", 
             "type": "image/svg+xml",
             "purpose": "maskable"
@@ -31,5 +31,5 @@
     "categories": ["business", "productivity"],
     "lang": "he",
     "dir": "rtl",
-    "display_override": ["standalone", "minimal-ui"]
+    "display_override": ["fullscreen", "standalone", "minimal-ui"]
 }

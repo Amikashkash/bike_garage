@@ -12,8 +12,19 @@
                 <p class="text-slate-300 text-sm">הזן את הפרטים שלך כדי להמשיך</p>
             </div>
 
+            <!-- Display messages -->
+            {% if messages %}
+                <div class="mt-4 space-y-2">
+                    {% for message in messages %}
+                    <div class="bg-red-500/20 border border-red-400/30 text-red-200 px-4 py-3 rounded-lg text-sm">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
             <!-- Login form -->
-            <form class="mt-8 space-y-6" method="POST">
+            <form class="mt-8 space-y-6" method="POST" id="login-form">
                 {% csrf_token %}
                 <div class="space-y-4">
                     <div>
@@ -23,7 +34,8 @@
                                type="text" 
                                required 
                                class="relative block w-full px-3 py-3 bg-slate-700/50 border border-slate-600 placeholder-slate-400 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 transition-colors duration-200" 
-                               placeholder="שם משתמש">
+                               placeholder="שם משתמש"
+                               value="{{ request.POST.username|default:'' }}">
                     </div>
                     <div>
                         <label for="password" class="sr-only">סיסמה</label>
@@ -64,4 +76,34 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Ensure CSRF token is properly handled
+    const form = document.getElementById('login-form');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    
+    // Add mobile-specific handling
+    form.addEventListener('submit', function(e) {
+        // Ensure form has CSRF token
+        if (!csrfToken) {
+            e.preventDefault();
+            alert('שגיאה טכנית. אנא רענן את הדף ונסה שוב.');
+            return false;
+        }
+        
+        // Prevent double submission
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        setTimeout(() => {
+            submitBtn.disabled = false;
+        }, 3000);
+    });
+    
+    // Clear password on error
+    {% if messages %}
+    document.getElementById('password').value = '';
+    {% endif %}
+});
+</script>
 {% endblock %}

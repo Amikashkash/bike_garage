@@ -26,13 +26,17 @@
             <div class="max-w-6xl mx-auto w-full">
                 <!-- User greeting -->
                 <div class="text-center mb-8">
-                    <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/20 rounded-full mb-4">
-                        <i class="fas fa-user text-2xl text-blue-300"></i>
+                    <!-- Inline icon + greeting row to save vertical space -->
+                    <div class="flex items-center justify-center gap-3 mb-2 rtl:space-x-reverse">
+                        <!-- Icon on the right (RTL) -->
+                        <div class="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-blue-500/20 rounded-full shrink-0">
+                            <i class="fas fa-user text-xl sm:text-2xl text-blue-300"></i>
+                        </div>
+                        <h2 class="text-xl sm:text-2xl font-semibold text-white m-0 leading-tight">
+                            שלום {{ user.get_full_name|default:user.username }}!
+                        </h2>
                     </div>
-                    <h2 class="text-xl sm:text-2xl font-semibold text-white mb-2">
-                        שלום {{ user.get_full_name|default:user.username }}!
-                    </h2>
-                    <p class="text-blue-200">מה תרצה לעשות היום?</p>
+                    <p class="text-blue-200 text-sm sm:text-base">מה תרצה לעשות היום?</p>
                 </div>
 
                 <!-- Alert notifications -->

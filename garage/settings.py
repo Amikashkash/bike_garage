@@ -42,6 +42,7 @@ ALLOWED_HOSTS = [
 CSRF_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
 CSRF_COOKIE_HTTPONLY = False  # מאפשר גישה ל-JavaScript אם נדרש
 CSRF_COOKIE_SAMESITE = 'Lax'  # מאפשר CSRF בין תת-דומיינים
+CSRF_FAILURE_VIEW = 'workshop.views.csrf_failure'  # Custom CSRF failure handler
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
     'https://shai-bike-garage.onrender.com',
