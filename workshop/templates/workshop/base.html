@@ -65,8 +65,8 @@
                 <!-- Enhanced Mobile Logo -->
                 <a href="{% url 'home' %}" class="flex items-center space-x-reverse space-x-3 group">
                     <div class="relative">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 group-hover:shadow-cyan-500/40 transition-all duration-300">
-                            <i class="fas fa-bicycle text-white text-xl group-hover:rotate-12 transition-transform duration-300"></i>
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 group-hover:shadow-cyan-500/40 transition-all duration-300 overflow-hidden">
+                            <img src="{% static 'images/logo.png' %}" alt="לוגו" class="w-10 h-10 object-contain drop-shadow-lg group-hover:scale-105 transition-transform duration-300" />
                         </div>
                         <div class="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse"></div>
                     </div>
@@ -92,8 +92,8 @@
                 <!-- Premium Desktop Logo -->
                 <a href="{% url 'home' %}" class="flex items-center space-x-reverse space-x-4 group">
                     <div class="relative">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/30 group-hover:shadow-cyan-500/50 transition-all duration-500 group-hover:scale-105">
-                            <i class="fas fa-bicycle text-white text-2xl group-hover:rotate-12 transition-transform duration-500"></i>
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 via-cyan-500 to-blue-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/30 group-hover:shadow-cyan-500/50 transition-all duration-500 group-hover:scale-105 overflow-hidden">
+                            <img src="{% static 'images/logo.png' %}" alt="לוגו" class="w-14 h-14 object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500" />
                         </div>
                         <div class="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full animate-pulse group-hover:animate-bounce"></div>
                     </div>
@@ -238,7 +238,7 @@
                         <!-- Quick Actions -->
                         {% if user.userprofile.role == 'customer' %}
                         <button class="action-btn premium-btn">
-                            <i class="fas fa-bicycle"></i>
+                            <img src="{% static 'images/logo.png' %}" alt="האופניים שלי" class="w-5 h-5 object-contain" />
                             <span class="hidden xl:inline">האופניים שלי</span>
                         </button>
                         {% endif %}
@@ -438,8 +438,8 @@
                 <!-- Brand Section -->
                 <div class="flex flex-col items-center md:items-start">
                     <div class="flex items-center space-x-reverse space-x-4 mb-4">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30">
-                            <i class="fas fa-bicycle text-white text-xl"></i>
+                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-500/30 overflow-hidden">
+                            <img src="{% static 'images/logo.png' %}" alt="לוגו" class="w-10 h-10 object-contain drop-shadow" />
                         </div>
                         <div class="text-center md:text-right">
                             <h3 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
