@@ -80,8 +80,8 @@
                 
                 <!-- Enhanced Mobile Menu Button -->
                 <button onclick="toggleMobileMenu()" 
-                        class="relative p-3 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-blue-200 hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300 group">
-                    <i class="fas fa-bars text-lg group-hover:rotate-180 transition-transform duration-300"></i>
+                        class="relative p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 text-blue-200 hover:bg-white/10 hover:border-blue-400/30 transition-all duration-300 group min-w-[48px] min-h-[48px] flex items-center justify-center">
+                    <i class="fas fa-bars text-xl group-hover:rotate-180 transition-transform duration-300"></i>
                     <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-blue-500/20 to-cyan-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
             </div>
@@ -145,6 +145,11 @@
                             <span>דשבורד מנהל</span>
                         </a>
                         
+                        <a href="{% url 'mechanic_dashboard' %}" class="nav-link">
+                            <i class="fas fa-tools text-green-400"></i>
+                            <span>דשבורד מכונאי</span>
+                        </a>
+                        
                         <a href="{% url 'repair_form' %}" class="nav-link">
                             <i class="fas fa-plus-circle text-blue-400"></i>
                             <span>תיקון חדש</span>
@@ -174,43 +179,9 @@
                                             <i class="fas fa-user-plus text-green-400"></i>
                                             <span>הוסף לקוח</span>
                                         </a>
-                                        <a href="{% url 'category_list' %}" class="dropdown-item">
-                                            <i class="fas fa-tags text-purple-400"></i>
-                                            <span>קטגוריות</span>
-                                        </a>
                                         <a href="{% url 'link_customer_user' %}" class="dropdown-item">
                                             <i class="fas fa-link text-cyan-400"></i>
                                             <span>חיבור לקוחות</span>
-                                        </a>
-                                        <a href="{% url 'print_labels_menu' %}" class="dropdown-item">
-                                            <i class="fas fa-print text-orange-400"></i>
-                                            <span>הדפסת מדבקות</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Mechanics Management Dropdown -->
-                            <div class="relative">
-                                <button class="nav-link hover:bg-white/10 transition-all duration-300 dropdown-trigger"
-                                        onmouseenter="showDropdown('mechanics-dropdown')"
-                                        onmouseleave="scheduleHideDropdown('mechanics-dropdown')">
-                                    <i class="fas fa-tools text-green-400"></i>
-                                    <span>מכונאים</span>
-                                    <i class="fas fa-chevron-down text-xs text-green-300 dropdown-arrow transition-transform duration-300"></i>
-                                </button>
-                                <div id="mechanics-dropdown" 
-                                     class="absolute top-full right-0 mt-2 w-64 bg-slate-800/95 backdrop-blur-xl border border-slate-700/50 rounded-xl shadow-2xl opacity-0 invisible transition-all duration-300 z-50"
-                                     onmouseenter="cancelHideDropdown('mechanics-dropdown')"
-                                     onmouseleave="hideDropdown('mechanics-dropdown')">
-                                    <div class="p-4 space-y-2">
-                                        <a href="{% url 'mechanic_dashboard' %}" class="dropdown-item">
-                                            <i class="fas fa-tachometer-alt text-green-400"></i>
-                                            <span>דשבורד מכונאים</span>
-                                        </a>
-                                        <a href="/admin/create-mechanic/" class="dropdown-item">
-                                            <i class="fas fa-user-plus text-blue-400"></i>
-                                            <span>הוסף מכונאי</span>
                                         </a>
                                     </div>
                                 </div>
@@ -230,6 +201,14 @@
                                      onmouseenter="cancelHideDropdown('advanced-dropdown')"
                                      onmouseleave="hideDropdown('advanced-dropdown')">
                                     <div class="p-4 space-y-2">
+                                        <a href="{% url 'category_list' %}" class="dropdown-item">
+                                            <i class="fas fa-tags text-purple-400"></i>
+                                            <span>קטגוריות</span>
+                                        </a>
+                                        <a href="{% url 'print_labels_menu' %}" class="dropdown-item">
+                                            <i class="fas fa-print text-orange-400"></i>
+                                            <span>הדפסת מדבקות</span>
+                                        </a>
                                         <a href="{% url 'backup_menu' %}" class="dropdown-item">
                                             <i class="fas fa-download text-yellow-400"></i>
                                             <span>גיבוי נתונים</span>
@@ -330,50 +309,29 @@
                                 </div>
                                 <i class="fas fa-chevron-down transition-transform duration-300" id="customers-icon"></i>
                             </button>
-                            <div id="customers-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
-                                <a href="{% url 'customer_list' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-list text-blue-300"></i>
-                                    <span>רשימת לקוחות</span>
-                                </a>
-                                <a href="{% url 'customer_form' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-user-plus text-green-300"></i>
-                                    <span>הוסף לקוח</span>
-                                </a>
-                                <a href="{% url 'category_list' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-tags text-purple-300"></i>
-                                    <span>קטגוריות</span>
-                                </a>
-                                <a href="{% url 'link_customer_user' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-link text-cyan-300"></i>
-                                    <span>חיבור לקוחות</span>
-                                </a>
-                                <a href="{% url 'print_labels_menu' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-print text-orange-300"></i>
-                                    <span>הדפסת מדבקות</span>
-                                </a>
+                            <div id="customers-menu" class="hidden mt-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-600/30 overflow-hidden">
+                                <div class="flex flex-col space-y-1 p-2">
+                                    <a href="{% url 'customer_list' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-blue-400/30">
+                                        <i class="fas fa-list text-blue-300 text-lg"></i>
+                                        <span class="font-medium">רשימת לקוחות</span>
+                                    </a>
+                                    <a href="{% url 'customer_form' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-green-400/30">
+                                        <i class="fas fa-user-plus text-green-300 text-lg"></i>
+                                        <span class="font-medium">הוסף לקוח</span>
+                                    </a>
+                                    <a href="{% url 'link_customer_user' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-cyan-400/30">
+                                        <i class="fas fa-link text-cyan-300 text-lg"></i>
+                                        <span class="font-medium">חיבור לקוחות</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- Mechanics Management Mobile -->
-                        <div class="mobile-dropdown">
-                            <button onclick="toggleMobileDropdown('mechanics')" class="mobile-nav-link w-full justify-between">
-                                <div class="flex items-center gap-3">
-                                    <i class="fas fa-tools text-green-400"></i>
-                                    <span>מכונאים</span>
-                                </div>
-                                <i class="fas fa-chevron-down transition-transform duration-300" id="mechanics-icon"></i>
-                            </button>
-                            <div id="mechanics-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
-                                <a href="{% url 'mechanic_dashboard' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-tachometer-alt text-green-300"></i>
-                                    <span>דשבורד מכונאים</span>
-                                </a>
-                                <a href="/admin/create-mechanic/" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-user-plus text-blue-300"></i>
-                                    <span>הוסף מכונאי</span>
-                                </a>
-                            </div>
-                        </div>
+                        <!-- Mechanic Dashboard Single Button Mobile -->
+                        <a href="{% url 'mechanic_dashboard' %}" class="mobile-nav-link">
+                            <i class="fas fa-tachometer-alt text-green-400"></i>
+                            <span>דשבורד מכונאי</span>
+                        </a>
                         
                         <!-- Advanced Management Mobile -->
                         <div class="mobile-dropdown">
@@ -384,15 +342,29 @@
                                 </div>
                                 <i class="fas fa-chevron-down transition-transform duration-300" id="advanced-icon"></i>
                             </button>
-                            <div id="advanced-menu" class="hidden pr-6 space-y-2 mt-3 bg-slate-800/30 rounded-lg p-3">
-                                <a href="{% url 'backup_menu' %}" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-download text-yellow-300"></i>
-                                    <span>גיבוי נתונים</span>
-                                </a>
-                                <a href="/admin/" class="mobile-nav-link text-sm py-3">
-                                    <i class="fas fa-shield-alt text-red-300"></i>
-                                    <span>ניהול מערכת</span>
-                                </a>
+                            <div id="advanced-menu" class="hidden mt-3 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-600/30 overflow-hidden">
+                                <div class="flex flex-col space-y-1 p-2">
+                                    <a href="{% url 'category_list' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-purple-400/30">
+                                        <i class="fas fa-tags text-purple-300 text-lg"></i>
+                                        <span class="font-medium">קטגוריות</span>
+                                    </a>
+                                    <a href="{% url 'print_labels_menu' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-orange-400/30">
+                                        <i class="fas fa-print text-orange-300 text-lg"></i>
+                                        <span class="font-medium">הדפסת מדבקות</span>
+                                    </a>
+                                    <a href="/admin/create-mechanic/" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-blue-400/30">
+                                        <i class="fas fa-user-plus text-blue-300 text-lg"></i>
+                                        <span class="font-medium">הוסף מכונאי</span>
+                                    </a>
+                                    <a href="{% url 'backup_menu' %}" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-yellow-400/30">
+                                        <i class="fas fa-download text-yellow-300 text-lg"></i>
+                                        <span class="font-medium">גיבוי נתונים</span>
+                                    </a>
+                                    <a href="/admin/" class="mobile-nav-link text-base py-4 px-4 min-h-[52px] rounded-lg bg-slate-700/30 hover:bg-slate-600/50 border border-slate-600/20 hover:border-red-400/30">
+                                        <i class="fas fa-shield-alt text-red-300 text-lg"></i>
+                                        <span class="font-medium">ניהול מערכת</span>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
@@ -715,7 +687,7 @@
         }
         
         .mobile-nav-link {
-            @apply flex items-center space-x-reverse space-x-4 px-4 py-4 rounded-xl text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 backdrop-blur-sm border border-transparent hover:border-white/10 transition-all duration-300;
+            @apply flex items-center space-x-reverse space-x-4 px-4 py-4 rounded-xl text-base font-medium text-gray-300 hover:text-white hover:bg-white/5 backdrop-blur-sm border border-transparent hover:border-white/10 transition-all duration-300 min-h-[48px];
         }
         
         /* Enhanced Action Buttons */

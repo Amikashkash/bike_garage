@@ -93,225 +93,254 @@
 
         <!-- Repairs List -->
         {% if assigned_repairs %}
-            <div class="space-y-6" id="repairs-container">
+            <div class="space-y-4" id="repairs-container">
                 {% for repair in assigned_repairs %}
                 <div class="repair-card glass-card border border-slate-600/40 rounded-2xl backdrop-blur-xl bg-slate-800/50 shadow-2xl" 
                      data-status="{% if repair.is_stuck %}stuck{% elif repair.progress_percentage == 100 %}completed{% else %}pending{% endif %}"
                      data-search="{{ repair.bike.brand|lower }} {{ repair.bike.model|lower }} {{ repair.bike.customer.name|lower }} #{{ repair.id }}">
                     
-                    <!-- Repair Header -->
-                    <div class="border-b border-slate-600/30 p-4 sm:p-6">
-                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                            <div class="flex items-center gap-4">
-                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-bicycle text-white text-lg"></i>
+                    <!-- Compact Header (Always Visible) -->
+                    <div class="p-4 cursor-pointer select-none" onclick="toggleRepairCard('repair-{{ repair.id }}')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4 flex-1">
+                                <div class="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                                    <i class="fas fa-bicycle text-white text-sm"></i>
                                 </div>
-                                <div>
-                                    <h3 class="text-lg sm:text-xl font-bold text-white">
-                                        {{ repair.bike.brand }} {{ repair.bike.model }}
-                                    </h3>
-                                    <p class="text-sm text-slate-400">תיקון #{{ repair.id }}</p>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h3 class="text-base font-bold text-white truncate">
+                                            {{ repair.bike.brand }} {{ repair.bike.model }}
+                                        </h3>
+                                        <span class="text-xs text-slate-400 flex-shrink-0">#{{ repair.id }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <p class="text-sm text-slate-300 truncate">{{ repair.bike.customer.name }}</p>
+                                        <div class="flex items-center gap-2">
+                                            {% if repair.is_stuck %}
+                                            <span class="px-2 py-1 bg-red-500/20 border border-red-400/30 rounded text-red-300 text-xs">
+                                                <i class="fas fa-exclamation-triangle mr-1"></i>תקוע
+                                            </span>
+                                            {% elif repair.progress_percentage == 100 %}
+                                            <span class="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded text-green-300 text-xs">
+                                                <i class="fas fa-check-circle mr-1"></i>הושלם
+                                            </span>
+                                            {% else %}
+                                            <span class="px-2 py-1 bg-amber-500/20 border border-amber-400/30 rounded text-amber-300 text-xs">
+                                                <i class="fas fa-clock mr-1"></i>בעבודה
+                                            </span>
+                                            {% endif %}
+                                            <span class="text-xs text-slate-400">{{ repair.progress_percentage }}%</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="flex items-center gap-2">
-                                {% if repair.is_stuck %}
-                                <span class="px-3 py-1 bg-red-500/20 border border-red-400/30 rounded-lg text-red-300 text-sm">
-                                    <i class="fas fa-exclamation-triangle mr-1"></i>תקוע
-                                </span>
-                                {% elif repair.progress_percentage == 100 %}
-                                <span class="px-3 py-1 bg-green-500/20 border border-green-400/30 rounded-lg text-green-300 text-sm">
-                                    <i class="fas fa-check-circle mr-1"></i>הושלם
-                                </span>
-                                {% else %}
-                                <span class="px-3 py-1 bg-amber-500/20 border border-amber-400/30 rounded-lg text-amber-300 text-sm">
-                                    <i class="fas fa-clock mr-1"></i>בעבודה
-                                </span>
-                                {% endif %}
+                            <!-- Quick Actions & Expand Icon -->
+                            <div class="flex items-center gap-3">
+                                <div class="text-xs text-slate-400 text-right">
+                                    <div>{{ repair.completed_count }}/{{ repair.total_items_count }} משימות</div>
+                                    <div>{{ repair.created_at|date:"d/m" }}</div>
+                                </div>
+                                
+                                <!-- Quick Action Button -->
+                                <a href="{% url 'mechanic_task_completion' repair.id %}" 
+                                   class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-xs"
+                                   onclick="event.stopPropagation()">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                
+                                <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300" id="icon-repair-{{ repair.id }}"></i>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Repair Content -->
-                    <div class="p-4 sm:p-6">
-                        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                            
-                            <!-- Customer Info -->
-                            <div class="xl:col-span-2 space-y-6">
-                                <!-- Customer Details -->
-                                <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
-                                    <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
-                                        <i class="fas fa-user text-blue-400"></i>
-                                        פרטי לקוח
-                                    </h4>
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div class="space-y-2">
-                                            <div class="flex items-center gap-2 text-sm">
-                                                <i class="fas fa-user text-slate-400"></i>
-                                                <span class="text-slate-300">{{ repair.bike.customer.name }}</span>
-                                            </div>
-                                            <div class="flex items-center gap-2 text-sm">
-                                                <i class="fas fa-calendar text-slate-400"></i>
-                                                <span class="text-slate-300">{{ repair.created_at|date:"d/m/Y H:i" }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="space-y-2">
-                                            <div class="flex items-center gap-2 text-sm">
-                                                <i class="fas fa-phone text-slate-400"></i>
-                                                <span class="text-slate-300">{{ repair.bike.customer.phone|default:"לא זמין" }}</span>
-                                            </div>
-                                            {% if repair.bike.customer.email %}
-                                            <div class="flex items-center gap-2 text-sm">
-                                                <i class="fas fa-envelope text-slate-400"></i>
-                                                <span class="text-slate-300">{{ repair.bike.customer.email }}</span>
-                                            </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
+                    <!-- Expandable Content (Hidden by Default) -->
+                    <div class="repair-details overflow-hidden transition-all duration-300 ease-in-out" 
+                         id="details-repair-{{ repair.id }}" 
+                         style="max-height: 0;">
+                        <div class="border-t border-slate-600/30"></div>
+                        
+                        <!-- Detailed Content -->
+                        <div class="p-4 sm:p-6">
+                            <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
                                 
-                                <!-- Diagnosis -->
-                                {% if repair.diagnosis %}
-                                <div class="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4">
-                                    <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
-                                        <i class="fas fa-stethoscope text-blue-400"></i>
-                                        אבחון
-                                    </h4>
-                                    <p class="text-slate-300 text-sm leading-relaxed">{{ repair.diagnosis }}</p>
-                                </div>
-                                {% endif %}
-                                
-                                <!-- Approved Tasks -->
-                                {% if repair.approved_items %}
-                                <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
-                                    <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
-                                        <i class="fas fa-tasks text-green-400"></i>
-                                        פעולות מאושרות
-                                    </h4>
-                                    <div class="space-y-2">
-                                        {% for item in repair.approved_items %}
-                                        <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
-                                            <div class="flex-1">
-                                                <div class="text-white text-sm font-medium">{{ item.description }}</div>
-                                                <div class="text-slate-400 text-xs">{{ item.notes|default:"-" }}</div>
+                                <!-- Customer Info -->
+                                <div class="xl:col-span-2 space-y-6">
+                                    <!-- Customer Details -->
+                                    <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                                        <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+                                            <i class="fas fa-user text-blue-400"></i>
+                                            פרטי לקוח
+                                        </h4>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div class="space-y-2">
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i class="fas fa-user text-slate-400"></i>
+                                                    <span class="text-slate-300">{{ repair.bike.customer.name }}</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i class="fas fa-calendar text-slate-400"></i>
+                                                    <span class="text-slate-300">{{ repair.created_at|date:"d/m/Y H:i" }}</span>
+                                                </div>
                                             </div>
-                                            <div class="flex items-center gap-3">
-                                                <span class="text-green-300 font-semibold">₪{{ item.price }}</span>
-                                                {% if item.status == 'completed' %}
-                                                    <span class="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded text-green-300 text-xs">
-                                                        הושלם
-                                                    </span>
-                                                {% elif item.status == 'blocked' %}
-                                                    <span class="px-2 py-1 bg-red-500/20 border border-red-400/30 rounded text-red-300 text-xs">
-                                                        תקוע
-                                                    </span>
-                                                {% else %}
-                                                    <span class="px-2 py-1 bg-amber-500/20 border border-amber-400/30 rounded text-amber-300 text-xs">
-                                                        ממתין
-                                                    </span>
+                                            <div class="space-y-2">
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i class="fas fa-phone text-slate-400"></i>
+                                                    <span class="text-slate-300">{{ repair.bike.customer.phone|default:"לא זמין" }}</span>
+                                                </div>
+                                                {% if repair.bike.customer.email %}
+                                                <div class="flex items-center gap-2 text-sm">
+                                                    <i class="fas fa-envelope text-slate-400"></i>
+                                                    <span class="text-slate-300">{{ repair.bike.customer.email }}</span>
+                                                </div>
                                                 {% endif %}
                                             </div>
                                         </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-                            
-                            <!-- Progress & Actions -->
-                            <div class="space-y-6">
-                                
-                                <!-- Progress Section -->
-                                <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
-                                    <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
-                                        <i class="fas fa-chart-pie text-purple-400"></i>
-                                        התקדמות
-                                    </h4>
-                                    
-                                    <!-- Progress Stats -->
-                                    <div class="grid grid-cols-2 gap-4 mb-4">
-                                        <div class="text-center">
-                                            <div class="text-2xl font-bold text-green-300">{{ repair.completed_count }}</div>
-                                            <div class="text-xs text-slate-400">הושלמו</div>
-                                        </div>
-                                        <div class="text-center">
-                                            <div class="text-2xl font-bold text-amber-300">{{ repair.pending_count }}</div>
-                                            <div class="text-xs text-slate-400">ממתינות</div>
-                                        </div>
                                     </div>
                                     
-                                    <!-- Progress Bar -->
-                                    <div class="relative">
-                                        <div class="w-full bg-slate-600 rounded-full h-6 mb-2">
-                                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-6 rounded-full flex items-center justify-center transition-all duration-500" 
-                                                 style="width: {{ repair.progress_percentage }}%">
-                                                <span class="text-white text-xs font-semibold">{{ repair.progress_percentage }}%</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Blocked Alert -->
-                                    {% if repair.blocked_count > 0 %}
-                                    <div class="mt-3 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
-                                        <div class="flex items-center gap-2 text-red-300 text-sm">
-                                            <i class="fas fa-exclamation-triangle"></i>
-                                            <span>{{ repair.blocked_count }} פעולות תקועות</span>
-                                        </div>
+                                    <!-- Diagnosis -->
+                                    {% if repair.diagnosis %}
+                                    <div class="bg-blue-500/10 border border-blue-400/30 rounded-xl p-4">
+                                        <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+                                            <i class="fas fa-stethoscope text-blue-400"></i>
+                                            אבחון
+                                        </h4>
+                                        <p class="text-slate-300 text-sm leading-relaxed">{{ repair.diagnosis }}</p>
                                     </div>
                                     {% endif %}
                                     
-                                    <!-- Stuck Alert -->
-                                    {% if repair.is_stuck %}
-                                    <div class="mt-3 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
-                                        <div class="text-red-300 text-sm font-semibold mb-1 flex items-center gap-2">
-                                            <i class="fas fa-stop-circle"></i>
-                                            תיקון תקוע
+                                    <!-- Approved Tasks -->
+                                    {% if repair.approved_items %}
+                                    <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                                        <h4 class="text-white font-semibold mb-3 flex items-center gap-2">
+                                            <i class="fas fa-tasks text-green-400"></i>
+                                            פעולות מאושרות
+                                        </h4>
+                                        <div class="space-y-2">
+                                            {% for item in repair.approved_items %}
+                                            <div class="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg">
+                                                <div class="flex-1">
+                                                    <div class="text-white text-sm font-medium">{{ item.description }}</div>
+                                                    <div class="text-slate-400 text-xs">{{ item.notes|default:"-" }}</div>
+                                                </div>
+                                                <div class="flex items-center gap-3">
+                                                    <span class="text-green-300 font-semibold">₪{{ item.price }}</span>
+                                                    {% if item.status == 'completed' %}
+                                                        <span class="px-2 py-1 bg-green-500/20 border border-green-400/30 rounded text-green-300 text-xs">
+                                                            הושלם
+                                                        </span>
+                                                    {% elif item.status == 'blocked' %}
+                                                        <span class="px-2 py-1 bg-red-500/20 border border-red-400/30 rounded text-red-300 text-xs">
+                                                            תקוע
+                                                        </span>
+                                                    {% else %}
+                                                        <span class="px-2 py-1 bg-amber-500/20 border border-amber-400/30 rounded text-amber-300 text-xs">
+                                                            ממתין
+                                                        </span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            {% endfor %}
                                         </div>
-                                        <p class="text-red-200 text-xs mb-2">{{ repair.stuck_reason }}</p>
-                                        {% if repair.manager_response %}
-                                        <div class="mt-2 p-2 bg-blue-500/10 border border-blue-400/30 rounded">
-                                            <div class="text-blue-300 text-xs font-semibold">תגובת מנהל:</div>
-                                            <div class="text-blue-200 text-xs">{{ repair.manager_response }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Progress & Actions -->
+                                <div class="space-y-6">
+                                    
+                                    <!-- Progress Section -->
+                                    <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
+                                        <h4 class="text-white font-semibold mb-4 flex items-center gap-2">
+                                            <i class="fas fa-chart-pie text-purple-400"></i>
+                                            התקדמות מפורטת
+                                        </h4>
+                                        
+                                        <!-- Progress Stats -->
+                                        <div class="grid grid-cols-2 gap-4 mb-4">
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-green-300">{{ repair.completed_count }}</div>
+                                                <div class="text-xs text-slate-400">הושלמו</div>
+                                            </div>
+                                            <div class="text-center">
+                                                <div class="text-2xl font-bold text-amber-300">{{ repair.pending_count }}</div>
+                                                <div class="text-xs text-slate-400">ממתינות</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Progress Bar -->
+                                        <div class="relative">
+                                            <div class="w-full bg-slate-600 rounded-full h-6 mb-2">
+                                                <div class="bg-gradient-to-r from-green-500 to-emerald-500 h-6 rounded-full flex items-center justify-center transition-all duration-500" 
+                                                     style="width: {{ repair.progress_percentage }}%">
+                                                    <span class="text-white text-xs font-semibold">{{ repair.progress_percentage }}%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Blocked Alert -->
+                                        {% if repair.blocked_count > 0 %}
+                                        <div class="mt-3 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                            <div class="flex items-center gap-2 text-red-300 text-sm">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <span>{{ repair.blocked_count }} פעולות תקועות</span>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        <!-- Stuck Alert -->
+                                        {% if repair.is_stuck %}
+                                        <div class="mt-3 p-3 bg-red-500/10 border border-red-400/30 rounded-lg">
+                                            <div class="text-red-300 text-sm font-semibold mb-1 flex items-center gap-2">
+                                                <i class="fas fa-stop-circle"></i>
+                                                תיקון תקוע
+                                            </div>
+                                            <p class="text-red-200 text-xs mb-2">{{ repair.stuck_reason }}</p>
+                                            {% if repair.manager_response %}
+                                            <div class="mt-2 p-2 bg-blue-500/10 border border-blue-400/30 rounded">
+                                                <div class="text-blue-300 text-xs font-semibold">תגובת מנהל:</div>
+                                                <div class="text-blue-200 text-xs">{{ repair.manager_response }}</div>
+                                            </div>
+                                            {% endif %}
                                         </div>
                                         {% endif %}
                                     </div>
-                                    {% endif %}
-                                </div>
-                                
-                                <!-- Action Buttons -->
-                                <div class="space-y-3">
-                                    <a href="{% url 'mechanic_task_completion' repair.id %}" 
-                                       class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm text-center block">
-                                        <i class="fas fa-edit mr-2"></i>
-                                        עדכן התקדמות
-                                    </a>
                                     
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <a href="{% url 'repair_status' repair.id %}" 
-                                           class="bg-blue-600/50 hover:bg-blue-600/70 text-blue-200 font-medium py-2 px-3 rounded-lg transition-all text-xs text-center">
-                                            <i class="fas fa-eye mr-1"></i>
-                                            פרטים
+                                    <!-- Action Buttons -->
+                                    <div class="space-y-3">
+                                        <a href="{% url 'mechanic_task_completion' repair.id %}" 
+                                           class="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm text-center block">
+                                            <i class="fas fa-edit mr-2"></i>
+                                            עדכן התקדמות
                                         </a>
-                                        <a href="{% url 'print_bike_label' repair.id %}" target="_blank"
-                                           class="bg-purple-600/50 hover:bg-purple-600/70 text-purple-200 font-medium py-2 px-3 rounded-lg transition-all text-xs text-center">
-                                            <i class="fas fa-print mr-1"></i>
-                                            מדבקה
-                                        </a>
+                                        
+                                        <div class="grid grid-cols-2 gap-2">
+                                            <a href="{% url 'repair_status' repair.id %}" 
+                                               class="bg-blue-600/50 hover:bg-blue-600/70 text-blue-200 font-medium py-2 px-3 rounded-lg transition-all text-xs text-center">
+                                                <i class="fas fa-eye mr-1"></i>
+                                                פרטים
+                                            </a>
+                                            <a href="{% url 'print_bike_label' repair.id %}" target="_blank"
+                                               class="bg-purple-600/50 hover:bg-purple-600/70 text-purple-200 font-medium py-2 px-3 rounded-lg transition-all text-xs text-center">
+                                                <i class="fas fa-print mr-1"></i>
+                                                מדבקה
+                                            </a>
+                                        </div>
+                                        
+                                        {% if not repair.is_stuck %}
+                                        <button class="w-full bg-red-600/50 hover:bg-red-600/70 text-red-200 font-medium py-2 px-4 rounded-lg transition-all text-sm" 
+                                                onclick="reportStuck({{ repair.id }})">
+                                            <i class="fas fa-exclamation-triangle mr-2"></i>
+                                            דווח תקיעה
+                                        </button>
+                                        {% else %}
+                                        <button class="w-full bg-green-600/50 hover:bg-green-600/70 text-green-200 font-medium py-2 px-4 rounded-lg transition-all text-sm" 
+                                                onclick="resumeWork({{ repair.id }})">
+                                            <i class="fas fa-play mr-2"></i>
+                                            המשך עבודה
+                                        </button>
+                                        {% endif %}
                                     </div>
-                                    
-                                    {% if not repair.is_stuck %}
-                                    <button class="w-full bg-red-600/50 hover:bg-red-600/70 text-red-200 font-medium py-2 px-4 rounded-lg transition-all text-sm" 
-                                            onclick="reportStuck({{ repair.id }})">
-                                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                                        דווח תקיעה
-                                    </button>
-                                    {% else %}
-                                    <button class="w-full bg-green-600/50 hover:bg-green-600/70 text-green-200 font-medium py-2 px-4 rounded-lg transition-all text-sm" 
-                                            onclick="resumeWork({{ repair.id }})">
-                                        <i class="fas fa-play mr-2"></i>
-                                        המשך עבודה
-                                    </button>
-                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -580,6 +609,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+// Toggle repair card expansion
+function toggleRepairCard(cardId) {
+    const detailsElement = document.getElementById('details-' + cardId);
+    const iconElement = document.getElementById('icon-' + cardId);
+    
+    if (!detailsElement || !iconElement) return;
+    
+    const isExpanded = detailsElement.style.maxHeight && detailsElement.style.maxHeight !== '0px';
+    
+    if (isExpanded) {
+        // Collapse
+        detailsElement.style.maxHeight = '0px';
+        iconElement.style.transform = 'rotate(0deg)';
+    } else {
+        // Expand
+        detailsElement.style.maxHeight = detailsElement.scrollHeight + 'px';
+        iconElement.style.transform = 'rotate(180deg)';
+    }
+}
 
 // Stuck reporting functionality
 let currentRepairId = null;

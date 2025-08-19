@@ -9,7 +9,7 @@
         <!-- Header Section -->
         <div class="text-center mb-6 sm:mb-8">
             <div class="mb-6">
-                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text mb-4">
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500 bg-clip-text text-transparent mb-4">
                     🚲 {{ title }}
                     <span class="text-2xl sm:text-3xl lg:text-4xl text-blue-300">⚙️</span>
                 </h1>
@@ -53,7 +53,7 @@
             <!-- Bikes Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 {% for bike in bikes %}
-                <div class="bike-card glass-card border border-blue-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl overflow-hidden hover:border-blue-400/50 transition-all duration-300">
+                <div class="bike-card bg-slate-800/40 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl overflow-hidden hover:border-blue-400/50 hover:bg-slate-800/50 hover:-translate-y-1 lg:hover:-translate-y-1 transition-all duration-300 opacity-0 animate-fade-in-up">
                     
                     <!-- Bike Header -->
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
@@ -71,7 +71,7 @@
                             </div>
                             {% if bike.color %}
                             <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 rounded-full border-2 border-white/20" style="background-color: {{ bike.color|lower }}"></div>
+                                <div class="w-4 h-4 rounded-full border-2 border-white/20" data-bike-color="{{ bike.color|lower }}"></div>
                                 <span class="bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-1 text-slate-200 text-sm font-medium">
                                     {{ bike.color }}
                                 </span>
@@ -118,10 +118,10 @@
                                     
                                     <div class="space-y-3 max-h-60 overflow-y-auto">
                                         {% for repair in repairs %}
-                                        <div class="repair-item bg-slate-800/50 border border-slate-600/40 rounded-lg p-3 hover:border-slate-500/60 transition-all duration-300">
+                                        <div class="repair-item bg-slate-800/50 border border-slate-600/40 rounded-lg p-3 hover:border-slate-500/60 hover:bg-slate-700/70 hover:-translate-x-1 transition-all duration-300">
                                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                                                 <div class="flex items-center gap-3">
-                                                    <span class="repair-status-badge status-{{ repair.status }}">
+                                                    <span class="repair-status-badge status-{{ repair.status }} inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold border" data-repair-status="{{ repair.status }}">
                                                         {% if repair.status == 'completed' %}
                                                             <i class="fas fa-check-circle mr-1"></i>הושלם
                                                         {% elif repair.status == 'in_progress' %}
@@ -176,7 +176,7 @@
         {% else %}
             <!-- Empty State -->
             <div class="text-center py-16">
-                <div class="glass-card border border-slate-600/40 rounded-2xl p-8 sm:p-12 max-w-lg mx-auto">
+                <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-600/40 rounded-2xl p-8 sm:p-12 max-w-lg mx-auto hover:bg-slate-800/50 hover:-translate-y-1 transition-all duration-300">
                     <div class="w-24 h-24 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-bicycle text-blue-400 text-4xl"></i>
                     </div>
@@ -203,7 +203,7 @@
         
         <!-- Statistics Section -->
         {% if bikes %}
-        <div class="glass-card border border-purple-400/30 rounded-2xl backdrop-blur-xl bg-slate-800/40 shadow-2xl p-4 sm:p-6 mb-8">
+        <div class="bg-slate-800/40 backdrop-blur-xl border border-purple-400/30 rounded-2xl shadow-2xl p-4 sm:p-6 mb-8 hover:bg-slate-800/50 hover:-translate-y-1 transition-all duration-300">
             <div class="flex items-center gap-3 mb-4">
                 <div class="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
                     <i class="fas fa-chart-bar text-purple-400"></i>
@@ -212,26 +212,20 @@
             </div>
             
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div class="stat-item text-center">
+                <div class="stat-item text-center p-4 bg-slate-700/30 border border-slate-600/50 rounded-xl hover:bg-slate-700/50 hover:border-slate-600/70 hover:-translate-y-1 transition-all duration-300">
                     <div class="text-2xl font-bold text-blue-300">{{ bikes|length }}</div>
                     <div class="text-slate-400 text-sm">אופניים</div>
                 </div>
-                <div class="stat-item text-center">
-                    <div class="text-2xl font-bold text-green-300">
-                        {% for bike in bikes %}{{ bike.repairs.all|length }}{% if not forloop.last %}+{% endif %}{% endfor %}
-                    </div>
+                <div class="stat-item text-center p-4 bg-slate-700/30 border border-slate-600/50 rounded-xl hover:bg-slate-700/50 hover:border-slate-600/70 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-2xl font-bold text-green-300" id="total-repairs">0</div>
                     <div class="text-slate-400 text-sm">תיקונים</div>
                 </div>
-                <div class="stat-item text-center">
-                    <div class="text-2xl font-bold text-orange-300">
-                        {% for bike in bikes %}{% for repair in bike.repairs.all %}{% if repair.status == 'in_progress' %}1{% endif %}{% endfor %}{% endfor %}
-                    </div>
+                <div class="stat-item text-center p-4 bg-slate-700/30 border border-slate-600/50 rounded-xl hover:bg-slate-700/50 hover:border-slate-600/70 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-2xl font-bold text-orange-300" id="in-progress-repairs">0</div>
                     <div class="text-slate-400 text-sm">בתיקון</div>
                 </div>
-                <div class="stat-item text-center">
-                    <div class="text-2xl font-bold text-purple-300">
-                        {% for bike in bikes %}{% for repair in bike.repairs.all %}{% if repair.status == 'completed' %}1{% endif %}{% endfor %}{% endfor %}
-                    </div>
+                <div class="stat-item text-center p-4 bg-slate-700/30 border border-slate-600/50 rounded-xl hover:bg-slate-700/50 hover:border-slate-600/70 hover:-translate-y-1 transition-all duration-300">
+                    <div class="text-2xl font-bold text-purple-300" id="completed-repairs">0</div>
                     <div class="text-slate-400 text-sm">הושלמו</div>
                 </div>
             </div>
@@ -249,185 +243,70 @@
     </div>
 </div>
 
-<style>
-/* Mercury Design System - Customer Bikes List Specific Styles */
-.gradient-text {
-    background: linear-gradient(135deg, #3b82f6, #06b6d4, #8b5cf6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
 
-.glass-card {
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-}
-
-.glass-card:hover {
-    background: rgba(15, 23, 42, 0.5);
-    transform: translateY(-2px);
-    transition: all 0.3s ease;
-}
-
-/* Bike Cards */
-.bike-card {
-    animation: fadeInUp 0.6s ease-out forwards;
-    opacity: 0;
-}
-
-.bike-card:nth-child(1) { animation-delay: 0.1s; }
-.bike-card:nth-child(2) { animation-delay: 0.2s; }
-.bike-card:nth-child(3) { animation-delay: 0.3s; }
-.bike-card:nth-child(4) { animation-delay: 0.4s; }
-
-/* Repair Status Badges */
-.repair-status-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border: 1px solid;
-}
-
-.repair-status-badge.status-completed {
-    background: rgba(34, 197, 94, 0.1);
-    border-color: rgba(34, 197, 94, 0.3);
-    color: rgb(74, 222, 128);
-}
-
-.repair-status-badge.status-in_progress {
-    background: rgba(59, 130, 246, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-    color: rgb(96, 165, 250);
-}
-
-.repair-status-badge.status-diagnosed {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.3);
-    color: rgb(251, 191, 36);
-}
-
-.repair-status-badge.status-pending_approval {
-    background: rgba(168, 85, 247, 0.1);
-    border-color: rgba(168, 85, 247, 0.3);
-    color: rgb(196, 181, 253);
-}
-
-/* Repair Items */
-.repair-item {
-    transition: all 0.3s ease;
-}
-
-.repair-item:hover {
-    transform: translateX(-2px);
-    background: rgba(15, 23, 42, 0.7) !important;
-}
-
-/* Statistics */
-.stat-item {
-    padding: 1rem;
-    background: rgba(51, 65, 85, 0.3);
-    border: 1px solid rgba(71, 85, 105, 0.5);
-    border-radius: 0.75rem;
-    transition: all 0.3s ease;
-}
-
-.stat-item:hover {
-    background: rgba(51, 65, 85, 0.5);
-    border-color: rgba(71, 85, 105, 0.7);
-    transform: translateY(-2px);
-}
-
-/* Animations */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Mobile optimizations */
-@media (max-width: 640px) {
-    .glass-card {
-        backdrop-filter: blur(12px);
-    }
-    
-    .bike-card {
-        margin-bottom: 1rem;
-    }
-    
-    .repair-item {
-        padding: 0.75rem;
-    }
-}
-
-/* Responsive hover effects */
-@media (min-width: 1024px) {
-    .bike-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    }
-}
-
-/* Scrollbar styling for repair lists */
-.space-y-3::-webkit-scrollbar {
-    width: 4px;
-}
-
-.space-y-3::-webkit-scrollbar-track {
-    background: rgba(51, 65, 85, 0.3);
-    border-radius: 2px;
-}
-
-.space-y-3::-webkit-scrollbar-thumb {
-    background: rgba(71, 85, 105, 0.5);
-    border-radius: 2px;
-}
-
-.space-y-3::-webkit-scrollbar-thumb:hover {
-    background: rgba(71, 85, 105, 0.7);
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚲 Customer bikes list with Mercury design loaded');
     
+    // Initialize bike colors
+    const colorElements = document.querySelectorAll('[data-bike-color]');
+    colorElements.forEach(element => {
+        const color = element.getAttribute('data-bike-color');
+        if (color) {
+            element.style.backgroundColor = color;
+        }
+    });
+    
     // Initialize bike cards animations
     const bikeCards = document.querySelectorAll('.bike-card');
     bikeCards.forEach((card, index) => {
         setTimeout(() => {
-            card.style.opacity = '1';
+            card.classList.remove('opacity-0');
+            card.classList.add('opacity-100');
         }, index * 100);
     });
     
-    // Add hover effects to repair items
-    const repairItems = document.querySelectorAll('.repair-item');
-    repairItems.forEach(item => {
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateX(-4px)';
-        });
+    // Repair items already have hover effects via Tailwind classes
+    
+    // Calculate and display statistics
+    const calculateStatistics = () => {
+        // Count total repairs
+        const totalRepairBadges = document.querySelectorAll('[data-repair-status]');
+        const totalRepairs = totalRepairBadges.length;
         
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateX(0)';
-        });
-    });
+        // Count repairs by status
+        const inProgressRepairs = document.querySelectorAll('[data-repair-status="in_progress"]').length;
+        const completedRepairs = document.querySelectorAll('[data-repair-status="completed"]').length;
+        
+        // Update statistics display
+        const totalRepairsElement = document.getElementById('total-repairs');
+        const inProgressElement = document.getElementById('in-progress-repairs');
+        const completedElement = document.getElementById('completed-repairs');
+        
+        if (totalRepairsElement) totalRepairsElement.textContent = totalRepairs;
+        if (inProgressElement) inProgressElement.textContent = inProgressRepairs;
+        if (completedElement) completedElement.textContent = completedRepairs;
+        
+        console.log(`📊 Statistics calculated: ${totalRepairs} total, ${inProgressRepairs} in progress, ${completedRepairs} completed`);
+    };
+    
+    // Calculate statistics immediately
+    calculateStatistics();
     
     // Statistics counter animation
     const statItems = document.querySelectorAll('.stat-item');
     const animateNumbers = () => {
         statItems.forEach(item => {
             const numberElement = item.querySelector('div:first-child');
-            const finalNumber = parseInt(numberElement.textContent);
+            const finalNumber = parseInt(numberElement.textContent) || 0;
             let currentNumber = 0;
-            const increment = Math.ceil(finalNumber / 20);
+            const increment = Math.max(1, Math.ceil(finalNumber / 20));
+            
+            if (finalNumber === 0) {
+                numberElement.textContent = '0';
+                return;
+            }
             
             const timer = setInterval(() => {
                 currentNumber += increment;
@@ -441,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // Trigger animation when statistics section is visible
-    const statsSection = document.querySelector('.glass-card');
+    const statsSection = document.querySelector('.bg-slate-800\\/40');
     if (statsSection) {
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -454,6 +333,95 @@ document.addEventListener('DOMContentLoaded', function() {
         
         observer.observe(statsSection);
     }
+    
+    // Apply dynamic styling for repair status badges using Tailwind classes
+    const applyRepairStatusStyling = () => {
+        // Completed repairs - green styling
+        document.querySelectorAll('[data-repair-status="completed"]').forEach(badge => {
+            badge.className = 'repair-status-badge inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold border bg-green-500/10 border-green-500/30 text-green-400';
+        });
+        
+        // In progress repairs - blue styling
+        document.querySelectorAll('[data-repair-status="in_progress"]').forEach(badge => {
+            badge.className = 'repair-status-badge inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold border bg-blue-500/10 border-blue-500/30 text-blue-400';
+        });
+        
+        // Diagnosed repairs - amber styling
+        document.querySelectorAll('[data-repair-status="diagnosed"]').forEach(badge => {
+            badge.className = 'repair-status-badge inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold border bg-amber-500/10 border-amber-500/30 text-amber-400';
+        });
+        
+        // Pending approval repairs - purple styling
+        document.querySelectorAll('[data-repair-status="pending_approval"]').forEach(badge => {
+            badge.className = 'repair-status-badge inline-flex items-center px-2 py-1 rounded-lg text-xs font-semibold border bg-purple-500/10 border-purple-500/30 text-purple-400';
+        });
+    };
+    
+    // Apply repair status styling
+    applyRepairStatusStyling();
+    
+    // Apply bike card animations using Tailwind classes
+    const applyBikeCardAnimations = () => {
+        const bikeCards = document.querySelectorAll('.bike-card');
+        bikeCards.forEach((card, index) => {
+            card.style.animationDelay = `${(index + 1) * 0.1}s`;
+            card.classList.add('animate-[fadeInUp_0.6s_ease-out_forwards]');
+            setTimeout(() => {
+                card.classList.remove('opacity-0');
+                card.classList.add('opacity-100');
+            }, index * 100);
+        });
+    };
+    
+    // Apply mobile optimizations and scrollbar styling using JavaScript
+    const applyAdditionalStyling = () => {
+        // Add mobile-specific classes for bike cards
+        if (window.innerWidth <= 640) {
+            document.querySelectorAll('.bike-card').forEach(card => {
+                card.classList.add('mb-4');
+            });
+            
+            document.querySelectorAll('.repair-item').forEach(item => {
+                item.classList.add('p-3');
+            });
+        }
+        
+        // Apply custom scrollbar styling for repair lists
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .space-y-3::-webkit-scrollbar {
+                width: 4px;
+            }
+            .space-y-3::-webkit-scrollbar-track {
+                background: rgba(51, 65, 85, 0.3);
+                border-radius: 0.375rem;
+            }
+            .space-y-3::-webkit-scrollbar-thumb {
+                background: rgba(71, 85, 105, 0.5);
+                border-radius: 0.375rem;
+            }
+            .space-y-3::-webkit-scrollbar-thumb:hover {
+                background: rgba(71, 85, 105, 0.7);
+            }
+        `;
+        document.head.appendChild(style);
+    };
+    
+    // Apply additional styling
+    applyAdditionalStyling();
+    
+    // Apply animations
+    applyBikeCardAnimations();
     
     // Enhanced action buttons
     const actionButtons = document.querySelectorAll('[class*="gradient"]');

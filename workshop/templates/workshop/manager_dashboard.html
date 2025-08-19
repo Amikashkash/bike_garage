@@ -10,20 +10,20 @@
         <div class="text-center mb-8">
             <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                 <div class="mb-4 md:mb-0">
-                    <h1 class="text-4xl font-bold gradient-text mb-2">🎯 דשבורד מנהל</h1>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent mb-2">🎯 דשבורד מנהל</h1>
                     <p class="text-slate-300">ניהול תיקונים וזרימת עבודה - מבט כולל על כל הפעילות</p>
                 </div>
                 
                 <!-- Action Buttons -->
                 <div class="flex gap-3 justify-center md:justify-end">
-                    <a href="{% url 'repair_form' %}" class="btn-modern primary sm" title="צור תיקון חדש">
-                        <i class="fas fa-plus ml-2"></i>תיקון חדש
+                    <a href="{% url 'repair_form' %}" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2" title="צור תיקון חדש">
+                        <i class="fas fa-plus"></i>תיקון חדש
                     </a>
-                    <a href="{% url 'backup_menu' %}" class="btn-modern warning sm" title="גיבוי נתונים">
-                        <i class="fas fa-download ml-2"></i>גיבוי
+                    <a href="{% url 'backup_menu' %}" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2" title="גיבוי נתונים">
+                        <i class="fas fa-download"></i>גיבוי
                     </a>
-                    <a href="{% url 'print_labels_menu' %}" class="btn-modern secondary sm" title="הדפסת מדבקות">
-                        <i class="fas fa-print ml-2"></i>מדבקות
+                    <a href="{% url 'print_labels_menu' %}" class="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2" title="הדפסת מדבקות">
+                        <i class="fas fa-print"></i>מדבקות
                     </a>
                 </div>
             </div>
@@ -52,12 +52,12 @@
                                 <i class="fas fa-fire"></i>
                                 <span class="text-sm md:text-base">{{ stuck_repairs.count }} מכונאי מחכה</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="stuck-repairs-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="stuck-repairs-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="stuck-repairs" class="p-6" style="display: none;">
+                <div id="stuck-repairs" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in stuck_repairs %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -167,12 +167,12 @@
                                 <i class="fas fa-clock"></i>
                                 <span class="text-sm md:text-base">{{ pending_diagnosis.count   }}   ממתינים . . . </span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="pending-diagnosis-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="pending-diagnosis-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="pending-diagnosis" class="p-6" style="display: none;">
+                <div id="pending-diagnosis" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in pending_diagnosis %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -244,12 +244,12 @@
                                 <i class="fas fa-hourglass-half"></i>
                                 <span class="text-sm md:text-base">{{ pending_approval.count }} ממתינים . . .</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="pending-approval-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="pending-approval-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="pending-approval" class="p-6" style="display: none;">
+                <div id="pending-approval" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in pending_approval %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -325,12 +325,12 @@
                                 <i class="fas fa-user-cog"></i>
                                 <span class="text-sm md:text-base">{{ approved_waiting_for_mechanic.count }} ממתינים .. .</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="approved-waiting-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="approved-waiting-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="approved-waiting" class="p-6" style="display: none;">
+                <div id="approved-waiting" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in approved_waiting_for_mechanic %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -406,12 +406,12 @@
                                 <i class="fas fa-play"></i>
                                 <span class="text-sm md:text-base">{{ in_progress.count }} פעילים . . .</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="in-progress-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="in-progress-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="in-progress" class="p-6" style="display: none;">
+                <div id="in-progress" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in in_progress %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -487,12 +487,12 @@
                                 <i class="fas fa-clipboard-check"></i>
                                 <span class="text-sm md:text-base">{{ awaiting_quality_check.count }}  לבדיקה . . .</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="quality-check-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="quality-check-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="quality-check" class="p-6" style="display: none;">
+                <div id="quality-check" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in awaiting_quality_check %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -568,12 +568,12 @@
                                 <i class="fas fa-gift"></i>
                                 <span class="text-sm md:text-base">{{ repairs_not_collected.count }} מוכנים . . .</span>
                             </div>
-                            <i class="fas fa-chevron-down transition-transform text-sm" id="ready-collection-icon"></i>
+                            <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="ready-collection-icon"></i>
                         </button>
                     </div>
                 </div>
                 
-                <div id="ready-collection" class="p-6" style="display: none;">
+                <div id="ready-collection" class="p-6 hidden">
                     <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {% for repair in repairs_not_collected %}
                         <!-- Modern Repair Card with Borders and Actions -->
@@ -649,8 +649,8 @@
                 </div>
                 <h2 class="text-2xl font-bold text-white mb-4">כל התיקונים במצב תקין</h2>
                 <p class="text-slate-400 mb-8">אין תיקונים הדורשים טיפול מיוחד כרגע</p>
-                <a href="{% url 'home' %}" class="btn-modern primary lg">
-                    <i class="fas fa-home ml-2"></i>חזרה לדף הבית
+                <a href="{% url 'home' %}" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2">
+                    <i class="fas fa-home"></i>חזרה לדף הבית
                 </a>
             </div>
         </div>
@@ -658,8 +658,8 @@
         
         <!-- Back to Home -->
         <div class="text-center mt-8">
-            <a href="{% url 'home' %}" class="btn-modern secondary">
-                <i class="fas fa-home ml-2"></i>חזרה לדף הבית
+            <a href="{% url 'home' %}" class="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2">
+                <i class="fas fa-home"></i>חזרה לדף הבית
             </a>
         </div>
     </div>
@@ -771,28 +771,30 @@ function toggleSection(sectionId) {
     const section = document.getElementById(sectionId);
     const icon = document.getElementById(sectionId + '-icon');
     
-    if (section.style.display === 'none') {
-        section.style.display = 'block';
-        icon.style.transform = 'rotate(180deg)';
+    if (section.classList.contains('hidden')) {
+        section.classList.remove('hidden');
+        icon.classList.add('rotate-180');
     } else {
-        section.style.display = 'none';
-        icon.style.transform = 'rotate(0deg)';
+        section.classList.add('hidden');
+        icon.classList.remove('rotate-180');
     }
 }
 
 // Initialize sections
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 Manager Dashboard loaded');
+    
     // Initialize ALL sections as collapsed 
     const sections = ['stuck-repairs', 'pending-diagnosis', 'pending-approval', 'approved-waiting', 'in-progress', 'quality-check', 'ready-collection'];
     sections.forEach(sectionId => {
         const section = document.getElementById(sectionId);
         if (section) {
-            section.style.display = 'none';
+            section.classList.add('hidden');
         }
         // Reset all arrow icons
         const icon = document.getElementById(sectionId + '-icon');
         if (icon) {
-            icon.style.transform = 'rotate(0deg)';
+            icon.classList.remove('rotate-180');
         }
     });
 });
@@ -1028,4 +1030,5 @@ document.addEventListener('click', function(e) {
     }
 });
 </script>
+
 {% endblock %}

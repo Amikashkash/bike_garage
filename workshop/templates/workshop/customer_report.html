@@ -102,28 +102,28 @@
                             <div class="category-item">
                                 <div class="category-card bg-slate-700/30 border border-slate-600/40 rounded-xl overflow-hidden transition-all duration-300 hover:border-amber-400/50">
                                     <!-- Category Header -->
-                                    <div class="category-header p-4 border-b border-slate-600/30 cursor-pointer">
+                                    <div class="category-header p-4 sm:p-4 sm:min-h-[56px] cursor-pointer">
                                         <div class="flex items-center gap-3">
                                             <div class="category-content flex items-center gap-2 flex-1">
                                                 <i class="fas fa-folder text-amber-400"></i>
                                                 <span class="text-white font-medium">{{ cat.name }}</span>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <span class="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">לחץ לפתיחה</span>
+                                                <span class="category-status text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">לחץ לפתיחה</span>
                                                 <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
                                             </div>
                                         </div>
                                     </div>
                                     
                                     <!-- Subcategories List -->
-                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list max-h-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out">
+                                    <div id="subcat-list-{{ cat.id }}" class="subcategories-list overflow-hidden transition-all duration-300 ease-in-out" style="max-height: 0px;">
                                         <div class="p-4 space-y-3">
                                             {% for sub in cat.subcategories.all %}
                                             <div class="subcategory-item">
-                                                <label for="sub-{{ sub.id }}" class="subcategory-label flex items-center gap-3 p-3 bg-slate-800/50 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-300 hover:border-green-400/50 hover:bg-slate-700/50 w-full touch-manipulation">
+                                                <label for="sub-{{ sub.id }}" class="subcategory-label flex items-center gap-3 p-3 md:p-3 sm:p-3 sm:min-h-[48px] bg-slate-800/50 border border-slate-600/30 rounded-lg cursor-pointer transition-all duration-300 hover:border-green-400/50 hover:bg-slate-700/50 w-full touch-manipulation">
                                                     <div class="relative flex-shrink-0">
                                                         <input type="checkbox" name="subcategories" value="{{ sub.id }}" class="subcategory-checkbox sr-only" id="sub-{{ sub.id }}">
-                                                        <div class="checkbox-visual w-5 h-5 bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300 flex items-center justify-center">
+                                                        <div class="checkbox-visual w-5 h-5 sm:w-6 sm:h-6 sm:min-w-[24px] bg-slate-600 border-2 border-slate-500 rounded transition-all duration-300 flex items-center justify-center">
                                                             <i class="fas fa-check text-white text-xs opacity-0 transition-opacity duration-300"></i>
                                                         </div>
                                                     </div>
@@ -177,7 +177,7 @@
                 </div>
                 
                 <!-- Summary Section -->
-                <div id="report-summary" class="bg-slate-800/40 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up [animation-delay:0.3s]" style="display: none;">
+                <div id="report-summary" class="bg-slate-800/40 backdrop-blur-xl border border-blue-400/30 rounded-2xl shadow-2xl overflow-hidden animate-fade-in-up [animation-delay:0.3s] hidden">
                     <div class="border-b border-slate-600/30 p-4 sm:p-6">
                         <div class="flex items-center gap-3">
                             <div class="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500/20 rounded-xl flex items-center justify-center">
@@ -188,14 +188,14 @@
                     </div>
                     <div class="p-4 sm:p-6">
                         <div class="space-y-4">
-                            <div id="selected-bike" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3" style="display: none;">
+                            <div id="selected-bike" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3 hidden">
                                 <div class="flex items-center gap-2 text-sm">
                                     <i class="fas fa-bicycle text-emerald-400"></i>
                                     <span class="text-white font-medium">אופניים:</span>
                                     <span id="bike-name" class="text-slate-300"></span>
                                 </div>
                             </div>
-                            <div id="selected-categories" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3" style="display: none;">
+                            <div id="selected-categories" class="bg-slate-700/30 border border-slate-600/30 rounded-lg p-3 hidden">
                                 <div class="flex items-start gap-2 text-sm">
                                     <i class="fas fa-tags text-amber-400 mt-0.5"></i>
                                     <div>
@@ -211,7 +211,7 @@
                 <!-- Submit Button -->
                 <div class="text-center pt-6">
                     <button type="submit" 
-                            class="btn-modern success w-full sm:w-auto"
+                            class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3 font-semibold text-slate-300 rounded-lg transition-all duration-300 bg-gradient-to-r from-slate-600 to-slate-700 border border-slate-500 shadow-lg opacity-60 cursor-not-allowed"
                             id="submit-btn"
                             disabled>
                         <i class="fas fa-paper-plane mr-2"></i>
@@ -223,81 +223,6 @@
         </div>
     </div>
 </div>
-
-<style>
-/* Modern Button Styles - Matching Customer Add Bike */
-.btn-modern {
-    background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-    border: 1px solid #1d4ed8 !important;
-    color: white !important;
-    font-weight: 600 !important;
-    padding: 12px 24px !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
-    transition: all 0.3s ease !important;
-    text-decoration: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-}
-
-.btn-modern:hover {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
-    color: white !important;
-    text-decoration: none !important;
-}
-
-.btn-modern.success {
-    background: linear-gradient(135deg, #10b981, #059669) !important;
-    border: 1px solid #047857 !important;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
-}
-
-.btn-modern.success:hover {
-    background: linear-gradient(135deg, #059669, #047857) !important;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4) !important;
-}
-
-.btn-modern:disabled {
-    background: rgba(71, 85, 105, 0.5) !important;
-    border-color: rgba(71, 85, 105, 0.3) !important;
-    cursor: not-allowed !important;
-    transform: none !important;
-    box-shadow: none !important;
-    opacity: 0.6 !important;
-}
-
-.btn-modern:disabled:hover {
-    transform: none !important;
-    box-shadow: none !important;
-}
-
-/* Mobile touch targets */
-@media (max-width: 768px) {
-    .subcategory-label {
-        min-height: 48px !important;
-        padding: 12px !important;
-    }
-    
-    .checkbox-visual {
-        width: 24px !important;
-        height: 24px !important;
-        min-width: 24px !important;
-    }
-    
-    .category-header {
-        min-height: 56px !important;
-        padding: 16px !important;
-    }
-    
-    .btn-modern {
-        padding: 16px 24px !important;
-        width: 100% !important;
-    }
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -317,36 +242,98 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
     
+    // Initialize accordion states - ensure all start closed
+    const initializeAccordions = () => {
+        console.log('🔧 Initializing accordions in closed state');
+        
+        // Set all subcategory lists to closed state using inline styles
+        document.querySelectorAll('.subcategories-list').forEach(function(list) {
+            list.style.maxHeight = '0px';
+            list.style.opacity = '0';
+        });
+        
+        // Set all category cards to closed state
+        document.querySelectorAll('.category-card').forEach(function(card) {
+            card.classList.remove('border-amber-400/60', 'bg-slate-900/80');
+            card.classList.add('border-slate-600/40');
+        });
+        
+        // Set all category headers to closed state
+        document.querySelectorAll('.category-header').forEach(function(header) {
+            header.classList.remove('border-b', 'border-slate-600/30');
+            const chevron = header.querySelector('i:last-child');
+            const statusText = header.querySelector('.category-status');
+            
+            if (chevron) {
+                chevron.style.transform = 'rotate(0deg)';
+            }
+            if (statusText) {
+                statusText.textContent = 'לחץ לפתיחה';
+            }
+        });
+        
+        console.log('✅ All accordions initialized as closed');
+    };
+    
     // Apply styles immediately
     styleFormControls();
     
+    // Initialize accordions as closed
+    initializeAccordions();
+    
     // Re-apply styles after a short delay to ensure Django forms are ready
-    setTimeout(styleFormControls, 100);
+    setTimeout(() => {
+        styleFormControls();
+        initializeAccordions(); // Ensure accordions stay closed
+    }, 100);
     
     // Category header click handling for accordion functionality
     document.querySelectorAll('.category-header').forEach(function(header) {
         header.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             const categoryItem = this.closest('.category-item');
             const catId = categoryItem.querySelector('.subcategories-list').id.split('-').pop();
             const list = document.getElementById('subcat-list-' + catId);
             const categoryCard = this.closest('.category-card');
             const chevron = this.querySelector('i:last-child');
+            const categoryHeader = this;
+            const statusText = categoryHeader.querySelector('.category-status');
             
-            // Toggle the subcategories visibility using Tailwind classes
-            if (list.classList.contains('max-h-96')) {
+            // Check if currently open by looking at maxHeight
+            const isCurrentlyOpen = list.style.maxHeight !== '0px' && list.style.maxHeight !== '';
+            
+            console.log(`🔄 Toggling accordion ${catId}, currently open: ${isCurrentlyOpen}, maxHeight: ${list.style.maxHeight}`);
+            
+            if (isCurrentlyOpen) {
                 // Close accordion
-                list.classList.remove('max-h-96', 'opacity-100');
-                list.classList.add('max-h-0', 'opacity-0');
-                categoryCard.classList.remove('border-amber-400/60', 'bg-amber-500/5');
+                list.style.maxHeight = '0px';
+                list.style.opacity = '0';
+                categoryCard.classList.remove('border-amber-400/60', 'bg-slate-900/80');
                 categoryCard.classList.add('border-slate-600/40');
-                chevron.style.transform = 'rotate(0deg)';
+                categoryHeader.classList.remove('border-b', 'border-slate-600/30');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+                if (statusText) statusText.textContent = 'לחץ לפתיחה';
+                console.log(`✅ Accordion ${catId} closed`);
             } else {
-                // Open accordion
-                list.classList.remove('max-h-0', 'opacity-0');
-                list.classList.add('max-h-96', 'opacity-100');
+                // Open accordion - calculate and set proper height
+                list.style.maxHeight = 'none'; // Temporarily remove height restriction to measure
+                const scrollHeight = list.scrollHeight;
+                list.style.maxHeight = '0px'; // Reset to 0 before animating
+                
+                // Force a reflow
+                list.offsetHeight;
+                
+                // Now animate to the full height
+                list.style.maxHeight = scrollHeight + 'px';
+                list.style.opacity = '1';
                 categoryCard.classList.remove('border-slate-600/40');
-                categoryCard.classList.add('border-amber-400/60', 'bg-amber-500/5');
-                chevron.style.transform = 'rotate(180deg)';
+                categoryCard.classList.add('border-amber-400/60', 'bg-slate-900/80');
+                categoryHeader.classList.add('border-b', 'border-slate-600/30');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                if (statusText) statusText.textContent = 'לחץ לסגירה';
+                console.log(`✅ Accordion ${catId} opened to height: ${scrollHeight}px`);
             }
         });
     });
@@ -377,6 +364,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             updateSummary();
+            validateForm(); // Add validation check when checkboxes change
         });
     });
     
@@ -460,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial validation
     validateForm();
     
-    console.log('✅ Customer report form ready with Mercury design');
+    console.log('✅ Customer report form ready with Mercury design - accordions initialized as closed');
 });
 
 function updateSummary() {
@@ -478,10 +466,10 @@ function updateSummary() {
     if (bikeSelect && bikeSelect.value) {
         const selectedOption = bikeSelect.options[bikeSelect.selectedIndex];
         bikeNameSpan.textContent = selectedOption.text;
-        selectedBikeDiv.style.display = 'block';
+        selectedBikeDiv.classList.remove('hidden');
         showSummary = true;
     } else {
-        selectedBikeDiv.style.display = 'none';
+        selectedBikeDiv.classList.add('hidden');
     }
     
     // Update categories
@@ -497,18 +485,18 @@ function updateSummary() {
                 categoriesList.appendChild(tag);
             }
         });
-        selectedCategoriesDiv.style.display = 'block';
+        selectedCategoriesDiv.classList.remove('hidden');
         showSummary = true;
     } else {
-        selectedCategoriesDiv.style.display = 'none';
+        selectedCategoriesDiv.classList.add('hidden');
     }
     
     // Show/hide summary
     if (showSummary) {
-        summarySection.style.display = 'block';
+        summarySection.classList.remove('hidden');
         summarySection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     } else {
-        summarySection.style.display = 'none';
+        summarySection.classList.add('hidden');
     }
 }
 
@@ -521,10 +509,20 @@ function validateForm() {
     
     if (submitBtn) {
         submitBtn.disabled = !isValid;
+        
         if (isValid) {
-            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            // Enable state - bright green gradient with enhanced mobile visibility
+            submitBtn.className = 'w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 font-bold text-white text-lg rounded-xl transition-all duration-300 transform focus:outline-none focus:ring-4 focus:ring-emerald-500/50 focus:ring-offset-2 focus:ring-offset-slate-900 shadow-2xl overflow-hidden bg-gradient-to-r from-emerald-500 via-green-500 to-emerald-600 hover:from-emerald-400 hover:to-green-500 active:from-emerald-600 active:to-green-700 border-2 border-emerald-400 shadow-emerald-500/40 hover:shadow-emerald-400/60 hover:shadow-2xl hover:scale-105 active:scale-95 cursor-pointer touch-manipulation animate-pulse';
+            
+            // Remove pulse animation after a moment to avoid being too distracting
+            setTimeout(() => {
+                if (!submitBtn.disabled) {
+                    submitBtn.classList.remove('animate-pulse');
+                }
+            }, 2000);
         } else {
-            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            // Disabled state - clear gray styling
+            submitBtn.className = 'w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 font-semibold text-slate-400 text-lg rounded-xl transition-all duration-300 bg-gradient-to-r from-slate-600 to-slate-700 border-2 border-slate-500 shadow-xl opacity-50 cursor-not-allowed';
         }
     }
     
