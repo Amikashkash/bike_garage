@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.conf import settings
 import os
 from . import views
+from .icon_views import app_icon_view
 
 urlpatterns = [
     # PWA Service Worker
@@ -10,6 +11,9 @@ urlpatterns = [
         open(os.path.join(settings.BASE_DIR, 'workshop/static/sw.js')).read(),
         content_type='application/javascript'
     )),
+    
+    # PWA App Icon
+    path('app-icon.svg', app_icon_view, name='app_icon'),
     
     # Authentication
     path("login/", views.user_login, name="login"),

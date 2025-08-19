@@ -3,7 +3,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="csrf-token" content="{{ csrf_token }}">
     
     <!-- PWA Meta Tags -->
@@ -18,14 +18,16 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="msapplication-TileColor" content="#0f172a">
     <meta name="theme-color" content="#3b82f6">
+    <meta name="color-scheme" content="dark">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="{% static 'manifest.json' %}">
     
     <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" href="{% static 'images/logo.png' %}">
+    <link rel="apple-touch-icon" href="/app-icon.svg">
+    <link rel="icon" type="image/svg+xml" href="/app-icon.svg">
     <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/logo.png' %}">
-    <link rel="shortcut icon" href="{% static 'images/logo.png' %}">
+    <link rel="shortcut icon" href="/app-icon.svg">>
     <title>{% block title %} מוסך אופניים מתקדם{% endblock %}</title>
 
     <!-- Tailwind CSS -->
@@ -405,6 +407,31 @@
     <!-- Enhanced Main Content Area -->
     <main class="relative pt-20 min-h-screen">
         
+        <!-- PWA Install Button (shows when installable) -->
+        <div id="pwa-install-banner" class="fixed top-20 left-4 right-4 z-40 hidden">
+            <div class="bg-gradient-to-r from-blue-600/95 to-cyan-600/95 backdrop-blur-xl border border-blue-400/30 rounded-2xl p-4 shadow-2xl animate-slideIn">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-download text-white text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-white font-semibold text-sm">התקן את האפליקציה</h3>
+                            <p class="text-blue-100 text-xs">גישה מהירה מהמסך הראשי</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="pwa-install-btn" class="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105">
+                            התקן
+                        </button>
+                        <button id="pwa-install-dismiss" class="bg-white/10 hover:bg-white/20 text-white px-3 py-2 rounded-lg text-sm transition-all duration-200">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Premium Messages Display -->
         {% if messages %}
         <div class="fixed top-24 left-4 right-4 z-50 space-y-2">
@@ -710,31 +737,113 @@
 
             // Handle app installation
             let deferredPrompt;
+            const installBanner = document.getElementById('pwa-install-banner');
+            const installBtn = document.getElementById('pwa-install-btn');
+            const dismissBtn = document.getElementById('pwa-install-dismiss');
+
             window.addEventListener('beforeinstallprompt', (e) => {
                 console.log('📲 PWA: Install prompt available');
                 e.preventDefault();
                 deferredPrompt = e;
                 
-                // Add PWA installable class using Tailwind
-                document.body.classList.add('pwa-installable');
+                // Show install banner
+                if (installBanner) {
+                    installBanner.classList.remove('hidden');
+                    document.body.classList.add('pwa-installable');
+                }
             });
+
+            // Install button click handler
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        console.log('🎯 PWA: Triggering install prompt');
+                        deferredPrompt.prompt();
+                        
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`👤 PWA: User choice: ${outcome}`);
+                        
+                        if (outcome === 'accepted') {
+                            console.log('✅ PWA: User accepted installation');
+                        } else {
+                            console.log('❌ PWA: User declined installation');
+                        }
+                        
+                        deferredPrompt = null;
+                        installBanner.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Dismiss button click handler
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    installBanner.classList.add('hidden');
+                    localStorage.setItem('pwa-install-dismissed', Date.now());
+                });
+            }
 
             // Track if app was installed
             window.addEventListener('appinstalled', (e) => {
-                console.log('✅ PWA: App was installed');
+                console.log('✅ PWA: App was installed successfully');
                 deferredPrompt = null;
                 document.body.classList.add('pwa-installed');
+                if (installBanner) {
+                    installBanner.classList.add('hidden');
+                }
+                
+                // Show success message
+                const successMsg = document.createElement('div');
+                successMsg.className = 'fixed top-24 left-4 right-4 z-50 bg-green-500/20 border border-green-400/30 text-green-200 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-2xl animate-slideIn';
+                successMsg.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-check-circle text-green-400 text-lg"></i>
+                        <span class="font-medium">האפליקציה הותקנה בהצלחה! תוכל למצוא אותה במסך הראשי</span>
+                    </div>
+                `;
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => successMsg.remove(), 5000);
             });
         }
 
-        // PWA standalone mode detection
+        // PWA standalone mode detection and setup
         const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
         const isInWebAppiOS = window.navigator.standalone === true;
         const isInWebAppChrome = window.matchMedia('(display-mode: standalone)').matches;
 
         if (isStandalone || isInWebAppiOS || isInWebAppChrome) {
-            console.log('📱 Running as PWA');
+            console.log('📱 Running as PWA in standalone mode');
             document.body.classList.add('pwa-standalone');
+            
+            // Hide install banner if already running as PWA
+            const installBanner = document.getElementById('pwa-install-banner');
+            if (installBanner) {
+                installBanner.classList.add('hidden');
+            }
+        }
+
+        // Check if user previously dismissed install prompt
+        window.addEventListener('DOMContentLoaded', () => {
+            const dismissed = localStorage.getItem('pwa-install-dismissed');
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+            
+            if (dismissed && parseInt(dismissed) > oneDayAgo) {
+                // User dismissed within last 24 hours, don't show banner
+                const installBanner = document.getElementById('pwa-install-banner');
+                if (installBanner) {
+                    installBanner.classList.add('hidden');
+                }
+            }
+
+            // Prevent zoom on input focus (iOS PWA)
+            const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea, select');
+            inputs.forEach(input => {
+                input.classList.add('text-base', 'md:text-sm');
+            });
+        });
+            console.log('🌐 Running in browser');
+            document.body.classList.add('browser-mode');
         }
 
         // Prevent zoom on input focus (iOS PWA)
@@ -782,9 +891,27 @@
     .animate-slideIn { animation: slideIn 0.5s ease-out; }
     
     /* PWA Standalone Mode Enhancements */
-    .pwa-standalone {
+    .pwa-standalone, .pwa-mode {
         --safe-area-inset-top: env(safe-area-inset-top);
         --safe-area-inset-bottom: env(safe-area-inset-bottom);
+        --safe-area-inset-left: env(safe-area-inset-left);
+        --safe-area-inset-right: env(safe-area-inset-right);
+    }
+    
+    /* Hide browser UI completely in standalone mode */
+    html.pwa-mode {
+        height: 100vh;
+        height: -webkit-fill-available;
+        overflow: hidden;
+    }
+    
+    html.pwa-mode body {
+        height: 100vh;
+        height: -webkit-fill-available;
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
     }
     
     /* Better touch targets for PWA */
@@ -796,12 +923,29 @@
         
         /* Hide elements that don't make sense in app mode */
         .browser-only { display: none !important; }
+        
+        /* Ensure full viewport usage */
+        .pwa-standalone nav {
+            padding-top: max(env(safe-area-inset-top), 0px);
+        }
     }
     
-    /* iOS PWA status bar handling */
+    /* iOS PWA specific handling */
     @supports (-webkit-touch-callout: none) {
         .pwa-standalone {
+            padding-top: max(env(safe-area-inset-top), 0px) !important;
+        }
+        
+        /* Fix iOS status bar overlay */
+        .pwa-standalone nav {
             padding-top: max(env(safe-area-inset-top), 20px) !important;
+        }
+    }
+    
+    /* Android PWA specific */
+    @media (display-mode: standalone) and (max-width: 768px) {
+        .pwa-standalone {
+            padding-top: 0 !important;
         }
     }
     

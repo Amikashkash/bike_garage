@@ -1,7 +1,8 @@
 const CACHE_NAME = 'yakir-bikes-v1';
 const MINIMAL_CACHE = [
     '/static/images/logo.png',
-    '/static/manifest.json'
+    '/static/manifest.json',
+    '/app-icon.svg'
 ];
 
 // Install event - cache only essential assets
