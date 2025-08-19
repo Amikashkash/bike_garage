@@ -1,166 +1,290 @@
 {% extends 'workshop/base.html' %}
+{% load static %}
 
-{% block title %}הדפסת מדבקות אופניים{% endblock %}
+{% block title %}הדפסת מדבקות אופניים - אופני יקיר{% endblock %}
 
 {% block content %}
-<div class="text-center mt-4 mb-5">
-    <h1 class="text-white">🏷️ הדפסת מדבקות אופניים</h1>
-    <p class="text-white">בחר תיקון להדפסת מדבקה זיהוי לאופניים</p>
-</div>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+    <!-- Animated Background Elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-1/4 -right-20 w-96 h-96 bg-gradient-to-r from-purple-500/10 via-blue-500/15 to-cyan-500/10 rounded-full blur-3xl animate-float-slow opacity-60"></div>
+        <div class="absolute bottom-1/4 -left-32 w-80 h-80 bg-gradient-to-r from-cyan-500/10 via-teal-500/15 to-emerald-500/10 rounded-full blur-3xl animate-float-medium opacity-40"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-indigo-500/10 via-purple-500/15 to-pink-500/10 rounded-full blur-3xl animate-float-fast opacity-50"></div>
+    </div>
 
-<div class="row">
-    <div class="col-md-10 mx-auto">
-        <!-- סטטיסטיקות -->
-        <div class="card bg-dark border-info mb-4">
-            <div class="card-body text-center">
-                <h5 class="text-info mb-3">
-                    <i class="fas fa-info-circle me-2"></i>
+    <!-- Main Content -->
+    <div class="relative z-10 container mx-auto px-4 py-8">
+        <!-- Header Section -->
+        <div class="text-center mb-12 animate-fadeInUp">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl mb-6 shadow-2xl">
+                <i class="fas fa-tags text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400 bg-clip-text text-transparent mb-4">
+                הדפסת מדבקות אופניים
+            </h1>
+            <p class="text-slate-300 text-lg max-w-2xl mx-auto">
+                בחר תיקון להדפסת מדבקה זיהוי לאופניים במערכת
+            </p>
+        </div>
+
+        <div class="max-w-7xl mx-auto">
+        <!-- Statistics Card -->
+        <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-3xl p-8 border border-slate-600/30 shadow-2xl mb-8">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl mb-4">
+                    <i class="fas fa-info-circle text-blue-400 text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white mb-2">
                     סך הכל {{ total_repairs }} תיקונים פעילים
-                </h5>
-                <p class="text-white mb-0">לחץ על כפתור ההדפסה ליד כל תיקון כדי להדפיס מדבקה</p>
+                </h2>
+                <p class="text-slate-300">
+                    לחץ על כפתור ההדפסה ליד כל תיקון כדי להדפיס מדבקה
+                </p>
             </div>
         </div>
 
         {% if repairs_by_status %}
             {% for status, repairs in repairs_by_status.items %}
-            <div class="card bg-dark border-secondary mb-4">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">
-                        <i class="fas fa-tag me-2"></i>
-                        {{ status }} ({{ repairs|length }})
-                    </h5>
+            <!-- Status Section -->
+            <div class="mb-8">
+                <!-- Status Header -->
+                <div class="bg-gradient-to-r from-slate-700/80 to-slate-800/80 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-slate-600/30">
+                    <h3 class="text-2xl font-bold text-white flex items-center">
+                        <div class="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full mr-3"></div>
+                        <i class="fas fa-tag text-blue-400 mr-3"></i>
+                        {{ status }} 
+                        <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-lg font-medium mr-3">{{ repairs|length }}</span>
+                    </h3>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for repair in repairs %}
-                        <div class="col-lg-6 mb-3">
-                            <div class="border border-secondary rounded p-3 h-100">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <h6 class="text-white mb-1">
-                                        <i class="fas fa-hashtag text-primary me-1"></i>
+                
+                <!-- Repairs Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {% for repair in repairs %}
+                    <div class="group relative overflow-hidden bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-2xl p-6 border border-slate-600/30 hover:border-blue-500/50 transition-all duration-300 shadow-xl hover:shadow-blue-500/10">
+                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        <!-- Left Border Accent -->
+                        <div class="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500 via-cyan-500 to-blue-600 group-hover:w-2 transition-all duration-300"></div>
+                        
+                        <div class="relative z-10">
+                            <!-- Header with Print Button -->
+                            <div class="flex items-start justify-between mb-4">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full mr-3 animate-pulse"></div>
+                                    <h4 class="text-xl font-bold text-white group-hover:text-blue-300 transition-colors">
                                         תיקון #{{ repair.id }}
-                                    </h6>
-                                    <a href="{% url 'print_bike_label' repair.id %}" 
-                                       class="btn btn-sm btn-primary" 
-                                       target="_blank"
-                                       title="הדפס מדבקה">
-                                        <i class="fas fa-print"></i>
-                                    </a>
+                                    </h4>
+                                </div>
+                                <a href="{% url 'print_bike_label' repair.id %}" 
+                                   target="_blank"
+                                   class="flex items-center justify-center w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 rounded-xl text-white shadow-lg hover:shadow-xl hover:shadow-blue-500/25 transform hover:scale-110 transition-all duration-300 group/btn">
+                                    <i class="fas fa-print text-lg group-hover/btn:scale-110 transition-transform"></i>
+                                </a>
+                            </div>
+                            
+                            <!-- Customer Info -->
+                            <div class="space-y-3">
+                                <div class="flex items-center text-slate-300">
+                                    <div class="flex items-center justify-center w-8 h-8 bg-purple-500/20 rounded-lg mr-3 flex-shrink-0">
+                                        <i class="fas fa-user text-purple-400 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 text-sm">לקוח:</span>
+                                        <span class="text-white font-medium mr-2">{{ repair.bike.customer.name }}</span>
+                                    </div>
                                 </div>
                                 
-                                <div class="info-row mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-user me-1"></i>
-                                        <strong>לקוח:</strong> {{ repair.bike.customer.name }}
-                                    </small>
-                                </div>
-                                
-                                <div class="info-row mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-bicycle me-1"></i>
-                                        <strong>אופניים:</strong> {{ repair.bike.brand }} {{ repair.bike.model|default:"" }}
-                                        {% if repair.bike.color %} - {{ repair.bike.color }}{% endif %}
-                                    </small>
+                                <div class="flex items-center text-slate-300">
+                                    <div class="flex items-center justify-center w-8 h-8 bg-green-500/20 rounded-lg mr-3 flex-shrink-0">
+                                        <i class="fas fa-bicycle text-green-400 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 text-sm">אופניים:</span>
+                                        <span class="text-white font-medium mr-2">
+                                            {{ repair.bike.brand }} {{ repair.bike.model|default:"" }}
+                                            {% if repair.bike.color %} - {{ repair.bike.color }}{% endif %}
+                                        </span>
+                                    </div>
                                 </div>
                                 
                                 {% if repair.assigned_mechanic %}
-                                <div class="info-row mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-user-cog me-1"></i>
-                                        <strong>מכונאי:</strong> {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
-                                    </small>
+                                <div class="flex items-center text-slate-300">
+                                    <div class="flex items-center justify-center w-8 h-8 bg-orange-500/20 rounded-lg mr-3 flex-shrink-0">
+                                        <i class="fas fa-user-cog text-orange-400 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 text-sm">מכונאי:</span>
+                                        <span class="text-white font-medium mr-2">{{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}</span>
+                                    </div>
                                 </div>
                                 {% endif %}
                                 
-                                <div class="info-row mb-2">
-                                    <small class="text-muted">
-                                        <i class="fas fa-clock me-1"></i>
-                                        <strong>נתקבל:</strong> {{ repair.created_at|date:"d/m/Y H:i" }}
-                                    </small>
+                                <div class="flex items-center text-slate-300">
+                                    <div class="flex items-center justify-center w-8 h-8 bg-cyan-500/20 rounded-lg mr-3 flex-shrink-0">
+                                        <i class="fas fa-clock text-cyan-400 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-400 text-sm">נתקבל:</span>
+                                        <span class="text-white font-medium mr-2">{{ repair.created_at|date:"d/m/Y H:i" }}</span>
+                                    </div>
                                 </div>
                                 
                                 {% if repair.problem_description %}
-                                <div class="info-row">
-                                    <small class="text-muted">
-                                        <i class="fas fa-exclamation-triangle me-1"></i>
-                                        <strong>בעיה:</strong> {{ repair.problem_description|truncatechars:50 }}
-                                    </small>
+                                <div class="flex items-start text-slate-300">
+                                    <div class="flex items-center justify-center w-8 h-8 bg-red-500/20 rounded-lg mr-3 flex-shrink-0 mt-0.5">
+                                        <i class="fas fa-exclamation-triangle text-red-400 text-sm"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="text-slate-400 text-sm block">בעיה:</span>
+                                        <span class="text-white font-medium">{{ repair.problem_description|truncatechars:100 }}</span>
+                                    </div>
                                 </div>
                                 {% endif %}
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-slate-600/30">
+                                <a href="{% url 'repair_status' repair.id %}" 
+                                   class="flex items-center px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-xl transition-all duration-300 border border-slate-600/30 hover:border-slate-500/50 text-sm">
+                                    <i class="fas fa-eye text-sm mr-2"></i>
+                                    צפה
+                                </a>
                                 
-                                <!-- כפתורים נוספים -->
-                                <div class="mt-3 d-flex gap-2">
-                                    <a href="{% url 'repair_status' repair.id %}" 
-                                       class="btn btn-sm btn-outline-info">
-                                        <i class="fas fa-eye me-1"></i>צפה
-                                    </a>
-                                    
-                                    {% if repair.status == 'approved' and not repair.assigned_mechanic %}
-                                    <a href="{% url 'assign_mechanic' repair.id %}" 
-                                       class="btn btn-sm btn-outline-warning">
-                                        <i class="fas fa-user-cog me-1"></i>הקצה מכונאי
-                                    </a>
-                                    {% endif %}
-                                </div>
+                                {% if repair.status == 'approved' and not repair.assigned_mechanic %}
+                                <a href="{% url 'assign_mechanic' repair.id %}" 
+                                   class="flex items-center px-4 py-2 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 hover:from-yellow-500/30 hover:to-orange-500/30 text-yellow-300 hover:text-yellow-200 rounded-xl transition-all duration-300 border border-yellow-500/30 hover:border-yellow-400/50 text-sm">
+                                    <i class="fas fa-user-cog text-sm mr-2"></i>
+                                    הקצה מכונאי
+                                </a>
+                                {% endif %}
                             </div>
                         </div>
-                        {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endfor %}
         {% else %}
-            <div class="card bg-dark border-warning">
-                <div class="card-body text-center">
-                    <h5 class="text-warning">
-                        <i class="fas fa-info-circle me-2"></i>
-                        אין תיקונים פעילים כרגע
-                    </h5>
-                    <p class="text-white mb-0">כשיהיו תיקונים פעילים, הם יופיעו כאן עם אפשרות הדפסה</p>
+            <!-- No Active Repairs -->
+            <div class="text-center py-16">
+                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 rounded-2xl mb-6">
+                    <i class="fas fa-info-circle text-yellow-400 text-3xl"></i>
                 </div>
+                <h3 class="text-2xl font-bold text-white mb-4">
+                    אין תיקונים פעילים כרגע
+                </h3>
+                <p class="text-slate-300 max-w-md mx-auto">
+                    כשיהיו תיקונים פעילים, הם יופיעו כאן עם אפשרות הדפסה
+                </p>
             </div>
         {% endif %}
         
-        <!-- עזרה והסבר -->
-        <div class="card bg-dark border-info mt-4">
-            <div class="card-header bg-info text-dark">
-                <h6 class="mb-0">
-                    <i class="fas fa-question-circle me-2"></i>
-                    איך להשתמש במדבקות
-                </h6>
+        <!-- Help Section -->
+        <div class="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-3xl p-8 border border-slate-600/30 shadow-2xl mt-12">
+            <div class="flex items-start space-x-4 space-x-reverse">
+                <div class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl flex-shrink-0">
+                    <i class="fas fa-question-circle text-blue-400 text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-white mb-4">
+                        איך להשתמש במדבקות
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center text-slate-300">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full mr-3 flex-shrink-0"></div>
+                            <span>לחץ על כפתור ההדפסה <i class="fas fa-print text-blue-400 mx-1"></i> ליד התיקון הרצוי</span>
+                        </div>
+                        <div class="flex items-center text-slate-300">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full mr-3 flex-shrink-0"></div>
+                            <span>המדבקה תיפתח בחלון חדש במידות מותאמות להדפסה (10x7 ס"מ)</span>
+                        </div>
+                        <div class="flex items-center text-slate-300">
+                            <div class="w-2 h-2 bg-teal-400 rounded-full mr-3 flex-shrink-0"></div>
+                            <span>השתמש בכפתור ההדפסה שבדף או במקש Ctrl+P</span>
+                        </div>
+                        <div class="flex items-center text-slate-300">
+                            <div class="w-2 h-2 bg-emerald-400 rounded-full mr-3 flex-shrink-0"></div>
+                            <span>הדבק את המדבקה על האופניים לזיהוי במוסך</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <ul class="text-white mb-0" style="font-size: 14px;">
-                    <li>לחץ על כפתור ההדפסה <i class="fas fa-print text-primary"></i> ליד התיקון הרצוי</li>
-                    <li>המדבקה תיפתח בחלון חדש במידות מותאמות להדפסה (10x7 ס"מ)</li>
-                    <li>השתמש בכפתור ההדפסה שבדף או במקש Ctrl+P</li>
-                    <li>הדבק את המדבקה על האופניים לזיהוי במוסך</li>
-                </ul>
-            </div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center mt-12">
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center px-6 py-3 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-xl transition-all duration-300 border border-slate-600/30 hover:border-slate-500/50">
+                <i class="fas fa-arrow-right mr-3"></i>
+                חזור לדף הבית
+            </a>
+        </div>
+        
         </div>
     </div>
 </div>
 
-<style>
-.info-row {
-    margin-bottom: 4px;
-}
+<!-- JavaScript for Animations -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Animate repair cards with staggered delay
+    const repairCards = document.querySelectorAll('.group');
+    repairCards.forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+            card.style.transition = 'all 0.6s ease-out';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
 
-.info-row i {
-    width: 16px;
-    text-align: center;
-}
+    // Add hover effects for print buttons
+    const printButtons = document.querySelectorAll('a[href*="print-label"]');
+    printButtons.forEach(button => {
+        button.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1) rotate(3deg)';
+        });
+        
+        button.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1) rotate(0deg)';
+        });
+    });
 
-.border-secondary {
-    border-color: #6c757d !important;
-}
+    // Add pulse animation to repair indicators
+    const indicators = document.querySelectorAll('.animate-pulse');
+    setInterval(() => {
+        indicators.forEach(indicator => {
+            indicator.classList.toggle('opacity-100');
+            indicator.classList.toggle('opacity-50');
+        });
+    }, 2000);
+});
+</script>
 
-.card-body .row .col-lg-6:nth-child(odd) .border {
-    border-left: 3px solid var(--bs-primary) !important;
+<!-- Add custom animations -->
+<script>
+// Add Tailwind animations configuration
+tailwind.config = {
+    ...tailwind.config,
+    theme: {
+        ...tailwind.config.theme,
+        extend: {
+            ...tailwind.config.theme.extend,
+            keyframes: {
+                ...tailwind.config.theme.extend.keyframes,
+                'fadeInUp': {
+                    'from': { opacity: '0', transform: 'translateY(30px)' },
+                    'to': { opacity: '1', transform: 'translateY(0)' }
+                }
+            },
+            animation: {
+                ...tailwind.config.theme.extend.animation,
+                'fadeInUp': 'fadeInUp 0.8s ease-out forwards'
+            }
+        }
+    }
 }
-
-.card-body .row .col-lg-6:nth-child(even) .border {
-    border-left: 3px solid var(--bs-info) !important;
-}
-</style>
+</script>
 {% endblock %}

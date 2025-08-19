@@ -1816,3 +1816,5 @@ def csrf_failure(request, reason=""):
     messages.error(request, 'שגיאת אבטחה. אנא נסה שוב.')
     return redirect('login')
 
+
+

@@ -400,12 +400,18 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Form submission handling
     const form = document.getElementById('repairForm');
+    let isSubmitting = false; // Flag to track if form is being submitted
+    
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
+            // Set submitting flag to prevent beforeunload warning
+            isSubmitting = true;
+            
             // Validate form
             if (!validateForm()) {
+                isSubmitting = false; // Reset flag if validation fails
                 alert('נא למלא את כל השדות הנדרשים');
                 return;
             }
@@ -421,6 +427,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show progress indicator
             showProgressIndicator();
+            
+            // Clear the auto-save backup since we're submitting
+            localStorage.removeItem('customer_report_backup');
             
             // Submit form
             setTimeout(() => {
@@ -572,8 +581,13 @@ document.querySelectorAll('textarea, select, input').forEach(field => {
     });
 });
 
-// Warn before leaving if there are unsaved changes
+// Warn before leaving if there are unsaved changes (but not during form submission)
 window.addEventListener('beforeunload', function(e) {
+    // Don't show warning if form is being submitted
+    if (isSubmitting) {
+        return;
+    }
+    
     const form = document.getElementById('repairForm');
     if (form) {
         // Check if any field has been filled
