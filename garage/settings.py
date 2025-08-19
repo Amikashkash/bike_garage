@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     'workshop.apps.WorkshopConfig',
     'tailwind',
     'ui',  
-
+    
 ]
 TAILWIND_APP_NAME = 'ui'
 INTERNAL_IPS = [
