@@ -1,7 +1,16 @@
 from django.urls import path
+from django.http import HttpResponse
+from django.conf import settings
+import os
 from . import views
 
 urlpatterns = [
+    # PWA Service Worker
+    path('sw.js', lambda r: HttpResponse(
+        open(os.path.join(settings.BASE_DIR, 'workshop/static/sw.js')).read(),
+        content_type='application/javascript'
+    )),
+    
     # Authentication
     path("login/", views.user_login, name="login"),
     path("logout/", views.user_logout, name="logout"),
