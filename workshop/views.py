@@ -29,6 +29,7 @@ from .forms import (
     CustomerApprovalForm, MechanicTaskForm, CustomerWithBikeForm,
     CustomerAddBikeForm
 )
+from .notification_service import NotificationService
 
 # Helper functions for role-based access
 def is_manager(user):
@@ -678,7 +679,10 @@ def repair_diagnosis(request, repair_id):
                     is_visible_to_customer=True
                 )
                 
-                # שליחת התראה ללקוח
+                # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
+                NotificationService.notify_approval_needed(repair_job)
+                
+                # שליחת התראה גם במערכת הישנה לתאימות לאחור
                 total_price = sum(item_data['price'] for item_data in repair_items_data)
                 send_customer_notification(
                     repair_job, 
@@ -1461,6 +1465,9 @@ def manager_notify_customer(request, repair_id):
             # עדכון שהלקוח הודע
             repair_job.customer_notified = True
             repair_job.save()
+            
+            # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
+            NotificationService.notify_ready_for_pickup(repair_job)
             
             # יצירת עדכון במערכת
             RepairUpdate.objects.create(

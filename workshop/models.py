@@ -313,6 +313,92 @@ class RepairItem(models.Model):
         return f"{self.description} - ₪{self.price}"
 
 
+class CustomerNotification(models.Model):
+    """התראות ללקוח"""
+    NOTIFICATION_TYPES = [
+        ('approval_needed', 'נדרש אישור'),
+        ('ready_for_pickup', 'מוכן לאיסוף'),
+        ('repair_update', 'עדכון תיקון'),
+        ('new_diagnosis', 'אבחון חדש'),
+        ('status_change', 'שינוי סטטוס'),
+    ]
+    
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='notifications', verbose_name="לקוח")
+    repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='notifications', null=True, blank=True, verbose_name="תיקון")
+    
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, verbose_name="סוג התראה")
+    title = models.CharField(max_length=200, verbose_name="כותרת")
+    message = models.TextField(verbose_name="הודעה")
+    
+    # Push notification fields
+    is_push_sent = models.BooleanField(default=False, verbose_name="הודעת דחיפה נשלחה")
+    push_sent_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך שליחת דחיפה")
+    
+    # Email notification fields  
+    is_email_sent = models.BooleanField(default=False, verbose_name="אימייל נשלח")
+    email_sent_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך שליחת אימייל")
+    
+    # Status tracking
+    is_read = models.BooleanField(default=False, verbose_name="נקרא")
+    read_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך קריאה")
+    is_clicked = models.BooleanField(default=False, verbose_name="נלחץ")
+    clicked_at = models.DateTimeField(null=True, blank=True, verbose_name="תאריך לחיצה")
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
+    action_url = models.CharField(max_length=500, blank=True, verbose_name="כתובת פעולה")
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "התראת לקוח"
+        verbose_name_plural = "התראות לקוחות"
+    
+    def __str__(self):
+        return f"{self.customer.name} - {self.title}"
+    
+    def mark_as_read(self):
+        """סימון כנקרא"""
+        if not self.is_read:
+            from django.utils import timezone
+            self.is_read = True
+            self.read_at = timezone.now()
+            self.save()
+    
+    def mark_as_clicked(self):
+        """סימון כנלחץ"""
+        if not self.is_clicked:
+            from django.utils import timezone
+            self.is_clicked = True
+            self.clicked_at = timezone.now()
+            self.save()
+        self.mark_as_read()  # אוטומטית גם נקרא
+
+
+class PushSubscription(models.Model):
+    """מנויי התראות דחיפה"""
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='push_subscriptions', verbose_name="לקוח")
+    endpoint = models.URLField(verbose_name="נקודת קצה")
+    p256dh_key = models.TextField(verbose_name="מפתח P256DH")
+    auth_key = models.TextField(verbose_name="מפתח Auth")
+    
+    # Device info
+    user_agent = models.TextField(blank=True, verbose_name="User Agent")
+    device_type = models.CharField(max_length=50, blank=True, verbose_name="סוג מכשיר")
+    
+    # Status
+    is_active = models.BooleanField(default=True, verbose_name="פעיל")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
+    last_used_at = models.DateTimeField(auto_now=True, verbose_name="שימוש אחרון")
+    
+    class Meta:
+        unique_together = ('customer', 'endpoint')
+        verbose_name = "מנוי דחיפה"
+        verbose_name_plural = "מנויי דחיפה"
+    
+    def __str__(self):
+        return f"{self.customer.name} - {self.device_type or 'Unknown Device'}"
+
+
 class RepairUpdate(models.Model):
     """עדכונים על התיקון"""
     repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='updates', verbose_name="תיקון")

@@ -4,6 +4,8 @@ from django.conf import settings
 import os
 from . import views
 from .icon_views import app_icon_view
+from . import notification_views
+from . import demo_views
 
 urlpatterns = [
     # PWA Service Worker
@@ -22,6 +24,10 @@ urlpatterns = [
     
     # Home
     path("", views.home, name="home"),
+    
+    # Demo and Testing
+    path('demo/notifications/', demo_views.notification_demo, name='notification_demo'),
+    path('demo/send-notification/', demo_views.send_demo_notification, name='send_demo_notification'),
     
     # Customer and Bikes
     path('customer/new/', views.customer_form, name='customer_form'),
@@ -82,4 +88,13 @@ urlpatterns = [
     # API endpoints
     path('api/search-customers/', views.search_customers_api, name='search_customers_api'),
     path('api/customer-bikes/<int:customer_id>/', views.customer_bikes_api, name='customer_bikes_api'),
+    
+    # Notification API endpoints
+    path('api/notifications/vapid-key/', notification_views.get_vapid_public_key, name='get_vapid_public_key'),
+    path('api/notifications/subscribe/', notification_views.register_push_subscription, name='register_push_subscription'),
+    path('api/notifications/unsubscribe/', notification_views.unregister_push_subscription, name='unregister_push_subscription'),
+    path('api/notifications/', notification_views.get_notifications, name='get_notifications'),
+    path('api/notifications/mark-read/', notification_views.mark_notification_read, name='mark_notification_read'),
+    path('api/notifications/mark-all-read/', notification_views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    path('api/notifications/test/', notification_views.test_notification, name='test_notification'),
 ]
