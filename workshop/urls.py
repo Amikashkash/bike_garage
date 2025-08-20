@@ -6,7 +6,7 @@ from . import views
 from .icon_views import app_icon_view
 from . import notification_views
 from . import demo_views
-from . import system_views
+# from . import system_views  # Temporarily disabled to fix deployment
 
 def serve_sw_js(request):
     """Serve service worker with proper encoding"""
@@ -33,9 +33,9 @@ urlpatterns = [
     # Home
     path("", views.home, name="home"),
     
-    # System Status and Testing
-    path('system/status/', system_views.system_status, name='system_status'),
-    path('system/test-notification/', system_views.test_notification_api, name='test_notification_api'),
+    # System Status and Testing - Disabled until deployment issue is resolved
+    # path('system/status/', system_views.system_status, name='system_status'),
+    # path('system/test-notification/', system_views.test_notification_api, name='test_notification_api'),
     
     # Demo and Testing
     path('demo/notifications/', demo_views.notification_demo, name='notification_demo'),
