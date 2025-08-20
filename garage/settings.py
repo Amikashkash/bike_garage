@@ -74,11 +74,14 @@ INSTALLED_APPS = [
 
 # Push Notification Settings
 VAPID_PUBLIC_KEY = "BK7vA-5jG9C3-7Xw9_5vY9_1Y8vJ2G8rZ3L4tE2hQ1mK5dR9_7Xw3V2N5cT8fE9kG2hL6dR7_4Xw1Y8vJ3L5tE9"
-VAPID_PRIVATE_KEY = config('VAPID_PRIVATE_KEY', default=None)  # Set this in production
+VAPID_PRIVATE_KEY = config('VAPID_PRIVATE_KEY', default="development_mode_no_push")  # Set to disable push in dev
 VAPID_CLAIMS = {"sub": "mailto:admin@bike-garage.com"}
 
+# Base URL for email links
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Print emails to console in development
 EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
 EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)

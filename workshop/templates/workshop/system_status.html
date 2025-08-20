@@ -1,0 +1,288 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}סטטוס מערכת התראות{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-white mb-2">
+                ⚙️ סטטוס מערכת התראות
+            </h1>
+            <p class="text-blue-200 text-lg">בדיקת תקינות וקונפיגורציה של מערכת ההתראות</p>
+        </div>
+
+        <!-- Configuration Status -->
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-8">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-cog text-blue-400"></i>
+                קונפיגורציה
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- VAPID Keys -->
+                <div class="bg-slate-700/30 rounded-lg p-4">
+                    <h4 class="text-white font-medium mb-3">מפתחות VAPID (התראות דחיפה)</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            {% if config_status.vapid_public_key %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                <span class="text-green-300">מפתח ציבורי קיים</span>
+                            {% else %}
+                                <i class="fas fa-times-circle text-red-400"></i>
+                                <span class="text-red-300">מפתח ציבורי חסר</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if config_status.vapid_private_key %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                <span class="text-green-300">מפתח פרטי קיים</span>
+                            {% else %}
+                                <i class="fas fa-times-circle text-red-400"></i>
+                                <span class="text-red-300">מפתח פרטי חסר</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Email Configuration -->
+                <div class="bg-slate-700/30 rounded-lg p-4">
+                    <h4 class="text-white font-medium mb-3">הגדרות אימייל (גיבוי)</h4>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            {% if config_status.email_backend %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                <span class="text-green-300">Email Backend מוגדר</span>
+                            {% else %}
+                                <i class="fas fa-times-circle text-red-400"></i>
+                                <span class="text-red-300">Email Backend חסר</span>
+                            {% endif %}
+                        </div>
+                        <div class="flex items-center gap-2">
+                            {% if config_status.email_host %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                <span class="text-green-300">SMTP Host מוגדר</span>
+                            {% else %}
+                                <i class="fas fa-times-circle text-red-400"></i>
+                                <span class="text-red-300">SMTP Host חסר</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6 mb-8">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-chart-bar text-green-400"></i>
+                סטטיסטיקות
+            </h3>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-blue-300">{{ stats.customers_count }}</div>
+                    <div class="text-slate-400 text-sm">לקוחות</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-green-300">{{ stats.customers_with_email }}</div>
+                    <div class="text-slate-400 text-sm">עם אימייל</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-purple-300">{{ stats.customers_with_phone }}</div>
+                    <div class="text-slate-400 text-sm">עם טלפון</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-yellow-300">{{ stats.repairs_count }}</div>
+                    <div class="text-slate-400 text-sm">תיקונים</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-orange-300">{{ stats.notifications_count }}</div>
+                    <div class="text-slate-400 text-sm">התראות</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-2xl font-bold text-red-300">{{ stats.subscriptions_count }}</div>
+                    <div class="text-slate-400 text-sm">מנויים</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Notifications -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Test with Customers -->
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-vial text-purple-400"></i>
+                    בדיקת התראות ללקוחות
+                </h3>
+                
+                {% if recent_customers %}
+                    <div class="space-y-3 mb-4">
+                        {% for customer in recent_customers %}
+                        <div class="bg-slate-700/30 rounded-lg p-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-white font-medium">{{ customer.name }}</div>
+                                    <div class="text-slate-400 text-sm">
+                                        {% if customer.email %}
+                                            <i class="fas fa-envelope mr-1"></i>{{ customer.email }}
+                                        {% else %}
+                                            <i class="fas fa-exclamation-triangle text-yellow-400 mr-1"></i>אין אימייל
+                                        {% endif %}
+                                        {% if customer.phone %}
+                                            <span class="ml-3"><i class="fas fa-phone mr-1"></i>{{ customer.phone }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <button onclick="sendTestNotification({{ customer.id }}, '{{ customer.name }}')" 
+                                        class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fas fa-paper-plane mr-1"></i>שלח
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-users text-6xl text-slate-600 mb-4"></i>
+                        <p class="text-slate-400">אין לקוחות עם אימייל במערכת</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Test with Repairs -->
+            <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="fas fa-wrench text-orange-400"></i>
+                    תיקונים פעילים
+                </h3>
+                
+                {% if recent_repairs %}
+                    <div class="space-y-3">
+                        {% for repair in recent_repairs %}
+                        <div class="bg-slate-700/30 rounded-lg p-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="text-white font-medium">תיקון #{{ repair.id }} - {{ repair.bike }}</div>
+                                    <div class="text-slate-400 text-sm">
+                                        {{ repair.bike.customer.name }}
+                                        <span class="ml-2 px-2 py-1 rounded text-xs
+                                            {% if repair.status == 'reported' %}bg-yellow-500/20 text-yellow-300
+                                            {% elif repair.status == 'diagnosed' %}bg-blue-500/20 text-blue-300
+                                            {% endif %}">
+                                            {{ repair.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <a href="{% url 'repair_diagnosis' repair.id %}" 
+                                   class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm transition-colors">
+                                    <i class="fas fa-stethoscope mr-1"></i>אבחן
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <i class="fas fa-tools text-6xl text-slate-600 mb-4"></i>
+                        <p class="text-slate-400">אין תיקונים פעילים</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Test Results -->
+        <div id="test-results" class="mt-6 bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+            <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-clipboard-list text-green-400"></i>
+                תוצאות בדיקה
+            </h3>
+            <div id="results-content" class="text-slate-400">
+                לחץ על "שלח" ליד לקוח כדי לבדוק את מערכת ההתראות.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function sendTestNotification(customerId, customerName) {
+    const resultsContent = document.getElementById('results-content');
+    
+    showResult('info', `שולח התראת בדיקה ל${customerName}...`);
+    
+    try {
+        const response = await fetch('/system/test-notification/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                customer_id: customerId,
+                message: `שלום ${customerName}, זוהי הודעת בדיקה ממערכת ההתראות של מוסך האופניים. המערכת פועלת תקין!`
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            let details = [];
+            if (result.push_sent) details.push('התראת דחיפה');
+            if (result.email_sent) details.push('אימייל');
+            
+            showResult('success', `התראה נשלחה בהצלחה ל${customerName}! (${details.join(' + ')})`);
+        } else {
+            showResult('error', `שגיאה בשליחת התראה ל${customerName}: ${result.error}`);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showResult('error', `שגיאה בחיבור לשרת: ${error.message}`);
+    }
+}
+
+function showResult(type, message) {
+    const resultsContent = document.getElementById('results-content');
+    
+    const colors = {
+        success: 'text-green-300',
+        error: 'text-red-300',
+        info: 'text-blue-300'
+    };
+    
+    const icons = {
+        success: 'check-circle',
+        error: 'exclamation-circle',
+        info: 'info-circle'
+    };
+    
+    const timestamp = new Date().toLocaleTimeString('he-IL');
+    
+    resultsContent.innerHTML = `
+        <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+            <i class="fas fa-${icons[type]} ${colors[type]} text-xl mt-1"></i>
+            <div>
+                <div class="${colors[type]} font-medium">${message}</div>
+                <div class="text-slate-500 text-sm mt-1">${timestamp}</div>
+            </div>
+        </div>
+    `;
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

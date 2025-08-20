@@ -679,22 +679,39 @@ def repair_diagnosis(request, repair_id):
                     is_visible_to_customer=True
                 )
                 
-                # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
-                NotificationService.notify_approval_needed(repair_job)
+                # בדיקה אם לשלוח התראה ללקוח
+                send_notification = request.POST.get('send_notification') == 'on'
+                notification_sent = False
                 
-                # שליחת התראה גם במערכת הישנה לתאימות לאחור
-                total_price = sum(item_data['price'] for item_data in repair_items_data)
-                send_customer_notification(
-                    repair_job, 
-                    'diagnosis_ready', 
-                    f"סה\"ג מחיר משוער: ₪{total_price:.2f}",
-                    user=request.user
-                )
+                if send_notification:
+                    try:
+                        # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
+                        NotificationService.notify_approval_needed(repair_job)
+                        notification_sent = True
+                        
+                        # שליחת התראה גם במערכת הישנה לתאימות לאחור
+                        total_price = sum(item_data['price'] for item_data in repair_items_data)
+                        send_customer_notification(
+                            repair_job, 
+                            'diagnosis_ready', 
+                            f"סה\"ג מחיר משוער: ₪{total_price:.2f}",
+                            user=request.user
+                        )
+                    except Exception as e:
+                        messages.warning(request, f'אבחון נשמר אך שליחת ההתראה נכשלה: {str(e)}')
                 
+                # הודעות הצלחה
                 if is_editing:
-                    messages.success(request, 'אבחון עודכן בהצלחה! הלקוח קיבל התראה על השינויים.')
+                    if notification_sent:
+                        messages.success(request, 'אבחון עודכן בהצלחה! הלקוח קיבל התראה על השינויים.')
+                    else:
+                        messages.success(request, 'אבחון עודכן בהצלחה (ללא שליחת התראה).')
                 else:
-                    messages.success(request, 'אבחון נשמר בהצלחה והלקוח קיבל התראה. כעת הלקוח יכול לאשר את הפעולות.')
+                    if notification_sent:
+                        messages.success(request, 'אבחון נשמר בהצלחה והלקוח קיבל התראה. כעת הלקוח יכול לאשר את הפעולות.')
+                    else:
+                        messages.success(request, 'אבחון נשמר בהצלחה (ללא שליחת התראה).')
+                        
                 return redirect('manager_dashboard')
         else:
             if not repair_items_data:

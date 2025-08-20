@@ -6,13 +6,21 @@ from . import views
 from .icon_views import app_icon_view
 from . import notification_views
 from . import demo_views
+from . import system_views
+
+def serve_sw_js(request):
+    """Serve service worker with proper encoding"""
+    try:
+        sw_path = os.path.join(settings.BASE_DIR, 'workshop/static/sw.js')
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return HttpResponse(content, content_type='application/javascript; charset=utf-8')
+    except Exception as e:
+        return HttpResponse(f'// Service worker error: {str(e)}', content_type='application/javascript')
 
 urlpatterns = [
-    # PWA Service Worker
-    path('sw.js', lambda r: HttpResponse(
-        open(os.path.join(settings.BASE_DIR, 'workshop/static/sw.js')).read(),
-        content_type='application/javascript'
-    )),
+    # PWA Service Worker - Fixed encoding
+    path('sw.js', serve_sw_js, name='service_worker'),
     
     # PWA App Icon
     path('app-icon.svg', app_icon_view, name='app_icon'),
@@ -24,6 +32,10 @@ urlpatterns = [
     
     # Home
     path("", views.home, name="home"),
+    
+    # System Status and Testing
+    path('system/status/', system_views.system_status, name='system_status'),
+    path('system/test-notification/', system_views.test_notification_api, name='test_notification_api'),
     
     # Demo and Testing
     path('demo/notifications/', demo_views.notification_demo, name='notification_demo'),

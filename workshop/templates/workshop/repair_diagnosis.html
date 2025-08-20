@@ -276,6 +276,74 @@
                     <!-- Close the grid -->
                     </div>
 
+                    <!-- Notification Settings - NEW -->
+                    <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-4 sm:p-6 mt-4 sm:mt-6">
+                        <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="fas fa-bell text-blue-400"></i>
+                            התראות ללקוח
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <!-- Send notification checkbox -->
+                            <div class="flex items-start gap-3 p-3 bg-slate-700/30 rounded-lg">
+                                <div class="flex-shrink-0 mt-1">
+                                    <input type="checkbox" 
+                                           id="send-notification" 
+                                           name="send_notification"
+                                           class="w-5 h-5 text-blue-500 bg-slate-600 border-slate-500 rounded focus:ring-blue-500 focus:ring-2"
+                                           checked>
+                                </div>
+                                <label for="send-notification" class="flex-1 cursor-pointer">
+                                    <div class="text-white font-medium mb-1">
+                                        📱 שלח התראה ללקוח
+                                    </div>
+                                    <div class="text-slate-400 text-sm">
+                                        הלקוח יקבל התראת דחיפה ואימייל עם בקשה לאישור הפעולות
+                                    </div>
+                                </label>
+                            </div>
+                            
+                            <!-- Notification preview -->
+                            <div id="notification-preview" class="bg-blue-500/10 border border-blue-400/30 rounded-lg p-3">
+                                <div class="flex items-start gap-3">
+                                    <i class="fas fa-mobile-alt text-blue-400 text-lg mt-1"></i>
+                                    <div class="flex-1">
+                                        <div class="text-blue-200 font-medium text-sm mb-1">תצוגה מקדימה של ההתראה:</div>
+                                        <div class="text-blue-100 text-sm">
+                                            "נדרש אישור - תיקון {{ repair_job.bike }}"<br>
+                                            <span class="text-blue-300">האבחון לתיקון האופניים {{ repair_job.bike }} מוכן. יש צורך באישור שלך לפעולות התיקון.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Customer contact info -->
+                            <div class="flex items-center gap-3 text-sm">
+                                <div class="flex items-center gap-2 text-slate-400">
+                                    <i class="fas fa-user"></i>
+                                    <span>{{ repair_job.bike.customer.name }}</span>
+                                </div>
+                                {% if repair_job.bike.customer.phone %}
+                                <div class="flex items-center gap-2 text-slate-400">
+                                    <i class="fas fa-phone"></i>
+                                    <span>{{ repair_job.bike.customer.phone }}</span>
+                                </div>
+                                {% endif %}
+                                {% if repair_job.bike.customer.email %}
+                                <div class="flex items-center gap-2 text-slate-400">
+                                    <i class="fas fa-envelope"></i>
+                                    <span>{{ repair_job.bike.customer.email }}</span>
+                                </div>
+                                {% else %}
+                                <div class="flex items-center gap-2 text-yellow-400">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span class="text-sm">אין אימייל - רק התראת דחיפה</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Form Actions - Mobile Responsive -->
                     <div class="flex flex-col gap-3 sm:gap-4 mt-4 sm:mt-6">
                         <button type="submit" class="btn-modern success lg w-full text-base sm:text-lg py-4 sm:py-3">

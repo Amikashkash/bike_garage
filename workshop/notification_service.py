@@ -129,88 +129,115 @@ class NotificationService:
     @staticmethod
     def _send_push_notification(notification: CustomerNotification) -> bool:
         """Send push notification to customer's registered devices"""
-        if not VAPID_PRIVATE_KEY:
-            logger.warning("VAPID_PRIVATE_KEY not configured, skipping push notification")
+        try:
+            if not VAPID_PRIVATE_KEY or VAPID_PRIVATE_KEY == "development_mode_no_push":
+                logger.info("Push notifications disabled in development mode")
+                return False
+            
+            customer = notification.customer
+            
+            # Validate customer has valid contact info
+            if not customer.phone and not customer.email:
+                logger.warning(f"Customer {customer.name} has no contact information")
+                return False
+            
+            subscriptions = customer.push_subscriptions.filter(is_active=True)
+            
+            if not subscriptions.exists():
+                logger.info(f"No active push subscriptions for customer {customer.name}")
+                return False
+            
+            success_count = 0
+            for subscription in subscriptions:
+                try:
+                    payload = {
+                        "title": notification.title,
+                        "body": notification.message,
+                        "icon": "/static/images/logo.png",
+                        "badge": "/static/images/logo.png",
+                        "data": {
+                            "notification_id": notification.id,
+                            "action_url": notification.action_url,
+                            "repair_id": notification.repair_job.id if notification.repair_job else None
+                        },
+                        "actions": [
+                            {
+                                "action": "view",
+                                "title": "צפה בפרטים",
+                                "icon": "/static/icons/view.png"
+                            }
+                        ],
+                        "requireInteraction": notification.notification_type in ['approval_needed', 'ready_for_pickup'],
+                        "vibrate": [200, 100, 200] if notification.notification_type == 'ready_for_pickup' else [100]
+                    }
+                    
+                    webpush(
+                        subscription_info={
+                            "endpoint": subscription.endpoint,
+                            "keys": {
+                                "p256dh": subscription.p256dh_key,
+                                "auth": subscription.auth_key
+                            }
+                        },
+                        data=json.dumps(payload),
+                        vapid_private_key=VAPID_PRIVATE_KEY,
+                        vapid_claims=VAPID_CLAIMS
+                    )
+                    
+                    success_count += 1
+                    logger.info(f"Push notification sent successfully to {customer.name}")
+                    
+                except WebPushException as e:
+                    logger.error(f"Failed to send push notification to {customer.name}: {e}")
+                    if e.response and e.response.status_code in [400, 404, 410]:
+                        # Invalid subscription, deactivate it
+                        subscription.is_active = False
+                        subscription.save()
+                except Exception as e:
+                    logger.error(f"Unexpected error sending push notification: {e}")
+            
+            if success_count > 0:
+                notification.is_push_sent = True
+                notification.push_sent_at = timezone.now()
+                notification.save()
+                return True
+            
             return False
-        
-        customer = notification.customer
-        subscriptions = customer.push_subscriptions.filter(is_active=True)
-        
-        success_count = 0
-        for subscription in subscriptions:
-            try:
-                payload = {
-                    "title": notification.title,
-                    "body": notification.message,
-                    "icon": "/static/images/logo.png",
-                    "badge": "/static/images/logo.png",
-                    "data": {
-                        "notification_id": notification.id,
-                        "action_url": notification.action_url,
-                        "repair_id": notification.repair_job.id if notification.repair_job else None
-                    },
-                    "actions": [
-                        {
-                            "action": "view",
-                            "title": "צפה בפרטים",
-                            "icon": "/static/icons/view.png"
-                        }
-                    ],
-                    "requireInteraction": notification.notification_type in ['approval_needed', 'ready_for_pickup'],
-                    "vibrate": [200, 100, 200] if notification.notification_type == 'ready_for_pickup' else [100]
-                }
-                
-                webpush(
-                    subscription_info={
-                        "endpoint": subscription.endpoint,
-                        "keys": {
-                            "p256dh": subscription.p256dh_key,
-                            "auth": subscription.auth_key
-                        }
-                    },
-                    data=json.dumps(payload),
-                    vapid_private_key=VAPID_PRIVATE_KEY,
-                    vapid_claims=VAPID_CLAIMS
-                )
-                
-                success_count += 1
-                logger.info(f"Push notification sent successfully to {customer.name}")
-                
-            except WebPushException as e:
-                logger.error(f"Failed to send push notification to {customer.name}: {e}")
-                if e.response and e.response.status_code in [400, 404, 410]:
-                    # Invalid subscription, deactivate it
-                    subscription.is_active = False
-                    subscription.save()
-            except Exception as e:
-                logger.error(f"Unexpected error sending push notification: {e}")
-        
-        if success_count > 0:
-            notification.is_push_sent = True
-            notification.push_sent_at = timezone.now()
-            notification.save()
-            return True
-        
-        return False
+            
+        except Exception as e:
+            logger.error(f"Critical error in push notification service: {e}")
+            return False
     
     @staticmethod
     def _send_email_notification(notification: CustomerNotification) -> bool:
         """Send email notification to customer"""
         try:
             customer = notification.customer
+            
+            # Skip if no email
+            if not customer.email or '@' not in customer.email:
+                logger.info(f"Customer {customer.name} has no valid email address")
+                return False
+            
             subject = f"מוסך האופניים - {notification.title}"
             
             # Create email body with action link
+            base_url = getattr(settings, 'BASE_URL', 'http://localhost:8000')
+            action_link = f"{base_url}{notification.action_url}" if notification.action_url else base_url
+            
             email_body = f"""
 שלום {customer.name},
 
 {notification.message}
 
 אם ברצונך לצפות בפרטים נוספים, לחץ על הקישור הבא:
-http://localhost:8000{notification.action_url}
+{action_link}
 
 בברכה,
 מוסך האופניים
+
+---
+הודעה זו נשלחה אוטומטית ממערכת ניהול מוסך האופניים.
 """
             
             send_mail(
@@ -229,7 +256,7 @@ http://localhost:8000{notification.action_url}
             return True
             
         except Exception as e:
-            logger.error(f"Failed to send email notification to {customer.email}: {e}")
+            logger.error(f"Failed to send email notification to {customer.email if hasattr(customer, 'email') else 'unknown'}: {e}")
             return False
     
     @staticmethod
