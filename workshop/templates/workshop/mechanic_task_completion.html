@@ -603,29 +603,37 @@ document.addEventListener('keydown', function(e) {
         }
     }
     
-    // Escape to go back
+    // Escape to go back - removed annoying confirm dialog
     if (e.key === 'Escape') {
         const backBtn = document.querySelector('a[href*="mechanic_dashboard"]');
-        if (backBtn && confirm('האם אתה בטוח שברצונך לעזוב? שינויים שלא נשמרו יאבדו.')) {
-            window.location.href = backBtn.href;
+        if (backBtn) {
+            // Show a subtle notification instead of blocking popup
+            showEscapeNotification();
+            setTimeout(() => {
+                window.location.href = backBtn.href;
+            }, 1500);
         }
     }
 });
 
-// Warn before leaving if there are unsaved changes
-window.addEventListener('beforeunload', function(e) {
-    const form = document.getElementById('task-completion-form');
-    if (form) {
-        // Check if any status has been changed or notes added
-        const hasChanges = document.querySelector('.status-option.active') || 
-                          Array.from(document.querySelectorAll('textarea')).some(t => t.value.trim() !== '');
-        
-        if (hasChanges) {
-            e.preventDefault();
-            e.returnValue = '';
+// Show non-blocking escape notification
+function showEscapeNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all duration-300';
+    notification.innerHTML = '<i class="fas fa-info-circle mr-2"></i>חוזר לדשבורד המכונאי...';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.classList.add('opacity-0');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
         }
-    }
-});
+    }, 1200);
+}
+
+// Removed beforeunload warning - no more annoying "changes may not be saved" popup
 </script>
 {% endblock %}
 
