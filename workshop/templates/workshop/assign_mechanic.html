@@ -265,10 +265,10 @@
                             </label>
                             
                             <select name="mechanic_id" id="mechanic_id" 
-                                    class="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
+                                    class="w-full px-4 py-3 bg-slate-800/80 border border-slate-600 rounded-lg text-white text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent" 
                                     required
-                                    style="background-color: rgb(51 65 85 / 0.5);">
-                                <option value="" style="background-color: rgb(51 65 85); color: white;">-- בחר מכונאי --</option>
+                                    style="background-color: rgb(30 41 59 / 0.8);">
+                                <option value="" style="background-color: rgb(30 41 59); color: white;">-- בחר מכונאי --</option>
                                 <option value="auto_assign" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; font-weight: bold;">
                                     🚀 הקצה למכונאי הזמין הראשון (דחוף)
                                 </option>
@@ -277,7 +277,7 @@
                                         style="{% if mechanic.total_workload == 0 %}background: linear-gradient(135deg, #10b981, #059669); color: white;
                                                {% elif mechanic.total_workload <= 2 %}background: linear-gradient(135deg, #f59e0b, #d97706); color: white;
                                                {% elif mechanic.total_workload > 4 %}background: linear-gradient(135deg, #ef4444, #dc2626); color: white;
-                                               {% else %}background-color: rgb(51 65 85); color: white;{% endif %}">
+                                               {% else %}background-color: rgb(30 41 59); color: white;{% endif %}">
                                     {{ mechanic.get_full_name|default:mechanic.username }}
                                     {% if mechanic.email %} - {{ mechanic.email }}{% endif %}
                                     ({{ mechanic.active_repairs_count }} פעיל{% if mechanic.stuck_repairs_count %}, {{ mechanic.stuck_repairs_count }} תקוע{% endif %})
@@ -334,11 +334,11 @@
                 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <button type="submit" class="btn-modern success lg flex-1">
-                        <i class="fas fa-user-cog mr-2"></i>הקצה מכונאי
+                    <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 flex-1">
+                        <i class="fas fa-user-cog"></i>הקצה מכונאי
                     </button>
-                    <a href="{% url 'manager_dashboard' %}" class="btn-modern secondary lg">
-                        <i class="fas fa-times mr-2"></i>חזור לדשבורד
+                    <a href="{% url 'manager_dashboard' %}" class="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2">
+                        <i class="fas fa-times"></i>חזור לדשבורד
                     </a>
                 </div>
                 {% else %}
