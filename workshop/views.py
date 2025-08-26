@@ -30,6 +30,7 @@ from .forms import (
     CustomerAddBikeForm
 )
 from .notification_service import NotificationService
+from .realtime_service import realtime_service
 
 # Helper functions for role-based access
 def is_manager(user):
@@ -761,8 +762,37 @@ def customer_approval(request, repair_id):
                 elif approved_count == total_count:
                     repair_job.status = 'approved'  # אושר הכל
                     repair_job.approved_at = timezone.now()
+                    
+                    # Send real-time notification to managers about approved repair
+                    realtime_service.send_to_group(
+                        "managers",
+                        "repair_approved",
+                        {
+                            'repair_id': repair_job.id,
+                            'customer_name': repair_job.bike.customer.name,
+                            'bike_info': f"{repair_job.bike.brand} {repair_job.bike.model}",
+                            'approved_count': approved_count,
+                            'total_count': total_count,
+                            'message': f"לקוח אישר תיקון: {repair_job.bike.brand} {repair_job.bike.model}"
+                        }
+                    )
+                    
                 else:
                     repair_job.status = 'partially_approved'  # אישור חלקי
+                    
+                    # Send real-time notification about partial approval
+                    realtime_service.send_to_group(
+                        "managers",
+                        "repair_partially_approved",
+                        {
+                            'repair_id': repair_job.id,
+                            'customer_name': repair_job.bike.customer.name,
+                            'bike_info': f"{repair_job.bike.brand} {repair_job.bike.model}",
+                            'approved_count': approved_count,
+                            'total_count': total_count,
+                            'message': f"אישור חלקי: {approved_count}/{total_count} פעולות"
+                        }
+                    )
                 
                 repair_job.save()
                 
@@ -848,6 +878,9 @@ def assign_mechanic(request, repair_id):
                 repair_job.assigned_mechanic = mechanic
                 repair_job.status = 'in_progress'
                 repair_job.save()
+                
+                # Send real-time notification to assigned mechanic
+                realtime_service.mechanic_assigned(repair_job, mechanic)
                 
                 # הודעת עדכון מותאמת לפי סוג ההקצאה
                 if auto_assigned:
@@ -953,11 +986,19 @@ def mechanic_task_completion(request, repair_id):
                 if status_field in request.POST:
                     item_status = request.POST[status_field]
                     
+                    # Check if status changed to send real-time updates
+                    old_status = item.status
+                    
                     if item_status == 'completed':
                         item.status = 'completed'
                         item.is_completed = True
                         item.completed_by = request.user
                         item.completed_at = timezone.now()
+                        
+                        # Send real-time progress update if newly completed
+                        if old_status != 'completed':
+                            realtime_service.repair_item_completed(item, request.user)
+                            
                     elif item_status == 'blocked':
                         item.status = 'blocked'
                         item.is_completed = False
@@ -988,6 +1029,9 @@ def mechanic_task_completion(request, repair_id):
                     message="התיקון הושלם והועבר לבדיקת איכות על ידי המנהל.",
                     is_visible_to_customer=True
                 )
+                
+                # Send real-time notification to managers
+                realtime_service.quality_check_ready(repair_job)
                 
                 messages.success(request, 'התיקון הושלם והועבר לבדיקת איכות!')
             else:
@@ -1416,6 +1460,18 @@ def manager_quality_approve(request, repair_id):
             repair_job.ready_for_pickup_date = timezone.now()
             repair_job.save()
             
+            # Send real-time notification to customer that repair is ready for pickup
+            if repair_job.bike.customer.user:
+                realtime_service.send_to_group(
+                    f"customer_{repair_job.bike.customer.user.id}",
+                    "repair_ready_for_pickup",
+                    {
+                        'repair_id': repair_job.id,
+                        'bike_info': f"{repair_job.bike.brand} {repair_job.bike.model}",
+                        'message': f"תיקון מוכן לאיסוף: {repair_job.bike.brand} {repair_job.bike.model}"
+                    }
+                )
+            
             messages.success(request, f'תיקון #{repair_job.id} אושר ומוכן לאיסוף!')
             
         elif action == 'reject':
@@ -1426,6 +1482,19 @@ def manager_quality_approve(request, repair_id):
             repair_job.stuck_reason = f"דחיית בדיקת איכות: {quality_notes}"
             repair_job.stuck_at = timezone.now()
             repair_job.save()
+            
+            # Send real-time notification to mechanic about rejection
+            if repair_job.assigned_mechanic:
+                realtime_service.send_to_group(
+                    f"mechanic_{repair_job.assigned_mechanic.id}",
+                    "quality_check_rejected",
+                    {
+                        'repair_id': repair_job.id,
+                        'bike_info': f"{repair_job.bike.brand} {repair_job.bike.model}",
+                        'reason': quality_notes,
+                        'message': f"בדיקת איכות נדחתה: {repair_job.bike.brand} {repair_job.bike.model}"
+                    }
+                )
             
             messages.warning(request, f'תיקון #{repair_job.id} נדחה בבדיקת האיכות והוחזר למכונאי')
         

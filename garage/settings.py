@@ -66,6 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'workshop.apps.WorkshopConfig',
     'tailwind',
     'ui',  
@@ -159,6 +160,25 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'garage.wsgi.application'
+ASGI_APPLICATION = 'garage.asgi.application'
+
+# Channels configuration
+# Using in-memory channels for development (switch to Redis for production)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
+# For production with Redis, use this instead:
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             'hosts': [config('REDIS_URL', default='redis://localhost:6379')],
+#         },
+#     },
+# }
 
 
 # Database

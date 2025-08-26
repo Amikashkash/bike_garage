@@ -6,6 +6,7 @@ from . import views
 from .icon_views import app_icon_view
 from . import notification_views
 from . import demo_views
+from . import api_views
 # from . import system_views  # Temporarily disabled to fix deployment
 
 def serve_sw_js(request):
@@ -109,4 +110,14 @@ urlpatterns = [
     path('api/notifications/mark-read/', notification_views.mark_notification_read, name='mark_notification_read'),
     path('api/notifications/mark-all-read/', notification_views.mark_all_notifications_read, name='mark_all_notifications_read'),
     path('api/notifications/test/', notification_views.test_notification, name='test_notification'),
+    
+    # Real-time API endpoints
+    path('api/manager/stats/', api_views.manager_stats, name='api_manager_stats'),
+    path('api/customer/active-repairs/', api_views.customer_active_repairs, name='api_customer_active_repairs'),
+    path('api/customer/notifications/', api_views.customer_notifications, name='api_customer_notifications'),
+    path('api/customer/notifications/list/', api_views.customer_notifications_list, name='api_customer_notifications_list'),
+    path('api/customer/notifications/mark-read/', api_views.mark_notification_read, name='api_mark_notification_read'),
+    path('api/mechanic/stats/', api_views.mechanic_stats, name='api_mechanic_stats'),
+    path('api/mechanic/repair/<int:repair_id>/stuck/', api_views.report_stuck_repair, name='api_report_stuck_repair'),
+    path('api/manager/resolve-stuck/<int:repair_id>/', api_views.resolve_stuck_repair, name='api_resolve_stuck_repair'),
 ]

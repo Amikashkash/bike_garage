@@ -118,7 +118,7 @@
             
             <!-- Task Completion Form -->
             <div class="xl:col-span-2">
-                <form method="post" id="task-completion-form">
+                <form method="post" id="task-completion-form" data-task-id="{{ repair_job.id }}" data-repair-id="{{ repair_job.id }}">
                     {% csrf_token %}
                     
                     {% if task_form.completed_items.field.queryset %}
@@ -233,6 +233,11 @@
                                         class="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
                                     <i class="fas fa-save mr-2"></i>
                                     עדכן ביצוע
+                                </button>
+                                <button type="button" 
+                                        class="report-stuck-btn bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/30 hover:border-amber-300 text-amber-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95">
+                                    <i class="fas fa-exclamation-triangle mr-2"></i>
+                                    דווח על בעיה
                                 </button>
                                 <a href="{% url 'mechanic_dashboard' %}" 
                                    class="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-semibold py-3 px-8 rounded-xl transition-all duration-300 text-center border border-slate-500/30 hover:border-slate-400/50">

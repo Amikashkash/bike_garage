@@ -62,7 +62,7 @@
     {% block extra_head %}{% endblock %}
 </head>
 
-<body class="font-['Heebo'] bg-slate-950 min-h-screen text-white overflow-x-hidden supports-[padding:max(0px)]:pt-[env(safe-area-inset-top)] supports-[padding:max(0px)]:pb-[env(safe-area-inset-bottom)]" data-pwa-ready="false">
+<body class="font-['Heebo'] bg-slate-950 min-h-screen text-white overflow-x-hidden supports-[padding:max(0px)]:pt-[env(safe-area-inset-top)] supports-[padding:max(0px)]:pb-[env(safe-area-inset-bottom)]" data-pwa-ready="false"{% if user.is_authenticated %} data-user-type="{{ user.userprofile.role }}" data-user-id="{{ user.id }}"{% if user.userprofile.role == 'customer' and user.customer %} data-customer-id="{{ user.customer.id }}"{% endif %}{% endif %}>
     
     <!-- Enhanced Mercury Background -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
@@ -567,6 +567,18 @@
             </div>
         </div>
     </footer>
+    
+    <!-- Real-time WebSocket Scripts -->
+    <script src="{% static 'js/realtime.js' %}"></script>
+    {% if user.is_authenticated %}
+        {% if user.userprofile.role == 'customer' %}
+            <script src="{% static 'js/customer-realtime.js' %}"></script>
+        {% elif user.userprofile.role == 'mechanic' %}
+            <script src="{% static 'js/mechanic-realtime.js' %}"></script>
+        {% elif user.userprofile.role == 'manager' %}
+            <script src="{% static 'js/manager-realtime.js' %}"></script>
+        {% endif %}
+    {% endif %}
     
     <!-- Enhanced JavaScript -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
