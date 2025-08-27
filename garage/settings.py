@@ -163,22 +163,25 @@ WSGI_APPLICATION = 'garage.wsgi.application'
 ASGI_APPLICATION = 'garage.asgi.application'
 
 # Channels configuration
-# Using in-memory channels for development (switch to Redis for production)
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+# Use Redis for production, in-memory for development
+REDIS_URL = config('REDIS_URL', default='')
+if REDIS_URL:
+    # Production - use Redis
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+            },
+        },
     }
-}
-
-# For production with Redis, use this instead:
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             'hosts': [config('REDIS_URL', default='redis://localhost:6379')],
-#         },
-#     },
-# }
+else:
+    # Development - use in-memory
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        }
+    }
 
 
 # Database

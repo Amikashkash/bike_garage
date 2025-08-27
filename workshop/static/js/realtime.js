@@ -71,12 +71,16 @@ class BikeGarageRealtime {
         }
         
         try {
-            // Determine WebSocket protocol
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            // Determine WebSocket protocol - force wss for production
+            const isProduction = window.location.hostname.includes('onrender.com') || window.location.protocol === 'https:';
+            const protocol = isProduction ? 'wss:' : 'ws:';
             const host = window.location.host;
             const wsUrl = `${protocol}//${host}/ws/workshop/${this.userType}/`;
             
             console.log(`Connecting to WebSocket: ${wsUrl}`);
+            console.log(`Production mode: ${isProduction}, Protocol: ${protocol}`);
+            
+            // Add authentication headers if available
             this.socket = new WebSocket(wsUrl);
             
             this.setupEventListeners();

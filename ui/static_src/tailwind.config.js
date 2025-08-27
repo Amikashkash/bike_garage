@@ -33,10 +33,14 @@ module.exports = {
   ],
   theme: { 
     extend: {
+      fontFamily: {
+        'heebo': ['Heebo', 'sans-serif']
+      },
       animation: {
         'float-slow': 'float-slow 20s ease-in-out infinite',
         'float-medium': 'float-medium 15s ease-in-out infinite', 
         'float-fast': 'float-fast 12s ease-in-out infinite',
+        'slideIn': 'slideIn 0.5s ease-out'
       }
     } 
   },
