@@ -53,6 +53,12 @@ class ManagerRealtime extends BikeGarageRealtime {
         super.handleNewRepairCreated(data);
         this.updateNewRepairsCounter();
         this.addToNewRepairsList(data);
+        
+        // Update specific status counter based on repair status
+        this.updateStatusCounter(data.status, 1); // +1 for new repair
+        
+        // Refresh the dashboard instead of full page reload
+        this.refreshManagerDashboard();
     }
     
     // Manager-specific UI methods
@@ -470,6 +476,97 @@ class ManagerRealtime extends BikeGarageRealtime {
         `;
         
         document.body.insertAdjacentHTML('beforeend', panelHtml);
+    }
+    
+    // Override the base refreshRepairsList method for manager dashboard
+    refreshRepairsList() {
+        this.refreshManagerDashboard();
+    }
+    
+    updateStatusCounter(status, increment) {
+        // Update specific dashboard section counters based on repair status
+        let sectionId;
+        
+        switch(status) {
+            case 'pending_diagnosis':
+                sectionId = '#pending-diagnosis-count';
+                break;
+            case 'pending_approval':
+                sectionId = '#pending-approval-count';
+                break;
+            case 'approved_waiting_for_mechanic':
+                sectionId = '#approved-waiting-count';
+                break;
+            case 'in_progress':
+                sectionId = '#in-progress-count';
+                break;
+            case 'awaiting_quality_check':
+                sectionId = '#quality-check-count';
+                break;
+            case 'ready_for_collection':
+                sectionId = '#ready-collection-count';
+                break;
+            default:
+                console.log('Unknown status for counter update:', status);
+                return;
+        }
+        
+        // Find counter element and update
+        const counter = document.querySelector(sectionId);
+        if (counter) {
+            const currentCount = parseInt(counter.textContent) || 0;
+            const newCount = Math.max(0, currentCount + increment);
+            counter.textContent = newCount;
+            
+            // Add animation
+            counter.classList.add('animate-pulse');
+            setTimeout(() => counter.classList.remove('animate-pulse'), 1000);
+            
+            console.log(`Updated ${status} counter: ${currentCount} -> ${newCount}`);
+        }
+    }
+    
+    refreshManagerDashboard() {
+        // Refresh the manager dashboard sections instead of full page reload
+        console.log('Refreshing manager dashboard...');
+        
+        // Use fetch to get updated dashboard content
+        fetch(window.location.href, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Parse the HTML to extract just the dashboard content
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newDashboard = doc.querySelector('#manager-dashboard');
+            
+            if (newDashboard) {
+                // Get current dashboard
+                const currentDashboard = document.querySelector('#manager-dashboard');
+                if (currentDashboard) {
+                    // Preserve the real-time status panel
+                    const statusPanel = currentDashboard.querySelector('#realtime-status-panel');
+                    
+                    // Replace dashboard content
+                    currentDashboard.innerHTML = newDashboard.innerHTML;
+                    
+                    // Re-add the status panel at the top
+                    if (statusPanel) {
+                        currentDashboard.insertAdjacentElement('afterbegin', statusPanel);
+                    }
+                    
+                    console.log('Manager dashboard refreshed successfully');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing dashboard:', error);
+            // Fallback to full page reload
+            setTimeout(() => window.location.reload(), 1000);
+        });
     }
 }
 

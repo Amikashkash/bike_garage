@@ -19,7 +19,15 @@ def serve_sw_js(request):
     except Exception as e:
         return HttpResponse(f'// Service worker error: {str(e)}', content_type='application/javascript')
 
+def health_check(request):
+    """Simple health check endpoint for Fly.io"""
+    return HttpResponse("OK", content_type="text/plain")
+
 urlpatterns = [
+    # Health check for Fly.io (both with and without trailing slash)
+    path('health/', health_check, name='health_check'),
+    path('health', health_check, name='health_check_no_slash'),
+    
     # PWA Service Worker - Fixed encoding
     path('sw.js', serve_sw_js, name='service_worker'),
     

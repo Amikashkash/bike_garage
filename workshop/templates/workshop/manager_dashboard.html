@@ -169,7 +169,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('pending-diagnosis')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-clock"></i>
-                                <span class="text-sm md:text-base">{{ pending_diagnosis.count   }}   ממתינים . . . </span>
+                                <span class="text-sm md:text-base"><span id="pending-diagnosis-count">{{ pending_diagnosis.count }}</span> ממתינים . . . </span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="pending-diagnosis-icon"></i>
                         </button>
@@ -246,7 +246,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('pending-approval')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-hourglass-half"></i>
-                                <span class="text-sm md:text-base">{{ pending_approval.count }} ממתינים . . .</span>
+                                <span class="text-sm md:text-base"><span id="pending-approval-count">{{ pending_approval.count }}</span> ממתינים . . .</span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="pending-approval-icon"></i>
                         </button>
@@ -327,7 +327,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('approved-waiting')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-user-cog"></i>
-                                <span class="text-sm md:text-base">{{ approved_waiting_for_mechanic.count }} ממתינים .. .</span>
+                                <span class="text-sm md:text-base"><span id="approved-waiting-count">{{ approved_waiting_for_mechanic.count }}</span> ממתינים .. .</span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="approved-waiting-icon"></i>
                         </button>
@@ -408,7 +408,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('in-progress')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-play"></i>
-                                <span class="text-sm md:text-base">{{ in_progress.count }} פעילים . . .</span>
+                                <span class="text-sm md:text-base"><span id="in-progress-count">{{ in_progress.count }}</span> פעילים . . .</span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="in-progress-icon"></i>
                         </button>
@@ -489,7 +489,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('quality-check')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-clipboard-check"></i>
-                                <span class="text-sm md:text-base">{{ awaiting_quality_check.count }}  לבדיקה . . .</span>
+                                <span class="text-sm md:text-base"><span id="quality-check-count">{{ awaiting_quality_check.count }}</span> לבדיקה . . .</span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="quality-check-icon"></i>
                         </button>
@@ -570,7 +570,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 onclick="toggleSection('ready-collection')">
                             <div class="flex items-center gap-2">
                                 <i class="fas fa-gift"></i>
-                                <span class="text-sm md:text-base">{{ repairs_not_collected.count }} מוכנים . . .</span>
+                                <span class="text-sm md:text-base"><span id="ready-collection-count">{{ repairs_not_collected.count }}</span> מוכנים . . .</span>
                             </div>
                             <i class="fas fa-chevron-down transition-transform duration-300 text-sm" id="ready-collection-icon"></i>
                         </button>

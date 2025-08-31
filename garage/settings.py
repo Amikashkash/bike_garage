@@ -35,8 +35,13 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     '10.100.102.87',
     '.onrender.com',
-    'shai-bike-garage.onrender.com'
+    'shai-bike-garage.onrender.com',
+    '.fly.dev',
+    'bike-garage-realtime.fly.dev'
 ]
+
+# Disable APPEND_SLASH for health checks
+APPEND_SLASH = True
 
 # CSRF Settings - תיקון בעיות CSRF במעבר בין מכשירים
 CSRF_COOKIE_SECURE = not DEBUG  # רק ב-HTTPS בייצור
@@ -49,6 +54,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
     'http://10.100.102.87:8000',
     'http://127.0.0.1:8000',
+    'https://*.fly.dev',
+    'https://bike-garage-realtime.fly.dev',
 ]
 
 # Session Settings - שיפור יציבות סשן
@@ -130,6 +137,7 @@ else:
 
 
 MIDDLEWARE = [
+    'workshop.middleware.HealthCheckMiddleware',  # Handle health checks first
     'workshop.middleware.DatabaseFixMiddleware',  # תיקון אוטומטי של מסד הנתונים
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  # עבור קבצים סטטיים ב-production
@@ -261,8 +269,8 @@ WHITENOISE_STATIC_PREFIX = '/static/'
 
 # הגדרות אבטחה לproduction
 if not DEBUG:
-    # HTTPS settings
-    SECURE_SSL_REDIRECT = True
+    # HTTPS settings - disabled since Fly.io handles HTTPS redirection
+    SECURE_SSL_REDIRECT = False  # Let Fly.io handle HTTPS redirect
     SECURE_HSTS_SECONDS = 31536000  # שנה
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -288,6 +296,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:8000',
     'http://localhost:8000',
     'https://shai-bike-garage.onrender.com',  # Your production domain
+    'https://*.fly.dev',
+    'https://bike-garage-realtime.fly.dev',
 ]
 
 # Session settings for mobile

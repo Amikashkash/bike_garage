@@ -34,6 +34,7 @@ def repair_job_status_changed(sender, instance, created, **kwargs):
                 'customer_name': instance.bike.customer.name,
                 'bike_info': f"{instance.bike.brand} {instance.bike.model}",
                 'problem_description': instance.problem_description,
+                'status': instance.status,  # Include status for counter updates
                 'message': f"תיקון חדש נוצר: {instance.bike.brand} {instance.bike.model}"
             }
         )
