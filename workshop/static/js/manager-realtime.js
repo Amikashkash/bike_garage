@@ -54,10 +54,13 @@ class ManagerRealtime extends BikeGarageRealtime {
         this.updateNewRepairsCounter();
         this.addToNewRepairsList(data);
         
-        // Update specific status counter based on repair status
+        // Update specific status counter based on repair status FIRST
         this.updateStatusCounter(data.status, 1); // +1 for new repair
         
-        // Refresh the dashboard instead of full page reload
+        // Show notification about the update
+        this.showCounterUpdateNotification(data);
+        
+        // Refresh the dashboard after a short delay to show the counter update
         this.refreshManagerDashboard();
     }
     
@@ -526,47 +529,50 @@ class ManagerRealtime extends BikeGarageRealtime {
         }
     }
     
-    refreshManagerDashboard() {
-        // Refresh the manager dashboard sections instead of full page reload
-        console.log('Refreshing manager dashboard...');
+    showCounterUpdateNotification(data) {
+        // Show a brief notification about the counter update
+        const statusText = this.getStatusDisplayText(data.status);
+        console.log(`📊 Counter updated: ${statusText} +1 (${data.bike_info})`);
         
-        // Use fetch to get updated dashboard content
-        fetch(window.location.href, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Parse the HTML to extract just the dashboard content
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newDashboard = doc.querySelector('#manager-dashboard');
-            
-            if (newDashboard) {
-                // Get current dashboard
-                const currentDashboard = document.querySelector('#manager-dashboard');
-                if (currentDashboard) {
-                    // Preserve the real-time status panel
-                    const statusPanel = currentDashboard.querySelector('#realtime-status-panel');
-                    
-                    // Replace dashboard content
-                    currentDashboard.innerHTML = newDashboard.innerHTML;
-                    
-                    // Re-add the status panel at the top
-                    if (statusPanel) {
-                        currentDashboard.insertAdjacentElement('afterbegin', statusPanel);
-                    }
-                    
-                    console.log('Manager dashboard refreshed successfully');
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error refreshing dashboard:', error);
-            // Fallback to full page reload
-            setTimeout(() => window.location.reload(), 1000);
-        });
+        // Create a temporary notification element
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+        notification.innerHTML = `
+            <div class="flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i>
+                <span>עדכון: ${statusText} +1</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => notification.classList.add('translate-x-0'), 10);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    getStatusDisplayText(status) {
+        const statusMap = {
+            'pending_diagnosis': 'ממתין לאבחון',
+            'pending_approval': 'ממתין לאישור',
+            'approved_waiting_for_mechanic': 'ממתין למכונאי',
+            'in_progress': 'בעבודה',
+            'awaiting_quality_check': 'בדיקת איכות',
+            'ready_for_collection': 'מוכן לאיסוף'
+        };
+        return statusMap[status] || status;
+    }
+    
+    refreshManagerDashboard() {
+        // For now, just use a simple page reload to avoid script injection issues
+        // TODO: Implement proper section-wise updates without script conflicts
+        console.log('Refreshing manager dashboard via reload...');
+        setTimeout(() => window.location.reload(), 500);
     }
 }
 
