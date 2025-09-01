@@ -1,8 +1,11 @@
 import json
+import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth.models import User
-from .models import UserProfile, Customer
+from .models import UserProfile, Customer, Notification
+
+logger = logging.getLogger(__name__)
 
 
 class WorkshopConsumer(AsyncWebsocketConsumer):
@@ -144,6 +147,38 @@ class WorkshopConsumer(AsyncWebsocketConsumer):
             return False
             
         return self.user_profile.role == valid_types[self.user_type]
+
+    async def new_repair_created(self, event):
+        """Handle new repair created notification"""
+        # Log for debugging
+        logger.info(f"New repair created notification: {event}")
+        
+        # Send to client
+        await self.send(text_data=json.dumps({
+            'type': 'new_repair_created',
+            'repair_id': event['repair_id'],
+            'customer_name': event['customer_name'],
+            'bike_info': event['bike_info'], 
+            'problem_description': event['problem_description'],
+            'status': event.get('status', 'pending_diagnosis'),
+            'message': event['message']
+        }))
+        
+        # Store notification in database for managers
+        if hasattr(self, 'user_type') and self.user_type == 'manager':
+            try:
+                # Find all manager users
+                manager_users = User.objects.filter(groups__name='Managers')
+                for manager in manager_users:
+                    Notification.objects.create(
+                        user=manager,
+                        title="תיקון חדש נוצר", 
+                        message=event['message'],
+                        notification_type='new_repair',
+                        repair_job_id=event.get('repair_id')
+                    )
+            except Exception as e:
+                logger.error(f"Error creating notifications for new repair: {e}")
 
     async def join_user_groups(self):
         """Join appropriate WebSocket groups based on user type"""
