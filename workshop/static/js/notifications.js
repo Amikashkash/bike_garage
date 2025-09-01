@@ -254,7 +254,7 @@ class BikeGarageNotifications {
                         <h4 class="font-bold text-white mb-1">התראות דחיפה 🔔</h4>
                         <p class="text-blue-100 text-sm mb-3">קבל התראות כשהתיקון מוכן לאיסוף או כשנדרש אישור</p>
                         <div class="flex gap-2">
-                            <button onclick="bikeNotifications.subscribe()" class="bg-white text-blue-600 px-3 py-1 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
+                            <button onclick="bikeNotifications.subscribe()" class="bg-slate-800/70 hover:bg-slate-700 text-white border border-slate-600 px-3 py-1 rounded-lg text-sm font-medium transition-colors">
                                 אפשר התראות
                             </button>
                             <button onclick="document.getElementById('notification-prompt').remove()" class="bg-blue-500/20 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-500/30 transition-colors">
