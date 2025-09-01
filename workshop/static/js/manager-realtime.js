@@ -572,7 +572,13 @@ class ManagerRealtime extends BikeGarageRealtime {
         // For now, just use a simple page reload to avoid script injection issues
         // TODO: Implement proper section-wise updates without script conflicts
         console.log('Refreshing manager dashboard via reload...');
-        setTimeout(() => window.location.reload(), 500);
+        setTimeout(() => {
+            try {
+                window.location.reload();
+            } catch (error) {
+                console.error('Error during dashboard reload:', error);
+            }
+        }, 500);
     }
 }
 

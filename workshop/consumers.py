@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile, Customer
 
 logger = logging.getLogger(__name__)
+# Fixed import error - removed Notification model import
 
 
 class WorkshopConsumer(AsyncWebsocketConsumer):
