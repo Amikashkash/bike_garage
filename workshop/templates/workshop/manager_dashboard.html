@@ -132,16 +132,10 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                         <i class="fas fa-eye"></i>
                                         <span class="text-sm">צפה</span>
                                     </a>
-                                    <button class="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 rounded-lg border border-red-400/40 hover:border-red-400/60 transition-all duration-200 respond-btn"
-                                            data-repair-id="{{ repair.id }}"
-                                            data-mechanic="{{ repair.assigned_mechanic.get_full_name|default:'לא הוקצה'|escapejs }}"
-                                            data-customer="{{ repair.bike.customer.name|escapejs }}"
-                                            data-phone="{{ repair.bike.customer.phone|default:'לא צוין'|escapejs }}"
-                                            data-bike="{{ repair.bike|escapejs }}"
-                                            data-problem="{% if repair.stuck_reason %}{{ repair.stuck_reason|escapejs }}{% endif %}{% for blocked_item in repair.repair_items.all %}{% if blocked_item.status == 'blocked' %}{% if repair.stuck_reason %} | {% endif %}{{ blocked_item.description|escapejs }}{% if blocked_item.notes %}: {{ blocked_item.notes|escapejs }}{% endif %}{% endif %}{% endfor %}">
+                                    <a href="/manager/repair/{{ repair.id }}/" class="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 rounded-lg border border-red-400/40 hover:border-red-400/60 transition-all duration-200">
                                         <i class="fas fa-reply"></i>
                                         <span class="text-sm">הגב</span>
-                                    </button>
+                                    </a>
                                 </div>
                             </div>
                         </div>
