@@ -84,7 +84,7 @@ class MechanicRealtime extends BikeGarageRealtime {
                     </div>
                     
                     <div class="flex gap-3">
-                        <button onclick="window.location.href='/repair/${data.repair_id}/'" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        <button onclick="window.location.href='/mechanic/repair/${data.repair_id}/complete/'" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                             התחל עבודה
                         </button>
                         <button onclick="document.getElementById('assignment-modal').remove()" class="flex-1 bg-slate-600/50 hover:bg-slate-600 border border-slate-500 text-slate-300 hover:text-white py-2 px-4 rounded-lg font-medium transition-colors">
