@@ -846,7 +846,10 @@
             inputs.forEach(input => {
                 input.classList.add('text-base', 'md:text-sm');
             });
-        } else {
+        });
+        
+        // Browser mode detection (not PWA)
+        if (!isStandalone && !isInWebAppiOS && !isInWebAppChrome) {
             console.log('🌐 Running in browser');
             document.body.classList.add('browser-mode');
         }
