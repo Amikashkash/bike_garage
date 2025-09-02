@@ -61,7 +61,8 @@ class ManagerRealtime extends BikeGarageRealtime {
         this.showCounterUpdateNotification(data);
         
         // Refresh the dashboard after a short delay to show the counter update
-        this.refreshManagerDashboard();
+        // Temporarily disabled to avoid syntax errors during reload
+        // this.refreshManagerDashboard();
     }
     
     handleRepairApproved(data) {
@@ -81,7 +82,8 @@ class ManagerRealtime extends BikeGarageRealtime {
         console.log(`✅ Repair #${data.repair_id} approved by customer - updated counters`);
         
         // Refresh the dashboard to show updated lists
-        this.refreshManagerDashboard();
+        // Temporarily disabled to avoid syntax errors during reload
+        // this.refreshManagerDashboard();
     }
     
     handleRepairPartiallyApproved(data) {
@@ -96,7 +98,8 @@ class ManagerRealtime extends BikeGarageRealtime {
         console.log(`⚠️ Repair #${data.repair_id} partially approved by customer (${data.approved_count}/${data.total_count})`);
         
         // Refresh to show updated status in the lists
-        this.refreshManagerDashboard();
+        // Temporarily disabled to avoid syntax errors during reload
+        // this.refreshManagerDashboard();
     }
     
     // Manager-specific UI methods
