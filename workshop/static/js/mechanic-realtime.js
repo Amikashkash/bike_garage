@@ -60,34 +60,34 @@ class MechanicRealtime extends BikeGarageRealtime {
     showAssignmentModal(data) {
         const modalHtml = `
             <div id="assignment-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+                <div class="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl">
                     <div class="text-center mb-4">
-                        <div class="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-tools text-blue-600 text-2xl"></i>
+                        <div class="bg-blue-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-tools text-blue-400 text-2xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">תיקון חדש הוקצה!</h3>
+                        <h3 class="text-xl font-bold text-white mb-2">תיקון חדש הוקצה!</h3>
                     </div>
                     
                     <div class="space-y-3 mb-6">
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <div class="text-sm text-gray-600">אופניים</div>
-                            <div class="font-semibold">${data.bike_info}</div>
+                        <div class="bg-slate-700/30 border border-slate-600 p-3 rounded-lg">
+                            <div class="text-sm text-slate-400">אופניים</div>
+                            <div class="font-semibold text-white">${data.bike_info}</div>
                         </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <div class="text-sm text-gray-600">לקוח</div>
-                            <div class="font-semibold">${data.customer_name}</div>
+                        <div class="bg-slate-700/30 border border-slate-600 p-3 rounded-lg">
+                            <div class="text-sm text-slate-400">לקוח</div>
+                            <div class="font-semibold text-white">${data.customer_name}</div>
                         </div>
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <div class="text-sm text-gray-600">תיאור התקלה</div>
-                            <div class="font-semibold">${data.problem_description}</div>
+                        <div class="bg-slate-700/30 border border-slate-600 p-3 rounded-lg">
+                            <div class="text-sm text-slate-400">תיאור התקלה</div>
+                            <div class="font-semibold text-white">${data.problem_description}</div>
                         </div>
                     </div>
                     
                     <div class="flex gap-3">
-                        <button onclick="window.location.href='/mechanic/task/${data.repair_id}/'" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
+                        <button onclick="window.location.href='/repair/${data.repair_id}/'" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                             התחל עבודה
                         </button>
-                        <button onclick="document.getElementById('assignment-modal').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
+                        <button onclick="document.getElementById('assignment-modal').remove()" class="flex-1 bg-slate-600/50 hover:bg-slate-600 border border-slate-500 text-slate-300 hover:text-white py-2 px-4 rounded-lg font-medium transition-colors">
                             סגור
                         </button>
                     </div>
@@ -230,26 +230,26 @@ class MechanicRealtime extends BikeGarageRealtime {
     showStuckModal() {
         const modalHtml = `
             <div id="stuck-modal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                <div class="bg-white rounded-xl p-6 max-w-md w-full shadow-2xl">
+                <div class="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-xl p-6 max-w-md w-full shadow-2xl">
                     <div class="text-center mb-4">
-                        <div class="bg-orange-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-exclamation-triangle text-orange-600 text-2xl"></i>
+                        <div class="bg-orange-500/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                            <i class="fas fa-exclamation-triangle text-orange-400 text-2xl"></i>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">דיווח על בעיה</h3>
-                        <p class="text-gray-600">תאר את הבעיה שמונעת המשך התיקון</p>
+                        <h3 class="text-xl font-bold text-white mb-2">דיווח על בעיה</h3>
+                        <p class="text-slate-300">תאר את הבעיה שמונעת המשך התיקון</p>
                     </div>
                     
                     <form id="stuck-report-form" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">סיבת החסימה</label>
-                            <textarea name="stuck_reason" rows="4" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="תאר את הבעיה..." required></textarea>
+                            <label class="block text-sm font-medium text-slate-300 mb-2">סיבת החסימה</label>
+                            <textarea name="stuck_reason" rows="4" class="w-full bg-slate-700/30 border border-slate-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-slate-400" placeholder="תאר את הבעיה..." required></textarea>
                         </div>
                         
                         <div class="flex gap-3">
                             <button type="submit" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg font-medium transition-colors">
                                 שלח דיווח
                             </button>
-                            <button type="button" onclick="document.getElementById('stuck-modal').remove()" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-lg font-medium transition-colors">
+                            <button type="button" onclick="document.getElementById('stuck-modal').remove()" class="flex-1 bg-slate-600/50 hover:bg-slate-600 border border-slate-500 text-slate-300 hover:text-white py-2 px-4 rounded-lg font-medium transition-colors">
                                 ביטול
                             </button>
                         </div>
