@@ -163,6 +163,12 @@ class BikeGarageRealtime {
             case 'new_repair_created':
                 this.handleNewRepairCreated(data);
                 break;
+            case 'repair_approved':
+                this.handleRepairApproved(data);
+                break;
+            case 'repair_partially_approved':
+                this.handleRepairPartiallyApproved(data);
+                break;
             default:
                 console.log('Unhandled message type:', type);
         }
@@ -221,6 +227,18 @@ class BikeGarageRealtime {
     
     handleNewRepairCreated(data) {
         this.showNotification('info', 'תיקון חדש נוצר', data.message);
+        this.refreshRepairsList();
+        this.playNotificationSound();
+    }
+    
+    handleRepairApproved(data) {
+        this.showNotification('success', 'תיקון אושר ע"י הלקוח', data.message);
+        this.refreshRepairsList();
+        this.playNotificationSound('success');
+    }
+    
+    handleRepairPartiallyApproved(data) {
+        this.showNotification('warning', 'אישור חלקי מהלקוח', data.message);
         this.refreshRepairsList();
         this.playNotificationSound();
     }

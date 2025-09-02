@@ -64,6 +64,41 @@ class ManagerRealtime extends BikeGarageRealtime {
         this.refreshManagerDashboard();
     }
     
+    handleRepairApproved(data) {
+        super.handleRepairApproved(data);
+        
+        // Update counters: -1 from pending approval, +1 to approved waiting
+        this.updateStatusCounter('pending_approval', -1);
+        this.updateStatusCounter('approved_waiting_for_mechanic', 1);
+        
+        // Show specific notification for manager
+        this.showCounterUpdateNotification({
+            bike_info: data.bike_info,
+            customer_name: data.customer_name,
+            status: 'approved_waiting_for_mechanic'
+        });
+        
+        console.log(`✅ Repair #${data.repair_id} approved by customer - updated counters`);
+        
+        // Refresh the dashboard to show updated lists
+        this.refreshManagerDashboard();
+    }
+    
+    handleRepairPartiallyApproved(data) {
+        super.handleRepairPartiallyApproved(data);
+        
+        // For partial approval, we keep it in pending_approval but show notification
+        // The counter doesn't change since it's still awaiting full approval
+        
+        // Show specific notification for manager
+        this.showPartialApprovalNotification(data);
+        
+        console.log(`⚠️ Repair #${data.repair_id} partially approved by customer (${data.approved_count}/${data.total_count})`);
+        
+        // Refresh to show updated status in the lists
+        this.refreshManagerDashboard();
+    }
+    
     // Manager-specific UI methods
     createManagerDashboard() {
         // Add real-time status panel to manager dashboard
@@ -554,6 +589,32 @@ class ManagerRealtime extends BikeGarageRealtime {
             notification.classList.add('translate-x-full', 'opacity-0');
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+    
+    showPartialApprovalNotification(data) {
+        // Show a specific notification for partial approvals
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-4 right-4 bg-yellow-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 transform transition-all duration-300';
+        notification.innerHTML = `
+            <div class="flex items-center gap-2">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="flex-1">
+                    <div class="font-medium">אישור חלקי</div>
+                    <div class="text-sm">${data.customer_name}: ${data.approved_count}/${data.total_count} פעולות</div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => notification.classList.add('translate-x-0'), 10);
+        
+        // Remove after 4 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full', 'opacity-0');
+            setTimeout(() => notification.remove(), 300);
+        }, 4000);
     }
     
     getStatusDisplayText(status) {
