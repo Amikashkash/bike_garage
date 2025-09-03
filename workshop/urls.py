@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.http import HttpResponse
 from django.conf import settings
 import os
@@ -128,4 +128,7 @@ urlpatterns = [
     path('api/mechanic/stats/', api_views.mechanic_stats, name='api_mechanic_stats'),
     path('api/mechanic/repair/<int:repair_id>/stuck/', api_views.report_stuck_repair, name='api_report_stuck_repair'),
     path('api/manager/resolve-stuck/<int:repair_id>/', api_views.resolve_stuck_repair, name='api_resolve_stuck_repair'),
+    
+    # Django REST Framework API endpoints
+    path('api/', include('workshop.api_urls')),
 ]

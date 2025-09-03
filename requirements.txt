@@ -17,3 +17,4 @@ pywebpush==1.13.0
 channels==4.0.0
 channels-redis==4.2.0
 daphne==4.2.1
+djangorestframework==3.14.0
