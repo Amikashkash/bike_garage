@@ -146,7 +146,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
             {% endif %}
 
             <!-- Pending Diagnosis -->
-            {% if pending_diagnosis %}
+            {% if pending_diagnosis.count > 0 %}
             <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl overflow-hidden">
                 <div class="bg-orange-500/20 px-6 py-4 border-b border-orange-500/30">
                     <div class="flex items-center justify-between">
@@ -639,7 +639,7 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
         </div>
 
         <!-- Empty State -->
-        {% if not stuck_repairs and not pending_diagnosis and not pending_approval and not in_progress and not awaiting_quality_check and not repairs_not_collected %}
+        {% if stuck_repairs.count == 0 and pending_diagnosis.count == 0 and pending_approval.count == 0 and in_progress.count == 0 and awaiting_quality_check.count == 0 and repairs_not_collected.count == 0 %}
         <div class="text-center py-20">
             <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-12 max-w-2xl mx-auto">
                 <div class="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">

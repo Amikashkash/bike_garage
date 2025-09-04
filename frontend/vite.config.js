@@ -7,12 +7,15 @@ export default defineConfig({
   root: './src',
   base: '/static/frontend/',
   build: {
-    outDir: '../workshop/static/frontend',
+    outDir: '../../workshop/static/frontend',
     assetsDir: '',
     rollupOptions: {
       input: {
         'customer-home': './src/customer-home.jsx',
-        'customer-dashboard': './src/customer-dashboard.jsx'
+        'customer-dashboard': './src/customer-dashboard.jsx',
+        'customer-add-bike': './src/customer-add-bike.jsx',
+        'customer-bikes-list': './src/customer-bikes-list.jsx',
+        'customer-approval': './src/customer-approval.jsx'
       },
       output: {
         entryFileNames: '[name].js',

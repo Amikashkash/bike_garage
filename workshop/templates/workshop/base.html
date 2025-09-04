@@ -245,10 +245,10 @@
                     {% if user.is_authenticated %}
                         <!-- Quick Actions -->
                         {% if user.userprofile.role == 'customer' %}
-                        <button class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border backdrop-blur-sm transition-all duration-300 hover:scale-105 bg-blue-500/20 hover:bg-blue-500/30 border-blue-400/30 text-blue-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/25">
+                        <a href="{% url 'customer_bikes_list' %}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border backdrop-blur-sm transition-all duration-300 hover:scale-105 bg-blue-500/20 hover:bg-blue-500/30 border-blue-400/30 text-blue-200 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-500/25">
                             <img src="{% static 'images/logo.png' %}" alt="האופניים שלי" class="w-4 h-4 object-contain" />
                             <span class="hidden xl:inline">האופניים שלי</span>
-                        </button>
+                        </a>
                         {% endif %}
                         
                         <!-- Premium Logout Button -->

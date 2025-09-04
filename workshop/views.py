@@ -78,17 +78,17 @@ def has_quality_fields():
         # בדיקה אילו שדות חסרים
         missing_fields = [field for field in required_fields if field not in existing_fields]
 
-        # דיווח בדיבוג
+        # Debug report
         if missing_fields:
-            print("DEBUG: חסרים השדות הבאים ב-RepairJob:", missing_fields)
+            print("DEBUG: Missing RepairJob fields:", missing_fields)
         else:
-            print("DEBUG: כל שדות בקרת האיכות קיימים")
+            print("DEBUG: All quality fields exist")
 
-        # מחזיר True רק אם כל השדות קיימים
+        # Return True only if all fields exist
         return not missing_fields
 
     except Exception as e:
-        print("DEBUG: שגיאה בבדיקת שדות בקרת איכות:", e)
+        print("DEBUG: Error checking quality fields:", e)
         return False
 
 
@@ -297,9 +297,11 @@ def home(request):
                     })
                 except Customer.DoesNotExist:
                     context['no_customer_profile'] = True
+                
+                return render(request, 'workshop/customer_home.html', context)
                     
             elif role == 'mechanic':
-                # עבור מכונאי - הצג תיקונים המוקצים אליו
+                # عبور مכונאי - هצג تیקונים המוقצים אליו
                 assigned_repairs = RepairJob.objects.filter(
                     assigned_mechanic=request.user,
                     status='in_progress'
@@ -309,8 +311,10 @@ def home(request):
                     'assigned_repairs': assigned_repairs,
                 })
                 
+                return render(request, 'workshop/mechanic_home.html', context)
+                
             elif role == 'manager':
-                # עבור מנהל - תקציר מהיר + תיקונים מוקצים (כמו מכונאי)
+                # عبור מנהל - تقציר مהیر + تیקונים موقצים (כמו مכונאי)
                 pending_diagnosis = RepairJob.objects.filter(status='reported').count()
                 pending_approval = RepairJob.objects.filter(status='diagnosed').count()
                 in_progress = RepairJob.objects.filter(status='in_progress').count()
@@ -331,11 +335,14 @@ def home(request):
                     'blocked_tasks_count': blocked_tasks_count,
 
                 })
+                
+                return render(request, 'workshop/manager_home.html', context)
     except Exception as e:
         # לוג השגיאה אבל תמשיך להציג את הדף
         print(f"Home view error: {e}")
         context['error'] = "בעיה בטעינת הנתונים"
     
+    # Default fallback to original home template for guest users
     return render(request, 'workshop/home.html', context)
 
 def user_logout(request):
@@ -512,6 +519,21 @@ def manager_dashboard(request):
         pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
         
+        print(f"DEBUG: pending_diagnosis count = {pending_diagnosis.count()}")
+        print(f"DEBUG: pending_approval count = {pending_approval.count()}")
+        print(f"DEBUG: partially_approved count = {partially_approved.count()}")
+        
+        # Debug: Show actual repair IDs
+        pending_ids = list(pending_diagnosis.values_list('id', flat=True))
+        print(f"DEBUG: pending_diagnosis IDs = {pending_ids}")
+        
+        # Check if repairs 14 and 15 exist in any status
+        from workshop.models import RepairJob as RJ
+        repair_14_status = RJ.objects.filter(id=14).values_list('status', flat=True).first()
+        repair_15_status = RJ.objects.filter(id=15).values_list('status', flat=True).first()
+        print(f"DEBUG: Repair 14 status = {repair_14_status}")
+        print(f"DEBUG: Repair 15 status = {repair_15_status}")
+        
         # הפרדה נכונה: תיקונים מאושרים ממתינים להקצאת מכונאי vs בביצוע
         approved_waiting_for_mechanic = RepairJob.objects.filter(
             status__in=['approved', 'partially_approved'], 
@@ -533,7 +555,7 @@ def manager_dashboard(request):
         
         has_quality = has_quality_fields()
         
-        print("DEBUG: נכנסתי לדשבורד")
+        print("DEBUG: Entered manager dashboard")
         print("DEBUG: has_quality_fields =", has_quality)
         
         
@@ -592,6 +614,8 @@ def manager_dashboard(request):
             'actively_working_count': actively_working_count,
             'blocked_tasks_count': blocked_tasks_count,
         }
+        
+        print(f"DEBUG: Context created successfully with {pending_diagnosis.count()} pending_diagnosis repairs")
         
         return render(request, 'workshop/manager_dashboard.html', context)
     
@@ -816,7 +840,7 @@ def customer_approval(request, repair_id):
     else:
         approval_form = CustomerApprovalForm(repair_job=repair_job)
     
-    return render(request, 'workshop/customer_approval.html', {
+    return render(request, 'workshop/customer_approval_react.html', {
         'repair_job': repair_job,
         'approval_form': approval_form,
     })

@@ -1,0 +1,355 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+
+{% block title %}אישור תיקון #{{ repair_job.id }}{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Enhanced mobile-first design with better colors and spacing */
+.approval-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    padding: 1rem;
+}
+
+@media (min-width: 768px) {
+    .approval-container {
+        padding: 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .approval-container {
+        padding: 3rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+}
+
+/* Better card design */
+.card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Color system */
+.color-primary { color: #3b82f6; }
+.color-success { color: #10b981; }
+.color-warning { color: #f59e0b; }
+.color-danger { color: #ef4444; }
+.color-info { color: #06b6d4; }
+
+.bg-primary { background-color: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+.bg-success { background-color: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+.bg-warning { background-color: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.3); }
+.bg-danger { background-color: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); }
+
+/* Button improvements */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669, #047857);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(71, 85, 105, 0.8);
+    color: white;
+    border-color: rgba(100, 116, 139, 0.5);
+}
+
+.btn-secondary:hover {
+    background: rgba(100, 116, 139, 0.9);
+    color: white;
+    text-decoration: none;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* Mobile improvements */
+@media (max-width: 767px) {
+    .mobile-stack > * + * {
+        margin-top: 1rem;
+    }
+    
+    .mobile-full-width {
+        width: 100% !important;
+    }
+    
+    .mobile-text-center {
+        text-align: center !important;
+    }
+    
+    .mobile-hidden {
+        display: none !important;
+    }
+}
+
+/* Better spacing */
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-8 > * + * { margin-top: 2rem; }
+
+/* Checkbox styling */
+.custom-checkbox {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid #64748b;
+    border-radius: 6px;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.custom-checkbox:checked {
+    background: #10b981;
+    border-color: #10b981;
+}
+
+.custom-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+/* Item selection styling */
+.repair-item {
+    padding: 1.5rem;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: rgba(30, 41, 59, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.repair-item:hover {
+    background: rgba(30, 41, 59, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.repair-item.selected {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+}
+
+/* Status indicators */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Price display */
+.price-tag {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 767px) {
+    .approval-container {
+        padding: 0.5rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+        border-radius: 12px;
+    }
+    
+    .btn {
+        padding: 1.25rem;
+        font-size: 1.1rem;
+        width: 100%;
+    }
+    
+    .repair-item {
+        padding: 1rem;
+    }
+    
+    .mobile-grid-fix {
+        display: block !important;
+    }
+    
+    .mobile-grid-fix > * + * {
+        margin-top: 1rem;
+    }
+}
+
+/* Loading and success states */
+.loading-spinner {
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.success-message {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: #10b981;
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="customer-approval-app" class="approval-container">
+    <!-- Loading state will be replaced by React -->
+    <div class="text-center">
+        <div class="loading-spinner mx-auto mb-4"></div>
+        <p class="text-slate-400">טוען ממשק אישור...</p>
+    </div>
+</div>
+
+<!-- React dependencies -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+<!-- Pass data to React -->
+<script type="application/json" id="repair-data">
+{
+    "repair_id": {{ repair_job.id }},
+    "bike_info": {
+        "brand": "{{ repair_job.bike.brand|escapejs }}",
+        "model": "{{ repair_job.bike.model|escapejs }}",
+        "customer_name": "{{ repair_job.bike.customer.name|escapejs }}"
+    },
+    "created_at": "{{ repair_job.created_at|date:'c' }}",
+    "status_display": "{{ repair_job.get_status_display|escapejs }}",
+    "problem_description": "{{ repair_job.problem_description|escapejs }}",
+    "diagnosis": "{{ repair_job.diagnosis|escapejs }}",
+    "repair_items": [
+        {% for item in repair_job.repair_items.all %}
+        {
+            "id": {{ item.id }},
+            "description": "{{ item.description|escapejs }}",
+            "price": "{{ item.price }}",
+            "notes": "{{ item.notes|escapejs }}",
+            "is_approved_by_customer": {{ item.is_approved_by_customer|yesno:"true,false" }}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+
+<script src="{% static 'frontend/customer-approval.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        const repairData = JSON.parse(document.getElementById('repair-data').textContent);
+        
+        // Initialize React component
+        if (window.CustomerApproval && window.React && window.ReactDOM) {
+            const root = ReactDOM.createRoot(document.getElementById('customer-approval-app'));
+            root.render(
+                React.createElement(window.CustomerApproval, { 
+                    repairData: repairData,
+                    csrfToken: '{{ csrf_token }}',
+                    submitUrl: window.location.pathname
+                })
+            );
+        } else {
+            console.error('Missing dependencies:', {
+                CustomerApproval: !!window.CustomerApproval,
+                React: !!window.React,
+                ReactDOM: !!window.ReactDOM
+            });
+            // Fallback to show error
+            document.getElementById('customer-approval-app').innerHTML = `
+                <div class="approval-container">
+                    <div class="card bg-danger p-6 text-center">
+                        <h3 class="text-white font-bold text-xl mb-4">שגיאה בטעינת הממשק</h3>
+                        <p class="text-red-200 mb-4">יש בעיה בטעינת הממשק החדש. אנא רענן את הדף.</p>
+                        <button onclick="window.location.reload()" class="btn btn-secondary">
+                            <i class="fas fa-refresh mr-2"></i>רענן דף
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error initializing component:', error);
+        document.getElementById('customer-approval-app').innerHTML = `
+            <div class="approval-container">
+                <div class="card bg-danger p-6 text-center">
+                    <h3 class="text-white font-bold text-xl mb-4">שגיאה בטעינת הנתונים</h3>
+                    <p class="text-red-200 mb-4">יש בעיה בטעינת נתוני התיקון.</p>
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-home mr-2"></i>חזרה לדף הבית
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+});
+</script>
+{% endblock %}

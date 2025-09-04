@@ -5,8 +5,20 @@
 {% block content %}
 {% if user.is_authenticated %}
     {% if user.userprofile.role == "customer" %}
-        <!-- Include the new hero section for customers -->
-        {% include "workshop/components/home/hero_section.html" %}
+        <!-- Clean React Customer Home -->
+        {% load static %}
+        <div id="customer-home-root" data-customer-id="{% if customer %}{{ customer.id }}{% endif %}">
+            <!-- Fallback content for non-JS users -->
+            <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+                <div class="text-center">
+                    <div class="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-slate-400">טוען את הדף הראשי...</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- React Customer Home Component -->
+        <script type="module" src="{% static 'frontend/customer-home.js' %}"></script>
     {% elif user.userprofile.role == "mechanic" %}
         <!-- Mechanic Dashboard -->
         <div class="max-w-6xl mx-auto">
