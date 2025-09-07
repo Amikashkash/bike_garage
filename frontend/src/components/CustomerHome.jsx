@@ -3,17 +3,17 @@ import { useWebSocket } from '../hooks/useWebSocket'
 
 export default function CustomerHome() {
   const [stats, setStats] = useState({
-    activeRepairs: 0,
-    totalRepairs: 0,
+    active_repairs: 0,
+    total_repairs: 0,
     notifications: 0,
-    readyForPickup: 0
+    ready_for_pickup: 0
   })
   
   const { isConnected, messages } = useWebSocket(null, 'customer')
 
   useEffect(() => {
     // Fetch initial stats
-    fetch('/api/customer/stats/')
+    fetch('/api/customer/stats/', { credentials: 'include' })
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error('Error fetching stats:', err))
@@ -24,7 +24,7 @@ export default function CustomerHome() {
     messages.forEach(message => {
       if (message.type === 'repair_status_update') {
         // Refresh stats when repairs update
-        fetch('/api/customer/stats/')
+        fetch('/api/customer/stats/', { credentials: 'include' })
           .then(res => res.json())
           .then(data => setStats(data))
       }
@@ -64,7 +64,7 @@ export default function CustomerHome() {
         </div>
 
         {/* Priority Alert - Ready for Pickup */}
-        {stats.readyForPickup > 0 && (
+        {stats.ready_for_pickup > 0 && (
           <div className="mb-6">
             <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 backdrop-blur-sm">
               <div className="flex items-center gap-3">
@@ -73,7 +73,7 @@ export default function CustomerHome() {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-green-300 font-semibold">
-                    {stats.readyForPickup} אופניים מוכנים לאיסוף! 🎉
+                    {stats.ready_for_pickup} אופניים מוכנים לאיסוף! 🎉
                   </h3>
                   <p className="text-green-200/80 text-sm">ניתן לאסוף מהמוסך</p>
                 </div>
@@ -93,7 +93,7 @@ export default function CustomerHome() {
           <StatCard
             icon="fas fa-tools"
             title="תיקונים פעילים"
-            value={stats.activeRepairs}
+            value={stats.active_repairs}
             color="blue"
             compact={true}
           />
@@ -107,14 +107,14 @@ export default function CustomerHome() {
           <StatCard
             icon="fas fa-check-circle"
             title="מוכן לאיסוף"
-            value={stats.readyForPickup}
+            value={stats.ready_for_pickup}
             color="green"
             compact={true}
           />
           <StatCard
             icon="fas fa-history" 
             title="סה״כ תיקונים"
-            value={stats.totalRepairs}
+            value={stats.total_repairs}
             color="purple"
             compact={true}
           />

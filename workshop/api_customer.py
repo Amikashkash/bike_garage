@@ -52,10 +52,16 @@ def customer_stats(request):
         is_read=False
     ).count()
     
-    # Ready for pickup
+    # Ready for pickup - broader criteria to match frontend logic
+    # Count repairs that are ready for pickup based on multiple criteria:
+    # 1. Status is 'quality_approved' 
+    # 2. Available_for_pickup field is True
+    # 3. Status is 'approved' (since frontend displays this as ready for pickup)
+    
     ready_for_pickup = repairs.filter(
-        status='quality_approved',
-        available_for_pickup=True
+        Q(status='quality_approved') |
+        Q(available_for_pickup=True) |
+        Q(status='approved')
     ).count()
     
     stats = {
@@ -278,7 +284,7 @@ def active_repairs_summary(request):
             'needs_approval': repair.repair_items.filter(
                 is_approved_by_customer=False
             ).exists(),
-            'ready_for_pickup': repair.status == 'quality_approved' and repair.available_for_pickup
+            'ready_for_pickup': repair.status == 'quality_approved'
         })
     
     return Response(summary_data)

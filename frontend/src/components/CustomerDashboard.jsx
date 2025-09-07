@@ -6,10 +6,10 @@ export default function CustomerDashboard() {
   const [error, setError] = useState(null)
   const [customer, setCustomer] = useState(null)
   const [stats, setStats] = useState({
-    activeRepairs: 0,
-    totalRepairs: 0,
+    active_repairs: 0,
+    total_repairs: 0,
     notifications: 0,
-    readyForPickup: 0
+    ready_for_pickup: 0
   })
   const [repairs, setRepairs] = useState([])
   const [notifications, setNotifications] = useState([])
@@ -20,9 +20,9 @@ export default function CustomerDashboard() {
   useEffect(() => {
     // Fetch initial data
     Promise.all([
-      fetch('/api/customer/stats/').then(res => res.json()),
-      fetch('/api/customer/repairs/').then(res => res.json()),
-      fetch('/api/customer/notifications/').then(res => res.json())
+      fetch('/api/customer/stats/', { credentials: 'include' }).then(res => res.json()),
+      fetch('/api/customer/repairs/', { credentials: 'include' }).then(res => res.json()),
+      fetch('/api/customer/notifications/', { credentials: 'include' }).then(res => res.json())
     ])
     .then(([statsData, repairsData, notificationsData]) => {
       setStats(statsData)
@@ -43,9 +43,9 @@ export default function CustomerDashboard() {
       if (message.type === 'repair_status_update' || message.type === 'notification') {
         // Refresh data when updates come in
         Promise.all([
-          fetch('/api/customer/stats/').then(res => res.json()),
-          fetch('/api/customer/repairs/').then(res => res.json()),
-          fetch('/api/customer/notifications/').then(res => res.json())
+          fetch('/api/customer/stats/', { credentials: 'include' }).then(res => res.json()),
+          fetch('/api/customer/repairs/', { credentials: 'include' }).then(res => res.json()),
+          fetch('/api/customer/notifications/', { credentials: 'include' }).then(res => res.json())
         ])
         .then(([statsData, repairsData, notificationsData]) => {
           setStats(statsData)
@@ -61,6 +61,7 @@ export default function CustomerDashboard() {
     try {
       await fetch(`/api/customer/notifications/${notificationId}/read/`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
@@ -194,13 +195,13 @@ export default function CustomerDashboard() {
           <StatCard
             icon="fas fa-tools"
             title="תיקונים פעילים"
-            value={stats.activeRepairs}
+            value={stats.active_repairs}
             color="blue"
           />
           <StatCard
             icon="fas fa-history"
             title="סה״כ תיקונים"
-            value={stats.totalRepairs}
+            value={stats.total_repairs}
             color="purple"
           />
           <StatCard
@@ -212,7 +213,7 @@ export default function CustomerDashboard() {
           <StatCard
             icon="fas fa-check-circle"
             title="מוכן לאיסוף"
-            value={stats.readyForPickup}
+            value={stats.ready_for_pickup}
             color="green"
           />
         </div>
