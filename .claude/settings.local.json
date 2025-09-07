@@ -7,7 +7,17 @@
       "Read(c:\\Users\\ami-k\\Pictures\\Screenshots/**)",
       "Bash(grep:*)",
       "Bash(npm install:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(python manage.py runserver:*)",
+      "Bash(python manage.py collectstatic:*)",
+      "Bash(pip install:*)",
+      "Bash(python -m uvicorn:*)",
+      "Read(c:\\Users\\ami-k\\Pictures\\Screenshots/**)",
+      "Read(c:\\Users\\ami-k\\Pictures\\Screenshots/**)",
+      "Read(c:\\Users\\ami-k\\Pictures\\Screenshots/**)",
+      "Read(/C:\\django\\bike_garage\\workshop/**)",
+      "Read(/C:\\django\\bike_garage\\workshop/**)",
+      "Bash(flyctl secrets:*)"
     ],
     "deny": [],
     "ask": []

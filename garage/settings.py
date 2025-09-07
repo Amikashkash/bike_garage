@@ -321,4 +321,9 @@ SESSION_COOKIE_SECURE = False  # Set to True only in production with HTTPS
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_SAVE_EVERY_REQUEST = True
 
+# Push Notification Settings (VAPID)
+VAPID_PRIVATE_KEY = 'jUlLEbDzNjJw/DEYBWycVbSofblrdR9YpNPttMlmuak='
+VAPID_PUBLIC_KEY = 'BC17hcxxIr0wLx7fM7XYKM11xbtAT232nBiJmYTrjoEIoRSdzexB35SRaIZmwfUDBGivNO7gYpC7hdh8SQ1S2Pc='
+VAPID_CLAIM_EMAIL = 'mailto:admin@bikegarage.com'
+
 

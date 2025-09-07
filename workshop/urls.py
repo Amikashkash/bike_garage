@@ -102,9 +102,11 @@ urlpatterns = [
     path('manager/mark-delivered/<int:repair_id>/', views.manager_mark_delivered, name='manager_mark_delivered'),
     
     # Categories
-    path('categories/', views.category_list, name='category_list'),
+    path('categories/', views.category_list_react, name='category_list'),
+    path('categories/legacy/', views.category_list, name='category_list_legacy'),
     path('categories/new/', views.category_create, name='category_create'),
-    path('subcategories/new/', views.subcategory_create, name='subcategory_create'),
+    path('subcategories/new/', views.subcategory_create_react, name='subcategory_create'),
+    path('subcategories/legacy/', views.subcategory_create, name='subcategory_create_legacy'),
     
     # API endpoints
     path('api/search-customers/', views.search_customers_api, name='search_customers_api'),
