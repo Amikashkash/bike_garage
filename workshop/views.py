@@ -322,7 +322,27 @@ def home(request):
                 pending_approval = RepairJob.objects.filter(status='diagnosed').count()
                 in_progress = RepairJob.objects.filter(status='in_progress').count()
                 blocked_tasks_count = RepairJob.objects.filter(status='stuck').count()
+                ready_for_pickup = RepairJob.objects.filter(status='quality_approved').count()
 
+                # הכנסה צפויה מתיקונים ממתינים לאישור
+                from django.db.models import Sum
+                expected_revenue = RepairJob.objects.filter(
+                    status__in=['diagnosed', 'approved_partial', 'approved_full']
+                ).aggregate(
+                    total=Sum('repair_items__price')
+                )['total'] or 0
+                
+                # חישוב יעילות מוסך (אחוז תיקונים שהושלמו השבוע)
+                from datetime import timedelta
+                week_ago = timezone.now() - timedelta(days=7)
+                
+                total_repairs_week = RepairJob.objects.filter(created_at__gte=week_ago).count()
+                completed_week = RepairJob.objects.filter(
+                    created_at__gte=week_ago,
+                    status__in=['quality_approved', 'delivered', 'completed']
+                ).count()
+                
+                efficiency = int((completed_week / total_repairs_week * 100)) if total_repairs_week > 0 else 0
                 
                 # תיקונים מוקצים למנהל כמכונאי
                 assigned_repairs = RepairJob.objects.filter(
@@ -336,7 +356,9 @@ def home(request):
                     'in_progress_count': in_progress,
                     'assigned_repairs': assigned_repairs,
                     'blocked_tasks_count': blocked_tasks_count,
-
+                    'ready_for_pickup_count': ready_for_pickup,
+                    'expected_revenue': expected_revenue,
+                    'efficiency': efficiency,
                 })
                 
                 return render(request, 'workshop/manager_home.html', context)

@@ -92,7 +92,13 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-wrench text-slate-400 w-4"></i>
-                                    <span class="text-white">{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</span>
+                                    <span class="text-white">
+                                        {% if repair.assigned_mechanic %}
+                                            {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                        {% else %}
+                                            לא הוקצה
+                                        {% endif %}
+                                    </span>
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-clock text-red-400 w-4"></i>
@@ -440,7 +446,13 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-wrench text-slate-400 w-4"></i>
-                                    <span class="text-white">{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</span>
+                                    <span class="text-white">
+                                        {% if repair.assigned_mechanic %}
+                                            {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                        {% else %}
+                                            לא הוקצה
+                                        {% endif %}
+                                    </span>
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-play text-green-400 w-4"></i>
@@ -521,7 +533,13 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-wrench text-slate-400 w-4"></i>
-                                    <span class="text-white">{{ repair.assigned_mechanic.get_full_name|default:"לא הוקצה" }}</span>
+                                    <span class="text-white">
+                                        {% if repair.assigned_mechanic %}
+                                            {{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username }}
+                                        {% else %}
+                                            לא הוקצה
+                                        {% endif %}
+                                    </span>
                                 </div>
                                 <div class="flex items-center gap-3 text-sm">
                                     <i class="fas fa-clipboard-check text-yellow-400 w-4"></i>
@@ -616,17 +634,22 @@ CACHE BUSTER: Updated 2025-08-20 to fix system_status URL error
 
                             <!-- Card Footer with Actions -->
                             <div class="border-t border-cyan-400/30 bg-cyan-500/5 p-4">
-                                <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center justify-between gap-2">
                                     <a href="{% url 'repair_status' repair.id %}" 
-                                       class="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200">
+                                       class="flex items-center gap-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200 text-xs">
                                         <i class="fas fa-eye"></i>
-                                        <span class="text-sm">צפה</span>
+                                        <span>צפה</span>
                                     </a>
                                     <a href="tel:{{ repair.bike.customer.phone }}" 
-                                       class="flex items-center gap-2 px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 rounded-lg border border-cyan-400/40 hover:border-cyan-400/60 transition-all duration-200">
+                                       class="flex items-center gap-1 px-3 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 hover:text-cyan-200 rounded-lg border border-cyan-400/40 hover:border-cyan-400/60 transition-all duration-200 text-xs">
                                         <i class="fas fa-phone"></i>
-                                        <span class="text-sm">התקשר</span>
+                                        <span>התקשר</span>
                                     </a>
+                                    <button onclick="markAsPickedUp({{ repair.id }})" 
+                                       class="flex items-center gap-1 px-3 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 hover:text-green-200 rounded-lg border border-green-400/40 hover:border-green-400/60 transition-all duration-200 text-xs">
+                                        <i class="fas fa-check"></i>
+                                        <span>נאסף</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -920,6 +943,62 @@ window.notifyCustomer = function(repairId) {
         if (button) {
             button.disabled = false;
             button.innerHTML = '<i class="fas fa-phone"></i>';
+        }
+    });
+};
+
+// Mark as picked up function
+window.markAsPickedUp = function(repairId) {
+    if (!confirm('האם לסמן את האופניים כנאספו על ידי הלקוח?')) {
+        return;
+    }
+    
+    const button = document.querySelector(`button[onclick*="markAsPickedUp(${repairId})"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+    
+    fetch('/manager/mark-delivered/' + repairId + '/', {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Remove the card from the UI
+            const card = button.closest('.bg-slate-800\\/60');
+            if (card) {
+                card.style.transition = 'all 0.5s ease-out';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    card.remove();
+                    // Update counter
+                    const counter = document.getElementById('ready-collection-count');
+                    if (counter) {
+                        counter.textContent = parseInt(counter.textContent) - 1;
+                    }
+                }, 500);
+            }
+            alert('האופניים סומנו כנאספו בהצלחה!');
+        } else {
+            alert('שגיאה בעדכון הסטטוס: ' + (data.error || 'שגיאה לא ידועה'));
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('AJAX Error:', error);
+        alert('שגיאה בעדכון הסטטוס. נסה שוב.');
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-check"></i>';
         }
     });
 };
