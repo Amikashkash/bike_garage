@@ -6,7 +6,7 @@ from django.db.models import Q, Count, Sum
 from django.utils import timezone
 from .models import (
     Customer, RepairJob, CustomerNotification, RepairItem, 
-    RepairCategory, RepairSubCategory
+    RepairCategory, RepairSubCategory, PushSubscription
 )
 from .serializers import (
     RepairJobSerializer, CustomerNotificationSerializer, CustomerStatsSerializer,
@@ -288,3 +288,129 @@ def active_repairs_summary(request):
         })
     
     return Response(summary_data)
+
+
+@api_view(['POST'])
+@permission_classes([IsCustomerPermission])
+def subscribe_to_push_notifications(request):
+    """Subscribe customer to push notifications"""
+    customer = request.customer
+    
+    # Extract subscription data
+    endpoint = request.data.get('endpoint')
+    p256dh = request.data.get('keys', {}).get('p256dh')
+    auth = request.data.get('keys', {}).get('auth')
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    
+    if not all([endpoint, p256dh, auth]):
+        return Response(
+            {'error': 'Missing required subscription data'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    # Detect device type from user agent
+    device_type = 'unknown'
+    if 'Mobile' in user_agent:
+        device_type = 'mobile'
+    elif 'iPad' in user_agent:
+        device_type = 'tablet'
+    else:
+        device_type = 'desktop'
+    
+    # Create or update subscription
+    subscription, created = PushSubscription.objects.update_or_create(
+        customer=customer,
+        endpoint=endpoint,
+        defaults={
+            'p256dh_key': p256dh,
+            'auth_key': auth,
+            'user_agent': user_agent,
+            'device_type': device_type,
+            'is_active': True,
+            'failure_count': 0
+        }
+    )
+    
+    return Response({
+        'success': True,
+        'message': 'הרשמה להתראות הושלמה בהצלחה',
+        'subscription_id': subscription.id,
+        'created': created
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsCustomerPermission])
+def unsubscribe_from_push_notifications(request):
+    """Unsubscribe customer from push notifications"""
+    customer = request.customer
+    endpoint = request.data.get('endpoint')
+    
+    if not endpoint:
+        return Response(
+            {'error': 'Missing endpoint'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+    
+    try:
+        subscription = PushSubscription.objects.get(
+            customer=customer,
+            endpoint=endpoint
+        )
+        subscription.is_active = False
+        subscription.save()
+        
+        return Response({
+            'success': True,
+            'message': 'הרשמה להתראות בוטלה בהצלחה'
+        })
+        
+    except PushSubscription.DoesNotExist:
+        return Response(
+            {'error': 'Subscription not found'}, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+
+
+@api_view(['GET'])
+@permission_classes([IsCustomerPermission])
+def push_subscription_status(request):
+    """Get push subscription status for customer"""
+    customer = request.customer
+    
+    subscriptions = PushSubscription.objects.filter(
+        customer=customer,
+        is_active=True
+    )
+    
+    subscription_data = []
+    for sub in subscriptions:
+        subscription_data.append({
+            'id': sub.id,
+            'device_type': sub.device_type,
+            'created_at': sub.created_at,
+            'last_success': sub.last_success,
+            'failure_count': sub.failure_count
+        })
+    
+    return Response({
+        'has_subscriptions': subscriptions.exists(),
+        'subscription_count': len(subscription_data),
+        'subscriptions': subscription_data
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsCustomerPermission])
+def vapid_public_key(request):
+    """Get VAPID public key for push notifications"""
+    from django.conf import settings
+    
+    public_key = getattr(settings, 'VAPID_PUBLIC_KEY', None)
+    if not public_key:
+        return Response(
+            {'error': 'VAPID key not configured'}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+    
+    return Response({'public_key': public_key})

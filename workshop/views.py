@@ -14,9 +14,12 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.middleware.csrf import get_token
 import json
+import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from .models import Customer, Bike, RepairJob
+
+logger = logging.getLogger(__name__)
 
 from .models import (
     Customer, Bike, RepairCategory, RepairSubCategory, RepairJob,
@@ -356,6 +359,11 @@ def category_list(request):
     return render(request, 'workshop/category_list.html', {'categories': categories})
 
 
+@login_required
+@manager_required
+def category_list_react(request):
+    """React-based category management interface"""
+    return render(request, 'workshop/category_list_react.html')
 
 
 @login_required
@@ -383,6 +391,13 @@ def subcategory_create(request):
     else:
         form = RepairSubCategoryForm()
     return render(request, 'workshop/subcategory_form.html', {'form': form})
+
+
+@login_required
+@manager_required
+def subcategory_create_react(request):
+    """React-based subcategory management interface"""
+    return render(request, 'workshop/subcategory_form_react.html')
 
 
 def register(request):
@@ -713,6 +728,15 @@ def repair_diagnosis(request, repair_id):
                         # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
                         NotificationService.notify_approval_needed(repair_job)
                         notification_sent = True
+                        
+                        # שליחת התראת push נוספת עבור אישור נדרש
+                        from .push_service import push_service
+                        items_count = repair_job.repair_items.count()
+                        push_service.send_approval_needed_notification(
+                            repair_job.bike.customer, 
+                            repair_job, 
+                            items_count
+                        )
                         
                         # שליחת התראה גם במערכת הישנה לתאימות לאחור
                         total_price = sum(item_data['price'] for item_data in repair_items_data)
@@ -1482,7 +1506,18 @@ def manager_quality_approve(request, repair_id):
             repair_job.quality_check_date = timezone.now()
             repair_job.quality_notes = quality_notes
             repair_job.ready_for_pickup_date = timezone.now()
+            repair_job.available_for_pickup = True
             repair_job.save()
+            
+            # Send push notification for ready for pickup
+            from .push_service import push_service
+            try:
+                push_service.send_ready_for_pickup_notification(
+                    repair_job.bike.customer, 
+                    repair_job
+                )
+            except Exception as e:
+                logger.error(f"Failed to send ready for pickup notification: {e}")
             
             # Send real-time notification to customer that repair is ready for pickup
             if repair_job.bike.customer.user:

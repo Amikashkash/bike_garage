@@ -374,31 +374,6 @@ class CustomerNotification(models.Model):
         self.mark_as_read()  # אוטומטית גם נקרא
 
 
-class PushSubscription(models.Model):
-    """מנויי התראות דחיפה"""
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='push_subscriptions', verbose_name="לקוח")
-    endpoint = models.URLField(verbose_name="נקודת קצה")
-    p256dh_key = models.TextField(verbose_name="מפתח P256DH")
-    auth_key = models.TextField(verbose_name="מפתח Auth")
-    
-    # Device info
-    user_agent = models.TextField(blank=True, verbose_name="User Agent")
-    device_type = models.CharField(max_length=50, blank=True, verbose_name="סוג מכשיר")
-    
-    # Status
-    is_active = models.BooleanField(default=True, verbose_name="פעיל")
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
-    last_used_at = models.DateTimeField(auto_now=True, verbose_name="שימוש אחרון")
-    
-    class Meta:
-        unique_together = ('customer', 'endpoint')
-        verbose_name = "מנוי דחיפה"
-        verbose_name_plural = "מנויי דחיפה"
-    
-    def __str__(self):
-        return f"{self.customer.name} - {self.device_type or 'Unknown Device'}"
-
-
 class RepairUpdate(models.Model):
     """עדכונים על התיקון"""
     repair_job = models.ForeignKey(RepairJob, on_delete=models.CASCADE, related_name='updates', verbose_name="תיקון")
@@ -414,3 +389,67 @@ class RepairUpdate(models.Model):
 
     def __str__(self):
         return f"עדכון על {self.repair_job} - {self.created_at.strftime('%d/%m/%Y %H:%M')}"
+
+
+class PushSubscription(models.Model):
+    """מנוי להתראות דחיפה"""
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='push_subscriptions', verbose_name="לקוח")
+    
+    # Web Push subscription details
+    endpoint = models.TextField(verbose_name="נקודת קצה")
+    p256dh_key = models.TextField(verbose_name="מפתח P256DH")
+    auth_key = models.TextField(verbose_name="מפתח Auth")
+    
+    # Device/browser info
+    user_agent = models.TextField(blank=True, verbose_name="סוכן משתמש")
+    device_type = models.CharField(max_length=50, blank=True, verbose_name="סוג מכשיר")
+    
+    # Status
+    is_active = models.BooleanField(default=True, verbose_name="פעיל")
+    last_success = models.DateTimeField(null=True, blank=True, verbose_name="שליחה מוצלחת אחרונה")
+    last_failure = models.DateTimeField(null=True, blank=True, verbose_name="כישלון אחרון")
+    failure_count = models.PositiveIntegerField(default=0, verbose_name="מספר כישלונות")
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="נוצר בתאריך")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="עודכן בתאריך")
+    
+    class Meta:
+        unique_together = ('customer', 'endpoint')
+        ordering = ['-created_at']
+        verbose_name = "מנוי להתראות דחיפה"
+        verbose_name_plural = "מנויי התראות דחיפה"
+    
+    def __str__(self):
+        return f"{self.customer.name} - {self.device_type or 'Unknown Device'}"
+    
+    def mark_success(self):
+        """סימון שליחה מוצלחת"""
+        from django.utils import timezone
+        self.last_success = timezone.now()
+        self.failure_count = 0
+        self.is_active = True
+        self.save()
+    
+    def mark_failure(self):
+        """סימון כישלון שליחה"""
+        from django.utils import timezone
+        self.last_failure = timezone.now()
+        self.failure_count += 1
+        
+        # Deactivate after 5 consecutive failures
+        if self.failure_count >= 5:
+            self.is_active = False
+        
+        self.save()
+    
+    @property
+    def subscription_info(self):
+        """מחזיר מידע המנוי בפורמט pywebpush"""
+        return {
+            'endpoint': self.endpoint,
+            'keys': {
+                'p256dh': self.p256dh_key,
+                'auth': self.auth_key,
+            }
+        }
