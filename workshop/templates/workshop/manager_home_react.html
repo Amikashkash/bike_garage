@@ -1,0 +1,565 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+
+{% block title %}דף הבית - מנהל{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Manager Home React Styles */
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    transform: translateY(-2px);
+}
+
+.loading-spinner {
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-top: 2px solid #3b82f6;
+    border-radius: 50%;
+    width: 1.5rem;
+    height: 1.5rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceIn {
+    0%, 20%, 40%, 60%, 80% {
+        animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    }
+    0% {
+        opacity: 0;
+        transform: scale3d(.3, .3, .3);
+    }
+    20% {
+        transform: scale3d(1.1, 1.1, 1.1);
+    }
+    40% {
+        transform: scale3d(.9, .9, .9);
+    }
+    60% {
+        opacity: 1;
+        transform: scale3d(1.03, 1.03, 1.03);
+    }
+    80% {
+        transform: scale3d(.97, .97, .97);
+    }
+    to {
+        opacity: 1;
+        transform: scale3d(1, 1, 1);
+    }
+}
+
+.animate-bounce-in {
+    animation: bounceIn 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.metric-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.metric-card:nth-child(1) { animation-delay: 0.1s; }
+.metric-card:nth-child(2) { animation-delay: 0.2s; }
+.metric-card:nth-child(3) { animation-delay: 0.3s; }
+.metric-card:nth-child(4) { animation-delay: 0.4s; }
+
+.counter-number {
+    transition: all 0.5s ease;
+}
+
+.pulse-ring {
+    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.8);
+        opacity: 1;
+    }
+    80%, 100% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}
+
+.chart-container {
+    position: relative;
+    height: 200px;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+}
+
+.progress-ring__circle {
+    transition: stroke-dasharray 0.35s;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="manager-home-app">
+    <div class="flex items-center justify-center min-h-[60vh]">
+        <div class="loading-spinner"></div>
+        <span class="mr-3 text-slate-400">טוען נתוני דשבורד...</span>
+    </div>
+</div>
+
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// Counter component for animated numbers
+const CounterNumber = ({ value, duration = 1000, prefix = '', suffix = '' }) => {
+    const [count, setCount] = useState(0);
+    const [isVisible, setIsVisible] = useState(false);
+    const elementRef = useRef(null);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    setIsVisible(true);
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (elementRef.current) {
+            observer.observe(elementRef.current);
+        }
+
+        return () => observer.disconnect();
+    }, []);
+
+    useEffect(() => {
+        if (!isVisible) return;
+
+        let startTime;
+        const startValue = 0;
+        const endValue = value;
+
+        const updateCounter = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            
+            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+            const currentValue = Math.floor(startValue + (endValue - startValue) * easeOutCubic);
+            
+            setCount(currentValue);
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        };
+
+        requestAnimationFrame(updateCounter);
+    }, [isVisible, value, duration]);
+
+    return (
+        <span ref={elementRef} className="counter-number">
+            {prefix}{count.toLocaleString('he-IL')}{suffix}
+        </span>
+    );
+};
+
+// Progress Ring component for donut charts
+const ProgressRing = ({ radius, stroke, progress, color = "#3b82f6", bgColor = "#1e293b" }) => {
+    const normalizedRadius = radius - stroke * 2;
+    const circumference = normalizedRadius * 2 * Math.PI;
+    const strokeDasharray = `${progress * circumference} ${circumference}`;
+
+    return (
+        <svg
+            height={radius * 2}
+            width={radius * 2}
+            className="progress-ring"
+        >
+            <circle
+                stroke={bgColor}
+                fill="transparent"
+                strokeWidth={stroke}
+                r={normalizedRadius}
+                cx={radius}
+                cy={radius}
+            />
+            <circle
+                stroke={color}
+                fill="transparent"
+                strokeWidth={stroke}
+                strokeDasharray={strokeDasharray}
+                r={normalizedRadius}
+                cx={radius}
+                cy={radius}
+                className="progress-ring__circle"
+                style={{ strokeLinecap: 'round' }}
+            />
+        </svg>
+    );
+};
+
+// Metric Card component
+const MetricCard = ({ title, value, icon, color, bgGradient, progress, subtitle, trend, index }) => {
+    return (
+        <div 
+            className={`metric-card glass-card rounded-2xl p-6 hover:scale-105 transform transition-all duration-500 ${bgGradient}`}
+            style={{ animationDelay: `${index * 0.1}s` }}
+        >
+            <div className="flex items-center justify-between mb-4">
+                <div className={`w-12 h-12 ${color}/20 rounded-xl flex items-center justify-center group-hover:animate-pulse relative`}>
+                    <div className={`absolute inset-0 ${color}/10 rounded-xl pulse-ring`}></div>
+                    <i className={`${icon} ${color} text-xl relative z-10`}></i>
+                </div>
+                <div className="text-right">
+                    <div className="text-3xl font-bold text-white">
+                        <CounterNumber value={value} />
+                    </div>
+                    <div className={`${color.replace('text-', 'text-').replace('400', '300')} text-sm`}>{title}</div>
+                </div>
+            </div>
+            {progress && (
+                <div className="flex items-center text-sm">
+                    <div className="flex-1 bg-slate-900/30 rounded-full h-2 overflow-hidden">
+                        <div 
+                            className={`bg-gradient-to-r ${progress.gradient} h-full animate-pulse transition-all duration-1000`}
+                            style={{ width: `${progress.percentage}%` }}
+                        ></div>
+                    </div>
+                    <span className={`${color.replace('text-', 'text-').replace('400', '300')} ml-2`}>{progress.label}</span>
+                </div>
+            )}
+            {trend && (
+                <div className={`flex items-center text-sm ${color.replace('text-', 'text-').replace('400', '300')} mt-2`}>
+                    <i className={`fas fa-arrow-${trend.direction} mr-1`}></i>
+                    <span>{trend.text}</span>
+                </div>
+            )}
+        </div>
+    );
+};
+
+// Chart component for workflow status
+const WorkflowChart = ({ stats }) => {
+    if (!stats) return null;
+    
+    const total = stats.pending_diagnosis_count + stats.pending_approval_count + 
+                 stats.in_progress_count + stats.blocked_tasks_count + stats.ready_for_pickup_count;
+    
+    const data = [
+        { label: 'ממתין לאבחון', value: stats.pending_diagnosis_count, color: '#f59e0b', bgColor: '#f59e0b20' },
+        { label: 'ממתין לאישור', value: stats.pending_approval_count, color: '#8b5cf6', bgColor: '#8b5cf620' },
+        { label: 'בעבודה', value: stats.in_progress_count, color: '#10b981', bgColor: '#10b98120' },
+        { label: 'מוכן לאיסוף', value: stats.ready_for_pickup_count, color: '#06b6d4', bgColor: '#06b6d420' },
+        { label: 'תקועים', value: stats.blocked_tasks_count, color: '#ef4444', bgColor: '#ef444420' }
+    ];
+
+    return (
+        <div className="glass-card rounded-2xl p-6 animate-fade-in">
+            <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                    <i className="fas fa-chart-pie text-blue-400"></i>
+                    זרימת עבודה
+                </h3>
+                <div className="text-sm text-slate-400">זמן אמת</div>
+            </div>
+            
+            <div className="flex items-center justify-center mb-6">
+                <div className="relative chart-container flex items-center justify-center">
+                    <ProgressRing 
+                        radius={80} 
+                        stroke={8} 
+                        progress={0.8} 
+                        color="#3b82f6"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center flex-col">
+                        <div className="text-2xl font-bold text-white">
+                            <CounterNumber value={total} />
+                        </div>
+                        <div className="text-slate-400 text-sm">תיקונים</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div className="space-y-3">
+                {data.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between text-sm">
+                        <div className="flex items-center gap-2">
+                            <div 
+                                className="w-3 h-3 rounded-full animate-pulse"
+                                style={{ backgroundColor: item.color }}
+                            ></div>
+                            <span className="text-slate-300">{item.label}</span>
+                        </div>
+                        <span className="text-white font-semibold">{item.value}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Main Manager Home Component
+const ManagerHome = () => {
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [user, setUser] = useState({ name: 'מנהל' });
+
+    useEffect(() => {
+        fetchManagerStats();
+        // Set up real-time updates every 30 seconds
+        const interval = setInterval(fetchManagerStats, 30000);
+        return () => clearInterval(interval);
+    }, []);
+    
+
+    const fetchManagerStats = async () => {
+        try {
+            
+            const response = await fetch('/api/manager/stats/', {
+                method: 'GET',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
+                }
+            });
+            
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`שגיאה בטעינת נתונים: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            setStats(data);
+            
+            if (data.user) {
+                setUser(data.user);
+            }
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="loading-spinner"></div>
+                <span className="mr-3 text-slate-400">טוען נתוני דשבורד...</span>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-6xl mx-auto">
+                <div className="glass-card rounded-xl p-6 text-center">
+                    <i className="fas fa-exclamation-triangle text-red-400 text-3xl mb-4"></i>
+                    <h2 className="text-xl font-bold text-white mb-2">שגיאה בטעינת הנתונים</h2>
+                    <p className="text-slate-400 mb-4">{error}</p>
+                    <button 
+                        onClick={fetchManagerStats}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors"
+                    >
+                        נסה שוב
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-6xl mx-auto space-y-6">
+            {/* Header */}
+            <div className="glass-card rounded-xl p-6 animate-bounce-in">
+                <div className="flex items-center mb-4">
+                    <i className="fas fa-chart-line text-blue-400 text-2xl ml-3"></i>
+                    <h2 className="text-2xl font-bold text-white">
+                        שלום {user.full_name || user.username || 'מנהל'}!
+                    </h2>
+                </div>
+                <p className="text-slate-300">ברוך הבא לדשבורד המנהל</p>
+            </div>
+
+            {/* Navigation Cards */}
+            <div className="glass-card rounded-xl p-6 animate-fade-in">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a href="/manager/dashboard/" className="bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div className="text-center">
+                            <i className="fas fa-chart-line text-blue-400 text-2xl mb-2 group-hover:text-blue-300"></i>
+                            <h3 className="text-white font-medium mb-1">דשבורד מנהל</h3>
+                            <p className="text-slate-400 text-sm">סטטיסטיקות וניהול</p>
+                        </div>
+                    </a>
+                    
+                    <a href="/mechanic/dashboard/" className="bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div className="text-center">
+                            <i className="fas fa-tools text-green-400 text-2xl mb-2 group-hover:text-green-300"></i>
+                            <h3 className="text-white font-medium mb-1">דשבורד מכונאי</h3>
+                            <p className="text-slate-400 text-sm">משימות ותיקונים</p>
+                        </div>
+                    </a>
+                    
+                    <a href="/customers/" className="bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div className="text-center">
+                            <i className="fas fa-users text-purple-400 text-2xl mb-2 group-hover:text-purple-300"></i>
+                            <h3 className="text-white font-medium mb-1">לקוחות</h3>
+                            <p className="text-slate-400 text-sm">ניהול לקוחות</p>
+                        </div>
+                    </a>
+                    
+                    <a href="/admin/" className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 rounded-lg p-4 transition-all duration-200 group">
+                        <div className="text-center">
+                            <i className="fas fa-cog text-red-400 text-2xl mb-2 group-hover:text-red-300"></i>
+                            <h3 className="text-white font-medium mb-1">ניהול</h3>
+                            <p className="text-slate-400 text-sm">הגדרות מערכת</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            {/* Key Metrics */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <MetricCard
+                    title="סה״כ תיקונים פעילים"
+                    value={stats ? stats.pending_diagnosis_count + stats.pending_approval_count + stats.in_progress_count + stats.ready_for_pickup_count : 0}
+                    icon="fas fa-tools"
+                    color="text-blue-400"
+                    bgGradient="bg-gradient-to-br from-blue-500/20 via-blue-600/10 to-cyan-500/20 border-blue-400/30"
+                    progress={{
+                        percentage: stats ? Math.round(((stats.pending_diagnosis_count + stats.pending_approval_count + stats.in_progress_count + stats.ready_for_pickup_count) / (stats.pending_diagnosis_count + stats.pending_approval_count + stats.in_progress_count + stats.ready_for_pickup_count + stats.blocked_tasks_count + 10) * 100)) : 85,
+                        gradient: "from-blue-500 to-cyan-500",
+                        label: stats ? Math.round(((stats.pending_diagnosis_count + stats.pending_approval_count + stats.in_progress_count + stats.ready_for_pickup_count) / (stats.pending_diagnosis_count + stats.pending_approval_count + stats.in_progress_count + stats.ready_for_pickup_count + stats.blocked_tasks_count + 10) * 100)) + "%" : "85%"
+                    }}
+                    index={0}
+                />
+                
+                <MetricCard
+                    title="דרושה עזרה מיידית"
+                    value={stats ? stats.blocked_tasks_count : 0}
+                    icon="fas fa-exclamation-triangle"
+                    color="text-red-400"
+                    bgGradient="bg-gradient-to-br from-red-500/20 via-red-600/10 to-orange-500/20 border-red-400/30"
+                    progress={{
+                        percentage: 30,
+                        gradient: "from-red-500 to-orange-500",
+                        label: "גבוה"
+                    }}
+                    index={1}
+                />
+                
+                <MetricCard
+                    title="הכנסה צפויה"
+                    value={stats ? Math.round(stats.expected_revenue) : 0}
+                    icon="fas fa-chart-line"
+                    color="text-green-400"
+                    bgGradient="bg-gradient-to-br from-green-500/20 via-green-600/10 to-emerald-500/20 border-green-400/30"
+                    trend={{
+                        direction: "up",
+                        text: "+23% השבוע"
+                    }}
+                    index={2}
+                />
+                
+                <MetricCard
+                    title="יעילות מוסך"
+                    value={stats ? stats.efficiency : 0}
+                    icon="fas fa-tachometer-alt"
+                    color="text-purple-400"
+                    bgGradient="bg-gradient-to-br from-purple-500/20 via-purple-600/10 to-pink-500/20 border-purple-400/30"
+                    progress={{
+                        percentage: 92,
+                        gradient: "from-purple-500 to-pink-500",
+                        label: "92%"
+                    }}
+                    index={3}
+                />
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <WorkflowChart stats={stats} />
+                
+                {/* Performance Timeline */}
+                <div className="glass-card rounded-2xl p-6 animate-fade-in">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                            <i className="fas fa-clock text-green-400"></i>
+                            ביצועים שבועיים
+                        </h3>
+                        <div className="text-sm text-slate-400">7 ימים אחרונים</div>
+                    </div>
+                    
+                    <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-300">תיקונים שהושלמו</span>
+                            <span className="text-green-400 font-bold">
+                                <CounterNumber value={stats ? stats.completed_this_week : 0} />
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-300">לקוחות חדשים</span>
+                            <span className="text-blue-400 font-bold">
+                                <CounterNumber value={stats ? stats.new_customers_this_week : 0} />
+                            </span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                            <span className="text-slate-300">הכנסות השבוע</span>
+                            <span className="text-purple-400 font-bold">
+                                ₪<CounterNumber value={stats ? Math.round(stats.revenue_this_week || 0) : 0} />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+// Render the component
+ReactDOM.render(<ManagerHome />, document.getElementById('manager-home-app'));
+</script>
+{% endblock %}

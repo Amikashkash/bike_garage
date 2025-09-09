@@ -6,7 +6,8 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.utils import timezone
 from django.db import transaction
-from django.db.models import Q
+from datetime import timedelta
+from django.db.models import Q, Sum
 from django.core.mail import send_mail
 from django.conf import settings
 from django.http import JsonResponse
@@ -81,17 +82,10 @@ def has_quality_fields():
         # בדיקה אילו שדות חסרים
         missing_fields = [field for field in required_fields if field not in existing_fields]
 
-        # Debug report
-        if missing_fields:
-            print("DEBUG: Missing RepairJob fields:", missing_fields)
-        else:
-            print("DEBUG: All quality fields exist")
-
         # Return True only if all fields exist
         return not missing_fields
 
-    except Exception as e:
-        print("DEBUG: Error checking quality fields:", e)
+    except Exception:
         return False
 
 
@@ -250,7 +244,6 @@ def home(request):
                     )[:5]
                     
                     # סטטיסטיקות שנתיות
-                    from django.utils import timezone
                     current_year = timezone.now().year
                     customer_yearly_repairs_count = all_repairs.filter(
                         created_at__year=current_year
@@ -321,11 +314,10 @@ def home(request):
                 pending_diagnosis = RepairJob.objects.filter(status='reported').count()
                 pending_approval = RepairJob.objects.filter(status='diagnosed').count()
                 in_progress = RepairJob.objects.filter(status='in_progress').count()
-                blocked_tasks_count = RepairJob.objects.filter(status='stuck').count()
+                blocked_tasks_count = RepairJob.objects.filter(is_stuck=True).count()
                 ready_for_pickup = RepairJob.objects.filter(status='quality_approved').count()
 
                 # הכנסה צפויה מתיקונים ממתינים לאישור
-                from django.db.models import Sum
                 expected_revenue = RepairJob.objects.filter(
                     status__in=['diagnosed', 'approved_partial', 'approved_full']
                 ).aggregate(
@@ -333,7 +325,6 @@ def home(request):
                 )['total'] or 0
                 
                 # חישוב יעילות מוסך (אחוז תיקונים שהושלמו השבוע)
-                from datetime import timedelta
                 week_ago = timezone.now() - timedelta(days=7)
                 
                 total_repairs_week = RepairJob.objects.filter(created_at__gte=week_ago).count()
@@ -361,10 +352,8 @@ def home(request):
                     'efficiency': efficiency,
                 })
                 
-                return render(request, 'workshop/manager_home.html', context)
-    except Exception as e:
-        # לוג השגיאה אבל תמשיך להציג את הדף
-        print(f"Home view error: {e}")
+                return render(request, 'workshop/manager_home_react.html', context)
+    except Exception:
         context['error'] = "בעיה בטעינת הנתונים"
     
     # Default fallback to original home template for guest users
@@ -439,7 +428,7 @@ def register(request):
                 return redirect('home')
             except Exception as e:
                 messages.error(request, f"שגיאה ברישום: {str(e)}")
-                print(f"Registration error: {e}")
+                # Registration error occurred
         else:
             messages.error(request, "יש שגיאות בטופס. אנא תקן ונסה שוב.")
     else:
@@ -556,20 +545,6 @@ def manager_dashboard(request):
         pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
         partially_approved = RepairJob.objects.filter(status='partially_approved').select_related('bike', 'bike__customer')
         
-        print(f"DEBUG: pending_diagnosis count = {pending_diagnosis.count()}")
-        print(f"DEBUG: pending_approval count = {pending_approval.count()}")
-        print(f"DEBUG: partially_approved count = {partially_approved.count()}")
-        
-        # Debug: Show actual repair IDs
-        pending_ids = list(pending_diagnosis.values_list('id', flat=True))
-        print(f"DEBUG: pending_diagnosis IDs = {pending_ids}")
-        
-        # Check if repairs 14 and 15 exist in any status
-        from workshop.models import RepairJob as RJ
-        repair_14_status = RJ.objects.filter(id=14).values_list('status', flat=True).first()
-        repair_15_status = RJ.objects.filter(id=15).values_list('status', flat=True).first()
-        print(f"DEBUG: Repair 14 status = {repair_14_status}")
-        print(f"DEBUG: Repair 15 status = {repair_15_status}")
         
         # הפרדה נכונה: תיקונים מאושרים ממתינים להקצאת מכונאי vs בביצוע
         approved_waiting_for_mechanic = RepairJob.objects.filter(
@@ -592,8 +567,6 @@ def manager_dashboard(request):
         
         has_quality = has_quality_fields()
         
-        print("DEBUG: Entered manager dashboard")
-        print("DEBUG: has_quality_fields =", has_quality)
         
         
         if has_quality:
@@ -614,7 +587,6 @@ def manager_dashboard(request):
                 status='quality_approved'
             ).select_related('bike', 'bike__customer')
             
-            print("DEBUG: awaiting_quality_check count =", len(awaiting_quality_check))
         
         # ספירה מתוקנת
         waiting_to_start_count = 0
@@ -652,15 +624,12 @@ def manager_dashboard(request):
             'blocked_tasks_count': blocked_tasks_count,
         }
         
-        print(f"DEBUG: Context created successfully with {pending_diagnosis.count()} pending_diagnosis repairs")
         
         return render(request, 'workshop/manager_dashboard.html', context)
     
     except Exception as e:
         # לוג השגיאה ותצוגת דף ריק
-        print(f"Manager dashboard error: {e}")
-        import traceback
-        traceback.print_exc()
+        # Manager dashboard error occurred
         
         context = {
             'error': str(e),
@@ -1260,7 +1229,8 @@ http://localhost:8000/repair/{repair_job.id}/approve/
             )
         except Exception as e:
             # נלוג את השגיאה אבל לא נעצור את התהליך
-            print(f"Failed to send email to {customer.email}: {e}")
+            # Failed to send email
+            pass
     
     # תמיד נוסיף עדכון במערכת (רק אם יש user)
     if user:
@@ -1921,10 +1891,7 @@ def search_customers_api(request):
     """API endpoint for searching customers"""
     try:
         query = request.GET.get('q', '').strip()
-        print(f"Search query received: '{query}'")
-        
         if len(query) < 2:
-            print("Query too short, returning empty results")
             return JsonResponse({'customers': []})
         
         # Search customers by name, phone, email, or associated username
@@ -1935,7 +1902,6 @@ def search_customers_api(request):
             Q(user__username__icontains=query)  # Added username search
         ).select_related('user').prefetch_related('bikes')[:10]  # Limit to 10 results
         
-        print(f"Found {customers.count()} customers")
         
         customers_data = []
         for customer in customers:
@@ -1948,16 +1914,11 @@ def search_customers_api(request):
                 'username': customer.user.username if customer.user else ''
             }
             customers_data.append(customer_data)
-            print(f"Customer: {customer_data}")
         
-        print(f"Returning {len(customers_data)} customers")
         return JsonResponse({'customers': customers_data})
     
     except Exception as e:
-        # Add error logging for debugging
-        print(f"Error in search_customers_api: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        # Error in search_customers_api
         return JsonResponse({'error': f'Search error: {str(e)}'}, status=500)
 
 

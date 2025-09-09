@@ -15,24 +15,72 @@ def manager_stats(request):
     if not is_manager(request.user):
         return JsonResponse({'error': 'Unauthorized'}, status=403)
     
-    # Count stuck repairs
-    stuck_repairs = RepairJob.objects.filter(is_stuck=True).count()
+    from django.db.models import Sum
+    from datetime import timedelta
     
-    # Count quality checks needed
-    quality_checks = RepairJob.objects.filter(status='awaiting_quality_check').count()
+    # Basic counts
+    pending_diagnosis_count = RepairJob.objects.filter(status='reported').count()
+    pending_approval_count = RepairJob.objects.filter(status='diagnosed').count()
+    in_progress_count = RepairJob.objects.filter(status='in_progress').count()
+    blocked_tasks_count = RepairJob.objects.filter(is_stuck=True).count()
+    ready_for_pickup_count = RepairJob.objects.filter(status='quality_approved').count()
     
-    # Count new repairs (not yet assigned)
-    new_repairs = RepairJob.objects.filter(
-        status__in=['approved', 'partially_approved'],
-        assigned_mechanic__isnull=True
+    
+    # Expected revenue from repairs awaiting approval
+    expected_revenue = RepairJob.objects.filter(
+        status__in=['diagnosed', 'approved_partial', 'approved_full']
+    ).aggregate(
+        total=Sum('repair_items__price')
+    )['total'] or 0
+    
+    # Workshop efficiency (percentage of repairs completed this week)
+    week_ago = timezone.now() - timedelta(days=7)
+    
+    total_repairs_week = RepairJob.objects.filter(created_at__gte=week_ago).count()
+    completed_week = RepairJob.objects.filter(
+        created_at__gte=week_ago,
+        status__in=['quality_approved', 'delivered', 'completed']
     ).count()
     
-    return JsonResponse({
-        'stuck_repairs': stuck_repairs,
-        'quality_checks': quality_checks,
-        'new_repairs': new_repairs,
+    efficiency = int((completed_week / total_repairs_week * 100)) if total_repairs_week > 0 else 0
+    
+    # Additional weekly stats - Customer model doesn't have created_at field
+    # Count customers who had their first repair this week instead
+    new_customers_this_week = Customer.objects.filter(
+        bikes__repairjob__created_at__gte=week_ago
+    ).distinct().count()
+    
+    # Revenue this week (completed repairs)
+    revenue_this_week = RepairJob.objects.filter(
+        updated_at__gte=week_ago,
+        status__in=['quality_approved', 'delivered', 'completed']
+    ).aggregate(
+        total=Sum('repair_items__price')
+    )['total'] or 0
+    
+    # User info
+    user_data = {
+        'username': request.user.username,
+        'full_name': request.user.get_full_name() if request.user.get_full_name() else None,
+    }
+    
+    response_data = {
+        'pending_diagnosis_count': pending_diagnosis_count,
+        'pending_approval_count': pending_approval_count,
+        'in_progress_count': in_progress_count,
+        'blocked_tasks_count': blocked_tasks_count,
+        'ready_for_pickup_count': ready_for_pickup_count,
+        'expected_revenue': float(expected_revenue),
+        'efficiency': efficiency,
+        'completed_this_week': completed_week,
+        'new_customers_this_week': new_customers_this_week,
+        'revenue_this_week': float(revenue_this_week),
+        'user': user_data,
         'status': 'success'
-    })
+    }
+    
+    
+    return JsonResponse(response_data)
 
 
 @login_required

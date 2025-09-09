@@ -17,7 +17,14 @@
       "Read(c:\\Users\\ami-k\\Pictures\\Screenshots/**)",
       "Read(/C:\\django\\bike_garage\\workshop/**)",
       "Read(/C:\\django\\bike_garage\\workshop/**)",
-      "Bash(flyctl secrets:*)"
+      "Bash(flyctl secrets:*)",
+      "Bash(flyctl status:*)",
+      "Bash(flyctl releases:*)",
+      "Bash(flyctl machine list:*)",
+      "Bash(flyctl deploy:*)",
+      "Bash(python manage.py shell:*)",
+      "Bash(python:*)",
+      "Bash(del debug_count.py)"
     ],
     "deny": [],
     "ask": []
