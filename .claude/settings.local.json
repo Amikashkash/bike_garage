@@ -24,7 +24,10 @@
       "Bash(flyctl deploy:*)",
       "Bash(python manage.py shell:*)",
       "Bash(python:*)",
-      "Bash(del debug_count.py)"
+      "Bash(del debug_count.py)",
+      "Bash(curl:*)",
+      "Bash(find:*)",
+      "Read(//c/Users/ami-k/Pictures/Screenshots/**)"
     ],
     "deny": [],
     "ask": []
