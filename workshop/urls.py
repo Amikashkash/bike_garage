@@ -74,6 +74,7 @@ urlpatterns = [
     
     # Manager workflow
     path('manager/dashboard/', views.manager_dashboard, name='manager_dashboard'),
+    path('manager/dashboard/react/', views.manager_dashboard_react, name='manager_dashboard_react'),
     path('manager/repair/<int:repair_id>/diagnosis/', views.repair_diagnosis, name='repair_diagnosis'),
     path('manager/repair/<int:repair_id>/assign/', views.assign_mechanic, name='assign_mechanic'),
     path('manager/response-stuck/', views.manager_response_stuck, name='manager_response_stuck'),
@@ -123,6 +124,7 @@ urlpatterns = [
     
     # Real-time API endpoints
     path('api/manager/stats/', api_views.manager_stats, name='api_manager_stats'),
+    path('api/manager/dashboard/', api_views.manager_dashboard_data, name='api_manager_dashboard'),
     path('api/customer/active-repairs/', api_views.customer_active_repairs, name='api_customer_active_repairs'),
     path('api/customer/notifications/', api_views.customer_notifications, name='api_customer_notifications'),
     path('api/customer/notifications/list/', api_views.customer_notifications_list, name='api_customer_notifications_list'),

@@ -311,3 +311,62 @@ def resolve_stuck_repair(request, repair_id):
         
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
+
+
+@login_required
+@require_http_methods(["GET"])
+def manager_dashboard_data(request):
+    """API endpoint for manager dashboard data"""
+    if not is_manager(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    # Helper function to serialize repair data
+    def serialize_repair(repair):
+        return {
+            'id': repair.id,
+            'bike': {
+                'brand': repair.bike.brand if repair.bike else '',
+                'model': repair.bike.model if repair.bike else '',
+                'customer': {
+                    'name': repair.bike.customer.name if repair.bike and repair.bike.customer else '',
+                    'phone': repair.bike.customer.phone if repair.bike and repair.bike.customer else ''
+                }
+            },
+            'assigned_mechanic': {
+                'username': repair.assigned_mechanic.username if repair.assigned_mechanic else None,
+                'get_full_name': repair.assigned_mechanic.get_full_name() if repair.assigned_mechanic else None
+            } if repair.assigned_mechanic else None,
+            'stuck_reason': getattr(repair, 'stuck_reason', ''),
+            'progress_percentage': getattr(repair, 'progress_percentage', 0),
+            'get_total_estimated_price': getattr(repair, 'get_total_estimated_price', 0),
+            'get_total_approved_price': getattr(repair, 'get_total_approved_price', 0),
+            'get_total_final_price': getattr(repair, 'get_total_final_price', 0),
+            'created_at_display': repair.created_at.strftime('%d/%m %H:%M') if repair.created_at else '',
+            'completed_at_display': repair.completed_at.strftime('%d/%m %H:%M') if hasattr(repair, 'completed_at') and repair.completed_at else ''
+        }
+    
+    # Get all repair data
+    stuck_repairs = RepairJob.objects.filter(is_stuck=True).select_related('bike', 'bike__customer', 'assigned_mechanic')
+    pending_diagnosis = RepairJob.objects.filter(status='reported').select_related('bike', 'bike__customer')
+    pending_approval = RepairJob.objects.filter(status='diagnosed').select_related('bike', 'bike__customer')
+    approved_waiting_for_mechanic = RepairJob.objects.filter(
+        status__in=['approved', 'partially_approved'],
+        assigned_mechanic__isnull=True
+    ).select_related('bike', 'bike__customer')
+    in_progress = RepairJob.objects.filter(status='in_progress').select_related('bike', 'bike__customer', 'assigned_mechanic')
+    awaiting_quality_check = RepairJob.objects.filter(status='awaiting_quality_check').select_related('bike', 'bike__customer', 'assigned_mechanic')
+    repairs_not_collected = RepairJob.objects.filter(status='quality_approved').select_related('bike', 'bike__customer')
+    
+    return JsonResponse({
+        'stuck_repairs': [serialize_repair(repair) for repair in stuck_repairs],
+        'pending_diagnosis': [serialize_repair(repair) for repair in pending_diagnosis],
+        'pending_approval': [serialize_repair(repair) for repair in pending_approval],
+        'approved_waiting_for_mechanic': [serialize_repair(repair) for repair in approved_waiting_for_mechanic],
+        'in_progress': [serialize_repair(repair) for repair in in_progress],
+        'awaiting_quality_check': [serialize_repair(repair) for repair in awaiting_quality_check],
+        'repairs_not_collected': [serialize_repair(repair) for repair in repairs_not_collected],
+        'status': 'success'
+    })

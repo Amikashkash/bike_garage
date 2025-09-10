@@ -650,6 +650,14 @@ def manager_dashboard(request):
         
         return render(request, 'workshop/manager_dashboard.html', context)
 
+
+@login_required
+@manager_required
+def manager_dashboard_react(request):
+    """React-based manager dashboard"""
+    return render(request, 'workshop/manager_dashboard_react.html')
+
+
 @login_required
 @manager_required
 def repair_diagnosis(request, repair_id):
