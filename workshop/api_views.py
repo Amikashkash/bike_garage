@@ -370,3 +370,89 @@ def manager_dashboard_data(request):
         'repairs_not_collected': [serialize_repair(repair) for repair in repairs_not_collected],
         'status': 'success'
     })
+
+
+@login_required
+@require_http_methods(["GET"])
+def mechanic_dashboard_data(request):
+    """API endpoint for mechanic dashboard data"""
+    if not is_mechanic(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    # Get assigned repairs for this mechanic
+    assigned_repairs = RepairJob.objects.filter(
+        assigned_mechanic=request.user
+    ).select_related('bike', 'bike__customer').prefetch_related('repair_items')
+    
+    # Calculate statistics based on progress percentage (like the frontend does)
+    total_assigned = assigned_repairs.count()
+    
+    # Count completed repairs by checking progress percentage = 100%
+    completed = 0
+    stuck = 0
+    in_progress = 0
+    
+    for repair in assigned_repairs:
+        # Calculate progress percentage
+        completed_items = repair.repair_items.filter(status='completed').count() if hasattr(repair, 'repair_items') else 0
+        total_items = repair.repair_items.count() if hasattr(repair, 'repair_items') else 0
+        progress_percentage = int((completed_items / total_items * 100)) if total_items > 0 else 0
+        
+        if repair.is_stuck:
+            stuck += 1
+        elif progress_percentage == 100:
+            completed += 1
+        else:
+            in_progress += 1
+    
+    # Helper function to serialize repair data
+    def serialize_repair(repair):
+        # Calculate progress percentage based on repair items status
+        completed_count = repair.repair_items.filter(status='completed').count() if hasattr(repair, 'repair_items') else 0
+        total_items_count = repair.repair_items.count() if hasattr(repair, 'repair_items') else 0
+        progress_percentage = int((completed_count / total_items_count * 100)) if total_items_count > 0 else 0
+        
+        return {
+            'id': repair.id,
+            'bike': {
+                'brand': repair.bike.brand if repair.bike else '',
+                'model': repair.bike.model if repair.bike else '',
+                'customer': {
+                    'name': repair.bike.customer.name if repair.bike and repair.bike.customer else '',
+                    'phone': repair.bike.customer.phone if repair.bike and repair.bike.customer else ''
+                }
+            },
+            'progress_percentage': progress_percentage,
+            'is_stuck': getattr(repair, 'is_stuck', False),
+            'stuck_reason': getattr(repair, 'stuck_reason', ''),
+            'manager_response': getattr(repair, 'manager_response', ''),
+            'diagnosis': getattr(repair, 'diagnosis', ''),
+            'created_at': repair.created_at.isoformat() if repair.created_at else '',
+            'completed_count': completed_count,
+            'pending_count': total_items_count - completed_count,
+            'total_items_count': total_items_count,
+            'approved_items': [
+                {
+                    'description': item.description,
+                    'price': float(item.price) if item.price else 0,
+                    'notes': getattr(item, 'notes', ''),
+                    'status': getattr(item, 'status', 'pending')
+                } for item in repair.repair_items.filter(is_approved_by_customer=True)
+            ] if hasattr(repair, 'repair_items') else []
+        }
+    
+    return JsonResponse({
+        'assigned_repairs': [serialize_repair(repair) for repair in assigned_repairs],
+        'stats': {
+            'total_assigned': total_assigned,
+            'completed': completed,
+            'in_progress': in_progress,
+            'stuck': stuck
+        },
+        'user_info': {
+            'username': request.user.username,
+            'first_name': request.user.first_name,
+            'full_name': request.user.get_full_name()
+        },
+        'status': 'success'
+    })

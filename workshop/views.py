@@ -1009,6 +1009,14 @@ def mechanic_dashboard(request):
         from django.http import HttpResponse
         return HttpResponse(f"שגיאה: {str(e)}")  
 
+
+@login_required
+@mechanic_required
+def mechanic_dashboard_react(request):
+    """React-based mechanic dashboard"""
+    return render(request, 'workshop/mechanic_dashboard_react.html')
+
+
 @login_required
 @mechanic_required
 def mechanic_task_completion(request, repair_id):

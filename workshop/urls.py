@@ -92,7 +92,9 @@ urlpatterns = [
     path('repair/<int:repair_id>/approve/', views.customer_approval, name='customer_approval'),
     
     # Mechanic workflow
-    path('mechanic/dashboard/', views.mechanic_dashboard, name='mechanic_dashboard'),
+    path('mechanic/dashboard/legacy/', views.mechanic_dashboard, name='mechanic_dashboard_legacy'),
+    path('mechanic/dashboard/', views.mechanic_dashboard_react, name='mechanic_dashboard'),
+    path('mechanic/dashboard/react/', views.mechanic_dashboard_react, name='mechanic_dashboard_react'),
     path('mechanic/repair/<int:repair_id>/complete/', views.mechanic_task_completion, name='mechanic_task_completion'),
     path('mechanic/update-status/', views.update_repair_status, name='update_repair_status'),
     
@@ -130,6 +132,7 @@ urlpatterns = [
     path('api/customer/notifications/list/', api_views.customer_notifications_list, name='api_customer_notifications_list'),
     path('api/customer/notifications/mark-read/', api_views.mark_notification_read, name='api_mark_notification_read'),
     path('api/mechanic/stats/', api_views.mechanic_stats, name='api_mechanic_stats'),
+    path('api/mechanic/dashboard/', api_views.mechanic_dashboard_data, name='api_mechanic_dashboard'),
     path('api/mechanic/repair/<int:repair_id>/stuck/', api_views.report_stuck_repair, name='api_report_stuck_repair'),
     path('api/manager/resolve-stuck/<int:repair_id>/', api_views.resolve_stuck_repair, name='api_resolve_stuck_repair'),
     
