@@ -106,7 +106,8 @@ urlpatterns = [
     path('manager/mark-delivered/<int:repair_id>/', views.manager_mark_delivered, name='manager_mark_delivered'),
     
     # Categories
-    path('categories/', views.category_list_react, name='category_list'),
+    path('categories/', views.category_list, name='category_list'),
+    path('categories/react/', views.category_list_react, name='category_list_react'),
     path('categories/legacy/', views.category_list, name='category_list_legacy'),
     path('categories/new/', views.category_create, name='category_create'),
     path('subcategories/new/', views.subcategory_create_react, name='subcategory_create'),
