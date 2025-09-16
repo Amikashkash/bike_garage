@@ -1,0 +1,235 @@
+{% extends 'workshop/base.html' %}
+
+{% block title %}פרטי תיקון #{{ repair.id }} - מנהל{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-white mb-2">
+                    פרטי תיקון #{{ repair.id }}
+                </h1>
+                <p class="text-slate-300">ניהול וטיפול בתיקון תקוע</p>
+            </div>
+            <a href="{% url 'manager_dashboard' %}" 
+               class="bg-slate-600 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors inline-flex items-center gap-2">
+                <i class="fas fa-arrow-right"></i>
+                חזור לדשבורד
+            </a>
+        </div>
+
+        <!-- Repair Details -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Main Info -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- Customer & Bike Info -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-user text-blue-400"></i>
+                        פרטי לקוח ואופניים
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="text-sm text-slate-400 mb-1">שם לקוח</div>
+                            <div class="text-white font-medium">{{ repair.bike.customer.name }}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-slate-400 mb-1">טלפון</div>
+                            <div class="text-white font-medium">{{ repair.bike.customer.phone|default:"לא זמין" }}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-slate-400 mb-1">מותג אופניים</div>
+                            <div class="text-white font-medium">{{ repair.bike.brand }}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-slate-400 mb-1">דגם</div>
+                            <div class="text-white font-medium">{{ repair.bike.model }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem Description -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-exclamation-circle text-orange-400"></i>
+                        תיאור הבעיה
+                    </h2>
+                    <p class="text-slate-300 leading-relaxed">{{ repair.problem_description }}</p>
+                </div>
+
+                <!-- Diagnosis -->
+                {% if repair.diagnosis %}
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-stethoscope text-green-400"></i>
+                        אבחון
+                    </h2>
+                    <p class="text-slate-300 leading-relaxed">{{ repair.diagnosis }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Stuck Information -->
+                {% if repair.is_stuck %}
+                <div class="bg-red-900/20 border border-red-500/30 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        מידע על התקיעה
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-sm text-red-300 mb-1">סיבת התקיעה</div>
+                            <p class="text-red-100 bg-red-500/10 p-3 rounded-lg">{{ repair.stuck_reason }}</p>
+                        </div>
+                        {% if repair.manager_response %}
+                        <div>
+                            <div class="text-sm text-blue-300 mb-1">תגובה קודמת של מנהל</div>
+                            <p class="text-blue-100 bg-blue-500/10 p-3 rounded-lg">{{ repair.manager_response }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="text-sm text-slate-400">
+                            <i class="fas fa-clock mr-1"></i>
+                            נדווח ב: {{ repair.stuck_at|date:"d/m/Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Actions Sidebar -->
+            <div class="space-y-6">
+                
+                <!-- Status Info -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">סטטוס תיקון</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">סטטוס:</span>
+                            <span class="text-white font-medium">
+                                {% if repair.is_stuck %}
+                                    <span class="text-red-400">תקוע</span>
+                                {% else %}
+                                    {{ repair.get_status_display }}
+                                {% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">מכונאי:</span>
+                            <span class="text-white font-medium">{{ repair.assigned_mechanic.get_full_name|default:repair.assigned_mechanic.username|default:"לא הוקצה" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">נוצר:</span>
+                            <span class="text-white font-medium">{{ repair.created_at|date:"d/m/Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Response Form -->
+                {% if repair.is_stuck %}
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-reply text-blue-400"></i>
+                        הגב למכונאי
+                    </h3>
+                    <form id="responseForm" class="space-y-4">
+                        <div>
+                            <label class="block text-slate-300 text-sm font-medium mb-2">תגובתך:</label>
+                            <textarea 
+                                id="managerResponse" 
+                                rows="4" 
+                                class="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all resize-none"
+                                placeholder="כתב הוראות, פתרונות או הנחיות למכונאי..."
+                                required></textarea>
+                        </div>
+                        <button 
+                            type="submit" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-all">
+                            <i class="fas fa-paper-plane mr-2"></i>
+                            שלח תגובה
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+                <!-- Actions -->
+                <div class="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-4">פעולות</h3>
+                    <div class="space-y-3">
+                        <a href="{% url 'repair_status' repair.id %}" 
+                           class="w-full bg-slate-600 hover:bg-slate-700 text-white font-medium py-2 px-4 rounded-lg transition-all text-center block">
+                            <i class="fas fa-eye mr-2"></i>
+                            צפה בסטטוס מלא
+                        </a>
+                        {% if repair.assigned_mechanic %}
+                        <a href="{% url 'assign_mechanic' repair.id %}" 
+                           class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded-lg transition-all text-center block">
+                            <i class="fas fa-user-edit mr-2"></i>
+                            שנה מכונאי
+                        </a>
+                        {% else %}
+                        <a href="{% url 'assign_mechanic' repair.id %}" 
+                           class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg transition-all text-center block">
+                            <i class="fas fa-user-plus mr-2"></i>
+                            הקצה מכונאי
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if repair.is_stuck %}
+<script>
+document.getElementById('responseForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const response = document.getElementById('managerResponse').value.trim();
+    if (!response) {
+        alert('נא להזין תגובה');
+        return;
+    }
+
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>שולח...';
+    submitBtn.disabled = true;
+
+    try {
+        const res = await fetch('{% url "api_resolve_stuck_repair" repair.id %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                manager_response: response
+            })
+        });
+
+        const data = await res.json();
+        
+        if (data.success) {
+            alert('התגובה נשלחה בהצלחה!');
+            location.reload();
+        } else {
+            alert('שגיאה: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('שגיאה בשליחת התגובה');
+    } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+</script>
+{% endif %}
+
+{% csrf_token %}
+{% endblock %}

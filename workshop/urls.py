@@ -75,6 +75,7 @@ urlpatterns = [
     # Manager workflow
     path('manager/dashboard/', views.manager_dashboard, name='manager_dashboard'),
     path('manager/dashboard/react/', views.manager_dashboard_react, name='manager_dashboard_react'),
+    path('manager/repair/<int:repair_id>/', views.manager_repair_detail, name='manager_repair_detail'),
     path('manager/repair/<int:repair_id>/diagnosis/', views.repair_diagnosis, name='repair_diagnosis'),
     path('manager/repair/<int:repair_id>/assign/', views.assign_mechanic, name='assign_mechanic'),
     path('manager/response-stuck/', views.manager_response_stuck, name='manager_response_stuck'),

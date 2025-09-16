@@ -660,6 +660,25 @@ def manager_dashboard_react(request):
 
 @login_required
 @manager_required
+def manager_repair_detail(request, repair_id):
+    """Manager repair detail page for responding to stuck repairs"""
+    try:
+        repair = get_object_or_404(RepairJob, id=repair_id)
+        
+        context = {
+            'repair': repair,
+            'is_manager': True,
+        }
+        
+        return render(request, 'workshop/manager_repair_detail.html', context)
+        
+    except Exception as e:
+        messages.error(request, f"שגיאה בטעינת תיקון: {str(e)}")
+        return redirect('manager_dashboard')
+
+
+@login_required
+@manager_required
 def repair_diagnosis(request, repair_id):
     """מנהל מוסיף אבחון ופרטי תיקון"""
     repair_job = get_object_or_404(RepairJob, id=repair_id)
