@@ -147,18 +147,6 @@ class ManagerRealtime extends BikeGarageRealtime {
                         </div>
                     </div>
                 </div>
-                
-                <div class="mt-4 flex gap-2">
-                    <button onclick="managerRealtime.refreshManagerStats()" class="bg-slate-600 hover:bg-slate-500 text-white px-4 py-2 rounded-lg text-sm transition-colors">
-                        <i class="fas fa-sync mr-2"></i>רענן נתונים
-                    </button>
-                    <button onclick="managerRealtime.showStuckRepairsList()" class="bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-4 py-2 rounded-lg text-sm transition-colors">
-                        <i class="fas fa-list mr-2"></i>תיקונים תקועים
-                    </button>
-                    <button onclick="managerRealtime.showQualityChecksList()" class="bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-400 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm transition-colors">
-                        <i class="fas fa-clipboard-list mr-2"></i>בדיקות איכות
-                    </button>
-                </div>
             </div>
         `;
         
