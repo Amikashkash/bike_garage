@@ -110,7 +110,8 @@ urlpatterns = [
     path('categories/react/', views.category_list_react, name='category_list_react'),
     path('categories/legacy/', views.category_list, name='category_list_legacy'),
     path('categories/new/', views.category_create, name='category_create'),
-    path('subcategories/new/', views.subcategory_create_react, name='subcategory_create'),
+    path('subcategories/new/', views.subcategory_create, name='subcategory_create'),
+    path('subcategories/react/', views.subcategory_create_react, name='subcategory_create_react'),
     path('subcategories/legacy/', views.subcategory_create, name='subcategory_create_legacy'),
     
     # API endpoints
