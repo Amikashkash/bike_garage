@@ -27,7 +27,10 @@
       "Bash(del debug_count.py)",
       "Bash(curl:*)",
       "Bash(find:*)",
-      "Read(//c/Users/ami-k/Pictures/Screenshots/**)"
+      "Read(//c/Users/ami-k/Pictures/Screenshots/**)",
+      "Bash(where psql)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

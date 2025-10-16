@@ -196,20 +196,27 @@ else:
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# ברירת מחדל SQLite לפיתוח מקומי
-default_db_config = {
-    'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': BASE_DIR / 'db.sqlite3',
-}
-
-# ב-production השתמש ב-PostgreSQL מהמשתנה DATABASE_URL
+# PostgreSQL configuration
+# For local development, you can use PostgreSQL directly or set DATABASE_URL
 DATABASE_URL = config('DATABASE_URL', default='')
-if DATABASE_URL:
-    default_db_config = dj_database_url.parse(DATABASE_URL)
 
-DATABASES = {
-    'default': default_db_config
-}
+if DATABASE_URL:
+    # Use DATABASE_URL if provided (production or custom setup)
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
+    }
+else:
+    # Local PostgreSQL setup
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='bike_garage'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default='postgres'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
 
 # Password validation
@@ -262,10 +269,18 @@ STATICFILES_DIRS = [
 # עבור production - הגדרת תיקיית static root
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# WhiteNoise פשוט
-WHITENOISE_USE_FINDERS = True
+# WhiteNoise configuration for production
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
-# Force Django admin static files
+# WhiteNoise settings
+WHITENOISE_USE_FINDERS = True
 WHITENOISE_STATIC_PREFIX = '/static/'
 
 # הגדרות אבטחה לproduction
