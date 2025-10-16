@@ -654,8 +654,8 @@ def manager_dashboard(request):
 @login_required
 @manager_required
 def manager_dashboard_react(request):
-    """React-based manager dashboard"""
-    return render(request, 'workshop/manager_dashboard_react.html')
+    """Manager dashboard with Vite-built React component (Phase 1 migration)"""
+    return render(request, 'workshop/manager_dashboard.html')
 
 
 @login_required

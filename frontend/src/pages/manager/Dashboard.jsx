@@ -1,12 +1,4 @@
-{% extends 'workshop/base.html' %}
-
-{% block title %}דשבורד מנהל - React{% endblock %}
-
-{% block content %}
-<div id="manager-dashboard-root" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
-
-<script>
-const { useState, useEffect, useRef } = React;
+import { useState, useEffect, useRef } from 'react';
 
 // Main Dashboard Component
 const ManagerDashboard = () => {
@@ -36,9 +28,9 @@ const ManagerDashboard = () => {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
                 }
             });
-            
+
             if (!response.ok) throw new Error('Failed to fetch dashboard data');
-            
+
             const data = await response.json();
             setDashboardData(data);
             setLoading(false);
@@ -67,7 +59,7 @@ const ManagerDashboard = () => {
                         <i className="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
                         <h2 className="text-xl font-bold text-white mb-2">שגיאה בטעינת הנתונים</h2>
                         <p className="text-red-200 mb-4">{error}</p>
-                        <button 
+                        <button
                             onClick={fetchDashboardData}
                             className="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-2 rounded-lg border border-red-400/40 transition-all duration-200"
                         >
@@ -101,25 +93,25 @@ const DashboardHeader = () => {
                     </h1>
                     <p className="text-slate-300">ניהול תיקונים וזרימת עבודה - מבט כולל על כל הפעילות</p>
                 </div>
-                
+
                 <div className="flex gap-3 justify-center md:justify-end flex-wrap">
-                    <ActionButton 
-                        href="{% url 'repair_form' %}" 
-                        icon="fas fa-plus" 
+                    <ActionButton
+                        href="/repair/form/"
+                        icon="fas fa-plus"
                         text="תיקון חדש"
                         gradient="from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
                         title="צור תיקון חדש"
                     />
-                    <ActionButton 
-                        href="{% url 'backup_menu' %}" 
-                        icon="fas fa-download" 
+                    <ActionButton
+                        href="/backup/menu/"
+                        icon="fas fa-download"
                         text="גיבוי"
                         gradient="from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
                         title="גיבוי נתונים"
                     />
-                    <ActionButton 
-                        href="{% url 'print_labels_menu' %}" 
-                        icon="fas fa-print" 
+                    <ActionButton
+                        href="/print-labels/menu/"
+                        icon="fas fa-print"
                         text="מדבקות"
                         gradient="from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800"
                         title="הדפסת מדבקות"
@@ -133,7 +125,7 @@ const DashboardHeader = () => {
 // Action Button Component
 const ActionButton = ({ href, icon, text, gradient, title }) => {
     return (
-        <a 
+        <a
             href={href}
             className={`bg-gradient-to-r ${gradient} text-white font-semibold px-4 py-2 rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2`}
             title={title}
@@ -282,12 +274,12 @@ const DashboardSections = ({ data }) => {
             {sections.map(section => {
                 const repairs = data[section.key] || [];
                 if (repairs.length === 0) return null;
-                
+
                 return (
-                    <DashboardSection 
-                        key={section.key} 
-                        section={section} 
-                        repairs={repairs} 
+                    <DashboardSection
+                        key={section.key}
+                        section={section}
+                        repairs={repairs}
                     />
                 );
             })}
@@ -317,7 +309,7 @@ const DashboardSection = ({ section, repairs }) => {
                             <p className={`${section.buttonText} text-sm`}>{section.subtitle}</p>
                         </div>
                     </div>
-                    <button 
+                    <button
                         className={`flex items-center justify-between w-48 md:w-56 px-4 py-3 ${section.buttonBg} ${section.buttonText} rounded-lg border ${section.buttonBorder} ${section.buttonHover} transition-all duration-300 cursor-pointer ${section.animate || ''}`}
                         onClick={toggleSection}
                     >
@@ -331,16 +323,16 @@ const DashboardSection = ({ section, repairs }) => {
                     </button>
                 </div>
             </div>
-            
+
             {/* Section Content */}
             <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                         {repairs.map(repair => (
-                            <RepairCard 
-                                key={repair.id} 
-                                repair={repair} 
-                                section={section} 
+                            <RepairCard
+                                key={repair.id}
+                                repair={repair}
+                                section={section}
                             />
                         ))}
                     </div>
@@ -350,6 +342,56 @@ const DashboardSection = ({ section, repairs }) => {
     );
 };
 
+// Mark as picked up function
+const markAsPickedUp = (repairId) => {
+    if (!confirm('האם לסמן את האופניים כנאספו על ידי הלקוח?')) {
+        return;
+    }
+
+    const button = document.querySelector(`button[onclick*="markAsPickedUp(${repairId})"]`);
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+
+    fetch(`/manager/mark-delivered/${repairId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const card = button.closest('.bg-slate-800\\/60');
+            if (card) {
+                card.style.transition = 'all 0.5s ease-out';
+                card.style.opacity = '0';
+                card.style.transform = 'scale(0.9)';
+                setTimeout(() => {
+                    card.remove();
+                }, 500);
+            }
+            alert('האופניים סומנו כנאספו בהצלחה!');
+        } else {
+            alert('שגיאה בעדכון הסטטוס: ' + (data.error || 'שגיאה לא ידועה'));
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('שגיאה בעדכון הסטטוס. נסה שוב.');
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+        }
+    });
+};
+
 // Repair Card Component
 const RepairCard = ({ repair, section }) => {
     const getCardActions = () => {
@@ -357,86 +399,86 @@ const RepairCard = ({ repair, section }) => {
             case 'stuck_repairs':
                 return (
                     <div className="flex items-center justify-between gap-3">
-                        <a href={`/repair/status/${repair.id}/`} 
+                        <a href={`/repair/status/${repair.id}/`}
                            className="flex items-center gap-2 px-4 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200">
                             <i className="fas fa-eye"></i>
                             <span className="text-sm">צפה</span>
                         </a>
-                        <a href={`/manager/repair/${repair.id}/`} 
+                        <a href={`/manager/repair/${repair.id}/`}
                            className={`flex items-center gap-2 px-4 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200`}>
                             <i className="fas fa-reply"></i>
                             <span className="text-sm">הגב</span>
                         </a>
                     </div>
                 );
-            
+
             case 'pending_diagnosis':
                 return (
-                    <a href={`/repair/diagnosis/${repair.id}/`} 
+                    <a href={`/repair/diagnosis/${repair.id}/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-stethoscope"></i>
                         <span className="text-sm font-medium">אבחן עכשיו</span>
                     </a>
                 );
-            
+
             case 'pending_approval':
                 return (
-                    <a href={`/customer/approval/${repair.id}/`} 
+                    <a href={`/customer/approval/${repair.id}/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-check"></i>
                         <span className="text-sm font-medium">נהל אישור</span>
                     </a>
                 );
-            
+
             case 'approved_waiting_for_mechanic':
                 return (
-                    <a href={`/assign/mechanic/${repair.id}/`} 
+                    <a href={`/assign/mechanic/${repair.id}/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-user-plus"></i>
                         <span className="text-sm font-medium">הקצה מכונאי</span>
                     </a>
                 );
-            
+
             case 'in_progress':
                 return (
-                    <a href={`/repair/status/${repair.id}/`} 
+                    <a href={`/repair/status/${repair.id}/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-eye"></i>
                         <span className="text-sm font-medium">צפה בפרטים</span>
                     </a>
                 );
-            
+
             case 'awaiting_quality_check':
                 return (
-                    <a href={`/manager/quality-check/${repair.id}/`} 
+                    <a href={`/manager/quality-check/${repair.id}/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-check-double"></i>
                         <span className="text-sm font-medium">בדוק איכות</span>
                     </a>
                 );
-            
+
             case 'repairs_not_collected':
                 return (
                     <div className="flex items-center justify-between gap-2">
-                        <a href={`/repair/status/${repair.id}/`} 
+                        <a href={`/repair/status/${repair.id}/`}
                            className="flex items-center gap-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200 text-xs">
                             <i className="fas fa-eye"></i>
                             <span>צפה</span>
                         </a>
-                        <a href={`tel:${repair.bike?.customer?.phone || ''}`} 
+                        <a href={`tel:${repair.bike?.customer?.phone || ''}`}
                            className={`flex items-center gap-1 px-3 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 text-xs`}>
                             <i className="fas fa-phone"></i>
                             <span>התקשר</span>
                         </a>
-                        <button 
-                            onClick={() => markAsPickedUp(repair.id)} 
+                        <button
+                            onClick={() => markAsPickedUp(repair.id)}
                             className="flex items-center gap-1 px-3 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-300 hover:text-green-200 rounded-lg border border-green-400/40 hover:border-green-400/60 transition-all duration-200 text-xs">
                             <i className="fas fa-check"></i>
                             <span>נאסף</span>
                         </button>
                     </div>
                 );
-            
+
             default:
                 return null;
         }
@@ -493,7 +535,7 @@ const RepairCard = ({ repair, section }) => {
                     <i className="fas fa-user text-slate-400 w-4"></i>
                     <span className="text-white">{repair.bike?.customer?.name || 'ללא שם'}</span>
                 </div>
-                
+
                 {repair.assigned_mechanic && (
                     <div className="flex items-center gap-3 text-sm">
                         <i className="fas fa-wrench text-slate-400 w-4"></i>
@@ -502,7 +544,7 @@ const RepairCard = ({ repair, section }) => {
                         </span>
                     </div>
                 )}
-                
+
                 <div className="flex items-center gap-3 text-sm">
                     <i className={`fas fa-clock ${section.iconColor} w-4`}></i>
                     <span className={section.buttonText}>
@@ -549,7 +591,7 @@ const RepairCard = ({ repair, section }) => {
 // Empty State Component
 const EmptyState = ({ data }) => {
     const hasAnyData = Object.values(data).some(arr => arr && arr.length > 0);
-    
+
     if (hasAnyData) return null;
 
     return (
@@ -583,7 +625,7 @@ const BackToHome = () => {
 const FloatingActionButton = () => {
     return (
         <div className="fixed bottom-6 left-6 z-40">
-            <a href="/repair/form/" 
+            <a href="/repair/form/"
                className="group flex items-center gap-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-blue-400/20"
                title="צור תיקון חדש">
                 <i className="fas fa-plus text-lg"></i>
@@ -593,59 +635,4 @@ const FloatingActionButton = () => {
     );
 };
 
-// Mark as picked up function
-window.markAsPickedUp = function(repairId) {
-    if (!confirm('האם לסמן את האופניים כנאספו על ידי הלקוח?')) {
-        return;
-    }
-    
-    const button = document.querySelector(`button[onclick*="markAsPickedUp(${repairId})"]`);
-    if (button) {
-        button.disabled = true;
-        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-    }
-    
-    fetch(`/manager/mark-delivered/${repairId}/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || '',
-            'Content-Type': 'application/json',
-        },
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const card = button.closest('.bg-slate-800\\/60');
-            if (card) {
-                card.style.transition = 'all 0.5s ease-out';
-                card.style.opacity = '0';
-                card.style.transform = 'scale(0.9)';
-                setTimeout(() => {
-                    card.remove();
-                }, 500);
-            }
-            alert('האופניים סומנו כנאספו בהצלחה!');
-        } else {
-            alert('שגיאה בעדכון הסטטוס: ' + (data.error || 'שגיאה לא ידועה'));
-            if (button) {
-                button.disabled = false;
-                button.innerHTML = '<i class="fas fa-check"></i>';
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('שגיאה בעדכון הסטטוס. נסה שוב.');
-        if (button) {
-            button.disabled = false;
-            button.innerHTML = '<i class="fas fa-check"></i>';
-        }
-    });
-};
-
-// Render the app
-ReactDOM.render(React.createElement(ManagerDashboard), document.getElementById('manager-dashboard-root'));
-</script>
-
-{% csrf_token %}
-{% endblock %}
+export default ManagerDashboard;

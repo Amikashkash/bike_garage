@@ -11,13 +11,8 @@ export default defineConfig({
     assetsDir: '',
     // Enable source maps for debugging
     sourcemap: true,
-    // Optimize build
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false, // Keep console.log for debugging
-      }
-    },
+    // Optimize build (using esbuild for now, faster than terser)
+    minify: 'esbuild',
     rollupOptions: {
       input: {
         // Customer pages (existing)
@@ -26,8 +21,8 @@ export default defineConfig({
         'customer-add-bike': './src/customer-add-bike.jsx',
         'customer-bikes-list': './src/customer-bikes-list.jsx',
         'customer-approval': './src/customer-approval.jsx',
-        // Manager pages (to be added in Phase 1)
-        // 'manager-dashboard': './src/pages/manager/Dashboard.jsx',
+        // Manager pages (Phase 1)
+        'manager-dashboard': './src/pages/manager/Dashboard.jsx',
         // Mechanic pages (to be added in Phase 1)
         // 'mechanic-dashboard': './src/pages/mechanic/Dashboard.jsx',
       },
