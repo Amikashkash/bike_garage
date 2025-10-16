@@ -118,8 +118,10 @@ JS_*.md
 LOCAL_*.md
 MANAGER_*.md
 MECHANIC_*.md
-MIGRATION_*.md
 MOBILE_*.md
+
+# Keep MIGRATION documentation files (important for project continuity)
+# MIGRATION_*.md files are NOT ignored
 NAVBAR_*.md
 NEW_*.md
 NOTES_*.md
