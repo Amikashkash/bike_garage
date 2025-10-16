@@ -1,6 +1,6 @@
 # 📐 Frontend Migration Rules & Standards
 
-**Version:** 1.0
+**Version:** 1.1
 **Last Updated:** 2025-10-16
 **Status:** Active
 
@@ -13,6 +13,7 @@
 3. **Progressive Enhancement** - Start simple, add complexity only when needed
 4. **Mobile First** - Design for mobile, enhance for desktop
 5. **Accessibility** - WCAG 2.1 AA compliance minimum
+6. **🗑️ Clean as You Go** - Delete every file immediately after it becomes unused and redundant
 
 ---
 
@@ -690,6 +691,79 @@ main              (production, always deployable)
 
 ---
 
+## 🗑️ File Cleanup Rules
+
+### When to Delete Files
+
+**Delete immediately when:**
+- ✅ File replaced by new React version (e.g., `manager_dashboard_react.html` → `ManagerDashboard.jsx`)
+- ✅ Old CSS file superseded (e.g., `components.css` after migrating to Tailwind components)
+- ✅ Legacy JavaScript replaced (e.g., jQuery code → React hooks)
+- ✅ Unused imports or dead code detected
+- ✅ Template no longer referenced in URLs
+
+### Migration File Deletion Process
+
+```bash
+# 1. After migrating a template, verify it works
+# 2. Remove old template file
+git rm workshop/templates/workshop/old_template.html
+
+# 3. Remove associated static files if any
+git rm workshop/static/js/old-script.js
+
+# 4. Commit with clear message
+git commit -m "refactor: Remove old_template.html (replaced by React component)"
+```
+
+### Examples
+
+```bash
+# ✅ Good - Clean deletion after migration
+- Migrated manager_dashboard_react.html → ManagerDashboard.jsx
+- Tested new component works
+- git rm workshop/templates/workshop/manager_dashboard_react.html
+- git commit -m "refactor: Remove manager_dashboard_react.html (replaced by Vite build)"
+
+# ❌ Bad - Keeping "just in case"
+- Migrated but kept old file
+- Result: 2 files doing same thing = confusion
+```
+
+### Exceptions
+
+**Keep temporarily (but document):**
+```python
+# views.py - during testing period
+def dashboard(request):
+    # TODO: Remove legacy template after 1 week (2025-10-23)
+    if request.GET.get('legacy'):
+        return render(request, 'workshop/legacy/dashboard.html')
+    return render(request, 'workshop/dashboard.html')  # New React version
+```
+
+After testing period expires: **DELETE** the legacy template.
+
+### No "Backup" Folders
+
+```
+❌ DON'T create backup folders:
+templates/
+  workshop/
+    old/
+    backup/
+    legacy/
+    archive/
+
+✅ DO use git history for backups:
+git log --all --full-history -- path/to/deleted/file.html
+git show commit_hash:path/to/file.html
+```
+
+**Git is your backup.** Don't clutter the codebase.
+
+---
+
 ## ✅ Pre-Commit Checklist
 
 Before committing code, verify:
@@ -701,6 +775,8 @@ Before committing code, verify:
 - [ ] Responsive on mobile
 - [ ] Tested in browser
 - [ ] Runs `npm run build` successfully
+- [ ] **🗑️ Deleted all unused/replaced files**
+- [ ] **🗑️ No commented-out code blocks**
 
 ---
 
