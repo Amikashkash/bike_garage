@@ -153,3 +153,6 @@ Thumbs.db
 # Deployment
 /dist/
 /build/
+
+# BUT keep Tailwind CSS output
+!ui/static/css/dist/
