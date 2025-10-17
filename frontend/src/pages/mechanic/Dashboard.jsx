@@ -1,45 +1,7 @@
-{% extends 'workshop/base.html' %}
-
-{% block title %}דשבורד מכונאי - React{% endblock %}
-
-{% block content %}
-<div id="mechanic-dashboard-root" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900"></div>
-
-<script>
-console.log('📝 Basic JavaScript test - script is loading');
-
-// Add error handling for the React code
-window.addEventListener('error', function(e) {
-    console.error('💥 JavaScript Error:', e.error);
-    console.error('Error at line:', e.lineno, 'column:', e.colno);
-    console.error('Error message:', e.message);
-});
-
-// Check React availability after a short delay to allow libs to load
-setTimeout(function() {
-    console.log('🔍 Checking React availability...');
-    console.log('React available:', typeof React);
-    console.log('ReactDOM available:', typeof ReactDOM);
-    if (typeof React === 'undefined') {
-        console.error('❌ React is not loaded!');
-    } else {
-        console.log('✅ React is available');
-    }
-    if (typeof ReactDOM === 'undefined') {
-        console.error('❌ ReactDOM is not loaded!');
-    } else {
-        console.log('✅ ReactDOM is available');
-    }
-}, 1000);
-</script>
-
-<script type="text/babel">
-{% verbatim %}
-const { useState, useEffect, useRef } = React;
+import { useState, useEffect } from 'react';
 
 // Main Mechanic Dashboard Component
 const MechanicDashboard = () => {
-    console.log('🚀 MechanicDashboard component initializing...');
     const [dashboardData, setDashboardData] = useState({
         assigned_repairs: [],
         stats: {
@@ -64,19 +26,17 @@ const MechanicDashboard = () => {
 
     const fetchDashboardData = async () => {
         try {
-            console.log('📡 Fetching dashboard data...');
             const response = await fetch('/api/mechanic/dashboard/', {
                 credentials: 'same-origin',
                 headers: {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || ''
                 }
             });
-            
+
             if (!response.ok) {
-                console.error('❌ API Response failed:', response.status, response.statusText);
                 throw new Error('Failed to fetch dashboard data');
             }
-            
+
             const data = await response.json();
             setDashboardData(data);
             setLoading(false);
@@ -94,13 +54,13 @@ const MechanicDashboard = () => {
     };
 
     const filteredRepairs = dashboardData.assigned_repairs.filter(repair => {
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
             repair.bike?.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             repair.bike?.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             repair.bike?.customer?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             repair.id.toString().includes(searchTerm);
 
-        const matchesFilter = filterType === 'all' || 
+        const matchesFilter = filterType === 'all' ||
             (filterType === 'pending' && !repair.is_stuck && repair.progress_percentage < 100) ||
             (filterType === 'completed' && repair.progress_percentage === 100) ||
             (filterType === 'stuck' && repair.is_stuck);
@@ -127,7 +87,7 @@ const MechanicDashboard = () => {
                         <i className="fas fa-exclamation-triangle text-red-400 text-4xl mb-4"></i>
                         <h2 className="text-xl font-bold text-white mb-2">שגיאה בטעינת הנתונים</h2>
                         <p className="text-red-200 mb-4">{error}</p>
-                        <button 
+                        <button
                             onClick={fetchDashboardData}
                             className="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-2 rounded-lg border border-red-400/40 transition-all duration-200"
                         >
@@ -143,13 +103,13 @@ const MechanicDashboard = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
             <DashboardHeader user={dashboardData.user_info} />
             <StatisticsOverview stats={dashboardData.stats} />
-            <SearchAndFilter 
+            <SearchAndFilter
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 filterType={filterType}
                 setFilterType={setFilterType}
             />
-            <RepairsList 
+            <RepairsList
                 repairs={filteredRepairs}
                 expandedCards={expandedCards}
                 toggleCard={toggleCard}
@@ -233,7 +193,7 @@ const StatisticsOverview = ({ stats }) => {
     return (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {metrics.map((metric, index) => (
-                <div 
+                <div
                     key={index}
                     className={`bg-slate-800/40 backdrop-blur-sm ${metric.borderColor} border rounded-xl p-4 text-center hover:scale-105 transform transition-all duration-300 hover:bg-slate-800/60 ${metric.gradient}`}
                 >
@@ -265,8 +225,8 @@ const SearchAndFilter = ({ searchTerm, setSearchTerm, filterType, setFilterType 
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
                         <div className="relative">
-                            <input 
-                                type="text" 
+                            <input
+                                type="text"
                                 placeholder="חפש לפי לקוח, דגם או מספר תיקון..."
                                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-4 py-3 pl-12 text-white placeholder-slate-400 focus:border-orange-400 focus:ring-2 focus:ring-orange-400/20 transition-all"
                                 value={searchTerm}
@@ -277,11 +237,11 @@ const SearchAndFilter = ({ searchTerm, setSearchTerm, filterType, setFilterType 
                     </div>
                     <div className="flex gap-2">
                         {filters.map(filter => (
-                            <button 
+                            <button
                                 key={filter.key}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                                    filterType === filter.key 
-                                        ? 'bg-orange-500/30 border border-orange-400/50 text-orange-200' 
+                                    filterType === filter.key
+                                        ? 'bg-orange-500/30 border border-orange-400/50 text-orange-200'
                                         : 'bg-slate-600/50 border border-slate-500/30 text-slate-300 hover:bg-slate-600/70'
                                 }`}
                                 onClick={() => setFilterType(filter.key)}
@@ -305,7 +265,7 @@ const RepairsList = ({ repairs, expandedCards, toggleCard, onStuckReport }) => {
     return (
         <div className="space-y-4" id="repairs-container">
             {repairs.map((repair, index) => (
-                <RepairCard 
+                <RepairCard
                     key={repair.id}
                     repair={repair}
                     index={index}
@@ -343,9 +303,9 @@ const RepairCard = ({ repair, index, isExpanded, onToggle, onStuckReport }) => {
 
     const animationStyle = { animationDelay: (index * 0.1) + 's' };
     const progressBarStyle = { width: repair.progress_percentage + '%' };
-    
+
     return (
-        <div 
+        <div
             className="bg-slate-800/50 backdrop-blur-sm border border-slate-600/40 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:border-slate-500/60 animate-fade-in-up"
             style={animationStyle}
         >
@@ -380,7 +340,7 @@ const RepairCard = ({ repair, index, isExpanded, onToggle, onStuckReport }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Right side actions and expand icon */}
                     <div className="flex items-center gap-4">
                         <div className="text-sm text-slate-400 text-right">
@@ -393,9 +353,9 @@ const RepairCard = ({ repair, index, isExpanded, onToggle, onStuckReport }) => {
                                 {new Date(repair.created_at).toLocaleDateString('he-IL')}
                             </div>
                         </div>
-                        
+
                         {/* Primary Action Button - Redesigned */}
-                        <a 
+                        <a
                             href={`/mechanic/repair/${repair.id}/complete/`}
                             className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-4 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-sm flex items-center gap-2"
                             onClick={(e) => e.stopPropagation()}
@@ -403,16 +363,16 @@ const RepairCard = ({ repair, index, isExpanded, onToggle, onStuckReport }) => {
                             <i className="fas fa-edit"></i>
                             <span className="hidden sm:inline">עדכן</span>
                         </a>
-                        
+
                         <i className={`fas fa-chevron-down text-slate-400 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}></i>
                     </div>
                 </div>
             </div>
-            
+
             {/* Expandable Content */}
             <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'}`}>
                 <div className="border-t border-slate-600/30"></div>
-                
+
                 <RepairCardDetails repair={repair} onStuckReport={onStuckReport} progressBarStyle={progressBarStyle} />
             </div>
         </div>
@@ -446,7 +406,7 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
     return (
         <div className="p-6">
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                
+
                 {/* Customer & Repair Info */}
                 <div className="xl:col-span-2 space-y-6">
                     {/* Customer Details */}
@@ -474,9 +434,9 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                                 <div className="flex items-center gap-3 text-base">
                                     <i className="fas fa-calendar text-slate-400 w-4"></i>
                                     <span className="text-slate-200">
-                                        {new Date(repair.created_at).toLocaleDateString('he-IL', { 
-                                            year: 'numeric', 
-                                            month: 'long', 
+                                        {new Date(repair.created_at).toLocaleDateString('he-IL', {
+                                            year: 'numeric',
+                                            month: 'long',
                                             day: 'numeric',
                                             hour: '2-digit',
                                             minute: '2-digit'
@@ -486,7 +446,7 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Diagnosis */}
                     {repair.diagnosis && (
                         <div className="bg-blue-500/10 border border-blue-400/30 rounded-xl p-5">
@@ -497,7 +457,7 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                             <p className="text-slate-200 text-base leading-relaxed">{repair.diagnosis}</p>
                         </div>
                     )}
-                    
+
                     {/* Approved Tasks */}
                     {repair.approved_items && repair.approved_items.length > 0 && (
                         <div className="bg-slate-700/30 border border-slate-600/30 rounded-xl p-5">
@@ -536,17 +496,17 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                         </div>
                     )}
                 </div>
-                
+
                 {/* Progress & Actions */}
                 <div className="space-y-6">
-                    
+
                     {/* Progress Section */}
                     <div className="bg-slate-700/30 border border-slate-600/30 rounded-xl p-5">
                         <h4 className="text-white font-semibold mb-4 flex items-center gap-2 text-lg">
                             <i className="fas fa-chart-pie text-purple-400"></i>
                             התקדמות מפורטת
                         </h4>
-                        
+
                         {/* Progress Stats */}
                         <div className="grid grid-cols-2 gap-4 mb-6">
                             <div className="text-center">
@@ -558,12 +518,12 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                                 <div className="text-sm text-slate-400">ממתינות</div>
                             </div>
                         </div>
-                        
+
                         {/* Progress Bar */}
                         <div className="relative mb-4">
                             <div className="w-full bg-slate-600 rounded-full h-8">
-                                <div 
-                                    className="bg-gradient-to-r from-green-500 to-emerald-500 h-8 rounded-full flex items-center justify-center transition-all duration-1000 shadow-lg" 
+                                <div
+                                    className="bg-gradient-to-r from-green-500 to-emerald-500 h-8 rounded-full flex items-center justify-center transition-all duration-1000 shadow-lg"
                                     style={progressBarStyle}
                                 >
                                     <span className="text-white text-sm font-bold">
@@ -572,7 +532,7 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                                 </div>
                             </div>
                         </div>
-                        
+
                         {/* Stuck Alert */}
                         {repair.is_stuck && (
                             <div className="p-4 bg-red-500/10 border border-red-400/30 rounded-lg">
@@ -590,26 +550,26 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                             </div>
                         )}
                     </div>
-                    
+
                     {/* Action Buttons */}
                     <div className="space-y-3">
-                        <a 
+                        <a
                             href={`/mechanic/repair/${repair.id}/complete/`}
                             className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 text-base text-center block flex items-center justify-center gap-2"
                         >
                             <i className="fas fa-edit"></i>
                             עדכן התקדמות
                         </a>
-                        
+
                         <div className="grid grid-cols-2 gap-3">
-                            <a 
+                            <a
                                 href={`/repair/${repair.id}/status/`}
                                 className="bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-medium py-3 px-4 rounded-lg transition-all text-sm text-center flex items-center justify-center gap-2"
                             >
                                 <i className="fas fa-eye"></i>
                                 פרטים
                             </a>
-                            <a 
+                            <a
                                 href={`/repair/${repair.id}/print-label/`}
                                 target="_blank"
                                 className="bg-purple-600/50 hover:bg-purple-600/70 text-purple-200 font-medium py-3 px-4 rounded-lg transition-all text-sm text-center flex items-center justify-center gap-2"
@@ -618,11 +578,11 @@ const RepairCardDetails = ({ repair, onStuckReport, progressBarStyle }) => {
                                 מדבקה
                             </a>
                         </div>
-                        
+
                         {!repair.is_stuck ? (
                             <StuckReportButton repairId={repair.id} onReport={handleStuckReport} />
                         ) : (
-                            <button 
+                            <button
                                 className="w-full bg-green-600/50 hover:bg-green-600/70 text-green-200 font-medium py-3 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
                                 onClick={() => {
                                     if (confirm('האם אתה בטוח שברצונך להמשיך בעבודה?')) {
@@ -663,7 +623,7 @@ const StuckReportButton = ({ repairId, onReport }) => {
 
     return (
         <>
-            <button 
+            <button
                 className="w-full bg-red-600/50 hover:bg-red-600/70 text-red-200 font-medium py-3 px-4 rounded-lg transition-all text-sm flex items-center justify-center gap-2"
                 onClick={() => setShowModal(true)}
             >
@@ -679,17 +639,17 @@ const StuckReportButton = ({ repairId, onReport }) => {
                                 <i className="fas fa-exclamation-triangle text-red-400"></i>
                                 דיווח על תקיעה
                             </h3>
-                            <button 
+                            <button
                                 onClick={() => setShowModal(false)}
                                 className="text-slate-400 hover:text-white transition-colors"
                             >
                                 <i className="fas fa-times text-xl"></i>
                             </button>
                         </div>
-                        
+
                         <div className="mb-4">
                             <label className="block text-slate-300 text-sm font-medium mb-2">סיבת התקיעה:</label>
-                            <textarea 
+                            <textarea
                                 rows="4"
                                 className="w-full bg-slate-700/50 border border-slate-600/50 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:border-red-400 focus:ring-2 focus:ring-red-400/20 transition-all resize-none"
                                 placeholder="תאר את הבעיה או מה שמונע ממך להמשיך..."
@@ -697,15 +657,15 @@ const StuckReportButton = ({ repairId, onReport }) => {
                                 onChange={(e) => setReason(e.target.value)}
                             />
                         </div>
-                        
+
                         <div className="flex gap-3">
-                            <button 
+                            <button
                                 onClick={() => setShowModal(false)}
                                 className="flex-1 bg-slate-600/50 hover:bg-slate-600/70 text-slate-200 font-medium py-2 px-4 rounded-lg transition-all"
                             >
                                 ביטול
                             </button>
-                            <button 
+                            <button
                                 onClick={handleSubmit}
                                 disabled={loading}
                                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-all disabled:opacity-50"
@@ -737,8 +697,8 @@ const EmptyState = () => {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">אין תיקונים מוקצים כרגע</h3>
                 <p className="text-slate-400 mb-6">כאשר יוקצו לך תיקונים, הם יופיעו כאן</p>
-                <a 
-                    href="/" 
+                <a
+                    href="/"
                     className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                 >
                     <i className="fas fa-home"></i>
@@ -749,55 +709,4 @@ const EmptyState = () => {
     );
 };
 
-// Render the app when DOM is ready
-function initializeReactApp() {
-    console.log('🎯 Initializing React app...');
-    console.log('Target element:', document.getElementById('mechanic-dashboard-root'));
-    console.log('React available:', typeof React !== 'undefined');
-    console.log('ReactDOM available:', typeof ReactDOM !== 'undefined');
-    console.log('MechanicDashboard available:', typeof MechanicDashboard !== 'undefined');
-
-    const targetElement = document.getElementById('mechanic-dashboard-root');
-    if (targetElement) {
-        try {
-            console.log('🚀 Rendering MechanicDashboard...');
-            ReactDOM.render(<MechanicDashboard />, targetElement);
-            console.log('✅ React app rendered successfully!');
-        } catch (error) {
-            console.error('❌ Error rendering React app:', error);
-        }
-    } else {
-        console.error('❌ Target element "mechanic-dashboard-root" not found!');
-    }
-}
-
-// Wait for DOM and then initialize
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeReactApp);
-} else {
-    // DOM is already ready
-    initializeReactApp();
-}
-{% endverbatim %}
-</script>
-
-<style>
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-    opacity: 0;
-}
-</style>
-
-{% csrf_token %}
-{% endblock %}
+export default MechanicDashboard;

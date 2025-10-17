@@ -1032,8 +1032,8 @@ def mechanic_dashboard(request):
 @login_required
 @mechanic_required
 def mechanic_dashboard_react(request):
-    """React-based mechanic dashboard"""
-    return render(request, 'workshop/mechanic_dashboard_react.html')
+    """Mechanic dashboard with Vite-built React component (Phase 1 migration)"""
+    return render(request, 'workshop/mechanic_dashboard.html')
 
 
 @login_required

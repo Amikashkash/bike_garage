@@ -31,7 +31,8 @@
       "Bash(where psql)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []

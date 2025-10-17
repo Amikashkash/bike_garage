@@ -23,8 +23,8 @@ export default defineConfig({
         'customer-approval': './src/customer-approval.jsx',
         // Manager pages (Phase 1)
         'manager-dashboard': './src/pages/manager/Dashboard.jsx',
-        // Mechanic pages (to be added in Phase 1)
-        // 'mechanic-dashboard': './src/pages/mechanic/Dashboard.jsx',
+        // Mechanic pages (Phase 1)
+        'mechanic-dashboard': './src/pages/mechanic/Dashboard.jsx',
       },
       output: {
         entryFileNames: '[name].js',
