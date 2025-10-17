@@ -442,7 +442,9 @@ class ManagerRealtime extends BikeGarageRealtime {
     
     refreshManagerStats() {
         // Refresh stats from server
-        fetch('/api/manager/stats/')
+        fetch('/api/manager/stats/', {
+            credentials: 'same-origin'
+        })
             .then(response => response.json())
             .then(data => {
                 this.stuckRepairsCount = data.stuck_repairs || 0;
