@@ -1,12 +1,5 @@
-# Dependencies
-node_modules
-
-# Build output
 dist
-../../workshop/static/frontend
-
-# Logs
-*.log
-
-# OS
-.DS_Store
+node_modules
+../workshop/static/frontend
+*.map
+package-lock.json
