@@ -70,6 +70,7 @@ urlpatterns = [
     path('repair/new/', views.repair_form, name='repair_form'),
     path('repair/new/<int:customer_id>/', views.repair_form, name='repair_form_with_customer'),
     path('customer/report/', views.customer_report, name='customer_report'),
+    path('customer/report/done/', views.customer_report_done, name='customer_report_done'),
     path('repair/<int:repair_id>/status/', views.repair_status, name='repair_status'),
     
     # Manager workflow

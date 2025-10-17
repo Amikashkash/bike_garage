@@ -103,6 +103,12 @@ def customer_report(request):
 
 
 @login_required
+def customer_report_done(request):
+    """Success page after submitting repair report"""
+    return render(request, 'workshop/customer_report_done.html')
+
+
+@login_required
 @user_passes_test(lambda u: is_manager(u) or is_mechanic(u))
 def repair_form(request, customer_id=None):
     selected_customer = None
