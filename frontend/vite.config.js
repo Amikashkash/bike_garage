@@ -21,6 +21,7 @@ export default defineConfig({
         'customer-add-bike': './src/customer-add-bike.jsx',
         'customer-bikes-list': './src/customer-bikes-list.jsx',
         'customer-approval': './src/customer-approval.jsx',
+        'customer-report': './src/pages/customer/ReportForm.jsx',
         // Manager pages (Phase 1)
         'manager-dashboard': './src/pages/manager/Dashboard.jsx',
         // Mechanic pages (Phase 1)

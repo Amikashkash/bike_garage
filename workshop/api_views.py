@@ -455,3 +455,92 @@ def mechanic_dashboard_data(request):
         },
         'status': 'success'
     })
+
+
+@login_required
+@require_http_methods(["GET"])
+def customer_bikes(request):
+    """API endpoint for customer's bikes"""
+    if not is_customer(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        customer = Customer.objects.get(user=request.user)
+        from .models import Bike
+        bikes = Bike.objects.filter(customer=customer)
+
+        bikes_data = [{
+            'id': bike.id,
+            'brand': bike.brand,
+            'model': bike.model,
+            'serial_number': bike.serial_number if hasattr(bike, 'serial_number') else None
+        } for bike in bikes]
+
+        return JsonResponse(bikes_data, safe=False)
+    except Customer.DoesNotExist:
+        return JsonResponse({'error': 'Customer not found'}, status=404)
+
+
+@login_required
+@require_http_methods(["GET"])
+def categories_list(request):
+    """API endpoint for repair categories with subcategories"""
+    from .models import RepairCategory
+
+    categories = RepairCategory.objects.prefetch_related('subcategories').all()
+
+    categories_data = [{
+        'id': cat.id,
+        'name': cat.name,
+        'subcategories': [{
+            'id': sub.id,
+            'name': sub.name
+        } for sub in cat.subcategories.all()]
+    } for cat in categories]
+
+    return JsonResponse(categories_data, safe=False)
+
+
+@login_required
+@require_http_methods(["POST"])
+def customer_report_submit(request):
+    """API endpoint for submitting customer repair report"""
+    if not is_customer(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        customer = Customer.objects.get(user=request.user)
+        data = json.loads(request.body)
+
+        from .models import Bike, RepairSubCategory
+
+        # Validate bike belongs to customer
+        bike_id = data.get('bike')
+        try:
+            bike = Bike.objects.get(id=bike_id, customer=customer)
+        except Bike.DoesNotExist:
+            return JsonResponse({'error': 'Bike not found or does not belong to you'}, status=400)
+
+        # Create repair job
+        repair = RepairJob.objects.create(
+            bike=bike,
+            problem_description=data.get('problem_description', ''),
+            status='reported'
+        )
+
+        # Add subcategories if provided
+        subcategory_ids = data.get('subcategories', [])
+        if subcategory_ids:
+            subcategories = RepairSubCategory.objects.filter(id__in=subcategory_ids)
+            repair.subcategories.set(subcategories)
+
+        return JsonResponse({
+            'success': True,
+            'repair_id': repair.id,
+            'message': 'הדיווח נשלח בהצלחה!'
+        })
+
+    except Customer.DoesNotExist:
+        return JsonResponse({'error': 'Customer not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

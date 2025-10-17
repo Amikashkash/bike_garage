@@ -1,0 +1,13 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+
+{% block title %}דיווח תקלה חדשה{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div id="root"></div>
+
+<link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+<script type="module" src="{% static 'frontend/customer-report.js' %}"></script>
+{% endblock %}

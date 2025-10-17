@@ -97,28 +97,9 @@ def customer_report(request):
     except Customer.DoesNotExist:
         messages.error(request, "לא נמצא פרופיל לקוח עבור המשתמש הזה")
         return redirect('home')
-    
-    bikes = Bike.objects.filter(customer=customer)
-    if request.method == 'POST':
-        form = CustomerRepairJobForm(request.POST)
-        form.fields['bike'].queryset = bikes
-        if form.is_valid():
-            repair = form.save(commit=False)
-            if repair.bike in bikes:
-                repair.save()
-                form.save_m2m()
-                messages.success(request, "הדיווח נשלח בהצלחה!")
-                return render(request, 'workshop/customer_report_done.html')
-    else:
-        form = CustomerRepairJobForm()
-        form.fields['bike'].queryset = bikes
-    
-    # הוספת קטגוריות כמו בדף המנהל
-    categories = RepairCategory.objects.prefetch_related('subcategories').all()
-    return render(request, 'workshop/customer_report.html', {
-        'form': form,
-        'categories': categories,
-    })
+
+    # Use React template (API handles form submission)
+    return render(request, 'workshop/customer_report_react.html')
 
 
 @login_required
