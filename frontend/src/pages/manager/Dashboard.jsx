@@ -489,7 +489,7 @@ const RepairCard = ({ repair, section }) => {
             case 'stuck_repairs':
                 return { text: 'דרושה עזרה', color: 'bg-red-500/30 border-red-400/40 text-red-200', animate: 'animate-pulse' };
             case 'pending_approval':
-                return { text: `₪${repair.get_total_estimated_price || '0'}`, color: 'bg-green-500/30 border-green-400/40 text-green-200' };
+                return { text: `₪${repair.get_total_price || '0'}`, color: 'bg-green-500/30 border-green-400/40 text-green-200' };
             case 'approved_waiting_for_mechanic':
                 return { text: `₪${repair.get_total_approved_price || '0'}`, color: 'bg-green-500/30 border-green-400/40 text-green-200' };
             case 'in_progress':
@@ -573,7 +573,7 @@ const RepairCard = ({ repair, section }) => {
                 {section.key === 'repairs_not_collected' && (
                     <div className="flex items-center gap-3 text-sm">
                         <i className="fas fa-shekel-sign text-green-400 w-4"></i>
-                        <span className="text-green-300">₪{repair.get_total_final_price || '0'}</span>
+                        <span className="text-green-300">₪{repair.get_total_approved_price || '0'}</span>
                     </div>
                 )}
             </div>

@@ -340,10 +340,9 @@ def manager_dashboard_data(request):
                 'get_full_name': repair.assigned_mechanic.get_full_name() if repair.assigned_mechanic else None
             } if repair.assigned_mechanic else None,
             'stuck_reason': getattr(repair, 'stuck_reason', ''),
-            'progress_percentage': getattr(repair, 'progress_percentage', 0),
-            'get_total_estimated_price': getattr(repair, 'get_total_estimated_price', 0),
-            'get_total_approved_price': getattr(repair, 'get_total_approved_price', 0),
-            'get_total_final_price': getattr(repair, 'get_total_final_price', 0),
+            'progress_percentage': repair.progress_percentage if hasattr(repair, 'progress_percentage') else 0,
+            'get_total_price': repair.get_total_price() if hasattr(repair, 'get_total_price') else 0,
+            'get_total_approved_price': repair.get_total_approved_price() if hasattr(repair, 'get_total_approved_price') else 0,
             'created_at_display': repair.created_at.strftime('%d/%m %H:%M') if repair.created_at else '',
             'completed_at_display': repair.completed_at.strftime('%d/%m %H:%M') if hasattr(repair, 'completed_at') and repair.completed_at else ''
         }
