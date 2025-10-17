@@ -96,7 +96,7 @@ const DashboardHeader = () => {
 
                 <div className="flex gap-3 justify-center md:justify-end flex-wrap">
                     <ActionButton
-                        href="/repair/form/"
+                        href="/repair/new/"
                         icon="fas fa-plus"
                         text="תיקון חדש"
                         gradient="from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
@@ -625,7 +625,7 @@ const BackToHome = () => {
 const FloatingActionButton = () => {
     return (
         <div className="fixed bottom-6 left-6 z-40">
-            <a href="/repair/form/"
+            <a href="/repair/new/"
                className="group flex items-center gap-3 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-blue-400/20"
                title="צור תיקון חדש">
                 <i className="fas fa-plus text-lg"></i>
