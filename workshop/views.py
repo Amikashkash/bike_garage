@@ -118,36 +118,9 @@ def repair_form(request, customer_id=None):
         except Customer.DoesNotExist:
             messages.error(request, "לקוח לא נמצא")
             return redirect('customer_list')
-    
-    if request.method == 'POST':
-        form = RepairJobForm(request.POST)
-        if form.is_valid():
-            try:
-                # שמירת התיקון
-                repair = form.save(commit=False)
-                repair.status = 'reported'  # סטטוס ראשוני
-                repair.save()
-                form.save_m2m()  # שמירת קטגוריות משנה
-                
-                # אם המנהל הזין אבחון, נעביר אותו ישירות לדף האבחון המפורט
-                if is_manager(request.user) and repair.diagnosis:
-                    messages.success(request, "התיקון נוצר בהצלחה! כעת הוסף פעולות תיקון ספציפיות עם מחירים.")
-                    return redirect('repair_diagnosis', repair_id=repair.id)
-                else:
-                    messages.success(request, "התיקון נוצר בהצלחה!")
-                    if is_manager(request.user):
-                        return redirect('manager_dashboard')
-                    else:
-                        return redirect('home')
-                        
-            except Exception as e:
-                messages.error(request, f"שגיאה ביצירת התיקון: {str(e)}")
-    else:
-        form = RepairJobForm()
-    categories = RepairCategory.objects.prefetch_related('subcategories').all()
-    return render(request, 'workshop/repair_form.html', {
-        'form': form,
-        'categories': categories,
+
+    # Use React template (API handles form submission)
+    return render(request, 'workshop/repair_form_react.html', {
         'selected_customer': selected_customer,
     })
 

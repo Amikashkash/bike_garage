@@ -1,0 +1,11 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+
+{% block title %}הוסף תיקון אופניים{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="root" {% if selected_customer %}data-customer-id="{{ selected_customer.id }}"{% endif %}></div>
+<link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+<script type="module" src="{% static 'frontend/repair-form.js' %}"></script>
+{% endblock %}

@@ -24,6 +24,7 @@ export default defineConfig({
         'customer-report': './src/pages/customer/ReportForm.jsx',
         // Manager pages (Phase 1)
         'manager-dashboard': './src/pages/manager/Dashboard.jsx',
+        'repair-form': './src/pages/manager/RepairForm.jsx',
         // Mechanic pages (Phase 1)
         'mechanic-dashboard': './src/pages/mechanic/Dashboard.jsx',
       },

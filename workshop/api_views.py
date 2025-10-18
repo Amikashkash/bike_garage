@@ -544,3 +544,55 @@ def customer_report_submit(request):
         return JsonResponse({'error': 'Customer not found'}, status=404)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def repair_form_submit(request):
+    """API endpoint for creating a new repair job"""
+    try:
+        from .models import RepairJob, Bike, RepairSubCategory
+        from .helpers import is_manager
+        import json
+
+        data = json.loads(request.body)
+
+        # Validate required fields
+        bike_id = data.get('bike_id')
+        if not bike_id:
+            return JsonResponse({'error': 'Bike ID is required'}, status=400)
+
+        # Get bike
+        try:
+            bike = Bike.objects.get(id=bike_id)
+        except Bike.DoesNotExist:
+            return JsonResponse({'error': 'Bike not found'}, status=404)
+
+        # Create repair job
+        repair = RepairJob.objects.create(
+            bike=bike,
+            problem_description=data.get('problem_description', ''),
+            diagnosis=data.get('diagnosis', ''),
+            status='reported'
+        )
+
+        # Add subcategories
+        subcategory_ids = data.get('subcategory_ids', [])
+        if subcategory_ids:
+            subcategories = RepairSubCategory.objects.filter(id__in=subcategory_ids)
+            repair.subcategories.set(subcategories)
+
+        # If manager entered diagnosis, redirect to diagnosis page
+        redirect_to_diagnosis = is_manager(request.user) and repair.diagnosis
+
+        return JsonResponse({
+            'success': True,
+            'repair_id': repair.id,
+            'redirect_to_diagnosis': redirect_to_diagnosis,
+            'message': 'התיקון נוצר בהצלחה!'
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
