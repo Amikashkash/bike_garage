@@ -272,8 +272,8 @@
 </div>
 
 <!-- React dependencies from CDN (keep old approach for now) -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script defer crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
 <!-- Pass data to React -->
 <script type="application/json" id="repair-data">
@@ -302,8 +302,8 @@
 }
 </script>
 
-<!-- Load the standalone component that uses CDN React -->
-<script src="{% static 'frontend/customer-approval.js' %}"></script>
+<!-- Load the standalone component that uses CDN React (defer to ensure React is loaded first) -->
+<script defer src="{% static 'frontend/customer-approval.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     try {
