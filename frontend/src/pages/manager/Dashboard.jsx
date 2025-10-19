@@ -432,7 +432,7 @@ const RepairCard = ({ repair, section }) => {
 
             case 'approved_waiting_for_mechanic':
                 return (
-                    <a href={`/assign/mechanic/${repair.id}/`}
+                    <a href={`/manager/repair/${repair.id}/assign/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-user-plus"></i>
                         <span className="text-sm font-medium">הקצה מכונאי</span>
