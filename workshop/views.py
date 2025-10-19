@@ -642,114 +642,15 @@ def manager_repair_detail(request, repair_id):
 def repair_diagnosis(request, repair_id):
     """מנהל מוסיף אבחון ופרטי תיקון"""
     repair_job = get_object_or_404(RepairJob, id=repair_id)
-    
+
     # מאפשר עריכה של אבחון עד לשלב אישור הלקוח
     if repair_job.status not in ['reported', 'diagnosed']:
         messages.error(request, 'לא ניתן לערוך אבחון זה יותר')
         return redirect('manager_dashboard')
-    
-    # משתנה לבדוק אם זה אבחון חדש או עריכה
-    is_editing = repair_job.status == 'diagnosed'
-    
-    if request.method == 'POST':
-        diagnosis_form = RepairDiagnosisForm(request.POST, instance=repair_job)
-        
-        # טיפול בפעולות התיקון
-        repair_items_data = []
-        i = 0
-        while f'item_{i}_description' in request.POST:
-            description = request.POST.get(f'item_{i}_description', '').strip()
-            price = request.POST.get(f'item_{i}_price', '').strip()
-            
-            if description and price:
-                try:
-                    price = float(price)
-                    repair_items_data.append({'description': description, 'price': price})
-                except ValueError:
-                    messages.error(request, f'מחיר לא תקין עבור פעולה: {description}')
-                    return render(request, 'workshop/repair_diagnosis.html', {
-                        'repair_job': repair_job,
-                        'diagnosis_form': diagnosis_form,
-                    })
-            i += 1
-        
-        if diagnosis_form.is_valid() and repair_items_data:
-            with transaction.atomic():
-                # שמירת האבחון
-                repair_job = diagnosis_form.save(commit=False)
-                repair_job.status = 'diagnosed'
-                repair_job.diagnosed_at = timezone.now()
-                repair_job.save()
-                
-                # יצירת פעולות התיקון
-                for item_data in repair_items_data:
-                    RepairItem.objects.create(
-                        repair_job=repair_job,
-                        description=item_data['description'],
-                        price=item_data['price']
-                    )
-                
-                # הוספת עדכון
-                RepairUpdate.objects.create(
-                    repair_job=repair_job,
-                    user=request.user,
-                    message=f"נוסף אבחון וכתב כמויות. סה\"ג פעולות: {len(repair_items_data)}",
-                    is_visible_to_customer=True
-                )
-                
-                # בדיקה אם לשלוח התראה ללקוח
-                send_notification = request.POST.get('send_notification') == 'on'
-                notification_sent = False
-                
-                if send_notification:
-                    try:
-                        # שליחת התראה ללקוח באמצעות מערכת ההתראות החדשה
-                        NotificationService.notify_approval_needed(repair_job)
-                        notification_sent = True
-                        
-                        # שליחת התראת push נוספת עבור אישור נדרש
-                        from .push_service import push_service
-                        items_count = repair_job.repair_items.count()
-                        push_service.send_approval_needed_notification(
-                            repair_job.bike.customer, 
-                            repair_job, 
-                            items_count
-                        )
-                        
-                        # שליחת התראה גם במערכת הישנה לתאימות לאחור
-                        total_price = sum(item_data['price'] for item_data in repair_items_data)
-                        send_customer_notification(
-                            repair_job, 
-                            'diagnosis_ready', 
-                            f"סה\"ג מחיר משוער: ₪{total_price:.2f}",
-                            user=request.user
-                        )
-                    except Exception as e:
-                        messages.warning(request, f'אבחון נשמר אך שליחת ההתראה נכשלה: {str(e)}')
-                
-                # הודעות הצלחה
-                if is_editing:
-                    if notification_sent:
-                        messages.success(request, 'אבחון עודכן בהצלחה! הלקוח קיבל התראה על השינויים.')
-                    else:
-                        messages.success(request, 'אבחון עודכן בהצלחה (ללא שליחת התראה).')
-                else:
-                    if notification_sent:
-                        messages.success(request, 'אבחון נשמר בהצלחה והלקוח קיבל התראה. כעת הלקוח יכול לאשר את הפעולות.')
-                    else:
-                        messages.success(request, 'אבחון נשמר בהצלחה (ללא שליחת התראה).')
-                        
-                return redirect('manager_dashboard')
-        else:
-            if not repair_items_data:
-                messages.error(request, 'יש להוסיף לפחות פעולת תיקון אחת')
-    else:
-        diagnosis_form = RepairDiagnosisForm(instance=repair_job)
-    
-    return render(request, 'workshop/repair_diagnosis.html', {
+
+    # Use React template (API handles form submission)
+    return render(request, 'workshop/repair_diagnosis_react.html', {
         'repair_job': repair_job,
-        'diagnosis_form': diagnosis_form,
-        'is_editing': is_editing,
     })
 
 @login_required

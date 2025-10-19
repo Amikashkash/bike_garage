@@ -605,3 +605,148 @@ def repair_form_submit(request):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["GET"])
+def repair_diagnosis_data(request, repair_id):
+    """API endpoint to get repair diagnosis data"""
+    from .models import RepairJob
+    from .helpers import is_manager
+
+    if not is_manager(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        repair = RepairJob.objects.select_related('bike__customer').prefetch_related(
+            'subcategories__category', 'repair_items'
+        ).get(id=repair_id)
+
+        # Check if editing is allowed
+        if repair.status not in ['reported', 'diagnosed']:
+            return JsonResponse({'error': 'Cannot edit this diagnosis anymore'}, status=403)
+
+        is_editing = repair.status == 'diagnosed'
+
+        repair_data = {
+            'id': repair.id,
+            'bike': {
+                'id': repair.bike.id,
+                'brand': repair.bike.brand,
+                'model': repair.bike.model,
+                'color': getattr(repair.bike, 'color', ''),
+            },
+            'customer': {
+                'id': repair.bike.customer.id,
+                'name': repair.bike.customer.name,
+                'phone': getattr(repair.bike.customer, 'phone', ''),
+                'email': getattr(repair.bike.customer, 'email', ''),
+            },
+            'subcategories': [
+                {'id': sub.id, 'name': sub.name, 'category': sub.category.name}
+                for sub in repair.subcategories.all()
+            ],
+            'problem_description': repair.problem_description or '',
+            'diagnosis': repair.diagnosis or '',
+            'created_at': repair.created_at.strftime('%d/%m %H:%M') if repair.created_at else '',
+            'existing_items': [
+                {
+                    'id': item.id,
+                    'description': item.description,
+                    'price': float(item.price),
+                    'is_approved': item.is_approved_by_customer,
+                }
+                for item in repair.repair_items.all()
+            ],
+            'total_existing_price': float(repair.get_total_price() if hasattr(repair, 'get_total_price') else 0),
+            'is_editing': is_editing,
+        }
+
+        return JsonResponse(repair_data)
+
+    except RepairJob.DoesNotExist:
+        return JsonResponse({'error': 'Repair not found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def repair_diagnosis_submit(request, repair_id):
+    """API endpoint to submit repair diagnosis"""
+    from .models import RepairJob, RepairItem, RepairUpdate
+    from .helpers import is_manager
+    from .push_service import NotificationService
+    from django.db import transaction
+
+    if not is_manager(request.user):
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+    try:
+        import json
+        data = json.loads(request.body)
+
+        repair = RepairJob.objects.get(id=repair_id)
+
+        # Check if editing is allowed
+        if repair.status not in ['reported', 'diagnosed']:
+            return JsonResponse({'error': 'Cannot edit this diagnosis anymore'}, status=403)
+
+        is_editing = repair.status == 'diagnosed'
+        diagnosis_text = data.get('diagnosis', '')
+        repair_items = data.get('repair_items', [])
+        send_notification = data.get('send_notification', True)
+
+        if not repair_items:
+            return JsonResponse({'error': 'At least one repair item is required'}, status=400)
+
+        with transaction.atomic():
+            # Update diagnosis
+            repair.diagnosis = diagnosis_text
+            repair.status = 'diagnosed'
+            repair.diagnosed_at = timezone.now()
+            repair.save()
+
+            # Create repair items
+            for item_data in repair_items:
+                RepairItem.objects.create(
+                    repair_job=repair,
+                    description=item_data['description'],
+                    price=item_data['price']
+                )
+
+            # Add update
+            RepairUpdate.objects.create(
+                repair_job=repair,
+                user=request.user,
+                message=f"נוסף אבחון וכתב כמויות. סה\"ג פעולות: {len(repair_items)}",
+                is_visible_to_customer=True
+            )
+
+            # Send notification if requested
+            notification_sent = False
+            if send_notification:
+                try:
+                    NotificationService.notify_approval_needed(repair)
+                    notification_sent = True
+                except Exception as e:
+                    print(f"Notification error: {e}")
+
+        message = 'אבחון עודכן בהצלחה' if is_editing else 'אבחון נשמר בהצלחה'
+        if notification_sent:
+            message += '! הלקוח קיבל התראה.'
+        else:
+            message += ' (ללא שליחת התראה).'
+
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'notification_sent': notification_sent,
+        })
+
+    except RepairJob.DoesNotExist:
+        return JsonResponse({'error': 'Repair not found'}, status=404)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

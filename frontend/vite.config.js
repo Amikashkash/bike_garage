@@ -25,6 +25,7 @@ export default defineConfig({
         // Manager pages (Phase 1)
         'manager-dashboard': './src/pages/manager/Dashboard.jsx',
         'repair-form': './src/pages/manager/RepairForm.jsx',
+        'repair-diagnosis': './src/pages/manager/RepairDiagnosis.jsx',
         // Mechanic pages (Phase 1)
         'mechanic-dashboard': './src/pages/mechanic/Dashboard.jsx',
       },

@@ -1,0 +1,11 @@
+{% extends 'workshop/base.html' %}
+{% load static %}
+
+{% block title %}אבחון תיקון #{{ repair_job.id }}{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="root" data-repair-id="{{ repair_job.id }}"></div>
+<link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
+<script type="module" src="{% static 'frontend/repair-diagnosis.js' %}"></script>
+{% endblock %}
