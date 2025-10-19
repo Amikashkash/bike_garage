@@ -110,7 +110,7 @@ const DashboardHeader = () => {
                         title="גיבוי נתונים"
                     />
                     <ActionButton
-                        href="/print-labels/menu/"
+                        href="/print-labels/"
                         icon="fas fa-print"
                         text="מדבקות"
                         gradient="from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800"
