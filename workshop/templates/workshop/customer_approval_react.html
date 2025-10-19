@@ -262,7 +262,8 @@
 {% endblock %}
 
 {% block content %}
-<div id="customer-approval-app" class="approval-container">
+{% csrf_token %}
+<div id="customer-approval-app" data-repair-id="{{ repair_job.id }}" class="approval-container">
     <!-- Loading state will be replaced by React -->
     <div class="text-center">
         <div class="loading-spinner mx-auto mb-4"></div>
@@ -270,7 +271,7 @@
     </div>
 </div>
 
-<!-- React dependencies -->
+<!-- React dependencies from CDN (keep old approach for now) -->
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -301,17 +302,18 @@
 }
 </script>
 
+<!-- Load the standalone component that uses CDN React -->
 <script src="{% static 'frontend/customer-approval.js' %}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     try {
         const repairData = JSON.parse(document.getElementById('repair-data').textContent);
-        
+
         // Initialize React component
         if (window.CustomerApproval && window.React && window.ReactDOM) {
             const root = ReactDOM.createRoot(document.getElementById('customer-approval-app'));
             root.render(
-                React.createElement(window.CustomerApproval, { 
+                React.createElement(window.CustomerApproval, {
                     repairData: repairData,
                     csrfToken: '{{ csrf_token }}',
                     submitUrl: window.location.pathname
