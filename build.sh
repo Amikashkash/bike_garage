@@ -12,6 +12,9 @@ npm ci
 npm run build
 cd ..
 
+echo "🎨 Building Tailwind CSS..."
+python manage.py tailwind build
+
 echo "📂 Collecting static files..."
 python manage.py collectstatic --no-input
 
