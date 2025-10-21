@@ -1439,13 +1439,21 @@ def manager_quality_approve(request, repair_id):
             
         elif action == 'reject':
             # דחיית בדיקת איכות - החזרה למכונאי לתיקון
-            repair_job.status = 'in_progress'
+            repair_job.status = 'approved'  # Back to approved status so mechanic can work
             repair_job.quality_notes = quality_notes
-            repair_job.is_stuck = True
-            repair_job.stuck_reason = f"דחיית בדיקת איכות: {quality_notes}"
-            repair_job.stuck_at = timezone.now()
+            repair_job.quality_checked_by = request.user
+            repair_job.quality_check_date = timezone.now()
+            # DON'T set is_stuck - this is a normal rejection, not a stuck situation
             repair_job.save()
-            
+
+            # Create a RepairUpdate to notify the mechanic
+            RepairUpdate.objects.create(
+                repair_job=repair_job,
+                user=request.user,
+                message=f"החזר ממנהל לתיקון נוסף: {quality_notes}",
+                is_visible_to_customer=False  # Only visible to staff
+            )
+
             # Send real-time notification to mechanic about rejection
             if repair_job.assigned_mechanic:
                 realtime_service.send_to_group(
@@ -1458,7 +1466,7 @@ def manager_quality_approve(request, repair_id):
                         'message': f"בדיקת איכות נדחתה: {repair_job.bike.brand} {repair_job.bike.model}"
                     }
                 )
-            
+
             messages.warning(request, f'תיקון #{repair_job.id} נדחה בבדיקת האיכות והוחזר למכונאי')
         
         return redirect('manager_dashboard')

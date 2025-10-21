@@ -82,6 +82,26 @@
                             <p class="text-slate-300 text-sm leading-relaxed">{{ repair_job.problem_description }}</p>
                         </div>
                         {% endif %}
+
+                        <!-- Quality Rejection Notice -->
+                        {% if repair_job.quality_notes and repair_job.status == 'approved' %}
+                        <div class="bg-red-500/10 border-2 border-red-400/50 rounded-xl p-4 animate-pulse-slow">
+                            <div class="flex items-center gap-3 mb-3">
+                                <i class="fas fa-undo text-red-400 text-lg"></i>
+                                <h3 class="text-white font-semibold">הוחזר ממנהל לתיקון</h3>
+                            </div>
+                            <div class="bg-red-500/10 p-3 rounded-lg">
+                                <p class="text-red-200 text-sm font-medium mb-1">הערות המנהל:</p>
+                                <p class="text-slate-200 text-sm leading-relaxed">{{ repair_job.quality_notes }}</p>
+                            </div>
+                            <div class="mt-2 text-xs text-red-300 flex items-center gap-2">
+                                <i class="fas fa-user"></i>
+                                {{ repair_job.quality_checked_by.get_full_name|default:repair_job.quality_checked_by.username }}
+                                <i class="fas fa-clock mr-2 ml-2"></i>
+                                {{ repair_job.quality_check_date|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                        {% endif %}
                         
                         <!-- Progress Section -->
                         <div class="bg-slate-700/30 border border-slate-600/30 rounded-xl p-4">
@@ -406,6 +426,20 @@
 @keyframes spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
+}
+
+/* Slow pulse animation for quality rejection notice */
+.animate-pulse-slow {
+    animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-slow {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.85;
+    }
 }
 </style>
 
