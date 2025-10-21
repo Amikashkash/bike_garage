@@ -147,6 +147,33 @@
                     </div>
                 </div>
                 {% endif %}
+
+                <!-- General Notes from Mechanic -->
+                {% if general_notes %}
+                <div class="bg-purple-900/20 border border-purple-500/30 rounded-xl p-6">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fas fa-sticky-note text-purple-400"></i>
+                        הערות כלליות על התיקון
+                    </h2>
+                    <div class="space-y-3">
+                        {% for update in general_notes %}
+                        <div class="bg-purple-500/10 border-r-4 border-purple-400 p-4 rounded">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="text-sm text-purple-300 flex items-center gap-2">
+                                    <i class="fas fa-user-cog"></i>
+                                    {{ update.user.get_full_name|default:update.user.username }}
+                                </div>
+                                <div class="text-sm text-slate-400">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    {{ update.created_at|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                            <p class="text-slate-200 leading-relaxed">{{ update.message|slice:"17:" }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
             <!-- Actions Sidebar -->
@@ -262,9 +289,9 @@ document.getElementById('responseForm').addEventListener('submit', async functio
         });
 
         const data = await res.json();
-        
-        if (data.success) {
-            alert('התגובה נשלחה בהצלחה!');
+
+        if (data.status === 'success') {
+            // Comment saved successfully, reload to show updated status
             location.reload();
         } else {
             alert('שגיאה: ' + data.error);

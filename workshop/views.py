@@ -624,14 +624,21 @@ def manager_repair_detail(request, repair_id):
     """Manager repair detail page for responding to stuck repairs"""
     try:
         repair = get_object_or_404(RepairJob, id=repair_id)
-        
+
+        # Get general notes from mechanic (stored as RepairUpdate)
+        general_notes = repair.updates.filter(
+            message__startswith="הערות מהמכונאי:",
+            is_visible_to_customer=False
+        ).order_by('-created_at')
+
         context = {
             'repair': repair,
+            'general_notes': general_notes,
             'is_manager': True,
         }
-        
+
         return render(request, 'workshop/manager_repair_detail.html', context)
-        
+
     except Exception as e:
         messages.error(request, f"שגיאה בטעינת תיקון: {str(e)}")
         return redirect('manager_dashboard')
@@ -950,24 +957,33 @@ def mechanic_task_completion(request, repair_id):
                 
                 item.save()
             
+            # שמירת הערות כלליות אם יש
+            if general_notes:
+                RepairUpdate.objects.create(
+                    repair_job=repair_job,
+                    user=request.user,
+                    message=f"הערות מהמכונאי: {general_notes}",
+                    is_visible_to_customer=False  # Visible only to staff
+                )
+
             # ספירת פעולות מושלמות
             completed_count = approved_items.filter(status='completed').count()
-            
+
             # בדיקה אם כל הפעולות שאושרו הושלמו
             if approved_items.count() == completed_count and completed_count > 0:
                 repair_job.status = 'awaiting_quality_check'
                 repair_job.save()
-                
+
                 RepairUpdate.objects.create(
                     repair_job=repair_job,
                     user=request.user,
                     message="התיקון הושלם והועבר לבדיקת איכות על ידי המנהל.",
                     is_visible_to_customer=True
                 )
-                
+
                 # Send real-time notification to managers
                 realtime_service.quality_check_ready(repair_job)
-                
+
                 messages.success(request, 'התיקון הושלם והועבר לבדיקת איכות!')
             else:
                 RepairUpdate.objects.create(
@@ -976,7 +992,7 @@ def mechanic_task_completion(request, repair_id):
                     message=f"עודכנו סטטוס והערות של פעולות התיקון",
                     is_visible_to_customer=True
                 )
-                
+
                 messages.success(request, f'העדכונים נשמרו בהצלחה')
             
             return redirect('mechanic_dashboard')
