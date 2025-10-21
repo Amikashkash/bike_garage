@@ -1444,13 +1444,30 @@ def manager_quality_approve(request, repair_id):
             repair_job.quality_checked_by = request.user
             repair_job.quality_check_date = timezone.now()
             # DON'T set is_stuck - this is a normal rejection, not a stuck situation
+
+            # Uncheck items that need rework based on manager's selection
+            items_to_rework = []
+            for key in request.POST.keys():
+                if key.startswith('needs_rework_'):
+                    item_id = key.replace('needs_rework_', '')
+                    try:
+                        item = RepairItem.objects.get(id=item_id, repair_job=repair_job)
+                        # Uncheck the item so mechanic can work on it again
+                        item.status = 'pending'
+                        item.is_completed = False
+                        item.save()
+                        items_to_rework.append(item.description)
+                    except RepairItem.DoesNotExist:
+                        pass
+
             repair_job.save()
 
             # Create a RepairUpdate to notify the mechanic
+            rework_list = ", ".join(items_to_rework) if items_to_rework else "כל הפעולות"
             RepairUpdate.objects.create(
                 repair_job=repair_job,
                 user=request.user,
-                message=f"החזר ממנהל לתיקון נוסף: {quality_notes}",
+                message=f"החזר ממנהל לתיקון נוסף: {quality_notes}\nפעולות לתיקון: {rework_list}",
                 is_visible_to_customer=False  # Only visible to staff
             )
 
@@ -1463,11 +1480,13 @@ def manager_quality_approve(request, repair_id):
                         'repair_id': repair_job.id,
                         'bike_info': f"{repair_job.bike.brand} {repair_job.bike.model}",
                         'reason': quality_notes,
+                        'items_to_rework': items_to_rework,
                         'message': f"בדיקת איכות נדחתה: {repair_job.bike.brand} {repair_job.bike.model}"
                     }
                 )
 
-            messages.warning(request, f'תיקון #{repair_job.id} נדחה בבדיקת האיכות והוחזר למכונאי')
+            items_count = len(items_to_rework) if items_to_rework else 'כל הפעולות'
+            messages.warning(request, f'תיקון #{repair_job.id} נדחה והוחזר למכונאי. פעולות לתיקון: {items_count}')
         
         return redirect('manager_dashboard')
     
