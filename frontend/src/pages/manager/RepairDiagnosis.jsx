@@ -327,12 +327,12 @@ const RepairDiagnosis = ({ repairId }) => {
         {/* ===== MAIN CONTENT ===== */}
         <div className="flex flex-col xl:flex-row gap-6 w-full">
           {/* Left Sidebar - Repair Info */}
-          <div className="w-full xl:w-96 xl:shrink-0 order-2 xl:order-1">
+          <div className="w-full xl:w-96 xl:shrink-0 order-1 xl:order-1">
             <RepairInfo repair={repair} onCategoryClick={handleCategoryClick} />
           </div>
 
           {/* Main Form Area */}
-          <div className="flex-1 min-w-0 order-1 xl:order-2">
+          <div className="flex-1 min-w-0 order-2 xl:order-2">
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">
                 {/* ===== DIAGNOSIS CARD ===== */}
