@@ -210,8 +210,55 @@ const RepairDiagnosis = ({ repairId }) => {
   // ============================================================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
+      <style>{`
+        @media print {
+          /* Hide navigation, buttons, and unnecessary elements when printing */
+          nav, .no-print, button[type="submit"], a[href*="dashboard"], .bg-gradient-to-br {
+            display: none !important;
+          }
+
+          /* Optimize page for print */
+          body {
+            background: white !important;
+            color: black !important;
+          }
+
+          .bg-slate-800\\/50, .bg-slate-700\\/50 {
+            background: white !important;
+            border: 1px solid #ccc !important;
+          }
+
+          .text-white, .text-slate-300, .text-slate-200 {
+            color: black !important;
+          }
+
+          /* Keep colors for headers */
+          .text-green-400, .text-orange-400, .text-blue-400 {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+
+          /* Show print button with different text */
+          button[onclick*="print"] {
+            display: none !important;
+          }
+
+          /* Ensure full width */
+          .max-w-7xl {
+            max-width: 100% !important;
+            padding: 0 !important;
+          }
+
+          /* Remove shadows and effects */
+          * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+          }
+        }
+      `}</style>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* ===== HEADER ===== */}
         <div className="text-center mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -287,7 +334,7 @@ const RepairDiagnosis = ({ repairId }) => {
           {/* Main Form Area */}
           <div className="flex-1 min-w-0 order-1 xl:order-2">
             <form onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 {/* ===== DIAGNOSIS CARD ===== */}
                 <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
                   <div className="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
@@ -303,7 +350,7 @@ const RepairDiagnosis = ({ repairId }) => {
                     <textarea
                       value={diagnosis}
                       onChange={e => setDiagnosis(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical min-h-[100px]"
+                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 text-base focus:ring-2 focus:ring-green-500 focus:border-transparent resize-vertical min-h-[200px]"
                       placeholder="פרט את האבחון..."
                     />
                   </div>
@@ -370,6 +417,16 @@ const RepairDiagnosis = ({ repairId }) => {
 
               {/* ===== FORM ACTIONS ===== */}
               <div className="flex flex-col gap-4 mt-6">
+                {/* Print/PDF Button */}
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+                >
+                  <i className="fas fa-print mr-2"></i>
+                  הדפס / שמור כ-PDF
+                </button>
+
                 <button
                   type="submit"
                   disabled={submitting}
@@ -406,6 +463,7 @@ const RepairDiagnosis = ({ repairId }) => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
