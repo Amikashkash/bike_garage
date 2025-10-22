@@ -628,22 +628,32 @@ def repair_diagnosis_data(request, repair_id):
 
         is_editing = repair.status == 'diagnosed'
 
+        # Safely get total price
+        try:
+            total_price = float(repair.get_total_price())
+        except Exception:
+            total_price = 0.0
+
         repair_data = {
             'id': repair.id,
             'bike': {
                 'id': repair.bike.id,
-                'brand': repair.bike.brand,
-                'model': repair.bike.model,
-                'color': getattr(repair.bike, 'color', ''),
+                'brand': repair.bike.brand or '',
+                'model': repair.bike.model or '',
+                'color': getattr(repair.bike, 'color', '') or '',
             },
             'customer': {
                 'id': repair.bike.customer.id,
-                'name': repair.bike.customer.name,
-                'phone': getattr(repair.bike.customer, 'phone', ''),
-                'email': getattr(repair.bike.customer, 'email', ''),
+                'name': repair.bike.customer.name or '',
+                'phone': repair.bike.customer.phone or '',
+                'email': repair.bike.customer.email or '',
             },
             'subcategories': [
-                {'id': sub.id, 'name': sub.name, 'category': sub.category.name}
+                {
+                    'id': sub.id,
+                    'name': sub.name or '',
+                    'category': sub.category.name if sub.category else ''
+                }
                 for sub in repair.subcategories.all()
             ],
             'problem_description': repair.problem_description or '',
@@ -652,13 +662,13 @@ def repair_diagnosis_data(request, repair_id):
             'existing_items': [
                 {
                     'id': item.id,
-                    'description': item.description,
-                    'price': float(item.price),
+                    'description': item.description or '',
+                    'price': float(item.price) if item.price else 0.0,
                     'is_approved': item.is_approved_by_customer,
                 }
                 for item in repair.repair_items.all()
             ],
-            'total_existing_price': float(repair.get_total_price() if hasattr(repair, 'get_total_price') else 0),
+            'total_existing_price': total_price,
             'is_editing': is_editing,
         }
 
@@ -667,7 +677,10 @@ def repair_diagnosis_data(request, repair_id):
     except RepairJob.DoesNotExist:
         return JsonResponse({'error': 'Repair not found'}, status=404)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"Error in repair_diagnosis_data: {error_details}")
+        return JsonResponse({'error': str(e), 'details': error_details}, status=500)
 
 
 @login_required
