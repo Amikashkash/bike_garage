@@ -611,19 +611,28 @@ def repair_form_submit(request):
 @require_http_methods(["GET"])
 def repair_diagnosis_data(request, repair_id):
     """API endpoint to get repair diagnosis data"""
+    import logging
+    logger = logging.getLogger(__name__)
+
     from .models import RepairJob
     from .helpers import is_manager
 
-    if not is_manager(request.user):
-        return JsonResponse({'error': 'Unauthorized'}, status=403)
-
     try:
+        logger.info(f"repair_diagnosis_data called for repair_id={repair_id}, user={request.user.id}")
+
+        if not is_manager(request.user):
+            logger.warning(f"Unauthorized access attempt by user {request.user.id}")
+            return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+        logger.info("Fetching repair from database...")
         repair = RepairJob.objects.select_related('bike__customer').prefetch_related(
             'subcategories__category', 'repair_items'
         ).get(id=repair_id)
+        logger.info(f"Repair found: {repair.id}, status={repair.status}")
 
         # Check if editing is allowed
         if repair.status not in ['reported', 'diagnosed']:
+            logger.warning(f"Cannot edit repair {repair_id} with status {repair.status}")
             return JsonResponse({'error': 'Cannot edit this diagnosis anymore'}, status=403)
 
         is_editing = repair.status == 'diagnosed'
@@ -631,9 +640,12 @@ def repair_diagnosis_data(request, repair_id):
         # Safely get total price
         try:
             total_price = float(repair.get_total_price())
-        except Exception:
+            logger.info(f"Total price calculated: {total_price}")
+        except Exception as e:
+            logger.error(f"Error calculating total price: {e}")
             total_price = 0.0
 
+        logger.info("Building repair data dictionary...")
         repair_data = {
             'id': repair.id,
             'bike': {
@@ -672,14 +684,16 @@ def repair_diagnosis_data(request, repair_id):
             'is_editing': is_editing,
         }
 
+        logger.info(f"Returning repair data for repair {repair_id}")
         return JsonResponse(repair_data)
 
     except RepairJob.DoesNotExist:
+        logger.error(f"Repair {repair_id} not found")
         return JsonResponse({'error': 'Repair not found'}, status=404)
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        print(f"Error in repair_diagnosis_data: {error_details}")
+        logger.error(f"Unexpected error in repair_diagnosis_data for repair {repair_id}: {error_details}")
         return JsonResponse({'error': str(e), 'details': error_details}, status=500)
 
 
