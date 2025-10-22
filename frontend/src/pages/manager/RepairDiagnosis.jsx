@@ -213,8 +213,9 @@ const RepairDiagnosis = ({ repairId }) => {
     <>
       <style>{`
         @media print {
-          /* Hide navigation, buttons, and unnecessary elements when printing */
-          nav, .no-print, button[type="submit"], a[href*="dashboard"], .bg-gradient-to-br {
+          /* Hide navigation, buttons, and unnecessary elements */
+          nav, .no-print, button, a[href*="dashboard"], .bg-gradient-to-br,
+          .breadcrumb, form button, .notification-settings {
             display: none !important;
           }
 
@@ -222,38 +223,102 @@ const RepairDiagnosis = ({ repairId }) => {
           body {
             background: white !important;
             color: black !important;
+            margin: 0;
+            padding: 20px;
           }
 
-          .bg-slate-800\\/50, .bg-slate-700\\/50 {
+          .min-h-screen {
+            min-height: auto !important;
+          }
+
+          /* Reset backgrounds and borders */
+          .bg-slate-800\\/50, .bg-slate-700\\/50, .bg-slate-700\\/30,
+          .bg-blue-500\\/20, .bg-green-500\\/20, .bg-orange-500\\/20,
+          .bg-red-500\\/10, .bg-yellow-500\\/10 {
             background: white !important;
             border: 1px solid #ccc !important;
           }
 
-          .text-white, .text-slate-300, .text-slate-200 {
+          /* Text colors */
+          .text-white, .text-slate-300, .text-slate-200, .text-slate-100,
+          .text-blue-300, .text-red-100, .text-yellow-100, .text-orange-200 {
             color: black !important;
           }
 
-          /* Keep colors for headers */
-          .text-green-400, .text-orange-400, .text-blue-400 {
+          /* Header colors - keep visible */
+          .text-green-400, .text-orange-400, .text-blue-400, .text-red-400, .text-yellow-400 {
+            color: #333 !important;
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
 
-          /* Show print button with different text */
-          button[onclick*="print"] {
-            display: none !important;
-          }
-
-          /* Ensure full width */
+          /* Page layout */
           .max-w-7xl {
             max-width: 100% !important;
             padding: 0 !important;
+          }
+
+          /* Flex layout for print */
+          .flex.flex-col.xl\\:flex-row {
+            display: block !important;
+          }
+
+          .xl\\:w-96 {
+            width: 100% !important;
+            margin-bottom: 20px;
+          }
+
+          .flex-1 {
+            width: 100% !important;
           }
 
           /* Remove shadows and effects */
           * {
             box-shadow: none !important;
             text-shadow: none !important;
+            backdrop-filter: none !important;
+          }
+
+          /* Page breaks */
+          .print-section {
+            page-break-inside: avoid;
+            margin-bottom: 20px;
+          }
+
+          /* Header styling */
+          h1, h2, h3, h4 {
+            color: #000 !important;
+            margin-bottom: 10px;
+          }
+
+          /* Ensure borders are visible */
+          .border {
+            border: 1px solid #666 !important;
+          }
+
+          /* Price highlights */
+          .total-price {
+            background: #f0f0f0 !important;
+            border: 2px solid #333 !important;
+            padding: 10px;
+            font-weight: bold;
+          }
+
+          /* Show print-only elements */
+          .print\\:block {
+            display: block !important;
+          }
+
+          .hidden {
+            display: block !important;
+          }
+
+          /* Hide textarea borders for clean print */
+          textarea {
+            border: none !important;
+            background: transparent !important;
+            padding: 0 !important;
+            resize: none !important;
           }
         }
       `}</style>
@@ -327,7 +392,7 @@ const RepairDiagnosis = ({ repairId }) => {
         {/* ===== MAIN CONTENT ===== */}
         <div className="flex flex-col xl:flex-row gap-6 w-full">
           {/* Left Sidebar - Repair Info */}
-          <div className="w-full xl:w-96 xl:shrink-0 order-1 xl:order-1">
+          <div className="w-full xl:w-96 xl:shrink-0 order-1 xl:order-1 print-section">
             <RepairInfo repair={repair} onCategoryClick={handleCategoryClick} />
           </div>
 
@@ -336,7 +401,7 @@ const RepairDiagnosis = ({ repairId }) => {
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6">
                 {/* ===== DIAGNOSIS CARD ===== */}
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit">
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden h-fit print-section">
                   <div className="bg-green-500/20 px-4 py-3 border-b border-green-500/30">
                     <h3 className="text-lg font-bold text-white flex items-center gap-2">
                       <i className="fas fa-stethoscope text-green-400"></i>אבחון והצעת מחיר
@@ -357,7 +422,7 @@ const RepairDiagnosis = ({ repairId }) => {
                 </div>
 
                 {/* ===== REPAIR ITEMS CARD ===== */}
-                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+                <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden print-section">
                   <div className="bg-orange-500/20 px-4 py-3 border-b border-orange-500/30">
                     <h3 className="text-lg font-bold text-white flex items-center gap-2">
                       <i className="fas fa-tools text-orange-400"></i>פעולות תיקון ומחירים
@@ -401,6 +466,33 @@ const RepairDiagnosis = ({ repairId }) => {
                       <div className="bg-green-500/10 border border-green-400/30 rounded-lg px-4 py-2 text-center sm:text-right">
                         <span className="text-green-300 font-medium text-sm">סה"כ פעולות חדשות: </span>
                         <span className="text-green-200 font-bold text-base">₪{totalNewPrice.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* ===== TOTAL PRICE SUMMARY (Print Only) ===== */}
+                <div className="hidden print:block total-price bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl overflow-hidden">
+                  <div className="p-6">
+                    <h3 className="text-2xl font-bold text-center mb-4">סיכום מחיר</h3>
+                    <div className="space-y-2 text-lg">
+                      {repair.existing_items && repair.existing_items.length > 0 && (
+                        <div className="flex justify-between">
+                          <span>פעולות קיימות:</span>
+                          <span className="font-bold">₪{repair.total_existing_price.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {totalNewPrice > 0 && (
+                        <div className="flex justify-between">
+                          <span>פעולות חדשות:</span>
+                          <span className="font-bold">₪{totalNewPrice.toFixed(2)}</span>
+                        </div>
+                      )}
+                      <div className="border-t-2 border-black pt-2 mt-2">
+                        <div className="flex justify-between text-xl font-bold">
+                          <span>סה"כ:</span>
+                          <span>₪{(repair.total_existing_price + totalNewPrice).toFixed(2)}</span>
+                        </div>
                       </div>
                     </div>
                   </div>

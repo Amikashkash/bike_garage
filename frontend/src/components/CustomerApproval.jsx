@@ -354,7 +354,7 @@ export default function CustomerApproval({ repairId }) {
                     <a href="/" 
                        className="flex-1 py-4 px-6 bg-slate-600 hover:bg-slate-500 text-white text-center rounded-lg font-semibold transition-colors">
                       <i className="fas fa-home mr-2"></i>
-                      חזרה לדף הבית
+                       בית
                     </a>
                   </div>
                 </>
