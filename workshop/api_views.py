@@ -561,7 +561,7 @@ def repair_form_submit(request):
     """API endpoint for creating a new repair job"""
     try:
         from .models import RepairJob, Bike, RepairSubCategory
-        from .helpers import is_manager
+        from .views import is_manager
         import json
 
         data = json.loads(request.body)
@@ -615,7 +615,7 @@ def repair_diagnosis_data(request, repair_id):
     logger = logging.getLogger(__name__)
 
     from .models import RepairJob
-    from .helpers import is_manager
+    from .views import is_manager
 
     try:
         logger.info(f"repair_diagnosis_data called for repair_id={repair_id}, user={request.user.id}")
@@ -702,7 +702,7 @@ def repair_diagnosis_data(request, repair_id):
 def repair_diagnosis_submit(request, repair_id):
     """API endpoint to submit repair diagnosis"""
     from .models import RepairJob, RepairItem, RepairUpdate
-    from .helpers import is_manager
+    from .views import is_manager
     from .push_service import NotificationService
     from django.db import transaction
 
