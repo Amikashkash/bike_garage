@@ -701,22 +701,33 @@ def repair_diagnosis_data(request, repair_id):
 @require_http_methods(["POST"])
 def repair_diagnosis_submit(request, repair_id):
     """API endpoint to submit repair diagnosis"""
+    import logging
+    logger = logging.getLogger(__name__)
+
     from .models import RepairJob, RepairItem, RepairUpdate
     from .views import is_manager
     from .push_service import NotificationService
     from django.db import transaction
-
-    if not is_manager(request.user):
-        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    from django.utils import timezone
+    import json
 
     try:
-        import json
+        logger.info(f"repair_diagnosis_submit called for repair_id={repair_id}, user={request.user.id}")
+
+        if not is_manager(request.user):
+            logger.warning(f"Unauthorized access attempt by user {request.user.id}")
+            return JsonResponse({'error': 'Unauthorized'}, status=403)
+
+        logger.info("Parsing request body...")
         data = json.loads(request.body)
+        logger.info(f"Received data: diagnosis length={len(data.get('diagnosis', ''))}, items count={len(data.get('repair_items', []))}")
 
         repair = RepairJob.objects.get(id=repair_id)
+        logger.info(f"Repair found: {repair.id}, status={repair.status}")
 
         # Check if editing is allowed
         if repair.status not in ['reported', 'diagnosed']:
+            logger.warning(f"Cannot edit repair {repair_id} with status {repair.status}")
             return JsonResponse({'error': 'Cannot edit this diagnosis anymore'}, status=403)
 
         is_editing = repair.status == 'diagnosed'
@@ -725,21 +736,25 @@ def repair_diagnosis_submit(request, repair_id):
         send_notification = data.get('send_notification', True)
 
         if not repair_items:
+            logger.error("No repair items provided")
             return JsonResponse({'error': 'At least one repair item is required'}, status=400)
 
+        logger.info("Starting transaction...")
         with transaction.atomic():
             # Update diagnosis
             repair.diagnosis = diagnosis_text
             repair.status = 'diagnosed'
             repair.diagnosed_at = timezone.now()
             repair.save()
+            logger.info(f"Repair status updated to diagnosed")
 
             # Create repair items
-            for item_data in repair_items:
+            for idx, item_data in enumerate(repair_items):
+                logger.info(f"Creating repair item {idx+1}: {item_data.get('description', 'N/A')}")
                 RepairItem.objects.create(
                     repair_job=repair,
-                    description=item_data['description'],
-                    price=item_data['price']
+                    description=item_data.get('description', ''),
+                    price=item_data.get('price', 0)
                 )
 
             # Add update
@@ -749,15 +764,18 @@ def repair_diagnosis_submit(request, repair_id):
                 message=f"נוסף אבחון וכתב כמויות. סה\"ג פעולות: {len(repair_items)}",
                 is_visible_to_customer=True
             )
+            logger.info("RepairUpdate created")
 
             # Send notification if requested
             notification_sent = False
             if send_notification:
                 try:
+                    logger.info("Attempting to send notification...")
                     NotificationService.notify_approval_needed(repair)
                     notification_sent = True
+                    logger.info("Notification sent successfully")
                 except Exception as e:
-                    print(f"Notification error: {e}")
+                    logger.error(f"Notification error: {e}")
 
         message = 'אבחון עודכן בהצלחה' if is_editing else 'אבחון נשמר בהצלחה'
         if notification_sent:
@@ -765,6 +783,7 @@ def repair_diagnosis_submit(request, repair_id):
         else:
             message += ' (ללא שליחת התראה).'
 
+        logger.info(f"Diagnosis submission successful for repair {repair_id}")
         return JsonResponse({
             'success': True,
             'message': message,
@@ -772,8 +791,13 @@ def repair_diagnosis_submit(request, repair_id):
         })
 
     except RepairJob.DoesNotExist:
+        logger.error(f"Repair {repair_id} not found")
         return JsonResponse({'error': 'Repair not found'}, status=404)
-    except json.JSONDecodeError:
+    except json.JSONDecodeError as e:
+        logger.error(f"JSON decode error: {e}")
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
+        import traceback
+        error_details = traceback.format_exc()
+        logger.error(f"Unexpected error in repair_diagnosis_submit for repair {repair_id}: {error_details}")
+        return JsonResponse({'error': str(e), 'details': error_details}, status=500)
