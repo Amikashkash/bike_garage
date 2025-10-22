@@ -706,7 +706,7 @@ def repair_diagnosis_submit(request, repair_id):
 
     from .models import RepairJob, RepairItem, RepairUpdate
     from .views import is_manager
-    from .push_service import NotificationService
+    from .notification_service import NotificationService
     from django.db import transaction
     from django.utils import timezone
     import json
