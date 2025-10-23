@@ -213,18 +213,28 @@ const RepairDiagnosis = ({ repairId }) => {
     <>
       <style>{`
         @media print {
-          /* Hide EVERYTHING except the diagnosis content */
-          body > *:not(#root) {
+          /* Hide Django template navigation and footer */
+          header,
+          footer,
+          nav,
+          aside,
+          main > footer {
             display: none !important;
           }
 
-          header, footer, nav, aside {
+          /* Hide the specific base.html footer */
+          .bg-gradient-to-r.from-slate-900\\/90 {
             display: none !important;
           }
 
           /* Hide buttons and interactive elements */
           button, input[type="button"], input[type="submit"],
-          a[href*="dashboard"], .notification-settings {
+          a[href*="dashboard"] {
+            display: none !important;
+          }
+
+          /* Hide notification settings specifically */
+          form > div:last-child {
             display: none !important;
           }
 
@@ -350,6 +360,23 @@ const RepairDiagnosis = ({ repairId }) => {
           /* Show hidden print elements */
           .hidden.print\\:block {
             display: block !important;
+            visibility: visible !important;
+          }
+
+          /* Ensure main content is visible */
+          #root,
+          #root > *,
+          .min-h-screen,
+          .max-w-7xl {
+            display: block !important;
+            visibility: visible !important;
+          }
+
+          /* Make sure cards are visible */
+          .print-section {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
           }
 
           /* Total price box */
