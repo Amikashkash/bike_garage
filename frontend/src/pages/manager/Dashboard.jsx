@@ -434,7 +434,7 @@ const RepairCard = ({ repair, section }) => {
 
             case 'in_progress':
                 return (
-                    <a href={`/repair/status/${repair.id}/`}
+                    <a href={`/repair/${repair.id}/status/`}
                        className={`flex items-center gap-2 px-6 py-2 bg-${section.color}-500/20 hover:bg-${section.color}-500/30 text-${section.color}-300 hover:text-${section.color}-200 rounded-lg border border-${section.color}-400/40 hover:border-${section.color}-400/60 transition-all duration-200 w-full justify-center`}>
                         <i className="fas fa-eye"></i>
                         <span className="text-sm font-medium">צפה בפרטים</span>
@@ -453,7 +453,7 @@ const RepairCard = ({ repair, section }) => {
             case 'repairs_not_collected':
                 return (
                     <div className="flex items-center justify-between gap-2">
-                        <a href={`/repair/status/${repair.id}/`}
+                        <a href={`/repair/${repair.id}/status/`}
                            className="flex items-center gap-1 px-3 py-2 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg border border-slate-600 hover:border-slate-500 transition-all duration-200 text-xs">
                             <i className="fas fa-eye"></i>
                             <span>צפה</span>
