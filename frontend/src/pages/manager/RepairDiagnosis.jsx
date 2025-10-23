@@ -213,66 +213,105 @@ const RepairDiagnosis = ({ repairId }) => {
     <>
       <style>{`
         @media print {
-          /* Hide navigation, buttons, and unnecessary elements */
-          nav, .no-print, button, a[href*="dashboard"], .bg-gradient-to-br,
-          .breadcrumb, form button, .notification-settings {
+          /* Hide EVERYTHING except the diagnosis content */
+          body > *:not(#root) {
+            display: none !important;
+          }
+
+          header, footer, nav, aside {
+            display: none !important;
+          }
+
+          /* Hide buttons and interactive elements */
+          button, input[type="button"], input[type="submit"],
+          a[href*="dashboard"], .notification-settings {
             display: none !important;
           }
 
           /* Optimize page for print */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
           body {
             background: white !important;
             color: black !important;
-            margin: 0;
-            padding: 20px;
+            margin: 0 !important;
+            padding: 20px !important;
+          }
+
+          #root {
+            background: white !important;
           }
 
           .min-h-screen {
             min-height: auto !important;
-          }
-
-          /* Reset backgrounds and borders */
-          .bg-slate-800\\/50, .bg-slate-700\\/50, .bg-slate-700\\/30,
-          .bg-blue-500\\/20, .bg-green-500\\/20, .bg-orange-500\\/20,
-          .bg-red-500\\/10, .bg-yellow-500\\/10 {
             background: white !important;
-            border: 1px solid #ccc !important;
           }
 
-          /* Text colors */
+          .bg-gradient-to-br {
+            background: white !important;
+          }
+
+          /* Reset all backgrounds to white */
+          .bg-slate-800\\/50, .bg-slate-700\\/50, .bg-slate-700\\/30,
+          .bg-slate-600, .bg-slate-800, .bg-slate-900,
+          .bg-blue-500\\/20, .bg-green-500\\/20, .bg-orange-500\\/20,
+          .bg-red-500\\/10, .bg-yellow-500\\/10, .bg-blue-900\\/30 {
+            background: white !important;
+          }
+
+          /* Make all borders visible */
+          .bg-slate-800\\/50, .bg-slate-700\\/50, .border {
+            border: 1px solid #333 !important;
+          }
+
+          /* Text colors - all to black */
           .text-white, .text-slate-300, .text-slate-200, .text-slate-100,
-          .text-blue-300, .text-red-100, .text-yellow-100, .text-orange-200 {
+          .text-blue-300, .text-red-100, .text-yellow-100, .text-orange-200,
+          .text-green-300, .text-green-200, .text-slate-400 {
             color: black !important;
           }
 
-          /* Header colors - keep visible */
-          .text-green-400, .text-orange-400, .text-blue-400, .text-red-400, .text-yellow-400 {
-            color: #333 !important;
-            print-color-adjust: exact;
-            -webkit-print-color-adjust: exact;
+          /* Headers stay bold */
+          .text-green-400, .text-orange-400, .text-blue-400,
+          .text-red-400, .text-yellow-400 {
+            color: #000 !important;
+            font-weight: bold !important;
           }
 
-          /* Page layout */
+          /* Icons */
+          i, .fas, .far {
+            color: #666 !important;
+          }
+
+          /* Layout */
           .max-w-7xl {
             max-width: 100% !important;
-            padding: 0 !important;
+            padding: 0 20px !important;
           }
 
-          /* Flex layout for print */
+          .px-4, .px-6, .px-8, .py-8 {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
+          }
+
+          /* Flex to block */
           .flex.flex-col.xl\\:flex-row {
             display: block !important;
           }
 
           .xl\\:w-96 {
             width: 100% !important;
-            margin-bottom: 20px;
+            margin-bottom: 15px !important;
           }
 
           .flex-1 {
             width: 100% !important;
           }
 
-          /* Remove shadows and effects */
+          /* Remove effects */
           * {
             box-shadow: none !important;
             text-shadow: none !important;
@@ -282,43 +321,68 @@ const RepairDiagnosis = ({ repairId }) => {
           /* Page breaks */
           .print-section {
             page-break-inside: avoid;
-            margin-bottom: 20px;
+            margin-bottom: 15px !important;
+            padding: 10px !important;
           }
 
-          /* Header styling */
-          h1, h2, h3, h4 {
-            color: #000 !important;
-            margin-bottom: 10px;
+          /* Typography */
+          h1 {
+            font-size: 24px !important;
+            color: black !important;
+            margin-bottom: 5px !important;
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            background-clip: unset !important;
+            -webkit-text-fill-color: black !important;
           }
 
-          /* Ensure borders are visible */
-          .border {
-            border: 1px solid #666 !important;
+          h2, h3, h4 {
+            color: black !important;
+            margin-top: 10px !important;
+            margin-bottom: 5px !important;
           }
 
-          /* Price highlights */
+          p {
+            color: black !important;
+            line-height: 1.4 !important;
+          }
+
+          /* Show hidden print elements */
+          .hidden.print\\:block {
+            display: block !important;
+          }
+
+          /* Total price box */
           .total-price {
-            background: #f0f0f0 !important;
-            border: 2px solid #333 !important;
-            padding: 10px;
-            font-weight: bold;
+            background: #f5f5f5 !important;
+            border: 2px solid #000 !important;
+            padding: 15px !important;
+            margin-top: 20px !important;
           }
 
-          /* Show print-only elements */
-          .print\\:block {
-            display: block !important;
-          }
-
-          .hidden {
-            display: block !important;
-          }
-
-          /* Hide textarea borders for clean print */
+          /* Clean textarea for print */
           textarea {
-            border: none !important;
-            background: transparent !important;
-            padding: 0 !important;
-            resize: none !important;
+            border: 1px solid #ccc !important;
+            background: white !important;
+            color: black !important;
+            font-family: inherit !important;
+            padding: 10px !important;
+            width: 100% !important;
+          }
+
+          /* Rounded corners off */
+          .rounded-xl, .rounded-lg {
+            border-radius: 0 !important;
+          }
+
+          /* Grid stays as is */
+          .grid {
+            display: block !important;
+          }
+
+          .space-y-3 > * + *,
+          .space-y-2 > * + * {
+            margin-top: 10px !important;
           }
         }
       `}</style>
