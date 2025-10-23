@@ -1,7 +1,10 @@
-/* MODERN COMPONENT STYLES - Add to your main CSS file or create workshop/static/workshop/css/components.css */
+/* CONSOLIDATED COMPONENT STYLES - Tailwind @apply directives */
+/* Only essential styles for legacy Django templates */
+/* React components should use Tailwind utilities directly */
 
 /* =========================
    BUTTON COMPONENTS
+   Essential for legacy forms
    ========================= */
 
 .btn-modern {
@@ -69,207 +72,8 @@
 }
 
 /* =========================
-   CARD COMPONENTS
-   ========================= */
-
-.stat-card {
-    @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:scale-105 transition-all duration-300;
-}
-
-.stat-card.blue-theme {
-    @apply bg-blue-500/10 border-blue-500/20;
-}
-
-.stat-card.green-theme {
-    @apply bg-green-500/10 border-green-500/20;
-}
-
-.stat-card.red-theme {
-    @apply bg-red-500/10 border-red-500/20;
-}
-
-.stat-card.orange-theme {
-    @apply bg-orange-500/10 border-orange-500/20;
-}
-
-.stat-label {
-    @apply text-slate-300 text-sm font-medium;
-}
-
-.stat-number {
-    @apply text-3xl font-bold text-white;
-}
-
-.stat-icon {
-    @apply w-16 h-16 rounded-2xl flex items-center justify-center;
-}
-
-.stat-icon.blue-bg {
-    @apply bg-blue-500/20;
-}
-
-.stat-icon.green-bg {
-    @apply bg-green-500/20;
-}
-
-.stat-icon.red-bg {
-    @apply bg-red-500/20;
-}
-
-.stat-icon.orange-bg {
-    @apply bg-orange-500/20;
-}
-
-.status-indicator {
-    @apply w-3 h-3 rounded-full animate-pulse;
-}
-
-.status-indicator.blue {
-    @apply bg-blue-400;
-}
-
-.status-indicator.green {
-    @apply bg-green-400;
-}
-
-.status-indicator.red {
-    @apply bg-red-400;
-}
-
-.status-indicator.orange {
-    @apply bg-orange-400;
-}
-
-/* =========================
-   REPAIR CARD COMPONENTS
-   ========================= */
-
-.repair-card {
-    @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 transition-all duration-300 hover:scale-105;
-}
-
-.repair-card.stuck-status {
-    @apply border-red-500/30 bg-gradient-to-br from-red-900/10 to-red-800/5;
-}
-
-.repair-card.completed-status {
-    @apply border-green-500/30 bg-gradient-to-br from-green-900/10 to-green-800/5;
-}
-
-.repair-card.in_progress-status {
-    @apply border-blue-500/30 bg-gradient-to-br from-blue-900/10 to-blue-800/5;
-}
-
-.repair-header {
-    @apply flex items-start justify-between mb-4;
-}
-
-.repair-icon {
-    @apply w-12 h-12 rounded-xl flex items-center justify-center;
-}
-
-.repair-icon.stuck-icon {
-    @apply bg-red-500/20;
-}
-
-.repair-icon.completed-icon {
-    @apply bg-green-500/20;
-}
-
-.repair-icon.in_progress-icon {
-    @apply bg-blue-500/20;
-}
-
-.repair-icon.normal-icon {
-    @apply bg-slate-500/20;
-}
-
-.repair-id {
-    @apply font-bold text-white text-lg;
-}
-
-.repair-bike {
-    @apply text-slate-400 text-sm;
-}
-
-.status-badge {
-    @apply px-3 py-1 rounded-lg text-xs font-medium border;
-}
-
-.status-badge.urgent {
-    @apply bg-red-500/20 text-red-300 border-red-500/30;
-}
-
-.status-badge.success {
-    @apply bg-green-500/20 text-green-300 border-green-500/30;
-}
-
-.status-badge.active {
-    @apply bg-blue-500/20 text-blue-300 border-blue-500/30;
-}
-
-.status-badge.pending {
-    @apply bg-orange-500/20 text-orange-300 border-orange-500/30;
-}
-
-.progress-circle {
-    @apply w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-blue-300 text-sm font-bold mt-2;
-}
-
-.repair-details {
-    @apply space-y-3 mb-4;
-}
-
-.detail-item {
-    @apply flex items-center text-sm space-x-reverse space-x-3;
-}
-
-.stuck-info {
-    @apply bg-red-500/10 border border-red-500/20 rounded-xl p-3 flex items-start space-x-reverse space-x-3;
-}
-
-.repair-actions {
-    @apply flex gap-3;
-}
-
-/* =========================
-   CUSTOMER CARD COMPONENTS
-   ========================= */
-
-.customer-card {
-    @apply bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-2xl p-6 hover:scale-105 transition-all duration-300;
-}
-
-.customer-header {
-    @apply flex items-center space-x-reverse space-x-4 mb-4;
-}
-
-.customer-avatar {
-    @apply w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-lg;
-}
-
-.customer-name {
-    @apply font-bold text-white;
-}
-
-.customer-type {
-    @apply text-slate-400 text-sm;
-}
-
-.customer-stats {
-    @apply space-y-2 mb-4;
-}
-
-.stat-item {
-    @apply flex items-center text-sm space-x-reverse space-x-3;
-}
-
-.customer-actions {
-    @apply flex gap-2;
-}
-
-/* =========================
    NAVIGATION COMPONENTS
+   Used in base.html - keep until Phase 5 (SPA)
    ========================= */
 
 .modern-nav {
@@ -290,15 +94,6 @@
 
 .nav-item.active {
     @apply text-blue-300 bg-blue-500/20 border-blue-500/30;
-}
-
-.nav-item::before {
-    @apply content-[''] absolute bottom-0 right-0 w-0 h-0.5 bg-gradient-to-l from-blue-400 to-blue-600 transition-all duration-300;
-}
-
-.nav-item:hover::before,
-.nav-item.active::before {
-    @apply w-full;
 }
 
 .mobile-toggle {
@@ -322,67 +117,8 @@
 }
 
 /* =========================
-   MODAL COMPONENTS
-   ========================= */
-
-.modern-modal {
-    @apply bg-slate-800 border border-slate-700 rounded-2xl;
-}
-
-.modal-header {
-    @apply flex items-center justify-between p-6 border-b border-slate-700;
-}
-
-.modal-title {
-    @apply text-xl font-bold text-white;
-}
-
-.modal-close {
-    @apply w-8 h-8 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-400 hover:text-white transition-colors duration-200 flex items-center justify-center;
-}
-
-.modal-body {
-    @apply p-6 text-white;
-}
-
-.modal-footer {
-    @apply flex gap-3 p-6 border-t border-slate-700 justify-end;
-}
-
-/* =========================
-   FORM COMPONENTS
-   ========================= */
-
-.form-group {
-    @apply mb-6;
-}
-
-.form-label {
-    @apply block text-sm font-medium text-white mb-2;
-}
-
-.form-label .required {
-    @apply text-red-400 ml-1;
-}
-
-.modern-input {
-    @apply w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200;
-}
-
-.form-errors {
-    @apply mt-2;
-}
-
-.error-message {
-    @apply block text-red-400 text-sm;
-}
-
-.form-help {
-    @apply block text-slate-400 text-sm mt-1;
-}
-
-/* =========================
    UTILITIES
+   Widely used across templates
    ========================= */
 
 .glass-effect {
@@ -401,42 +137,8 @@
     .nav-items {
         @apply flex flex-col absolute top-full left-0 right-0 bg-slate-900/95 backdrop-blur-xl rounded-b-2xl border-t border-white/10 shadow-2xl p-4 space-y-2 space-x-0;
     }
-    
+
     .nav-items.hidden {
         @apply hidden;
     }
-    
-    .stat-card {
-        @apply hover:scale-100;
-    }
-    
-    .repair-card {
-        @apply hover:scale-100;
-    }
-    
-    .customer-card {
-        @apply hover:scale-100;
-    }
-}
-
-/* =========================
-   ANIMATIONS
-   ========================= */
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-.animate-fadeIn {
-    animation: fadeIn 0.3s ease-out;
-}
-
-.animate-slideIn {
-    animation: slideIn 0.5s ease-out;
 }
