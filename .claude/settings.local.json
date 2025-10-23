@@ -34,7 +34,8 @@
       "Bash(cat:*)",
       "Bash(git rm:*)",
       "Read(//c/Program Files/**)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Read(//c/Users/ami-k/AppData/Local/Packages/Microsoft.YourPhone_8wekyb3d8bbwe/TempState/medias/**)"
     ],
     "deny": [],
     "ask": []

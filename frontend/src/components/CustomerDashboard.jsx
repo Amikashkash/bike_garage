@@ -96,20 +96,20 @@ export default function CustomerDashboard() {
   const getActionButton = (repair) => {
     if (repair.status === 'diagnosed' || repair.status === 'partially_approved') {
       return (
-        <a 
+        <a
           href={`/repair/${repair.id}/approve/`}
-          className="block mt-2 bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200 text-center"
+          className="block mt-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded text-xs transition-colors duration-200 text-center w-20"
         >
           <i className="fas fa-check ml-1"></i>
           אשר
         </a>
       )
     }
-    
+
     return (
-      <a 
+      <a
         href={`/repair/${repair.id}/status/`}
-        className="block mt-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200 text-center"
+        className="block mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded text-xs transition-colors duration-200 text-center w-20"
       >
         <i className="fas fa-eye ml-1"></i>
         צפה
@@ -307,11 +307,14 @@ export default function CustomerDashboard() {
             <i className="fas fa-history text-purple-400"></i>
             היסטוריית תיקונים
           </h3>
-          {repairs.length > 0 ? (
+          {repairs.filter(repair => ['completed', 'delivered'].includes(repair.status)).length > 0 ? (
             <div className="space-y-4">
-              {repairs.slice(0, 10).map(repair => (
-                <RepairCard key={repair.id} repair={repair} getStatusColor={getStatusColor} getActionButton={getActionButton} />
-              ))}
+              {repairs
+                .filter(repair => ['completed', 'delivered'].includes(repair.status))
+                .slice(0, 10)
+                .map(repair => (
+                  <RepairCard key={repair.id} repair={repair} getStatusColor={getStatusColor} getActionButton={getActionButton} />
+                ))}
             </div>
           ) : (
             <div className="text-center py-12">
@@ -415,7 +418,7 @@ function RepairCard({ repair, getStatusColor, getActionButton }) {
         </div>
         
         <div className="text-left">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(repair.status)}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${getStatusColor(repair.status)}`}>
             {repair.status_display}
           </span>
           {getActionButton(repair)}
